@@ -1,0 +1,97 @@
+/* Design system (Crust / MonoFly DSP) tokens + typography — the team's
+   source of truth. Editing this file re-skins the whole app. It also @imports
+   the display faces Special Elite + VT323. */
+/* Load the body/mono faces the design-system typography classes reference. */
+@import "https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Roboto+Mono:wght@400;500&family=Special+Elite&display=swap";
+@import "tailwindcss";
+
+/* Expose the design-system tokens as Tailwind utilities so every color, radius
+   and surface in the UI resolves back to a variable in the kit stylesheet.
+   The kit declares its tokens with escaped slashes (e.g. --text\/default\/default),
+   so we alias them to clean names here and reference only these downstream. */
+@theme inline {
+  --color-surface: var(--background\/default\/default);
+  --color-surface-2: var(--background\/default\/secondary);
+  --color-surface-3: var(--background\/default\/tertiary);
+  --color-ink: var(--text\/default\/default);
+  --color-ink-2: var(--text\/default\/secondary);
+  --color-ink-3: var(--text\/default\/tertiary);
+  --color-brand: var(--background\/brand\/default);
+  --color-brand-hover: var(--background\/brand\/hover);
+  --color-on-brand: var(--text\/brand\/on-brand);
+  --color-accent: var(--pink\/500);
+  --color-accent-strong: var(--pink\/600);
+  --color-accent-ink: var(--pink\/800);
+  --color-accent-soft: var(--pink\/200);
+  --color-accent-tint: var(--pink\/100);
+  --color-line: var(--border\/default\/default);
+  --color-line-strong: var(--border\/default\/secondary);
+  --color-positive: var(--background\/positive\/default);
+
+  --radius-sm: calc(var(--radius\/100) * 1px);
+  --radius-md: calc(var(--radius\/200) * 1px);
+  --radius-lg: calc(var(--radius\/400) * 1px);
+  --radius-full: calc(var(--radius\/full) * 1px);
+}
+
+/* Distressed display face for headings and wordmarks */
+.wordmark,
+.heading,
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Special Elite", cursive, var(--default-font-family, sans-serif);
+  letter-spacing: 0.02em;
+}
+
+/* Small uppercase metadata label in the design system's mono face. */
+.mono-label {
+  font-family: "Roboto Mono", var(--default-mono-font-family);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  background-color: var(--background\/default\/default);
+  background-image:
+    radial-gradient(circle at 50% -10%, rgba(236, 32, 15, 0.4) 0%, transparent 60%),
+    radial-gradient(circle at 85% 50%, rgba(236, 32, 15, 0.2) 0%, transparent 45%),
+    radial-gradient(circle at 15% 85%, rgba(255, 216, 77, 0.1) 0%, transparent 40%),
+    linear-gradient(180deg, var(--background\/default\/secondary) 0%, var(--background\/default\/default) 100%);
+  background-attachment: fixed;
+}
+
+:root {
+  /* Override kit tokens with requested palette ramps for dark theme */
+  --background\/default\/default: #121212;
+  --background\/default\/secondary: #1a1a1a;
+  --background\/default\/tertiary: #2a2a2a;
+  
+  --text\/default\/default: #FFFDF7;
+  --text\/default\/secondary: rgba(255, 253, 247, 0.7);
+  --text\/default\/tertiary: rgba(255, 253, 247, 0.5);
+  
+  --background\/brand\/default: #EC200F;
+  --background\/brand\/hover: #d11a0d;
+  --text\/brand\/on-brand: #FFFDF7;
+  
+  --pink\/100: rgba(255, 216, 77, 0.1);
+  --pink\/200: rgba(255, 216, 77, 0.2);
+  --pink\/500: #FFD84D;
+  --pink\/600: #e6c245;
+  --pink\/800: #b39736;
+  
+  --border\/default\/default: rgba(255, 253, 247, 0.1);
+  --border\/default\/secondary: rgba(255, 253, 247, 0.2);
+
+  --radius\/100: 8;
+  --radius\/200: 16;
+  --radius\/400: 28;
+}
