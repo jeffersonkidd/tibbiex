@@ -122,9 +122,9 @@ const TAGS = [
   { icon: Mic2, label: "Squatting" },
   { icon: Disc, label: "No Gods No Masters" },
 ]
-
+  
 async function copyLink() {
-  const text = "https://tibbie-x.punk/bio"
+  const text = "https://tibbiex.vercel.app"
   try {
     await navigator.clipboard.writeText(text)
   } catch {
@@ -145,7 +145,7 @@ export default function App() {
 
       <div className="w-full max-w-2xl px-4 pt-6 sm:px-6">
         {/* Header Controls */}
-        <header className="mb-8 flex items-center justify-between rounded-lg border border-border bg-card/60 p-3 backdrop-blur-xl">
+        <header className="card-surface mb-8 flex items-center justify-between rounded-lg bg-card/60 p-3">
           <span className="mono-label px-2 text-muted-foreground">tibbie-x.punk/bio</span>
           <div className="flex gap-2">
             <button
@@ -168,7 +168,7 @@ export default function App() {
         </header>
 
         {/* Profile Section */}
-        <div className="relative mb-8 overflow-hidden rounded-xl border border-border bg-card shadow-[0_30px_80px_-32px_rgba(236,32,15,0.6)] backdrop-blur-xl">
+        <div className="card-surface relative mb-8 overflow-hidden rounded-xl shadow-[0_30px_80px_-32px_rgba(236,32,15,0.6)]">
           <div className="relative h-48 w-full overflow-hidden bg-muted sm:h-56">
             <img
               src="https://images.unsplash.com/photo-1508973379184-7517410fb0bc?q=80&w=1200&auto=format&fit=crop"
@@ -227,16 +227,12 @@ export default function App() {
         </div>
 
         {/* Booking CTA */}
-        <button
-          type="button"
-          onClick={() => setBooking(true)}
-          className="mb-6 flex w-full items-center justify-center gap-2 brand-surface brand-lift rounded-lg bg-brand py-3.5 text-sm font-bold text-on-brand"
-        >
+        <BrandButton onClick={() => setBooking(true)} className="mb-6">
           <MessageSquare className="h-4 w-4" /> Book / Contact
-        </button>
+        </BrandButton>
 
         {/* Studio Status */}
-        <div className="mb-8 rounded-lg border border-border bg-card p-5 backdrop-blur-xl">
+        <div className="card-surface mb-8 rounded-lg p-5">
           <div className="flex items-center justify-between">
             <div className="text-base font-bold">Studio Status</div>
             <span className="mono-label text-muted-foreground">66%</span>
@@ -250,7 +246,7 @@ export default function App() {
         </div>
 
         {/* Navigation Tabs */}
-        <nav className="hide-scrollbar mb-6 flex gap-2 overflow-x-auto rounded-lg border border-border bg-card/50 p-1.5 backdrop-blur-xl">
+        <nav className="card-surface hide-scrollbar mb-6 flex gap-2 overflow-x-auto rounded-lg bg-card/50 p-1.5">
           {TABS.map((tab) => (
             <button
               key={tab}
@@ -274,7 +270,7 @@ export default function App() {
               <a
                 key={title}
                 href={href}
-                className="group block transform rounded-lg border border-border bg-card p-4 backdrop-blur-xl transition-all duration-300 hover:scale-[1.01] hover:border-accent"
+                className="card-surface group block transform rounded-lg p-4 transition-all duration-300 hover:scale-[1.01] hover:border-accent"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
@@ -302,7 +298,7 @@ export default function App() {
                   key={rec.id}
                   type="button"
                   onClick={() => setAlbum(rec)}
-                  className="group relative cursor-pointer overflow-hidden rounded-lg border border-border bg-card text-left backdrop-blur-xl transition-colors hover:border-accent"
+                  className="card-surface group relative cursor-pointer overflow-hidden rounded-lg text-left transition-colors hover:border-accent"
                 >
                   <div className="h-48 overflow-hidden">
                     <img
@@ -325,7 +321,7 @@ export default function App() {
 
           {activeTab === "Tour" &&
             SHOWS.map((show) => (
-              <div key={show.id} className="rounded-lg border border-border bg-card p-5 backdrop-blur-xl">
+              <div key={show.id} className="card-surface rounded-lg p-5">
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="text-lg font-bold">{show.venue}</div>
@@ -337,12 +333,9 @@ export default function App() {
                     </div>
                   </div>
                   {show.status === "Tickets" ? (
-                    <button
-                      type="button"
-                      className="flex items-center gap-1.5 brand-surface brand-lift rounded-full bg-brand px-4 py-2 text-xs font-bold text-on-brand"
-                    >
+                    <BrandButton variant="pill">
                       <Ticket className="h-4 w-4" /> Tickets
-                    </button>
+                    </BrandButton>
                   ) : (
                     <span className="rounded-full bg-accent-tint px-3 py-1 text-xs font-bold text-accent-strong">
                       {show.status}
@@ -357,7 +350,7 @@ export default function App() {
               {MERCH.map((item) => (
                 <div
                   key={item.id}
-                  className="group cursor-pointer overflow-hidden rounded-lg border border-border bg-card backdrop-blur-xl transition-colors hover:border-accent"
+                  className="card-surface group cursor-pointer overflow-hidden rounded-lg transition-colors hover:border-accent"
                 >
                   <div className="h-48 overflow-hidden">
                     <img
@@ -391,12 +384,9 @@ export default function App() {
             <p className="mt-2 text-sm text-muted-foreground">
               Released {album.year} · {album.role}
             </p>
-            <button
-              type="button"
-              className="mt-6 flex w-full items-center justify-center gap-2 brand-surface brand-lift rounded-lg bg-brand py-3 text-sm font-bold text-on-brand"
-            >
+            <BrandButton className="mt-6">
               <Disc size={18} /> Stream Now
-            </button>
+            </BrandButton>
           </div>
         </Overlay>
       )}
@@ -423,12 +413,9 @@ export default function App() {
                 placeholder="Message"
                 className="w-full resize-none rounded-md border border-border bg-input-background px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-accent"
               />
-              <button
-                type="submit"
-                className="mt-1 brand-surface brand-lift rounded-lg bg-brand py-3 text-sm font-bold text-on-brand"
-              >
+              <BrandButton type="submit" className="mt-1">
                 Send Message
-              </button>
+              </BrandButton>
             </div>
           </form>
         </Overlay>
@@ -453,6 +440,38 @@ export default function App() {
         </Overlay>
       )}
     </div>
+  )
+}
+
+// The brand-red CTA, shared by the booking button, the ticket link and both
+// modal actions. Shape and margins are the only things that vary between call
+// sites, so those are props; the gradient/sheen/lift live in .brand-surface.
+function BrandButton({
+  children,
+  variant = "block",
+  type = "button",
+  onClick,
+  className = "",
+}: {
+  children: React.ReactNode
+  variant?: "block" | "pill"
+  type?: "button" | "submit"
+  onClick?: () => void
+  className?: string
+}) {
+  const shape =
+    variant === "pill"
+      ? "gap-1.5 rounded-full px-4 py-2 text-xs"
+      : "w-full gap-2 rounded-lg py-3 text-sm"
+
+  return (
+    <button
+      type={type}
+      onClick={onClick}
+      className={`brand-surface brand-lift flex items-center justify-center bg-brand font-bold text-on-brand ${shape} ${className}`}
+    >
+      {children}
+    </button>
   )
 }
 

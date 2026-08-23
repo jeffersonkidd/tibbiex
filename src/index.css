@@ -339,6 +339,24 @@ body::after {
   }
 }
 
+/* ---------------------------------------------------------------------------
+   Card surface — the shared treatment for every panel in the stack (header,
+   profile, studio status, tab strip, link rows, tour rows, media tiles).
+   Lives in the components layer so Tailwind utilities still win: a site that
+   wants a sheerer fill or a coloured hover border just adds bg-card/60 or
+   hover:border-accent alongside it. Radius, padding and layout stay in the
+   markup, since those differ per panel.
+--------------------------------------------------------------------------- */
+@layer components {
+  .card-surface {
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    /* Matches backdrop-blur-xl; --card is translucent, so the page gradient
+       and grain read through every panel. */
+    backdrop-filter: blur(24px);
+  }
+}
+
 @layer base {
   html {
     overflow-y: scroll;
