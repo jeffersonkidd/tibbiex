@@ -122,7 +122,7 @@ const TAGS = [
   { icon: Mic2, label: "Squatting" },
   { icon: Disc, label: "No Gods No Masters" },
 ]
-  
+
 async function copyLink() {
   const text = "https://tibbiex.vercel.app"
   try {
@@ -146,7 +146,7 @@ export default function App() {
       <div className="w-full max-w-2xl px-4 pt-6 sm:px-6">
         {/* Header Controls */}
         <header className="card-surface mb-8 flex items-center justify-between rounded-lg bg-card/60 p-3">
-          <span className="mono-label px-2 text-muted-foreground">tibbie-x.punk/bio</span>
+          <span className="mono-label px-2 text-muted-foreground">tibbiex.vercel.app</span>
           <div className="flex gap-2">
             <button
               type="button"
@@ -177,7 +177,7 @@ export default function App() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/40 to-transparent" />
             <span className="mono-label absolute left-4 top-4 flex items-center gap-1.5 rounded-full border border-border bg-card/90 px-2.5 py-1 text-accent-strong backdrop-blur-sm">
-              <Radio size={12} /> Touring Now
+              <Radio size={12} /> Recording Now
             </span>
           </div>
 
@@ -194,7 +194,7 @@ export default function App() {
                   <span className="mono-label rounded-full border border-border bg-card px-2 py-1 text-accent-strong">
                     Bass · Vocals
                   </span>
-                  <span className="text-sm">• Leftover Crack · Star Fucking Hipsters</span>
+                  <span className="text-sm">• Leftover Crack • Gash • Reagan Youth</span>
                 </div>
               </div>
             </div>
