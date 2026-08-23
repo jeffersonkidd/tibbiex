@@ -20,6 +20,7 @@ import {
   Ticket,
   Heart,
   Calendar,
+  Guitar,
 } from "lucide-react"
 
 import profilePic from "./assets/tibbie_profile.jpeg"
@@ -112,7 +113,46 @@ const LINKS = [
   { icon: Heart, title: "Support the Scene", meta: "Mutual aid links", href: "#", external: true },
 ]
 
-const TABS = ["Links", "Music", "Tour", "Merch"] as const
+// Portfolio entries: one section per band/project. Dates and credits below are
+// placeholders — confirm them before this goes live.
+type PortfolioEntry = {
+  id: string
+  band: string
+  role: string
+  years: string
+  blurb: string
+  highlights: { label: string; detail: string }[]
+}
+
+const PORTFOLIO: PortfolioEntry[] = [
+  {
+    id: "gash",
+    band: "Gash",
+    role: "Bass · Vocals",
+    years: "2019 — present",
+    blurb: "Bass and co-vocals in the NYC four-piece — fast, ugly, and built for basement rooms.",
+    highlights: [
+      { label: "Releases", detail: "Demo tape · split 7\"" },
+      { label: "Live", detail: "East coast DIY circuit" },
+      { label: "Writing", detail: "Co-writes the full set" },
+    ],
+  },
+  {
+    id: "leftover-crack",
+    band: "Leftover Crack",
+    role: "Bass",
+    years: "2015 — present",
+    blurb:
+      "Holding down low end for the crust-punk institution — squat shows, festival stages, and everything in between.",
+    highlights: [
+      { label: "Releases", detail: "Constructs of the State (2015)" },
+      { label: "Live", detail: "924 Gilman · Riot Fest" },
+      { label: "Touring", detail: "US · EU" },
+    ],
+  },
+]
+
+const TABS = ["Links", "Music", "Portfolio", "Tour", "Merch"] as const
 type Tab = (typeof TABS)[number]
 
 const SOCIALS = [Instagram, Twitter, Youtube]
@@ -318,6 +358,31 @@ export default function App() {
               ))}
             </div>
           )}
+
+          {activeTab === "Portfolio" &&
+            PORTFOLIO.map((entry) => (
+              <section key={entry.id} className="card-surface rounded-lg p-5">
+                <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                  <h2 className="text-2xl uppercase leading-none tracking-tight">{entry.band}</h2>
+                  <span className="mono-label text-muted-foreground">{entry.years}</span>
+                </div>
+
+                <span className="mono-label mt-3 inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/50 px-2.5 py-1 text-accent-strong">
+                  <Guitar size={12} /> {entry.role}
+                </span>
+
+                <p className="mt-3 text-sm text-muted-foreground">{entry.blurb}</p>
+
+                <dl className="mt-4 space-y-2 border-t border-border pt-4">
+                  {entry.highlights.map(({ label, detail }) => (
+                    <div key={label} className="flex items-baseline justify-between gap-4">
+                      <dt className="mono-label shrink-0 text-muted-foreground">{label}</dt>
+                      <dd className="text-right text-sm font-medium">{detail}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </section>
+            ))}
 
           {activeTab === "Tour" &&
             SHOWS.map((show) => (
