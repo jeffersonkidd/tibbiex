@@ -19,14 +19,16 @@ import {
   Copy,
   Ticket,
   Heart,
+  Calendar,
 } from "lucide-react"
 
 import profilePic from "./assets/tibbie_profile.jpeg"
 
-// The MonoFly DSP kit ships design tokens + typography classes but no React
-// components (its barrel is empty), so UI is built from raw primitives styled
-// exclusively through the kit's tokens (bg-surface, text-ink, rounded-lg, …)
-// and its typography classes (.title-page, .heading, .body-*).
+// Layout follows the added.tsx reference: a stack of self-contained rounded
+// cards on a dark page (control bar, profile card, socials, tab strip, panels)
+// rather than one monolithic sheet. Colors come from the added.css token set
+// mirrored into src/index.css (background / card / muted / border), with the
+// buttons and accents kept on the original brand ramp (bg-brand / accent).
 
 type Album = {
   id: string
@@ -115,6 +117,12 @@ type Tab = (typeof TABS)[number]
 
 const SOCIALS = [Instagram, Twitter, Youtube]
 
+const TAGS = [
+  { icon: MapPin, label: "NYC" },
+  { icon: Mic2, label: "Squatting" },
+  { icon: Disc, label: "No Gods No Masters" },
+]
+
 async function copyLink() {
   const text = "https://tibbie-x.punk/bio"
   try {
@@ -125,27 +133,6 @@ async function copyLink() {
   toast.success("Bio link copied. Spread the word.")
 }
 
-function IconButton({
-  label,
-  onClick,
-  children,
-}: {
-  label: string
-  onClick?: () => void
-  children: React.ReactNode
-}) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      onClick={onClick}
-      className="grid h-10 w-10 place-items-center rounded-full border border-line text-ink-2 transition-colors hover:border-line-strong hover:text-ink"
-    >
-      {children}
-    </button>
-  )
-}
-
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>("Links")
   const [booking, setBooking] = useState(false)
@@ -153,233 +140,246 @@ export default function App() {
   const [album, setAlbum] = useState<Album | null>(null)
 
   return (
-    <div className="flex min-h-screen justify-center px-4 py-8 text-ink selection:bg-accent-soft sm:py-14">
+    <div className="flex min-h-screen justify-center pb-20 font-sans text-foreground selection:bg-accent-soft">
       <Toaster position="top-center" richColors />
 
-      <main className="w-full max-w-[560px]">
-        <div className="overflow-hidden rounded-3xl border border-line bg-surface shadow-[0_24px_60px_-24px_rgba(30,30,30,0.28)]">
-          {/* Top bar */}
-          <div className="flex items-center justify-between px-5 pt-5 sm:px-7">
-            <span className="mono-label text-ink-3">tibbie-x.punk/bio</span>
-            <div className="flex gap-2">
-              <IconButton label="Show QR code" onClick={() => setQr(true)}>
-                <QrCode size={17} />
-              </IconButton>
-              <IconButton label="Share bio link" onClick={copyLink}>
-                <Share2 size={17} />
-              </IconButton>
-            </div>
+      <div className="w-full max-w-2xl px-4 pt-6 sm:px-6">
+        {/* Header Controls */}
+        <header className="mb-8 flex items-center justify-between rounded-lg border border-border bg-card/60 p-3 backdrop-blur-xl">
+          <span className="mono-label px-2 text-muted-foreground">tibbie-x.punk/bio</span>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              aria-label="Show QR code"
+              onClick={() => setQr(true)}
+              className="rounded-md border border-border bg-card p-2.5 text-foreground transition-all hover:bg-muted"
+            >
+              <QrCode className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              aria-label="Share bio link"
+              onClick={copyLink}
+              className="flex items-center gap-1.5 rounded-md border border-border bg-card p-2.5 text-xs font-medium text-foreground transition-all hover:bg-muted"
+            >
+              <Share2 className="h-4 w-4" /> <span className="hidden sm:inline">Share</span>
+            </button>
           </div>
+        </header>
 
-          {/* Cover */}
-          <div className="relative mx-5 mt-4 h-44 overflow-hidden rounded-xl sm:mx-7">
+        {/* Profile Section */}
+        <div className="relative mb-8 overflow-hidden rounded-xl border border-border bg-card shadow-[0_30px_80px_-32px_rgba(236,32,15,0.6)] backdrop-blur-xl">
+          <div className="relative h-48 w-full overflow-hidden bg-muted sm:h-56">
             <img
               src="https://images.unsplash.com/photo-1508973379184-7517410fb0bc?q=80&w=1200&auto=format&fit=crop"
               alt="Tibbie X performing live"
               className="h-full w-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-            <span className="mono-label absolute left-3 top-3 flex items-center gap-1.5 rounded-full bg-surface/95 px-2.5 py-1 text-accent-ink">
+            <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/40 to-transparent" />
+            <span className="mono-label absolute left-4 top-4 flex items-center gap-1.5 rounded-full border border-border bg-card/90 px-2.5 py-1 text-accent-strong backdrop-blur-sm">
               <Radio size={12} /> Touring Now
             </span>
           </div>
 
-          {/* Identity */}
-          <div className="px-5 sm:px-7">
-            <div className="flex items-end gap-4">
-              <img
-                src={profilePic}
-                alt="Tibbie X"
-                className="relative z-10 -mt-10 h-24 w-24 rounded-2xl border-4 border-surface object-cover shadow-lg"
-              />
+          <div className="relative -mt-20 px-6 pb-6 pt-0">
+            <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-end sm:text-left">
+              <div className="relative h-32 w-32 overflow-hidden rounded-full border-4 border-background shadow-2xl">
+                <img src={profilePic} alt="Tibbie X" className="h-full w-full object-cover" />
+              </div>
+              <div className="flex-1 pb-2">
+                <h1 className="wordmark text-3xl uppercase leading-none tracking-tight sm:text-4xl">
+                  Tibbie X
+                </h1>
+                <div className="mt-2 flex flex-wrap items-center justify-center gap-2 text-muted-foreground sm:justify-start">
+                  <span className="mono-label rounded-full border border-border bg-card px-2 py-1 text-accent-strong">
+                    Bass · Vocals
+                  </span>
+                  <span className="text-sm">• Leftover Crack · Star Fucking Hipsters</span>
+                </div>
+              </div>
             </div>
 
-            <h1 className="wordmark mt-3 text-4xl uppercase leading-none text-ink">Tibbie X</h1>
-            <span className="mono-label mt-2 block text-accent-strong">Bass · Vocals</span>
-            <p className="subheading mt-2 text-ink-2">Leftover Crack · Star Fucking Hipsters</p>
-
-            <div className="mt-4 flex flex-wrap gap-2">
-              {[
-                { icon: MapPin, label: "NYC" },
-                { icon: Mic2, label: "Squatting" },
-                { icon: Disc, label: "No Gods No Masters" },
-              ].map(({ icon: Icon, label }) => (
+            <div className="mt-5 flex flex-wrap justify-center gap-2 sm:justify-start">
+              {TAGS.map(({ icon: Icon, label }) => (
                 <span
                   key={label}
-                  className="mono-label flex items-center gap-1.5 rounded-full bg-surface-2 px-3 py-1.5 text-ink-2"
+                  className="mono-label flex items-center gap-1.5 rounded-full border border-border bg-muted/50 px-3 py-1.5 text-muted-foreground"
                 >
                   <Icon size={12} /> {label}
                 </span>
               ))}
             </div>
-
-            {/* Socials + book */}
-            <div className="mt-5 flex items-center gap-2">
-              {SOCIALS.map((Icon, i) => (
-                <IconButton key={i} label="Social profile">
-                  <Icon size={17} />
-                </IconButton>
-              ))}
-              <button
-                type="button"
-                onClick={() => setBooking(true)}
-                className="body-small-strong ml-auto flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-on-brand transition-colors hover:bg-brand-hover"
-              >
-                <MessageSquare size={15} /> Book / Contact
-              </button>
-            </div>
-
-            {/* Status */}
-            <div className="mt-6 rounded-xl border border-line bg-surface-2 p-4">
-              <div className="flex items-center justify-between">
-                <span className="body-small-strong text-ink">Studio Status</span>
-                <span className="mono-label text-ink-3">66%</span>
-              </div>
-              <p className="body-small mt-1 text-ink-2">
-                Recording new bass tracks for the split EP. Rehearsing the fall setlist.
-              </p>
-              <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-surface-3">
-                <div className="h-full rounded-full bg-accent" style={{ width: "66%" }} />
-              </div>
-            </div>
-          </div>
-
-          {/* Tabs */}
-          <div className="mt-6 px-5 sm:px-7">
-            <div className="flex gap-1 rounded-full border border-line bg-surface-2 p-1">
-              {TABS.map((tab) => {
-                const active = tab === activeTab
-                return (
-                  <button
-                    key={tab}
-                    type="button"
-                    onClick={() => setActiveTab(tab)}
-                    className={
-                      "body-small-strong flex-1 rounded-full py-2 transition-colors " +
-                      (active ? "bg-brand text-on-brand" : "text-ink-2 hover:text-ink")
-                    }
-                  >
-                    {tab}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-
-          {/* Panels */}
-          <div className="min-h-[280px] px-5 pb-8 pt-5 sm:px-7">
-            {activeTab === "Links" && (
-              <div className="flex flex-col gap-3">
-                {LINKS.map(({ icon: Icon, title, meta, href, external }) => (
-                  <a
-                    key={title}
-                    href={href}
-                    className="group flex items-center gap-4 rounded-xl border border-line bg-surface p-4 transition-colors hover:border-accent hover:bg-accent-tint"
-                  >
-                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-surface-2 text-accent-strong">
-                      <Icon size={20} />
-                    </span>
-                    <span className="flex-1">
-                      <span className="body-strong block text-ink">{title}</span>
-                      <span className="mono-label mt-1 block text-ink-3">{meta}</span>
-                    </span>
-                    {external ? (
-                      <ExternalLink size={18} className="text-ink-3 group-hover:text-accent-strong" />
-                    ) : (
-                      <ChevronRight size={18} className="text-ink-3 group-hover:text-accent-strong" />
-                    )}
-                  </a>
-                ))}
-              </div>
-            )}
-
-            {activeTab === "Music" && (
-              <div className="flex flex-col gap-3">
-                {DISCOGRAPHY.map((rec) => (
-                  <button
-                    key={rec.id}
-                    type="button"
-                    onClick={() => setAlbum(rec)}
-                    className="group flex items-center gap-4 rounded-xl border border-line bg-surface p-3 text-left transition-colors hover:border-accent hover:bg-accent-tint"
-                  >
-                    <img
-                      src={rec.image}
-                      alt={rec.album}
-                      className="h-16 w-16 rounded-md object-cover"
-                    />
-                    <span className="min-w-0 flex-1">
-                      <span className="body-strong block truncate text-ink">{rec.album}</span>
-                      <span className="body-small block text-accent-strong">{rec.band}</span>
-                      <span className="mono-label mt-1 block text-ink-3">
-                        {rec.year} · {rec.role}
-                      </span>
-                    </span>
-                    <ChevronRight size={18} className="text-ink-3 group-hover:text-accent-strong" />
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {activeTab === "Tour" && (
-              <div className="flex flex-col gap-3">
-                {SHOWS.map((show) => (
-                  <div
-                    key={show.id}
-                    className="flex items-center justify-between rounded-xl border border-line bg-surface p-4"
-                  >
-                    <div>
-                      <span className="body-strong block text-ink">{show.venue}</span>
-                      <span className="body-small block text-ink-2">
-                        {show.city} · {show.date}
-                      </span>
-                    </div>
-                    {show.status === "Tickets" ? (
-                      <button
-                        type="button"
-                        className="body-small-strong flex items-center gap-1.5 rounded-full bg-accent px-4 py-2 text-white transition-colors hover:bg-accent-strong"
-                      >
-                        <Ticket size={14} /> Tickets
-                      </button>
-                    ) : (
-                      <span className="mono-label rounded-full bg-surface-2 px-3 py-2 text-ink-3">
-                        {show.status}
-                      </span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {activeTab === "Merch" && (
-              <div className="grid grid-cols-2 gap-3">
-                {MERCH.map((item) => (
-                  <div
-                    key={item.id}
-                    className="group overflow-hidden rounded-xl border border-line bg-surface transition-colors hover:border-accent"
-                  >
-                    <div className="aspect-square overflow-hidden">
-                      <img
-                        src={item.image}
-                        alt={item.item}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    </div>
-                    <div className="p-3">
-                      <span className="body-small-strong block leading-tight text-ink">{item.item}</span>
-                      <div className="mt-2 flex items-center justify-between">
-                        <span className="body-strong text-accent-strong">{item.price}</span>
-                        <ShoppingBag size={15} className="text-ink-3" />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
         </div>
 
-        <p className="mono-label mt-5 text-center text-ink-3">Built in the squat · 2026</p>
-      </main>
+        {/* Social Icons */}
+        <div className="mb-6 flex justify-center gap-4">
+          {SOCIALS.map((Icon, i) => (
+            <a
+              key={i}
+              href="#"
+              aria-label="Social profile"
+              className="flex h-12 w-12 transform items-center justify-center rounded-full border border-border bg-card shadow-sm backdrop-blur-xl transition-all hover:-translate-y-1 hover:bg-brand hover:text-on-brand"
+            >
+              <Icon size={20} />
+            </a>
+          ))}
+        </div>
+
+        {/* Booking CTA */}
+        <button
+          type="button"
+          onClick={() => setBooking(true)}
+          className="mb-6 flex w-full items-center justify-center gap-2 brand-surface brand-lift rounded-lg bg-brand py-3.5 text-sm font-bold text-on-brand"
+        >
+          <MessageSquare className="h-4 w-4" /> Book / Contact
+        </button>
+
+        {/* Studio Status */}
+        <div className="mb-8 rounded-lg border border-border bg-card p-5 backdrop-blur-xl">
+          <div className="flex items-center justify-between">
+            <div className="text-base font-bold">Studio Status</div>
+            <span className="mono-label text-muted-foreground">66%</span>
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Recording new bass tracks for the split EP. Rehearsing the fall setlist.
+          </p>
+          <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-muted">
+            <div className="h-full rounded-full bg-accent" style={{ width: "66%" }} />
+          </div>
+        </div>
+
+        {/* Navigation Tabs */}
+        <nav className="hide-scrollbar mb-6 flex gap-2 overflow-x-auto rounded-lg border border-border bg-card/50 p-1.5 backdrop-blur-xl">
+          {TABS.map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveTab(tab)}
+              className={`min-w-[80px] flex-1 rounded-md py-2.5 text-sm font-bold transition-all ${
+                activeTab === tab
+                  ? "brand-surface brand-pop bg-brand text-on-brand"
+                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </nav>
+
+        {/* Content Area */}
+        <main className="space-y-4">
+          {activeTab === "Links" &&
+            LINKS.map(({ icon: Icon, title, meta, href, external }) => (
+              <a
+                key={title}
+                href={href}
+                className="group block transform rounded-lg border border-border bg-card p-4 backdrop-blur-xl transition-all duration-300 hover:scale-[1.01] hover:border-accent"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="rounded-md bg-muted p-3 text-muted-foreground transition-colors group-hover:bg-brand group-hover:text-on-brand">
+                      <Icon className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <div className="text-base font-bold">{title}</div>
+                      <p className="mono-label mt-1 text-muted-foreground">{meta}</p>
+                    </div>
+                  </div>
+                  {external ? (
+                    <ExternalLink className="h-5 w-5 text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-accent-strong" />
+                  ) : (
+                    <ChevronRight className="h-5 w-5 text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-accent-strong" />
+                  )}
+                </div>
+              </a>
+            ))}
+
+          {activeTab === "Music" && (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {DISCOGRAPHY.map((rec) => (
+                <button
+                  key={rec.id}
+                  type="button"
+                  onClick={() => setAlbum(rec)}
+                  className="group relative cursor-pointer overflow-hidden rounded-lg border border-border bg-card text-left backdrop-blur-xl transition-colors hover:border-accent"
+                >
+                  <div className="h-48 overflow-hidden">
+                    <img
+                      src={rec.image}
+                      alt={rec.album}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background/80 to-transparent p-4 pt-12">
+                    <div className="text-lg font-bold leading-tight">{rec.album}</div>
+                    <p className="text-xs font-medium text-accent-strong">{rec.band}</p>
+                    <p className="mono-label mt-1 text-muted-foreground">
+                      {rec.year} · {rec.role}
+                    </p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {activeTab === "Tour" &&
+            SHOWS.map((show) => (
+              <div key={show.id} className="rounded-lg border border-border bg-card p-5 backdrop-blur-xl">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <div className="text-lg font-bold">{show.venue}</div>
+                    <div className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
+                      <Calendar className="h-4 w-4" /> {show.date}
+                    </div>
+                    <div className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
+                      <MapPin className="h-4 w-4" /> {show.city}
+                    </div>
+                  </div>
+                  {show.status === "Tickets" ? (
+                    <button
+                      type="button"
+                      className="flex items-center gap-1.5 brand-surface brand-lift rounded-full bg-brand px-4 py-2 text-xs font-bold text-on-brand"
+                    >
+                      <Ticket className="h-4 w-4" /> Tickets
+                    </button>
+                  ) : (
+                    <span className="rounded-full bg-accent-tint px-3 py-1 text-xs font-bold text-accent-strong">
+                      {show.status}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+
+          {activeTab === "Merch" && (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {MERCH.map((item) => (
+                <div
+                  key={item.id}
+                  className="group cursor-pointer overflow-hidden rounded-lg border border-border bg-card backdrop-blur-xl transition-colors hover:border-accent"
+                >
+                  <div className="h-48 overflow-hidden">
+                    <img
+                      src={item.image}
+                      alt={item.item}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                  </div>
+                  <div className="flex items-center justify-between gap-3 p-4">
+                    <div className="text-sm font-bold leading-tight">{item.item}</div>
+                    <span className="flex shrink-0 items-center gap-1.5 text-base font-bold text-accent-strong">
+                      {item.price} <ShoppingBag className="h-4 w-4 text-muted-foreground" />
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </main>
+
+        <p className="mono-label mt-8 text-center text-muted-foreground">Built in the squat · 2026</p>
+      </div>
 
       {/* Album modal */}
       {album && (
@@ -387,13 +387,13 @@ export default function App() {
           <img src={album.image} alt={album.album} className="h-56 w-full object-cover" />
           <div className="p-6">
             <span className="mono-label text-accent-strong">{album.band}</span>
-            <h2 className="heading mt-1 text-ink">{album.album}</h2>
-            <p className="body-small mt-2 text-ink-2">
+            <h2 className="mt-1 text-2xl font-bold">{album.album}</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
               Released {album.year} · {album.role}
             </p>
             <button
               type="button"
-              className="body-strong mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3 text-on-brand transition-colors hover:bg-brand-hover"
+              className="mt-6 flex w-full items-center justify-center gap-2 brand-surface brand-lift rounded-lg bg-brand py-3 text-sm font-bold text-on-brand"
             >
               <Disc size={18} /> Stream Now
             </button>
@@ -412,8 +412,8 @@ export default function App() {
             }}
             className="p-6"
           >
-            <h2 className="heading text-ink">Book / Contact</h2>
-            <p className="body-small mt-1 text-ink-2">For booking, press, or hate mail.</p>
+            <h2 className="text-2xl font-bold">Book / Contact</h2>
+            <p className="mt-1 text-sm text-muted-foreground">For booking, press, or hate mail.</p>
             <div className="mt-5 flex flex-col gap-3">
               <Field placeholder="Name" type="text" />
               <Field placeholder="Email" type="email" />
@@ -421,11 +421,11 @@ export default function App() {
                 required
                 rows={4}
                 placeholder="Message"
-                className="body-base w-full resize-none rounded-md border border-line bg-surface-2 px-4 py-3 text-ink outline-none transition-colors placeholder:text-ink-3 focus:border-accent"
+                className="w-full resize-none rounded-md border border-border bg-input-background px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-accent"
               />
               <button
                 type="submit"
-                className="body-strong mt-1 rounded-full bg-accent py-3 text-white transition-colors hover:bg-accent-strong"
+                className="mt-1 brand-surface brand-lift rounded-lg bg-brand py-3 text-sm font-bold text-on-brand"
               >
                 Send Message
               </button>
@@ -438,14 +438,14 @@ export default function App() {
       {qr && (
         <Overlay onClose={() => setQr(false)} size="xs">
           <div className="p-6 text-center">
-            <h2 className="heading text-ink">Scan &amp; Share</h2>
-            <div className="mx-auto mt-5 w-fit rounded-md border border-line bg-surface p-4">
-              <QrCode size={148} className="text-ink" />
+            <h2 className="text-2xl font-bold">Scan &amp; Share</h2>
+            <div className="mx-auto mt-5 w-fit rounded-md border border-border bg-muted p-4">
+              <QrCode size={148} className="text-foreground" />
             </div>
             <button
               type="button"
               onClick={copyLink}
-              className="body-small-strong mt-5 flex w-full items-center justify-center gap-2 rounded-full border border-line py-3 text-ink transition-colors hover:border-line-strong"
+              className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg border border-border py-3 text-sm font-bold text-foreground transition-colors hover:bg-muted"
             >
               <Copy size={16} /> Copy Link
             </button>
@@ -462,7 +462,7 @@ function Field({ placeholder, type }: { placeholder: string; type: string }) {
       required
       type={type}
       placeholder={placeholder}
-      className="body-base w-full rounded-md border border-line bg-surface-2 px-4 py-3 text-ink outline-none transition-colors placeholder:text-ink-3 focus:border-accent"
+      className="w-full rounded-md border border-border bg-input-background px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-accent"
     />
   )
 }
@@ -478,13 +478,13 @@ function Overlay({
 }) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-brand/40 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#0a0405]/80 p-4 backdrop-blur-md"
       onClick={onClose}
     >
       <div
         onClick={(e) => e.stopPropagation()}
         className={
-          "relative w-full overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl " +
+          "relative w-full overflow-hidden rounded-xl border border-border bg-popover shadow-[0_40px_90px_-30px_rgba(0,0,0,0.9)] backdrop-blur-2xl " +
           (size === "xs" ? "max-w-xs" : "max-w-md")
         }
       >
@@ -492,7 +492,7 @@ function Overlay({
           type="button"
           aria-label="Close"
           onClick={onClose}
-          className="absolute right-3 top-3 z-10 grid h-9 w-9 place-items-center rounded-full bg-surface/80 text-ink-2 transition-colors hover:text-ink"
+          className="absolute right-3 top-3 z-10 grid h-9 w-9 place-items-center rounded-full border border-border bg-card/80 text-muted-foreground transition-colors hover:text-foreground"
         >
           <X size={18} />
         </button>

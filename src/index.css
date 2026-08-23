@@ -58,21 +58,11 @@ body,
   min-height: 100%;
 }
 
-body {
-  background-color: var(--background\/default\/default);
-  background-image:
-    radial-gradient(circle at 50% -10%, rgba(236, 32, 15, 0.4) 0%, transparent 60%),
-    radial-gradient(circle at 85% 50%, rgba(236, 32, 15, 0.2) 0%, transparent 45%),
-    radial-gradient(circle at 15% 85%, rgba(255, 216, 77, 0.1) 0%, transparent 40%),
-    linear-gradient(180deg, var(--background\/default\/secondary) 0%, var(--background\/default\/default) 100%);
-  background-attachment: fixed;
-}
-
 :root {
   /* Override kit tokens with requested palette ramps for dark theme */
-  --background\/default\/default: #121212;
-  --background\/default\/secondary: #1a1a1a;
-  --background\/default\/tertiary: #2a2a2a;
+  --background\/default\/default: #0d0708;
+  --background\/default\/secondary: #1a0d0e;
+  --background\/default\/tertiary: #2a1618;
   
   --text\/default\/default: #FFFDF7;
   --text\/default\/secondary: rgba(255, 253, 247, 0.7);
@@ -80,6 +70,8 @@ body {
   
   --background\/brand\/default: #EC200F;
   --background\/brand\/hover: #d11a0d;
+  --background\/brand\/lift: #FF5433;
+  --background\/brand\/deep: #B8150A;
   --text\/brand\/on-brand: #FFFDF7;
   
   --pink\/100: rgba(255, 216, 77, 0.1);
@@ -91,7 +83,273 @@ body {
   --border\/default\/default: rgba(255, 253, 247, 0.1);
   --border\/default\/secondary: rgba(255, 253, 247, 0.2);
 
-  --radius\/100: 8;
-  --radius\/200: 16;
-  --radius\/400: 28;
+  /* Radius ramp. These feed rounded-sm / -md / -lg via the @theme inline block
+     at the top of this file, so they -- not Tailwind's default scale -- are
+     what those utilities resolve to. Kept deliberately tight for a squarer,
+     more printed-flyer feel. --radius/full must be defined or rounded-full
+     compiles to an invalid calc() and collapses to 0. */
+  --radius\/100: 4;
+  --radius\/200: 6;
+  --radius\/400: 10;
+  --radius\/full: 9999;
+}
+
+/* ---------------------------------------------------------------------------
+   Brand surface — shared treatment for the brand-red CTAs and the active tab.
+   A three-stop gradient off the brand ramp plus inset edge highlights give the
+   flat fill some dimension; a sheen sweeps across on hover. Both the gradient
+   and the glow read from the same tokens as bg-brand, so re-skinning :root
+   still drives them.
+--------------------------------------------------------------------------- */
+.brand-surface {
+  position: relative;
+  overflow: hidden;
+  background-image: linear-gradient(
+    145deg,
+    var(--background\/brand\/lift) 0%,
+    var(--background\/brand\/default) 48%,
+    var(--background\/brand\/deep) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 253, 247, 0.3),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.22),
+    0 8px 20px -10px rgba(236, 32, 15, 0.8);
+  transition:
+    box-shadow 220ms ease,
+    transform 220ms ease,
+    filter 220ms ease;
+}
+
+/* Diagonal sheen, parked off the left edge until hover sweeps it across. */
+.brand-surface::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 38%,
+    rgba(255, 253, 247, 0.26) 50%,
+    transparent 62%
+  );
+  transform: translateX(-130%);
+  transition: transform 650ms ease;
+}
+
+.brand-surface:hover::after {
+  transform: translateX(130%);
+}
+
+.brand-surface:hover {
+  filter: brightness(1.07);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 253, 247, 0.38),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.22),
+    0 12px 26px -10px rgba(236, 32, 15, 0.95);
+}
+
+/* CTA buttons lift on hover; the segmented tab deliberately does not. */
+.brand-lift:hover {
+  transform: translateY(-1px);
+}
+
+.brand-lift:active {
+  transform: translateY(0);
+  filter: brightness(0.96);
+}
+
+/* Plays when a tab becomes active, so switching tabs has some snap. */
+@keyframes brand-pop {
+  from {
+    transform: scale(0.94);
+    opacity: 0.65;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.brand-pop {
+  animation: brand-pop 260ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-surface,
+  .brand-surface::after {
+    transition: none;
+  }
+  .brand-surface:hover::after {
+    transform: translateX(-130%);
+  }
+  .brand-lift:hover,
+  .brand-lift:active {
+    transform: none;
+  }
+  .brand-pop {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Palette adopted from the added.css design tokens (dark cyberpunk ramp:
+   cyan primary, magenta accent, slate-violet surfaces). These names are what
+   the UI in App.tsx references — background/card/muted/border/primary/accent.
+--------------------------------------------------------------------------- */
+:root {
+  /* Surfaces sit on the same warm red-black ramp as the page gradient. Card
+     and popover are deliberately translucent so the gradient and grain read
+     through them; every card surface pairs this with a backdrop blur. */
+  --background: oklch(0.15 0.035 22);
+  --foreground: oklch(0.97 0.01 60);
+
+  --card: oklch(0.21 0.035 20 / 0.72);
+  --card-foreground: oklch(0.97 0.01 60);
+
+  --popover: oklch(0.21 0.035 20 / 0.92);
+  --popover-foreground: oklch(0.97 0.01 60);
+
+  --primary: oklch(0.58 0.22 28);
+  --primary-foreground: oklch(0.97 0.01 60);
+
+  --secondary: oklch(0.28 0.05 22);
+  --secondary-foreground: oklch(0.97 0.01 60);
+
+  --muted: oklch(0.28 0.04 22 / 0.7);
+  --muted-foreground: oklch(0.74 0.03 40);
+
+  --accent-2: oklch(0.72 0.22 330);
+  --accent-2-foreground: oklch(0.16 0.02 275);
+
+  --destructive: oklch(0.62 0.23 25);
+  --destructive-foreground: oklch(0.98 0.01 25);
+
+  --border: oklch(0.38 0.05 25 / 0.55);
+  --input: oklch(0.38 0.05 25 / 0.55);
+  --input-background: oklch(0.18 0.03 20 / 0.8);
+  --ring: oklch(0.58 0.22 28);
+}
+
+@theme inline {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent-2: var(--accent-2);
+  --color-accent-2-foreground: var(--accent-2-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-ring: var(--ring);
+}
+
+/* ---------------------------------------------------------------------------
+   Page background — four stacked layers, all fixed so they stay put while the
+   content scrolls:
+
+     body            deep red-to-black gradient ramp + static crimson blooms
+     body::before    two slowly drifting ember glows (motion, behind content)
+     body::after     film grain + halftone dot screen + vignette
+     #root           the app, lifted above all of it
+
+   The blooms read off the same brand red (#EC200F) and amber (#FFD84D) as the
+   CTAs, so re-skinning the brand ramp keeps the page in the same family.
+--------------------------------------------------------------------------- */
+body {
+  background-color: #0a0405;
+  background-image:
+    /* crimson bloom spilling in from the top */
+    radial-gradient(120% 75% at 50% -15%, rgba(236, 32, 15, 0.42) 0%, rgba(140, 15, 8, 0.16) 38%, transparent 72%),
+    /* ember banked against the right edge */
+    radial-gradient(70% 55% at 105% 28%, rgba(184, 21, 10, 0.32) 0%, transparent 62%),
+    /* cooler flare low-left, to keep the ramp from going flat */
+    radial-gradient(65% 50% at -10% 95%, rgba(255, 84, 51, 0.18) 0%, transparent 65%),
+    /* faint amber kicker, echoing the accent */
+    radial-gradient(45% 32% at 18% 52%, rgba(255, 216, 77, 0.07) 0%, transparent 70%),
+    /* base vertical ramp: oxblood at the top, near-black at the bottom */
+    linear-gradient(180deg, #2c090a 0%, #180608 42%, #0d0405 72%, #080304 100%);
+  background-attachment: fixed;
+}
+
+/* Drifting embers. Kept on their own layer so the animation never repaints
+   the gradient underneath it. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -20%;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(38% 30% at 30% 25%, rgba(236, 32, 15, 0.3) 0%, transparent 70%),
+    radial-gradient(32% 28% at 72% 70%, rgba(255, 84, 51, 0.2) 0%, transparent 70%);
+  filter: blur(30px);
+  animation: ember-drift 26s ease-in-out infinite alternate;
+}
+
+@keyframes ember-drift {
+  from {
+    transform: translate3d(-2%, -1%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(3%, 2.5%, 0) scale(1.12);
+  }
+}
+
+/* Texture pass: fine grain (SVG turbulence), a halftone dot screen and a
+   vignette that pulls the corners down so the centre column reads first. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image:
+    radial-gradient(rgba(255, 253, 247, 0.05) 1px, transparent 1px),
+    radial-gradient(115% 90% at 50% 45%, transparent 45%, rgba(0, 0, 0, 0.55) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.42'/%3E%3C/svg%3E");
+  background-size:
+    22px 22px,
+    100% 100%,
+    160px 160px;
+  mix-blend-mode: soft-light;
+}
+
+/* The app sits above every background layer. */
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before {
+    animation: none;
+  }
+}
+
+@layer base {
+  html {
+    overflow-y: scroll;
+  }
+
+  /* Horizontal tab strip scrolls without showing a scrollbar. */
+  .hide-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }
