@@ -21,6 +21,8 @@ import {
   Heart,
 } from "lucide-react"
 
+import profilePic from "./assets/tibbie_profile.jpeg"
+
 // The MonoFly DSP kit ships design tokens + typography classes but no React
 // components (its barrel is empty), so UI is built from raw primitives styled
 // exclusively through the kit's tokens (bg-surface, text-ink, rounded-lg, …)
@@ -186,16 +188,14 @@ export default function App() {
           <div className="px-5 sm:px-7">
             <div className="flex items-end gap-4">
               <img
-                src="https://images.unsplash.com/photo-1520627581566-68fb4f1aeb85?q=80&w=400&auto=format&fit=crop"
+                src={profilePic}
                 alt="Tibbie X"
-                className="-mt-10 h-24 w-24 rounded-full border-4 border-surface object-cover shadow-lg"
+                className="relative z-10 -mt-10 h-24 w-24 rounded-2xl border-4 border-surface object-cover shadow-lg"
               />
-              <div className="pb-1">
-                <span className="mono-label text-accent-strong">Bass · Vocals</span>
-              </div>
             </div>
 
             <h1 className="wordmark mt-3 text-4xl uppercase leading-none text-ink">Tibbie X</h1>
+            <span className="mono-label mt-2 block text-accent-strong">Bass · Vocals</span>
             <p className="subheading mt-2 text-ink-2">Leftover Crack · Star Fucking Hipsters</p>
 
             <div className="mt-4 flex flex-wrap gap-2">
