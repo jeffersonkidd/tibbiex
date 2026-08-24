@@ -60,9 +60,9 @@ body,
 
 :root {
   /* Override kit tokens with requested palette ramps for dark theme */
-  --background\/default\/default: #0d0708;
-  --background\/default\/secondary: #1a0d0e;
-  --background\/default\/tertiary: #2a1618;
+  --background\/default\/default: #0b0b0d;
+  --background\/default\/secondary: #16171b;
+  --background\/default\/tertiary: #26282e;
   
   --text\/default\/default: #FFFDF7;
   --text\/default\/secondary: rgba(255, 253, 247, 0.7);
@@ -197,26 +197,27 @@ body,
    the UI in App.tsx references — background/card/muted/border/primary/accent.
 --------------------------------------------------------------------------- */
 :root {
-  /* Surfaces sit on the same warm red-black ramp as the page gradient. Card
-     and popover are deliberately translucent so the gradient and grain read
-     through them; every card surface pairs this with a backdrop blur. */
-  --background: oklch(0.15 0.035 22);
-  --foreground: oklch(0.97 0.01 60);
+  /* Near-neutral charcoal surfaces with a faint cool cast, matching the page
+     ramp. Card and popover are translucent so the gradient, screen lines and
+     grain read through them; every card surface pairs this with a backdrop
+     blur. Text stays a warm off-white so it reads as paper, not screen white. */
+  --background: oklch(0.16 0.006 260);
+  --foreground: oklch(0.97 0.01 85);
 
-  --card: oklch(0.21 0.035 20 / 0.72);
-  --card-foreground: oklch(0.97 0.01 60);
+  --card: oklch(0.22 0.007 260 / 0.72);
+  --card-foreground: oklch(0.97 0.01 85);
 
-  --popover: oklch(0.21 0.035 20 / 0.92);
-  --popover-foreground: oklch(0.97 0.01 60);
+  --popover: oklch(0.22 0.007 260 / 0.92);
+  --popover-foreground: oklch(0.97 0.01 85);
 
   --primary: oklch(0.58 0.22 28);
-  --primary-foreground: oklch(0.97 0.01 60);
+  --primary-foreground: oklch(0.97 0.01 85);
 
-  --secondary: oklch(0.28 0.05 22);
-  --secondary-foreground: oklch(0.97 0.01 60);
+  --secondary: oklch(0.29 0.008 260);
+  --secondary-foreground: oklch(0.97 0.01 85);
 
-  --muted: oklch(0.28 0.04 22 / 0.7);
-  --muted-foreground: oklch(0.74 0.03 40);
+  --muted: oklch(0.29 0.008 260 / 0.7);
+  --muted-foreground: oklch(0.74 0.008 260);
 
   --accent-2: oklch(0.72 0.22 330);
   --accent-2-foreground: oklch(0.16 0.02 275);
@@ -224,9 +225,9 @@ body,
   --destructive: oklch(0.62 0.23 25);
   --destructive-foreground: oklch(0.98 0.01 25);
 
-  --border: oklch(0.38 0.05 25 / 0.55);
-  --input: oklch(0.38 0.05 25 / 0.55);
-  --input-background: oklch(0.18 0.03 20 / 0.8);
+  --border: oklch(0.42 0.009 260 / 0.5);
+  --input: oklch(0.42 0.009 260 / 0.5);
+  --input-background: oklch(0.19 0.007 260 / 0.8);
   --ring: oklch(0.58 0.22 28);
 }
 
@@ -256,35 +257,34 @@ body,
 }
 
 /* ---------------------------------------------------------------------------
-   Page background — four stacked layers, all fixed so they stay put while the
-   content scrolls:
+   Page background — a xeroxed-zine treatment in four stacked layers, all fixed
+   so they stay put while the content scrolls:
 
-     body            deep red-to-black gradient ramp + static crimson blooms
-     body::before    two slowly drifting ember glows (motion, behind content)
-     body::after     film grain + halftone dot screen + vignette
+     body            near-black charcoal ramp + a cool toner wash
+     body::before    one slow, desaturated light leak (motion, behind content)
+     body::after     screen-print lines + halftone dots + grain + vignette
      #root           the app, lifted above all of it
 
-   The blooms read off the same brand red (#EC200F) and amber (#FFD84D) as the
-   CTAs, so re-skinning the brand ramp keeps the page in the same family.
+   The page is deliberately colourless. Brand red is reserved for the CTAs and
+   the active tab, so those read as the only saturated thing on screen.
 --------------------------------------------------------------------------- */
 body {
-  background-color: #0a0405;
+  background-color: #0b0b0d;
   background-image:
-    /* crimson bloom spilling in from the top */
-    radial-gradient(120% 75% at 50% -15%, rgba(236, 32, 15, 0.42) 0%, rgba(140, 15, 8, 0.16) 38%, transparent 72%),
-    /* ember banked against the right edge */
-    radial-gradient(70% 55% at 105% 28%, rgba(184, 21, 10, 0.32) 0%, transparent 62%),
-    /* cooler flare low-left, to keep the ramp from going flat */
-    radial-gradient(65% 50% at -10% 95%, rgba(255, 84, 51, 0.18) 0%, transparent 65%),
-    /* faint amber kicker, echoing the accent */
-    radial-gradient(45% 32% at 18% 52%, rgba(255, 216, 77, 0.07) 0%, transparent 70%),
-    /* base vertical ramp: oxblood at the top, near-black at the bottom */
-    linear-gradient(180deg, #2c090a 0%, #180608 42%, #0d0405 72%, #080304 100%);
+    /* toner wash bleeding in from the top-left, like a bad photocopy */
+    radial-gradient(95% 65% at 12% -10%, rgba(214, 220, 232, 0.09) 0%, transparent 62%),
+    /* faint counter-light low-right so the ramp is not perfectly flat */
+    radial-gradient(70% 55% at 100% 88%, rgba(190, 198, 214, 0.05) 0%, transparent 65%),
+    /* the one warm note, tying back to the amber accent */
+    radial-gradient(40% 30% at 78% 22%, rgba(255, 216, 77, 0.035) 0%, transparent 70%),
+    /* base vertical ramp: charcoal at the top, near-black at the bottom */
+    linear-gradient(180deg, #191a1e 0%, #121317 45%, #0c0c0f 75%, #08080a 100%);
   background-attachment: fixed;
 }
 
-/* Drifting embers. Kept on their own layer so the animation never repaints
-   the gradient underneath it. */
+/* A single slow light leak. Desaturated on purpose — it reads as uneven paper
+   rather than a glow. Its own layer, so the animation never repaints the
+   gradient underneath it. */
 body::before {
   content: "";
   position: fixed;
@@ -292,36 +292,44 @@ body::before {
   z-index: 0;
   pointer-events: none;
   background-image:
-    radial-gradient(38% 30% at 30% 25%, rgba(236, 32, 15, 0.3) 0%, transparent 70%),
-    radial-gradient(32% 28% at 72% 70%, rgba(255, 84, 51, 0.2) 0%, transparent 70%);
-  filter: blur(30px);
-  animation: ember-drift 26s ease-in-out infinite alternate;
+    radial-gradient(40% 32% at 32% 28%, rgba(206, 214, 228, 0.07) 0%, transparent 70%),
+    radial-gradient(34% 28% at 70% 72%, rgba(170, 180, 200, 0.05) 0%, transparent 70%);
+  filter: blur(40px);
+  animation: paper-drift 34s ease-in-out infinite alternate;
 }
 
-@keyframes ember-drift {
+@keyframes paper-drift {
   from {
     transform: translate3d(-2%, -1%, 0) scale(1);
   }
   to {
-    transform: translate3d(3%, 2.5%, 0) scale(1.12);
+    transform: translate3d(3%, 2%, 0) scale(1.1);
   }
 }
 
-/* Texture pass: fine grain (SVG turbulence), a halftone dot screen and a
-   vignette that pulls the corners down so the centre column reads first. */
+/* Texture pass, in print order: diagonal screen-print hatching, a halftone dot
+   screen, a vignette pulling the corners down, and toner grain on top. */
 body::after {
   content: "";
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  opacity: 0.5;
+  opacity: 0.55;
   background-image:
-    radial-gradient(rgba(255, 253, 247, 0.05) 1px, transparent 1px),
-    radial-gradient(115% 90% at 50% 45%, transparent 45%, rgba(0, 0, 0, 0.55) 100%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.42'/%3E%3C/svg%3E");
+    repeating-linear-gradient(
+      -45deg,
+      rgba(255, 253, 247, 0.022) 0px,
+      rgba(255, 253, 247, 0.022) 1px,
+      transparent 1px,
+      transparent 7px
+    ),
+    radial-gradient(rgba(255, 253, 247, 0.045) 1px, transparent 1px),
+    radial-gradient(118% 92% at 50% 42%, transparent 42%, rgba(0, 0, 0, 0.62) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
   background-size:
-    22px 22px,
+    auto,
+    20px 20px,
     100% 100%,
     160px 160px;
   mix-blend-mode: soft-light;

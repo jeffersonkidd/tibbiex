@@ -220,7 +220,7 @@ export default function App() {
         </header>
 
         {/* Profile Section */}
-        <div className="card-surface relative mb-8 overflow-hidden rounded-xl shadow-[0_30px_80px_-32px_rgba(236,32,15,0.6)]">
+        <div className="card-surface relative mb-8 overflow-hidden rounded-xl shadow-[0_30px_80px_-32px_rgba(0,0,0,0.85)]">
           <div className="relative h-48 w-full overflow-hidden bg-muted sm:h-56">
             <img
               src="https://images.unsplash.com/photo-1508973379184-7517410fb0bc?q=80&w=1200&auto=format&fit=crop"
@@ -240,13 +240,13 @@ export default function App() {
               </div>
               <div className="flex-1 pb-2">
                 <h1 className="wordmark text-3xl uppercase leading-none tracking-tight sm:text-4xl">
-                  Tibbie X
+                  Tibbie <span className="text-brand">X</span>
                 </h1>
                 <div className="mt-2 flex flex-wrap items-center justify-center gap-2 text-muted-foreground sm:justify-start">
                   <span className="mono-label rounded-full border border-border bg-card px-2 py-1 text-accent-strong">
                     Bass · Vocals
                   </span>
-                  <span className="text-sm">• Leftover Crack • Gash • Reagan Youth • X-Possibles • Kissy Kamikaze</span>
+                  <span className="text-sm">• Leftover Crack • GASH • Reagan Youth • X-Possibles • Kissy Kamikaze</span>
                 </div>
               </div>
             </div>
@@ -574,7 +574,7 @@ function Overlay({
 }) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#0a0405]/80 p-4 backdrop-blur-md"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#08080a]/85 p-4 backdrop-blur-md"
       onClick={onClose}
     >
       <div
