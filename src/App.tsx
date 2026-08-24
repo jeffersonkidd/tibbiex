@@ -152,8 +152,20 @@ const PORTFOLIO: PortfolioEntry[] = [
   },
 ]
 
-const TABS = ["Links", "Music", "Portfolio", "Tour", "Merch"] as const
-type Tab = (typeof TABS)[number]
+// Flip `enabled` to hide a tab from the strip. The Tab union still includes
+// every label, so the tab's data and its panel below stay compiled and
+// typechecked while it is off — turning it back on is a one-word change.
+const TABS = [
+  { label: "Links", enabled: true },
+  { label: "Music", enabled: true },
+  { label: "Portfolio", enabled: true },
+  { label: "Tour", enabled: false },
+  { label: "Merch", enabled: true },
+] as const
+
+type Tab = (typeof TABS)[number]["label"]
+
+const VISIBLE_TABS = TABS.filter((tab) => tab.enabled)
 
 const SOCIALS = [Instagram, Twitter, Youtube]
 
@@ -174,7 +186,7 @@ async function copyLink() {
 }
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<Tab>("Links")
+  const [activeTab, setActiveTab] = useState<Tab>(VISIBLE_TABS[0].label)
   const [booking, setBooking] = useState(false)
   const [qr, setQr] = useState(false)
   const [album, setAlbum] = useState<Album | null>(null)
@@ -234,7 +246,7 @@ export default function App() {
                   <span className="mono-label rounded-full border border-border bg-card px-2 py-1 text-accent-strong">
                     Bass · Vocals
                   </span>
-                  <span className="text-sm">• Leftover Crack • Gash • Reagan Youth</span>
+                  <span className="text-sm">• Leftover Crack • Gash • Reagan Youth • X-Possibles • Kissy Kamikaze</span>
                 </div>
               </div>
             </div>
@@ -287,18 +299,18 @@ export default function App() {
 
         {/* Navigation Tabs */}
         <nav className="card-surface hide-scrollbar mb-6 flex gap-2 overflow-x-auto rounded-lg bg-card/50 p-1.5">
-          {TABS.map((tab) => (
+          {VISIBLE_TABS.map(({ label }) => (
             <button
-              key={tab}
+              key={label}
               type="button"
-              onClick={() => setActiveTab(tab)}
+              onClick={() => setActiveTab(label)}
               className={`min-w-[80px] flex-1 rounded-md py-2.5 text-sm font-bold transition-all ${
-                activeTab === tab
+                activeTab === label
                   ? "brand-surface brand-pop bg-brand text-on-brand"
                   : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
               }`}
             >
-              {tab}
+              {label}
             </button>
           ))}
         </nav>
