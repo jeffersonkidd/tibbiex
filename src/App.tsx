@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Toaster, toast } from "sonner"
+import { Analytics } from "@vercel/analytics/react"
 import {
   QrCode,
   Share2,
@@ -71,9 +72,27 @@ const DISCOGRAPHY: Album[] = [
 ]
 
 const SHOWS = [
-  { id: "s1", venue: "924 Gilman", date: "Oct 31, 2026", city: "Berkeley, CA", status: "Tickets" },
-  { id: "s2", venue: "The Bowery Electric", date: "Nov 15, 2026", city: "New York, NY", status: "Sold Out" },
-  { id: "s3", venue: "Riot Fest", date: "Dec 5, 2026", city: "Chicago, IL", status: "Festival" },
+  {
+    id: "s1",
+    venue: "924 Gilman",
+    date: "Oct 31, 2026",
+    city: "Berkeley, CA",
+    status: "Tickets",
+  },
+  {
+    id: "s2",
+    venue: "The Bowery Electric",
+    date: "Nov 15, 2026",
+    city: "New York, NY",
+    status: "Sold Out",
+  },
+  {
+    id: "s3",
+    venue: "Riot Fest",
+    date: "Dec 5, 2026",
+    city: "Chicago, IL",
+    status: "Festival",
+  },
 ]
 
 const MERCH = [
@@ -108,9 +127,25 @@ const MERCH = [
 ]
 
 const LINKS = [
-  { icon: Music, title: "Listen on Spotify", meta: "Leftover Crack · SFH", href: "#" },
-  { icon: Youtube, title: "Live Videos", meta: "Shows, squats & riots", href: "#" },
-  { icon: Heart, title: "Support the Scene", meta: "Mutual aid links", href: "#", external: true },
+  {
+    icon: Music,
+    title: "Listen on Spotify",
+    meta: "Leftover Crack · SFH",
+    href: "#",
+  },
+  {
+    icon: Youtube,
+    title: "Live Videos",
+    meta: "Shows, squats & riots",
+    href: "#",
+  },
+  {
+    icon: Heart,
+    title: "Support the Scene",
+    meta: "Mutual aid links",
+    href: "#",
+    external: true,
+  },
 ]
 
 // Portfolio entries: one section per band/project. Dates and credits below are
@@ -121,7 +156,7 @@ type PortfolioEntry = {
   role: string
   years: string
   blurb: string
-  highlights: { label: string; detail: string }[]
+  highlights: { label: string detail: string }[]
 }
 
 const PORTFOLIO: PortfolioEntry[] = [
@@ -130,9 +165,10 @@ const PORTFOLIO: PortfolioEntry[] = [
     band: "Gash",
     role: "Bass · Vocals",
     years: "2019 — present",
-    blurb: "Bass and co-vocals in the NYC four-piece — fast, ugly, and built for basement rooms.",
+    blurb:
+      "Bass and co-vocals in the NYC four-piece — fast, ugly, and built for basement rooms.",
     highlights: [
-      { label: "Releases", detail: "Demo tape · split 7\"" },
+      { label: "Releases", detail: 'Demo tape · split 7"' },
       { label: "Live", detail: "East coast DIY circuit" },
       { label: "Writing", detail: "Co-writes the full set" },
     ],
@@ -163,7 +199,7 @@ const TABS = [
   { label: "Merch", enabled: true },
 ] as const
 
-type Tab = (typeof TABS)[number]["label"]
+type Tab = typeof TABS[number]["label"]
 
 const VISIBLE_TABS = TABS.filter((tab) => tab.enabled)
 
@@ -198,7 +234,9 @@ export default function App() {
       <div className="w-full max-w-2xl px-4 pt-6 sm:px-6">
         {/* Header Controls */}
         <header className="card-surface mb-8 flex items-center justify-between rounded-lg bg-card/60 p-3">
-          <span className="mono-label px-2 text-muted-foreground">tibbiex.vercel.app</span>
+          <span className="mono-label px-2 text-muted-foreground">
+            tibbiex.vercel.app
+          </span>
           <div className="flex gap-2">
             <button
               type="button"
@@ -214,7 +252,8 @@ export default function App() {
               onClick={copyLink}
               className="flex items-center gap-1.5 rounded-md border border-border bg-card p-2.5 text-xs font-medium text-foreground transition-all hover:bg-muted"
             >
-              <Share2 className="h-4 w-4" /> <span className="hidden sm:inline">Share</span>
+              <Share2 className="h-4 w-4" />{" "}
+              <span className="hidden sm:inline">Share</span>
             </button>
           </div>
         </header>
@@ -236,7 +275,11 @@ export default function App() {
           <div className="relative -mt-20 px-6 pb-6 pt-0">
             <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-end sm:text-left">
               <div className="relative h-32 w-32 overflow-hidden rounded-full border-4 border-background shadow-2xl">
-                <img src={profilePic} alt="Tibbie X" className="h-full w-full object-cover" />
+                <img
+                  src={profilePic}
+                  alt="Tibbie X"
+                  className="h-full w-full object-cover"
+                />
               </div>
               <div className="flex-1 pb-2">
                 <h1 className="wordmark text-3xl uppercase leading-none tracking-tight sm:text-4xl">
@@ -246,7 +289,10 @@ export default function App() {
                   <span className="mono-label rounded-full border border-border bg-card px-2 py-1 text-accent-strong">
                     Bass · Vocals
                   </span>
-                  <span className="text-sm">• Leftover Crack • GASH • Reagan Youth • X-Possibles • Kissy Kamikaze</span>
+                  <span className="text-sm">
+                    • Leftover Crack • GASH • Reagan Youth • X-Possibles • Kissy
+                    Kamikaze
+                  </span>
                 </div>
               </div>
             </div>
@@ -290,10 +336,14 @@ export default function App() {
             <span className="mono-label text-muted-foreground">66%</span>
           </div>
           <p className="mt-1 text-xs text-muted-foreground">
-            Recording new bass tracks for the split EP. Rehearsing the fall setlist.
+            Recording new bass tracks for the split EP. Rehearsing the fall
+            setlist.
           </p>
           <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-muted">
-            <div className="h-full rounded-full bg-accent" style={{ width: "66%" }} />
+            <div
+              className="h-full rounded-full bg-accent"
+              style={{ width: "66%" }}
+            />
           </div>
         </div>
 
@@ -331,7 +381,9 @@ export default function App() {
                     </div>
                     <div>
                       <div className="text-base font-bold">{title}</div>
-                      <p className="mono-label mt-1 text-muted-foreground">{meta}</p>
+                      <p className="mono-label mt-1 text-muted-foreground">
+                        {meta}
+                      </p>
                     </div>
                   </div>
                   {external ? (
@@ -360,8 +412,12 @@ export default function App() {
                     />
                   </div>
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background/80 to-transparent p-4 pt-12">
-                    <div className="text-lg font-bold leading-tight">{rec.album}</div>
-                    <p className="text-xs font-medium text-accent-strong">{rec.band}</p>
+                    <div className="text-lg font-bold leading-tight">
+                      {rec.album}
+                    </div>
+                    <p className="text-xs font-medium text-accent-strong">
+                      {rec.band}
+                    </p>
                     <p className="mono-label mt-1 text-muted-foreground">
                       {rec.year} · {rec.role}
                     </p>
@@ -375,21 +431,34 @@ export default function App() {
             PORTFOLIO.map((entry) => (
               <section key={entry.id} className="card-surface rounded-lg p-5">
                 <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-                  <h2 className="text-2xl uppercase leading-none tracking-tight">{entry.band}</h2>
-                  <span className="mono-label text-muted-foreground">{entry.years}</span>
+                  <h2 className="text-2xl uppercase leading-none tracking-tight">
+                    {entry.band}
+                  </h2>
+                  <span className="mono-label text-muted-foreground">
+                    {entry.years}
+                  </span>
                 </div>
 
                 <span className="mono-label mt-3 inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/50 px-2.5 py-1 text-accent-strong">
                   <Guitar size={12} /> {entry.role}
                 </span>
 
-                <p className="mt-3 text-sm text-muted-foreground">{entry.blurb}</p>
+                <p className="mt-3 text-sm text-muted-foreground">
+                  {entry.blurb}
+                </p>
 
                 <dl className="mt-4 space-y-2 border-t border-border pt-4">
                   {entry.highlights.map(({ label, detail }) => (
-                    <div key={label} className="flex items-baseline justify-between gap-4">
-                      <dt className="mono-label shrink-0 text-muted-foreground">{label}</dt>
-                      <dd className="text-right text-sm font-medium">{detail}</dd>
+                    <div
+                      key={label}
+                      className="flex items-baseline justify-between gap-4"
+                    >
+                      <dt className="mono-label shrink-0 text-muted-foreground">
+                        {label}
+                      </dt>
+                      <dd className="text-right text-sm font-medium">
+                        {detail}
+                      </dd>
                     </div>
                   ))}
                 </dl>
@@ -437,9 +506,12 @@ export default function App() {
                     />
                   </div>
                   <div className="flex items-center justify-between gap-3 p-4">
-                    <div className="text-sm font-bold leading-tight">{item.item}</div>
+                    <div className="text-sm font-bold leading-tight">
+                      {item.item}
+                    </div>
                     <span className="flex shrink-0 items-center gap-1.5 text-base font-bold text-accent-strong">
-                      {item.price} <ShoppingBag className="h-4 w-4 text-muted-foreground" />
+                      {item.price}{" "}
+                      <ShoppingBag className="h-4 w-4 text-muted-foreground" />
                     </span>
                   </div>
                 </div>
@@ -448,13 +520,19 @@ export default function App() {
           )}
         </main>
 
-        <p className="mono-label mt-8 text-center text-muted-foreground">Built in the squat · 2026</p>
+        <p className="mono-label mt-8 text-center text-muted-foreground">
+          Built in the squat · 2026
+        </p>
       </div>
 
       {/* Album modal */}
       {album && (
         <Overlay onClose={() => setAlbum(null)}>
-          <img src={album.image} alt={album.album} className="h-56 w-full object-cover" />
+          <img
+            src={album.image}
+            alt={album.album}
+            className="h-56 w-full object-cover"
+          />
           <div className="p-6">
             <span className="mono-label text-accent-strong">{album.band}</span>
             <h2 className="mt-1 text-2xl font-bold">{album.album}</h2>
@@ -480,7 +558,9 @@ export default function App() {
             className="p-6"
           >
             <h2 className="text-2xl font-bold">Book / Contact</h2>
-            <p className="mt-1 text-sm text-muted-foreground">For booking, press, or hate mail.</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              For booking, press, or hate mail.
+            </p>
             <div className="mt-5 flex flex-col gap-3">
               <Field placeholder="Name" type="text" />
               <Field placeholder="Email" type="email" />
@@ -516,6 +596,7 @@ export default function App() {
           </div>
         </Overlay>
       )}
+      <Analytics />
     </div>
   )
 }
@@ -552,7 +633,7 @@ function BrandButton({
   )
 }
 
-function Field({ placeholder, type }: { placeholder: string; type: string }) {
+function Field({ placeholder, type }: { placeholder: string type: string }) {
   return (
     <input
       required
