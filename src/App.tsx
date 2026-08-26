@@ -156,7 +156,7 @@ type PortfolioEntry = {
   role: string
   years: string
   blurb: string
-  highlights: { label: string detail: string }[]
+  highlights: { label: string; detail: string }[]
 }
 
 const PORTFOLIO: PortfolioEntry[] = [
@@ -633,7 +633,7 @@ function BrandButton({
   )
 }
 
-function Field({ placeholder, type }: { placeholder: string type: string }) {
+function Field({ placeholder, type }: { placeholder: string; type: string }) {
   return (
     <input
       required
