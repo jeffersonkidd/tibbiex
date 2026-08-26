@@ -283,15 +283,17 @@ export default function App() {
               </div>
               <div className="flex-1 pb-2">
                 <h1 className="wordmark text-3xl uppercase leading-none tracking-tight sm:text-4xl">
-                  Tibbie <span className="text-brand">X</span>
+                  Tibbie <span className="wordmark-x">X</span>
                 </h1>
                 <div className="mt-2 flex flex-wrap items-center justify-center gap-2 text-muted-foreground sm:justify-start">
                   <span className="mono-label rounded-full border border-border bg-card px-2 py-1 text-accent-strong">
                     Bass · Vocals
                   </span>
-                  <span className="text-sm">
-                    • Leftover Crack • GASH • Reagan Youth • X-Possibles • Kissy
-                    Kamikaze
+                  {/* basis-full drops the band list onto its own row under the
+                      Bass · Vocals pill at every width. */}
+                  <span className="basis-full text-sm">
+                    • Leftover Crack • GASH • Reagan Youth
+                    <br />• X-Possibles • Kissy Kamikaze
                   </span>
                 </div>
               </div>
@@ -596,7 +598,7 @@ export default function App() {
           </div>
         </Overlay>
       )}
-      <Analytics />
+      <Analytics beforeSend={(event) => (analyticsOptedOut() ? null : event)} />
     </div>
   )
 }
@@ -631,6 +633,30 @@ function BrandButton({
       {children}
     </button>
   )
+}
+
+/* Self-exclusion from Vercel Web Analytics.
+
+   Vercel has no IP or geo filter for your own visits, and a VPN moves the exit
+   IP around anyway, so the opt-out lives in this browser: load the site once
+   with ?no-analytics to set the flag, ?analytics to clear it. beforeSend
+   returning null drops the event before it leaves the page. The flag is
+   per-browser, so repeat it on every device/profile you browse the site from. */
+const ANALYTICS_OPT_OUT_KEY = "tibbiex:no-analytics"
+
+function analyticsOptedOut() {
+  try {
+    const params = new URLSearchParams(window.location.search)
+    if (params.has("no-analytics")) {
+      localStorage.setItem(ANALYTICS_OPT_OUT_KEY, "1")
+    } else if (params.has("analytics")) {
+      localStorage.removeItem(ANALYTICS_OPT_OUT_KEY)
+    }
+    return localStorage.getItem(ANALYTICS_OPT_OUT_KEY) === "1"
+  } catch {
+    /* Private window or blocked storage — count the visit rather than break. */
+    return false
+  }
 }
 
 function Field({ placeholder, type }: { placeholder: string; type: string }) {

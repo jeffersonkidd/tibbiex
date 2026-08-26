@@ -42,6 +42,46 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: 0.02em;
 }
 
+/* ---------------------------------------------------------------------------
+   The X in the "Tibbie X" wordmark. Oversized against the rest of the lockup
+   and filled with the brand ramp -- bright red at the top-left falling to the
+   deep red at the bottom-right -- instead of a flat brand fill.
+--------------------------------------------------------------------------- */
+.wordmark-x {
+  display: inline-block;
+  font-size: 1.45em;
+  /* background-clip: text paints only inside the padding box, so the line-box
+     has to be tall enough to contain the glyph -- a tight line-height clipped
+     the top of the X away. The padding gives the gradient headroom; the
+     matching negative margins keep the lockup's spacing unchanged. */
+  line-height: 1;
+  padding: 0.18em 0.06em 0.08em;
+  /* The left margin also pulls the X back toward "Tibbie", tightening the
+     word space in the lockup. */
+  margin: -0.18em -0.04em -0.08em -0.15em;
+  vertical-align: -0.06em;
+  transform: rotate(-3deg);
+  color: var(--background\/brand\/default);
+  background-image: linear-gradient(
+    155deg,
+    var(--background\/brand\/lift) 0%,
+    var(--background\/brand\/default) 50%,
+    var(--background\/brand\/deep) 100%
+  );
+  filter: drop-shadow(0 3px 10px rgba(236, 32, 15, 0.5));
+}
+
+/* Only paint the gradient through the glyph where the browser can clip to
+   text -- otherwise the flat brand red above stands. */
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .wordmark-x {
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
 /* Small uppercase metadata label in the design system's mono face. */
 .mono-label {
   font-family: "Roboto Mono", var(--default-mono-font-family);
