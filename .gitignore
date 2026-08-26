@@ -20,3 +20,8 @@ logs/
 /.opencode-skills/
 
 .DS_Store
+
+# Agent instruction files, kept local rather than shared with the repo.
+/CLAUDE.md
+/AGENTS.md
+/.claude/
