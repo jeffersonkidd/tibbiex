@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Toaster, toast } from "sonner"
 import { Analytics } from "@vercel/analytics/react"
 import {
@@ -9,6 +9,9 @@ import {
   Radio,
   Instagram,
   Facebook,
+  Coffee,
+  Send,
+  CreditCard,
   Youtube,
   MessageSquare,
   Music,
@@ -203,6 +206,10 @@ type Tab = typeof TABS[number]["label"]
 
 const VISIBLE_TABS = TABS.filter((tab) => tab.enabled)
 
+/* The tip jar has no backend — "Send Support" hands the amount and note to
+   Venmo and lets the app (or venmo.com) take the payment from there. */
+const VENMO_HANDLE = "TibbieSkyeX"
+
 const SOCIALS = [
   {
     icon: Instagram,
@@ -221,10 +228,60 @@ const SOCIALS = [
   },
   {
     icon: VenmoIcon,
-    label: "Venmo — @TibbieSkyeX",
-    href: "https://venmo.com/u/TibbieSkyeX",
+    label: `Venmo — @${VENMO_HANDLE}`,
+    href: `https://venmo.com/u/${VENMO_HANDLE}`,
   },
 ]
+
+const TIP_PRESETS = [3, 5, 10, 25]
+
+/* Real supporters only — fill this in from what actually arrives, on either
+   rail (Venmo's activity feed, or Stripe's payments with their note metadata).
+   Shape: { name: "Ratface", msg: "for the new strings", amount: 10 }.
+   The feed hides itself while this is empty rather than showing invented names. */
+const SUPPORTERS: { name: string; msg: string; amount: number }[] = []
+
+/* The two ways money can arrive. Venmo is a hand-off to an app the visitor
+   already has; Stripe is a card checkout that this site's one serverless
+   function opens. Same amount and note feed both. */
+const RAILS = [
+  { id: "venmo", label: "Venmo", icon: VenmoIcon },
+  { id: "card", label: "Card", icon: CreditCard },
+] as const
+
+type Rail = typeof RAILS[number]["id"]
+
+function venmoPayUrl(amount: number, note: string) {
+  const params = new URLSearchParams({
+    txn: "pay",
+    amount: amount.toFixed(2),
+    note: note.trim() || "Supporting Tibbie X",
+  })
+  return `https://venmo.com/${VENMO_HANDLE}?${params}`
+}
+
+/* Asks the serverless function for a Stripe Checkout Session and returns the
+   hosted page's URL. Errors come back as a thrown message the widget can put
+   in a toast -- the caller has no useful way to recover, only to say so. */
+async function stripeCheckoutUrl(amount: number, note: string) {
+  const response = await fetch("/api/checkout", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ amount, note }),
+  })
+
+  /* A 404 here is the everyday case of running `pnpm dev`, which serves the
+     static app without the function. */
+  if (response.status === 404) {
+    throw new Error("Card payments only run on the deployed site.")
+  }
+
+  const data = await response.json().catch(() => ({}))
+  if (!response.ok || !data.url) {
+    throw new Error(data.error ?? "Could not reach Stripe.")
+  }
+  return data.url as string
+}
 
 const TAGS = [
   { icon: MapPin, label: "NYC" },
@@ -393,33 +450,38 @@ export default function App() {
 
         {/* Content Area */}
         <main className="space-y-4">
-          {activeTab === "Links" &&
-            LINKS.map(({ icon: Icon, title, meta, href, external }) => (
-              <a
-                key={title}
-                href={href}
-                className="card-surface group block transform rounded-lg p-4 transition-all duration-300 hover:scale-[1.01] hover:border-accent"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="rounded-md bg-muted p-3 text-muted-foreground transition-colors group-hover:bg-brand group-hover:text-on-brand">
-                      <Icon className="h-6 w-6" />
+          {activeTab === "Links" && (
+            <>
+              {LINKS.map(({ icon: Icon, title, meta, href, external }) => (
+                <a
+                  key={title}
+                  href={href}
+                  className="card-surface group block transform rounded-lg p-4 transition-all duration-300 hover:scale-[1.01] hover:border-accent"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="rounded-md bg-muted p-3 text-muted-foreground transition-colors group-hover:bg-brand group-hover:text-on-brand">
+                        <Icon className="h-6 w-6" />
+                      </div>
+                      <div>
+                        <div className="text-base font-bold">{title}</div>
+                        <p className="mono-label mt-1 text-muted-foreground">
+                          {meta}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <div className="text-base font-bold">{title}</div>
-                      <p className="mono-label mt-1 text-muted-foreground">
-                        {meta}
-                      </p>
-                    </div>
+                    {external ? (
+                      <ExternalLink className="h-5 w-5 text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-accent-strong" />
+                    ) : (
+                      <ChevronRight className="h-5 w-5 text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-accent-strong" />
+                    )}
                   </div>
-                  {external ? (
-                    <ExternalLink className="h-5 w-5 text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-accent-strong" />
-                  ) : (
-                    <ChevronRight className="h-5 w-5 text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-accent-strong" />
-                  )}
-                </div>
-              </a>
-            ))}
+                </a>
+              ))}
+
+              <TipJar />
+            </>
+          )}
 
           {activeTab === "Music" && (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -635,12 +697,14 @@ function BrandButton({
   variant = "block",
   type = "button",
   onClick,
+  disabled = false,
   className = "",
 }: {
   children: React.ReactNode
   variant?: "block" | "pill"
   type?: "button" | "submit"
   onClick?: () => void
+  disabled?: boolean
   className?: string
 }) {
   const shape =
@@ -652,7 +716,8 @@ function BrandButton({
     <button
       type={type}
       onClick={onClick}
-      className={`brand-surface brand-lift flex items-center justify-center bg-brand font-bold text-on-brand ${shape} ${className}`}
+      disabled={disabled}
+      className={`brand-surface brand-lift flex items-center justify-center bg-brand font-bold text-on-brand disabled:pointer-events-none disabled:opacity-60 ${shape} ${className}`}
     >
       {children}
     </button>
@@ -680,7 +745,10 @@ function SiteQrCode({ size = 148 }: { size?: number }) {
       aria-label={`QR code linking to ${SITE_URL}`}
     >
       <rect x="-4" y="-4" width="33" height="33" fill="#FFFDF7" />
-      <path d="M0 0h7v1h-7zM8 0h3v1h-3zM12 0h1v1h-1zM16 0h1v1h-1zM18 0h7v1h-7zM0 1h1v1h-1zM6 1h1v1h-1zM8 1h5v1h-5zM18 1h1v1h-1zM24 1h1v1h-1zM0 2h1v1h-1zM2 2h3v1h-3zM6 2h1v1h-1zM10 2h1v1h-1zM12 2h4v1h-4zM18 2h1v1h-1zM20 2h3v1h-3zM24 2h1v1h-1zM0 3h1v1h-1zM2 3h3v1h-3zM6 3h1v1h-1zM8 3h4v1h-4zM13 3h4v1h-4zM18 3h1v1h-1zM20 3h3v1h-3zM24 3h1v1h-1zM0 4h1v1h-1zM2 4h3v1h-3zM6 4h1v1h-1zM9 4h1v1h-1zM11 4h1v1h-1zM15 4h2v1h-2zM18 4h1v1h-1zM20 4h3v1h-3zM24 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM9 5h1v1h-1zM16 5h1v1h-1zM18 5h1v1h-1zM24 5h1v1h-1zM0 6h7v1h-7zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM18 6h7v1h-7zM8 7h2v1h-2zM12 7h1v1h-1zM14 7h3v1h-3zM0 8h1v1h-1zM2 8h2v1h-2zM5 8h3v1h-3zM10 8h1v1h-1zM12 8h1v1h-1zM14 8h3v1h-3zM18 8h1v1h-1zM21 8h1v1h-1zM23 8h2v1h-2zM2 9h2v1h-2zM8 9h5v1h-5zM19 9h1v1h-1zM23 9h1v1h-1zM1 10h1v1h-1zM6 10h1v1h-1zM10 10h2v1h-2zM13 10h2v1h-2zM17 10h2v1h-2zM20 10h1v1h-1zM1 11h1v1h-1zM5 11h1v1h-1zM8 11h1v1h-1zM11 11h4v1h-4zM16 11h2v1h-2zM21 11h2v1h-2zM0 12h2v1h-2zM3 12h1v1h-1zM5 12h3v1h-3zM9 12h6v1h-6zM16 12h5v1h-5zM22 12h3v1h-3zM1 13h4v1h-4zM8 13h1v1h-1zM10 13h2v1h-2zM14 13h7v1h-7zM24 13h1v1h-1zM1 14h2v1h-2zM4 14h4v1h-4zM9 14h2v1h-2zM13 14h2v1h-2zM20 14h1v1h-1zM22 14h2v1h-2zM0 15h1v1h-1zM3 15h2v1h-2zM7 15h2v1h-2zM10 15h1v1h-1zM12 15h1v1h-1zM14 15h3v1h-3zM19 15h2v1h-2zM24 15h1v1h-1zM2 16h2v1h-2zM5 16h3v1h-3zM9 16h1v1h-1zM11 16h3v1h-3zM16 16h9v1h-9zM8 17h5v1h-5zM16 17h1v1h-1zM20 17h1v1h-1zM22 17h1v1h-1zM24 17h1v1h-1zM0 18h7v1h-7zM8 18h1v1h-1zM10 18h1v1h-1zM12 18h1v1h-1zM14 18h1v1h-1zM16 18h1v1h-1zM18 18h1v1h-1zM20 18h1v1h-1zM22 18h3v1h-3zM0 19h1v1h-1zM6 19h1v1h-1zM8 19h2v1h-2zM11 19h1v1h-1zM14 19h3v1h-3zM20 19h1v1h-1zM23 19h2v1h-2zM0 20h1v1h-1zM2 20h3v1h-3zM6 20h1v1h-1zM9 20h1v1h-1zM12 20h1v1h-1zM16 20h6v1h-6zM24 20h1v1h-1zM0 21h1v1h-1zM2 21h3v1h-3zM6 21h1v1h-1zM8 21h1v1h-1zM10 21h2v1h-2zM13 21h1v1h-1zM17 21h2v1h-2zM20 21h5v1h-5zM0 22h1v1h-1zM2 22h3v1h-3zM6 22h1v1h-1zM8 22h1v1h-1zM10 22h4v1h-4zM16 22h3v1h-3zM20 22h1v1h-1zM22 22h2v1h-2zM0 23h1v1h-1zM6 23h1v1h-1zM9 23h1v1h-1zM13 23h1v1h-1zM20 23h1v1h-1zM22 23h1v1h-1zM0 24h7v1h-7zM8 24h2v1h-2zM12 24h3v1h-3zM19 24h6v1h-6z" fill="#0B0B0D" />
+      <path
+        d="M0 0h7v1h-7zM8 0h3v1h-3zM12 0h1v1h-1zM16 0h1v1h-1zM18 0h7v1h-7zM0 1h1v1h-1zM6 1h1v1h-1zM8 1h5v1h-5zM18 1h1v1h-1zM24 1h1v1h-1zM0 2h1v1h-1zM2 2h3v1h-3zM6 2h1v1h-1zM10 2h1v1h-1zM12 2h4v1h-4zM18 2h1v1h-1zM20 2h3v1h-3zM24 2h1v1h-1zM0 3h1v1h-1zM2 3h3v1h-3zM6 3h1v1h-1zM8 3h4v1h-4zM13 3h4v1h-4zM18 3h1v1h-1zM20 3h3v1h-3zM24 3h1v1h-1zM0 4h1v1h-1zM2 4h3v1h-3zM6 4h1v1h-1zM9 4h1v1h-1zM11 4h1v1h-1zM15 4h2v1h-2zM18 4h1v1h-1zM20 4h3v1h-3zM24 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM9 5h1v1h-1zM16 5h1v1h-1zM18 5h1v1h-1zM24 5h1v1h-1zM0 6h7v1h-7zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM18 6h7v1h-7zM8 7h2v1h-2zM12 7h1v1h-1zM14 7h3v1h-3zM0 8h1v1h-1zM2 8h2v1h-2zM5 8h3v1h-3zM10 8h1v1h-1zM12 8h1v1h-1zM14 8h3v1h-3zM18 8h1v1h-1zM21 8h1v1h-1zM23 8h2v1h-2zM2 9h2v1h-2zM8 9h5v1h-5zM19 9h1v1h-1zM23 9h1v1h-1zM1 10h1v1h-1zM6 10h1v1h-1zM10 10h2v1h-2zM13 10h2v1h-2zM17 10h2v1h-2zM20 10h1v1h-1zM1 11h1v1h-1zM5 11h1v1h-1zM8 11h1v1h-1zM11 11h4v1h-4zM16 11h2v1h-2zM21 11h2v1h-2zM0 12h2v1h-2zM3 12h1v1h-1zM5 12h3v1h-3zM9 12h6v1h-6zM16 12h5v1h-5zM22 12h3v1h-3zM1 13h4v1h-4zM8 13h1v1h-1zM10 13h2v1h-2zM14 13h7v1h-7zM24 13h1v1h-1zM1 14h2v1h-2zM4 14h4v1h-4zM9 14h2v1h-2zM13 14h2v1h-2zM20 14h1v1h-1zM22 14h2v1h-2zM0 15h1v1h-1zM3 15h2v1h-2zM7 15h2v1h-2zM10 15h1v1h-1zM12 15h1v1h-1zM14 15h3v1h-3zM19 15h2v1h-2zM24 15h1v1h-1zM2 16h2v1h-2zM5 16h3v1h-3zM9 16h1v1h-1zM11 16h3v1h-3zM16 16h9v1h-9zM8 17h5v1h-5zM16 17h1v1h-1zM20 17h1v1h-1zM22 17h1v1h-1zM24 17h1v1h-1zM0 18h7v1h-7zM8 18h1v1h-1zM10 18h1v1h-1zM12 18h1v1h-1zM14 18h1v1h-1zM16 18h1v1h-1zM18 18h1v1h-1zM20 18h1v1h-1zM22 18h3v1h-3zM0 19h1v1h-1zM6 19h1v1h-1zM8 19h2v1h-2zM11 19h1v1h-1zM14 19h3v1h-3zM20 19h1v1h-1zM23 19h2v1h-2zM0 20h1v1h-1zM2 20h3v1h-3zM6 20h1v1h-1zM9 20h1v1h-1zM12 20h1v1h-1zM16 20h6v1h-6zM24 20h1v1h-1zM0 21h1v1h-1zM2 21h3v1h-3zM6 21h1v1h-1zM8 21h1v1h-1zM10 21h2v1h-2zM13 21h1v1h-1zM17 21h2v1h-2zM20 21h5v1h-5zM0 22h1v1h-1zM2 22h3v1h-3zM6 22h1v1h-1zM8 22h1v1h-1zM10 22h4v1h-4zM16 22h3v1h-3zM20 22h1v1h-1zM22 22h2v1h-2zM0 23h1v1h-1zM6 23h1v1h-1zM9 23h1v1h-1zM13 23h1v1h-1zM20 23h1v1h-1zM22 23h1v1h-1zM0 24h7v1h-7zM8 24h2v1h-2zM12 24h3v1h-3zM19 24h6v1h-6z"
+        fill="#0B0B0D"
+      />
     </svg>
   )
 }
@@ -739,14 +807,242 @@ function analyticsOptedOut() {
   }
 }
 
-function Field({ placeholder, type }: { placeholder: string; type: string }) {
+// The shared input treatment. The booking form uses it uncontrolled and
+// required; the tip jar passes value/onChange and opts out of required, so
+// both forms keep the same border, fill and focus colour.
+function Field({
+  placeholder,
+  type,
+  value,
+  onChange,
+  required = true,
+  min,
+  step,
+  inputMode,
+  className = "",
+}: {
+  placeholder: string
+  type: string
+  value?: string
+  onChange?: (value: string) => void
+  required?: boolean
+  min?: string
+  step?: string
+  inputMode?: "decimal" | "text"
+  className?: string
+}) {
   return (
     <input
-      required
+      required={required}
       type={type}
       placeholder={placeholder}
-      className="w-full rounded-md border border-border bg-input-background px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-accent"
+      value={value}
+      onChange={onChange ? (e) => onChange(e.target.value) : undefined}
+      min={min}
+      step={step}
+      inputMode={inputMode}
+      className={`w-full rounded-md border border-border bg-input-background px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-accent ${className}`}
     />
+  )
+}
+
+/* Tip jar under the link rows. One amount and one note, two ways out: Venmo
+   hands off to the app with both in the query string, while Card posts them to
+   api/checkout.ts and follows the Stripe Checkout Session it opens. Neither
+   path touches money in this component -- it only composes the hand-off. The
+   rail toggle and the preset chips both reuse .brand-surface, the treatment
+   the active tab uses, so "selected" reads the same way across the page. */
+function TipJar() {
+  const [rail, setRail] = useState<Rail>("venmo")
+  const [preset, setPreset] = useState(TIP_PRESETS[1])
+  const [custom, setCustom] = useState("")
+  const [note, setNote] = useState("")
+  const [sending, setSending] = useState(false)
+
+  const amount = custom ? Number(custom) : preset
+  const validAmount = Number.isFinite(amount) && amount > 0
+
+  /* Stripe sends the payer back here with a flag on the URL. Say thank you,
+     then strip the flag so a refresh does not repeat the toast. */
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const outcome = params.get("tip")
+    if (!outcome) return
+
+    if (outcome === "thanks") {
+      toast.success("Payment received — thank you, seriously.")
+    } else if (outcome === "cancelled") {
+      toast("Payment cancelled. No hard feelings.")
+    }
+
+    params.delete("tip")
+    const query = params.toString()
+    window.history.replaceState(
+      {},
+      "",
+      window.location.pathname + (query ? `?${query}` : ""),
+    )
+  }, [])
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!validAmount) {
+      toast.error("Enter an amount above $0.")
+      return
+    }
+
+    if (rail === "venmo") {
+      window.open(venmoPayUrl(amount, note), "_blank", "noopener,noreferrer")
+      toast.success("Venmo is open — thank you, seriously.")
+      return
+    }
+
+    setSending(true)
+    try {
+      /* A full navigation rather than a new tab: Stripe's hosted page returns
+         the payer to the success_url, and that round trip only works in the
+         tab that left. */
+      window.location.href = await stripeCheckoutUrl(amount, note)
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Could not reach Stripe.",
+      )
+      setSending(false)
+    }
+  }
+
+  return (
+    <section className="card-surface rounded-lg p-5">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="rounded-md border border-accent-soft bg-accent-tint p-2 text-accent-strong">
+            <Coffee className="h-5 w-5" />
+          </div>
+          <div>
+            <h2 className="text-base font-bold">Fuel the Next Record</h2>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              Strings, van gas and studio time
+            </p>
+          </div>
+        </div>
+        <span className="mono-label shrink-0 rounded-full border border-border bg-muted/50 px-2.5 py-1 text-accent-strong">
+          Tip Jar
+        </span>
+      </div>
+
+      <form onSubmit={handleSubmit} className="mt-4 space-y-3">
+        {/* Which rail the money travels on. Same segmented treatment as the
+            tab strip, so "selected" looks the same everywhere on the page. */}
+        <div className="flex gap-2 rounded-md border border-border bg-input-background p-1">
+          {RAILS.map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setRail(id)}
+              className={`flex flex-1 items-center justify-center gap-1.5 rounded-sm py-2 text-xs font-bold transition-all ${
+                rail === id
+                  ? "brand-surface brand-pop bg-brand text-on-brand"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <Icon size={14} /> {label}
+            </button>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-4 gap-2">
+          {TIP_PRESETS.map((amt) => {
+            const selected = preset === amt && !custom
+            return (
+              <button
+                key={amt}
+                type="button"
+                onClick={() => {
+                  setPreset(amt)
+                  setCustom("")
+                }}
+                className={`rounded-md py-2 text-sm font-bold transition-all ${
+                  selected
+                    ? "brand-surface brand-pop bg-brand text-on-brand"
+                    : "border border-border bg-input-background text-muted-foreground hover:border-accent hover:text-foreground"
+                }`}
+              >
+                ${amt}
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Field carries w-full, so the row's widths live on wrappers rather
+            than in Field's className -- two width utilities on one element let
+            the stylesheet's order decide the winner, which put the amount at
+            full width and pushed the note field out of the card. */}
+        <div className="flex gap-2">
+          <div className="w-28 shrink-0">
+            <Field
+              type="number"
+              placeholder="Custom $"
+              value={custom}
+              onChange={setCustom}
+              required={false}
+              min="1"
+              step="1"
+              inputMode="decimal"
+              className="px-3 py-2.5"
+            />
+          </div>
+          <div className="min-w-0 flex-1">
+            <Field
+              type="text"
+              placeholder="Say something…"
+              value={note}
+              onChange={setNote}
+              required={false}
+              className="px-3 py-2.5"
+            />
+          </div>
+        </div>
+
+        <BrandButton type="submit" disabled={sending}>
+          <Send className="h-4 w-4" />
+          {sending
+            ? "Opening Stripe…"
+            : `Send Support${validAmount ? ` $${amount}` : ""}`}
+        </BrandButton>
+
+        <p className="text-center text-[11px] text-muted-foreground">
+          {rail === "venmo"
+            ? `Opens Venmo to pay @${VENMO_HANDLE} directly.`
+            : "Card payments are processed by Stripe."}
+        </p>
+      </form>
+
+      {SUPPORTERS.length > 0 && (
+        <div className="mt-4 border-t border-border pt-4">
+          <span className="mono-label block text-muted-foreground">
+            Recent Supporters
+          </span>
+          <div className="hide-scrollbar mt-2 max-h-32 space-y-1.5 overflow-y-auto">
+            {SUPPORTERS.map((sup) => (
+              <div
+                key={`${sup.name}-${sup.msg}`}
+                className="flex items-center justify-between gap-2 rounded-md border border-border bg-muted/40 p-2 text-xs"
+              >
+                <p className="truncate">
+                  <span className="font-bold">{sup.name}</span>
+                  <span className="ml-1.5 text-muted-foreground">
+                    “{sup.msg}”
+                  </span>
+                </p>
+                <span className="shrink-0 font-bold text-accent-strong">
+                  +${sup.amount}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </section>
   )
 }
 
