@@ -16,6 +16,7 @@ import {
   MessageSquare,
   Music,
   ChevronRight,
+  ChevronLeft,
   ExternalLink,
   ShoppingBag,
   X,
@@ -98,7 +99,7 @@ const SHOWS = [
   },
 ]
 
-const MERCH = [
+const BUY = [
   {
     id: "m1",
     item: "Logo Patch",
@@ -153,6 +154,16 @@ const LINKS = [
 
 // Portfolio entries: one section per band/project. Dates and credits below are
 // placeholders — confirm them before this goes live.
+/* Intrinsic pixel dimensions travel with each photo so the masonry columns
+   reserve the right space before the image loads -- without them the whole
+   stack reflows as each one arrives. They must match the w/h in the URL. */
+type Photo = {
+  src: string
+  alt: string
+  width: number
+  height: number
+}
+
 type PortfolioEntry = {
   id: string
   band: string
@@ -160,6 +171,7 @@ type PortfolioEntry = {
   years: string
   blurb: string
   highlights: { label: string; detail: string }[]
+  photos: Photo[]
 }
 
 const PORTFOLIO: PortfolioEntry[] = [
@@ -175,6 +187,44 @@ const PORTFOLIO: PortfolioEntry[] = [
       { label: "Live", detail: "East coast DIY circuit" },
       { label: "Writing", detail: "Co-writes the full set" },
     ],
+    photos: [
+      {
+        src: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=600&h=800&auto=format&fit=crop",
+        alt: "Gash mid-set in a packed basement room",
+        width: 600,
+        height: 800,
+      },
+      {
+        src: "https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?q=80&w=600&h=400&auto=format&fit=crop",
+        alt: "Stage lights over the crowd at a Gash show",
+        width: 600,
+        height: 400,
+      },
+      {
+        src: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&h=750&auto=format&fit=crop",
+        alt: "Guitarist leaning into the front row",
+        width: 600,
+        height: 750,
+      },
+      {
+        src: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?q=80&w=600&h=450&auto=format&fit=crop",
+        alt: "Wide shot of the band from the back of the room",
+        width: 600,
+        height: 450,
+      },
+      {
+        src: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=600&h=600&auto=format&fit=crop",
+        alt: "Drum kit lit from the side",
+        width: 600,
+        height: 600,
+      },
+      {
+        src: "https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?q=80&w=600&h=820&auto=format&fit=crop",
+        alt: "Vocal mic in a smoke-filled spotlight",
+        width: 600,
+        height: 820,
+      },
+    ],
   },
   {
     id: "leftover-crack",
@@ -188,6 +238,44 @@ const PORTFOLIO: PortfolioEntry[] = [
       { label: "Live", detail: "924 Gilman · Riot Fest" },
       { label: "Touring", detail: "US · EU" },
     ],
+    photos: [
+      {
+        src: "https://images.unsplash.com/photo-1549213783-8284d0336c4f?q=80&w=600&h=450&auto=format&fit=crop",
+        alt: "Leftover Crack on a festival stage",
+        width: 600,
+        height: 450,
+      },
+      {
+        src: "https://images.unsplash.com/photo-1415886541506-6efc5e4b1786?q=80&w=600&h=780&auto=format&fit=crop",
+        alt: "Crowd surge during the set",
+        width: 600,
+        height: 780,
+      },
+      {
+        src: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?q=80&w=600&h=600&auto=format&fit=crop",
+        alt: "Records stacked on a table",
+        width: 600,
+        height: 600,
+      },
+      {
+        src: "https://images.unsplash.com/photo-1462965326201-d02e4f455804?q=80&w=600&h=820&auto=format&fit=crop",
+        alt: "Bass rig backstage before doors",
+        width: 600,
+        height: 820,
+      },
+      {
+        src: "https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=600&h=420&auto=format&fit=crop",
+        alt: "House lights up on an emptying room",
+        width: 600,
+        height: 420,
+      },
+      {
+        src: "https://images.unsplash.com/photo-1508973379184-7517410fb0bc?q=80&w=600&h=760&auto=format&fit=crop",
+        alt: "Guitar neck and hands mid-chord",
+        width: 600,
+        height: 760,
+      },
+    ],
   },
 ]
 
@@ -199,7 +287,7 @@ const TABS = [
   { label: "Music", enabled: true },
   { label: "Portfolio", enabled: true },
   { label: "Tour", enabled: false },
-  { label: "Merch", enabled: true },
+  { label: "Buy", enabled: true },
 ] as const
 
 type Tab = typeof TABS[number]["label"]
@@ -304,6 +392,9 @@ export default function App() {
   const [booking, setBooking] = useState(false)
   const [qr, setQr] = useState(false)
   const [album, setAlbum] = useState<Album | null>(null)
+  /* Which photo set is open and where we are in it -- the set is carried in
+     state rather than looked up by id so the arrows stay inside one band. */
+  const [lightbox, setLightbox] = useState<LightboxState | null>(null)
 
   return (
     <div className="flex min-h-screen justify-center pb-20 font-sans text-foreground selection:bg-accent-soft">
@@ -550,6 +641,13 @@ export default function App() {
                     </div>
                   ))}
                 </dl>
+
+                <PhotoGrid
+                  photos={entry.photos}
+                  onOpen={(index) =>
+                    setLightbox({ photos: entry.photos, index })
+                  }
+                />
               </section>
             ))}
 
@@ -579,9 +677,9 @@ export default function App() {
               </div>
             ))}
 
-          {activeTab === "Merch" && (
+          {activeTab === "Buy" && (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {MERCH.map((item) => (
+              {BUY.map((item) => (
                 <div
                   key={item.id}
                   className="card-surface group cursor-pointer overflow-hidden rounded-lg transition-colors hover:border-accent"
@@ -684,6 +782,15 @@ export default function App() {
           </div>
         </Overlay>
       )}
+      {/* Photo lightbox */}
+      {lightbox && (
+        <Lightbox
+          state={lightbox}
+          onChange={setLightbox}
+          onClose={() => setLightbox(null)}
+        />
+      )}
+
       <Analytics beforeSend={(event) => (analyticsOptedOut() ? null : event)} />
     </div>
   )
@@ -1046,6 +1153,12 @@ function TipJar() {
   )
 }
 
+const OVERLAY_WIDTHS = {
+  xs: "max-w-xs",
+  md: "max-w-md",
+  lg: "max-w-3xl",
+}
+
 function Overlay({
   children,
   onClose,
@@ -1053,7 +1166,7 @@ function Overlay({
 }: {
   children: React.ReactNode
   onClose: () => void
-  size?: "xs" | "md"
+  size?: "xs" | "md" | "lg"
 }) {
   return (
     <div
@@ -1064,7 +1177,7 @@ function Overlay({
         onClick={(e) => e.stopPropagation()}
         className={
           "relative w-full overflow-hidden rounded-xl border border-border bg-popover shadow-[0_40px_90px_-30px_rgba(0,0,0,0.9)] backdrop-blur-2xl " +
-          (size === "xs" ? "max-w-xs" : "max-w-md")
+          OVERLAY_WIDTHS[size]
         }
       >
         <button
@@ -1078,5 +1191,130 @@ function Overlay({
         {children}
       </div>
     </div>
+  )
+}
+
+/* Masonry with no library and no measuring pass: CSS multi-column flows the
+   photos down each column in turn, and `break-inside-avoid` stops one being
+   split across a column boundary. The trade is a ragged bottom edge, which
+   suits the zine treatment better than a locked grid would. */
+function PhotoGrid({
+  photos,
+  onOpen,
+}: {
+  photos: Photo[]
+  onOpen: (index: number) => void
+}) {
+  if (photos.length === 0) return null
+
+  return (
+    <div className="mt-5 border-t border-border pt-4">
+      <span className="mono-label text-muted-foreground">Photos</span>
+
+      <div className="mt-3 columns-2 gap-2 sm:columns-3">
+        {photos.map((photo, index) => (
+          <button
+            key={photo.src}
+            type="button"
+            onClick={() => onOpen(index)}
+            aria-label={`Open photo: ${photo.alt}`}
+            className="group mb-2 block w-full break-inside-avoid overflow-hidden rounded-md border border-border transition-colors hover:border-accent"
+          >
+            <img
+              src={photo.src}
+              alt={photo.alt}
+              width={photo.width}
+              height={photo.height}
+              loading="lazy"
+              decoding="async"
+              className="h-auto w-full transition-transform duration-500 group-hover:scale-105"
+            />
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+type LightboxState = {
+  photos: Photo[]
+  index: number
+}
+
+/* The expanded view. Key handling lives here rather than in Overlay so the
+   booking and QR modals keep their click-only dismissal, and the arrows wrap
+   at both ends so the set never dead-ends. */
+function Lightbox({
+  state,
+  onChange,
+  onClose,
+}: {
+  state: LightboxState
+  onChange: (next: LightboxState) => void
+  onClose: () => void
+}) {
+  const { photos, index } = state
+  const photo = photos[index]
+
+  function step(delta: number) {
+    onChange({
+      photos,
+      index: (index + delta + photos.length) % photos.length,
+    })
+  }
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose()
+      if (e.key === "ArrowRight") step(1)
+      if (e.key === "ArrowLeft") step(-1)
+    }
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  })
+
+  return (
+    <Overlay onClose={onClose} size="lg">
+      {/* object-contain, not cover: a lightbox that crops the photo defeats
+          the point of opening it. */}
+      <img
+        src={photo.src}
+        alt={photo.alt}
+        className="max-h-[70vh] w-full bg-muted object-contain"
+      />
+
+      <div className="flex items-center gap-3 border-t border-border p-4">
+        {photos.length > 1 && (
+          <button
+            type="button"
+            aria-label="Previous photo"
+            onClick={() => step(-1)}
+            className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            <ChevronLeft size={18} />
+          </button>
+        )}
+
+        <div className="min-w-0 flex-1 text-center">
+          <p className="truncate text-xs text-muted-foreground">{photo.alt}</p>
+          {photos.length > 1 && (
+            <span className="mono-label mt-0.5 block text-accent-strong">
+              {index + 1} / {photos.length}
+            </span>
+          )}
+        </div>
+
+        {photos.length > 1 && (
+          <button
+            type="button"
+            aria-label="Next photo"
+            onClick={() => step(1)}
+            className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            <ChevronRight size={18} />
+          </button>
+        )}
+      </div>
+    </Overlay>
   )
 }
