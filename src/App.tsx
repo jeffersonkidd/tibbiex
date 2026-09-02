@@ -29,6 +29,7 @@ import {
 } from "lucide-react"
 
 import profilePic from "./assets/tibbie_profile.jpeg"
+import bannerPic from "./assets/tibbie_background.jpeg"
 
 // Layout follows the added.tsx reference: a stack of self-contained rounded
 // cards on a dark page (control bar, profile card, socials, tab strip, panels)
@@ -431,7 +432,7 @@ export default function App() {
         <div className="card-surface relative mb-8 overflow-hidden rounded-xl shadow-[0_30px_80px_-32px_rgba(0,0,0,0.85)]">
           <div className="relative h-48 w-full overflow-hidden bg-muted sm:h-56">
             <img
-              src="https://images.unsplash.com/photo-1508973379184-7517410fb0bc?q=80&w=1200&auto=format&fit=crop"
+              src={bannerPic}
               alt="Tibbie X performing live"
               className="h-full w-full object-cover"
             />
