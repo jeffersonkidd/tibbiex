@@ -177,57 +177,6 @@ type PortfolioEntry = {
 
 const PORTFOLIO: PortfolioEntry[] = [
   {
-    id: "gash",
-    band: "Gash",
-    role: "Bass · Vocals",
-    years: "2019 — present",
-    blurb:
-      "Bass and co-vocals in the NYC four-piece — fast, ugly, and built for basement rooms.",
-    highlights: [
-      { label: "Releases", detail: 'Demo tape · split 7"' },
-      { label: "Live", detail: "East coast DIY circuit" },
-      { label: "Writing", detail: "Co-writes the full set" },
-    ],
-    photos: [
-      {
-        src: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=600&h=800&auto=format&fit=crop",
-        alt: "Gash mid-set in a packed basement room",
-        width: 600,
-        height: 800,
-      },
-      {
-        src: "https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?q=80&w=600&h=400&auto=format&fit=crop",
-        alt: "Stage lights over the crowd at a Gash show",
-        width: 600,
-        height: 400,
-      },
-      {
-        src: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&h=750&auto=format&fit=crop",
-        alt: "Guitarist leaning into the front row",
-        width: 600,
-        height: 750,
-      },
-      {
-        src: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?q=80&w=600&h=450&auto=format&fit=crop",
-        alt: "Wide shot of the band from the back of the room",
-        width: 600,
-        height: 450,
-      },
-      {
-        src: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=600&h=600&auto=format&fit=crop",
-        alt: "Drum kit lit from the side",
-        width: 600,
-        height: 600,
-      },
-      {
-        src: "https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?q=80&w=600&h=820&auto=format&fit=crop",
-        alt: "Vocal mic in a smoke-filled spotlight",
-        width: 600,
-        height: 820,
-      },
-    ],
-  },
-  {
     id: "leftover-crack",
     band: "Leftover Crack",
     role: "Bass",
@@ -275,6 +224,93 @@ const PORTFOLIO: PortfolioEntry[] = [
         alt: "Guitar neck and hands mid-chord",
         width: 600,
         height: 760,
+      },
+    ],
+  },
+  {
+    id: "reagan-youth",
+    band: "Reagan Youth",
+    role: "Bass",
+    years: "2018 — present",
+    blurb:
+      "Low end for the Queens band that helped write the New York hardcore canon, still playing the early catalogue at full volume.",
+    highlights: [
+      { label: "Live", detail: "NYC clubs · punk festivals" },
+      { label: "Touring", detail: "US · EU" },
+      { label: "Set", detail: "Early catalogue, full volume" },
+    ],
+    /* Placeholder gallery: these are stand-ins pulled from the same stock pool
+       as the other sections, not Reagan Youth photos. Swap them for real ones
+       before this goes live, and update alt text and dimensions to match. */
+    photos: [
+      {
+        src: "https://images.unsplash.com/photo-1538356111053-748a48e1acb8?q=80&w=600&h=600&auto=format&fit=crop",
+        alt: "Vinyl pressings stacked on the merch table",
+        width: 600,
+        height: 600,
+      },
+      {
+        src: "https://images.unsplash.com/photo-1614082242765-7c98ca0f3df3?q=80&w=600&h=780&auto=format&fit=crop",
+        alt: "Patches sewn across a battle jacket",
+        width: 600,
+        height: 780,
+      },
+      {
+        src: "https://images.unsplash.com/photo-1519508234239-44619d854291?q=80&w=600&h=450&auto=format&fit=crop",
+        alt: "Picks and spare strings in an open gig bag",
+        width: 600,
+        height: 450,
+      },
+    ],
+  },
+  {
+    id: "gash",
+    band: "Gash",
+    role: "Bass · Vocals",
+    years: "2019 — present",
+    blurb:
+      "Bass and co-vocals in the NYC four-piece — fast, ugly, and built for basement rooms.",
+    highlights: [
+      { label: "Releases", detail: 'Demo tape · split 7"' },
+      { label: "Live", detail: "East coast DIY circuit" },
+      { label: "Writing", detail: "Co-writes the full set" },
+    ],
+    photos: [
+      {
+        src: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=600&h=800&auto=format&fit=crop",
+        alt: "Gash mid-set in a packed basement room",
+        width: 600,
+        height: 800,
+      },
+      {
+        src: "https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?q=80&w=600&h=400&auto=format&fit=crop",
+        alt: "Stage lights over the crowd at a Gash show",
+        width: 600,
+        height: 400,
+      },
+      {
+        src: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&h=750&auto=format&fit=crop",
+        alt: "Guitarist leaning into the front row",
+        width: 600,
+        height: 750,
+      },
+      {
+        src: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?q=80&w=600&h=450&auto=format&fit=crop",
+        alt: "Wide shot of the band from the back of the room",
+        width: 600,
+        height: 450,
+      },
+      {
+        src: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=600&h=600&auto=format&fit=crop",
+        alt: "Drum kit lit from the side",
+        width: 600,
+        height: 600,
+      },
+      {
+        src: "https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?q=80&w=600&h=820&auto=format&fit=crop",
+        alt: "Vocal mic in a smoke-filled spotlight",
+        width: 600,
+        height: 820,
       },
     ],
   },
