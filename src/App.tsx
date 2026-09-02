@@ -754,7 +754,7 @@ export default function App() {
                 required
                 rows={4}
                 placeholder="Message"
-                className="w-full resize-none rounded-md border border-border bg-input-background px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-accent"
+                className="w-full resize-none rounded-md border border-border bg-input-background px-4 py-3 text-base text-foreground outline-none sm:text-sm transition-colors placeholder:text-muted-foreground focus:border-accent"
               />
               <BrandButton type="submit" className="mt-1">
                 Send Message
@@ -948,7 +948,7 @@ function Field({
       min={min}
       step={step}
       inputMode={inputMode}
-      className={`w-full rounded-md border border-border bg-input-background px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-accent ${className}`}
+      className={`w-full rounded-md border border-border bg-input-background px-4 py-3 text-base text-foreground outline-none sm:text-sm transition-colors placeholder:text-muted-foreground focus:border-accent ${className}`}
     />
   )
 }
