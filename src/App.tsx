@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Toaster, toast } from "sonner"
 import { Analytics } from "@vercel/analytics/react"
 import {
@@ -100,13 +100,29 @@ const SHOWS = [
   },
 ]
 
-const BUY = [
+/* One id per band/project. It is the join between a portfolio section and the
+   items it sells, so a typo is a type error rather than an empty shelf at
+   runtime. Anything not tied to one band is tagged "general". */
+type BandId = "leftover-crack" | "reagan-youth" | "gash"
+
+type ShopItem = {
+  id: string
+  item: string
+  price: string
+  image: string
+  band: BandId | "general"
+}
+
+// Placeholder catalogue — stock photography and provisional prices. Confirm
+// the items, prices and artwork before this goes live.
+const BUY: ShopItem[] = [
   {
     id: "m1",
     item: "Logo Patch",
     price: "$5",
     image:
       "https://images.unsplash.com/photo-1614082242765-7c98ca0f3df3?q=80&w=400&auto=format&fit=crop",
+    band: "general",
   },
   {
     id: "m2",
@@ -114,6 +130,7 @@ const BUY = [
     price: "$25",
     image:
       "https://images.unsplash.com/photo-1538356111053-748a48e1acb8?q=80&w=400&auto=format&fit=crop",
+    band: "leftover-crack",
   },
   {
     id: "m3",
@@ -121,6 +138,7 @@ const BUY = [
     price: "$10",
     image:
       "https://images.unsplash.com/photo-1519508234239-44619d854291?q=80&w=400&auto=format&fit=crop",
+    band: "general",
   },
   {
     id: "m4",
@@ -128,6 +146,39 @@ const BUY = [
     price: "$28",
     image:
       "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=400&auto=format&fit=crop",
+    band: "leftover-crack",
+  },
+  {
+    id: "m5",
+    item: "Youth Anthems — Reissue LP",
+    price: "$30",
+    image:
+      "https://images.unsplash.com/photo-1526394931762-90052e97b376?q=80&w=400&auto=format&fit=crop",
+    band: "reagan-youth",
+  },
+  {
+    id: "m6",
+    item: "Reagan Youth Logo Tee",
+    price: "$26",
+    image:
+      "https://images.unsplash.com/photo-1503341504253-dff4815485f1?q=80&w=400&auto=format&fit=crop",
+    band: "reagan-youth",
+  },
+  {
+    id: "m7",
+    item: "Gash Demo — Cassette",
+    price: "$8",
+    image:
+      "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?q=80&w=400&auto=format&fit=crop",
+    band: "gash",
+  },
+  {
+    id: "m8",
+    item: 'Gash / Sputter — Split 7"',
+    price: "$12",
+    image:
+      "https://images.unsplash.com/photo-1461360370896-922624d12aa1?q=80&w=400&auto=format&fit=crop",
+    band: "gash",
   },
 ]
 
@@ -166,7 +217,7 @@ type Photo = {
 }
 
 type PortfolioEntry = {
-  id: string
+  id: BandId
   band: string
   role: string
   years: string
@@ -245,7 +296,7 @@ const PORTFOLIO: PortfolioEntry[] = [
     photos: [
       {
         src: "https://images.unsplash.com/photo-1538356111053-748a48e1acb8?q=80&w=600&h=600&auto=format&fit=crop",
-        alt: "Vinyl pressings stacked on the merch table",
+        alt: "Vinyl pressings stacked on the table by the door",
         width: 600,
         height: 600,
       },
@@ -315,6 +366,39 @@ const PORTFOLIO: PortfolioEntry[] = [
     ],
   },
 ]
+
+/* Portfolio -> Buy wiring. The groups are derived from the two arrays above
+   rather than maintained by hand, so adding a band or a product needs no edit
+   here. `SHOP_BY_BAND` keeps the catalogue order within each group, and
+   "general" is rendered last as the everything-else shelf. */
+const SHOP_BY_BAND = BUY.reduce(
+  (groups, item) => {
+    ;(groups[item.band] ??= []).push(item)
+    return groups
+  },
+  {} as Record<ShopGroupId, ShopItem[] | undefined>,
+)
+
+function shopFor(band: BandId) {
+  return SHOP_BY_BAND[band] ?? []
+}
+
+/* Group order for the Buy tab: the bands in portfolio order, then the
+   unaffiliated items. Groups with nothing in them drop out. */
+type ShopGroupId = BandId | "general"
+
+const SHOP_GROUPS: { id: ShopGroupId; title: string; items: ShopItem[] }[] = [
+  ...PORTFOLIO.map((entry) => ({
+    id: entry.id,
+    title: entry.band,
+    items: shopFor(entry.id),
+  })),
+  {
+    id: "general" as const,
+    title: "Everything Else",
+    items: SHOP_BY_BAND.general ?? [],
+  },
+].filter((group) => group.items.length > 0)
 
 // Flip `enabled` to hide a tab from the strip. The Tab union still includes
 // every label, so the tab's data and its panel below stay compiled and
@@ -432,6 +516,37 @@ export default function App() {
   /* Which photo set is open and where we are in it -- the set is carried in
      state rather than looked up by id so the arrows stay inside one band. */
   const [lightbox, setLightbox] = useState<LightboxState | null>(null)
+  /* Which band the Buy tab is narrowed to. Set from a portfolio section's
+     shop link, and resettable from the filter strip. */
+  const [shopBand, setShopBand] = useState<ShopGroupId | "all">("all")
+  const tabsRef = useRef<HTMLElement>(null)
+  const pendingScroll = useRef<BandId | null>(null)
+
+  /* The one hand-off between the two tabs: switch to Buy, narrow it to the
+     band, and put the tab strip back under the user's eye -- the Buy panel
+     can start well below the fold after a long portfolio scroll. */
+  function openShop(band: BandId) {
+    setShopBand(band)
+    setActiveTab("Buy")
+    tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+  }
+
+  /* The return leg. The Portfolio panel is unmounted while Buy is showing, so
+     the target section cannot be scrolled to until after the switch renders --
+     hence the ref handed to the effect below rather than a scroll right here. */
+  function openPortfolio(band: BandId) {
+    pendingScroll.current = band
+    setActiveTab("Portfolio")
+  }
+
+  useEffect(() => {
+    const band = pendingScroll.current
+    if (activeTab !== "Portfolio" || !band) return
+    pendingScroll.current = null
+    document
+      .getElementById(`portfolio-${band}`)
+      ?.scrollIntoView({ behavior: "smooth", block: "start" })
+  }, [activeTab])
 
   return (
     <div className="flex min-h-screen justify-center pb-20 font-sans text-foreground selection:bg-accent-soft">
@@ -559,7 +674,10 @@ export default function App() {
         </div>
 
         {/* Navigation Tabs */}
-        <nav className="card-surface hide-scrollbar mb-6 flex gap-2 overflow-x-auto rounded-lg bg-card/50 p-1.5">
+        <nav
+          ref={tabsRef}
+          className="card-surface hide-scrollbar mb-6 flex scroll-mt-4 gap-2 overflow-x-auto rounded-lg bg-card/50 p-1.5"
+        >
           {VISIBLE_TABS.map(({ label }) => (
             <button
               key={label}
@@ -645,7 +763,11 @@ export default function App() {
 
           {activeTab === "Portfolio" &&
             PORTFOLIO.map((entry) => (
-              <section key={entry.id} className="card-surface rounded-lg p-5">
+              <section
+                key={entry.id}
+                id={`portfolio-${entry.id}`}
+                className="card-surface scroll-mt-4 rounded-lg p-5"
+              >
                 <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
                   <h2 className="text-2xl uppercase leading-none tracking-tight">
                     {entry.band}
@@ -678,6 +800,8 @@ export default function App() {
                     </div>
                   ))}
                 </dl>
+
+                <ShopLink entry={entry} onOpen={openShop} />
 
                 <PhotoGrid
                   photos={entry.photos}
@@ -715,31 +839,87 @@ export default function App() {
             ))}
 
           {activeTab === "Buy" && (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {BUY.map((item) => (
-                <div
-                  key={item.id}
-                  className="card-surface group cursor-pointer overflow-hidden rounded-lg transition-colors hover:border-accent"
-                >
-                  <div className="h-48 overflow-hidden">
-                    <img
-                      src={item.image}
-                      alt={item.item}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                  </div>
-                  <div className="flex items-center justify-between gap-3 p-4">
-                    <div className="text-sm font-bold leading-tight">
-                      {item.item}
+            <>
+              {/* Filter strip -- also the way back out of a band the portfolio
+                  dropped the visitor into. */}
+              <div className="card-surface hide-scrollbar flex gap-2 overflow-x-auto rounded-lg bg-card/50 p-1.5">
+                <ShopFilter
+                  label="All"
+                  active={shopBand === "all"}
+                  onClick={() => setShopBand("all")}
+                />
+                {SHOP_GROUPS.map((group) => (
+                  <ShopFilter
+                    key={group.id}
+                    label={group.title}
+                    active={shopBand === group.id}
+                    onClick={() => setShopBand(group.id)}
+                  />
+                ))}
+              </div>
+
+              {SHOP_GROUPS.filter(
+                (group) => shopBand === "all" || shopBand === group.id,
+              ).map((group) => {
+                /* Pulled out of the JSX so the "general" check narrows for the
+                   click handler too -- TS drops narrowing on a callback param
+                   once it is captured in a closure. */
+                const band = group.id === "general" ? null : group.id
+
+                return (
+                  <section key={group.id} className="space-y-4">
+                    <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 pt-2">
+                      <h2 className="text-xl uppercase leading-none tracking-tight">
+                        {group.title}
+                      </h2>
+                      {/* The return leg of the portfolio link. "general" has no
+                          section to go back to, so it gets a count instead. */}
+                      {band === null ? (
+                        <span className="mono-label text-muted-foreground">
+                          {group.items.length} items
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => openPortfolio(band)}
+                          className="mono-label flex items-center gap-1 text-muted-foreground transition-colors hover:text-accent-strong"
+                        >
+                          View credits <ChevronRight className="h-3.5 w-3.5" />
+                        </button>
+                      )}
                     </div>
-                    <span className="flex shrink-0 items-center gap-1.5 text-base font-bold text-accent-strong">
-                      {item.price}{" "}
-                      <ShoppingBag className="h-4 w-4 text-muted-foreground" />
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
+
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      {group.items.map((item) => (
+                        <div
+                          key={item.id}
+                          className="card-surface group cursor-pointer overflow-hidden rounded-lg transition-colors hover:border-accent"
+                        >
+                          <div className="h-48 overflow-hidden">
+                            <img
+                              src={item.image}
+                              alt={item.item}
+                              loading="lazy"
+                              decoding="async"
+                              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            />
+                          </div>
+                          <div className="flex items-center justify-between gap-3 p-4">
+                            <div className="text-sm font-bold leading-tight">
+                              {item.item}
+                            </div>
+                            <span className="flex shrink-0 items-center gap-1.5 text-base font-bold text-accent-strong">
+                              {item.price}{" "}
+                              <ShoppingBag className="h-4 w-4 text-muted-foreground" />
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )
+              })}
+            </>
           )}
         </main>
 
@@ -1235,6 +1415,77 @@ function Overlay({
    photos down each column in turn, and `break-inside-avoid` stops one being
    split across a column boundary. The trade is a ragged bottom edge, which
    suits the zine treatment better than a locked grid would. */
+/* The portfolio -> Buy hand-off, rendered inside a portfolio section. It is a
+   button rather than an anchor because the destination is a tab in this same
+   view, not a URL. Bands with nothing for sale render nothing at all. */
+function ShopLink({
+  entry,
+  onOpen,
+}: {
+  entry: PortfolioEntry
+  onOpen: (band: BandId) => void
+}) {
+  const items = shopFor(entry.id)
+  if (items.length === 0) return null
+
+  const cheapest = items.reduce((low, item) =>
+    priceValue(item) < priceValue(low) ? item : low,
+  )
+
+  return (
+    <button
+      type="button"
+      onClick={() => onOpen(entry.id)}
+      className="group mt-4 flex w-full items-center justify-between gap-3 rounded-md border border-border bg-muted/40 p-3 text-left transition-colors hover:border-accent hover:bg-muted"
+    >
+      <span className="flex items-center gap-3">
+        <span className="rounded-md bg-card p-2 text-muted-foreground transition-colors group-hover:bg-brand group-hover:text-on-brand">
+          <ShoppingBag className="h-4 w-4" />
+        </span>
+        <span>
+          <span className="block text-sm font-bold">Shop {entry.band}</span>
+          <span className="mono-label mt-0.5 block text-muted-foreground">
+            {items.length} {items.length === 1 ? "item" : "items"} · from{" "}
+            {cheapest.price}
+          </span>
+        </span>
+      </span>
+      <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-accent-strong" />
+    </button>
+  )
+}
+
+/* "$25" -> 25, so the "from" price is the real cheapest item and not just
+   whichever one happens to sort first as a string. */
+function priceValue(item: ShopItem) {
+  return Number(item.price.replace(/[^0-9.]/g, "")) || 0
+}
+
+function ShopFilter({
+  label,
+  active,
+  onClick,
+}: {
+  label: string
+  active: boolean
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={`shrink-0 whitespace-nowrap rounded-md px-3 py-2 text-sm font-bold transition-all ${
+        active
+          ? "brand-surface brand-pop bg-brand text-on-brand"
+          : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+      }`}
+    >
+      {label}
+    </button>
+  )
+}
+
 function PhotoGrid({
   photos,
   onOpen,
