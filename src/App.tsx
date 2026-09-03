@@ -26,6 +26,28 @@ import {
   Heart,
   Calendar,
   Guitar,
+  Sparkles,
+  Shuffle,
+  Footprints,
+  Speaker,
+  Newspaper,
+  Soup,
+  Building,
+  Megaphone,
+  Truck,
+  Fence,
+  Flashlight,
+  Gavel,
+  Waves,
+  Skull,
+  Cable,
+  Cigarette,
+  Bomb,
+  Star,
+  CloudMoon,
+  Sunrise,
+  Bell,
+  Globe,
 } from "lucide-react"
 
 import profilePic from "./assets/tibbie_profile.jpeg"
@@ -182,7 +204,17 @@ const BUY: ShopItem[] = [
   },
 ]
 
+/* The first tab. Rows are outbound links, except one: a row carrying `action`
+   is a button that opens something inside the app instead of navigating away.
+   The tarot spread is the only one so far. */
 const LINKS = [
+  {
+    icon: Sparkles,
+    title: "The Midnight Pull",
+    meta: "Tarot — three cards, no gods",
+    href: "#",
+    action: "tarot",
+  },
   {
     icon: Music,
     title: "Listen on Spotify",
@@ -203,6 +235,8 @@ const LINKS = [
     external: true,
   },
 ]
+
+type LinkEntry = typeof LINKS[number]
 
 // Portfolio entries: one section per band/project. Dates and credits below are
 // placeholders — confirm them before this goes live.
@@ -512,6 +546,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>(VISIBLE_TABS[0].label)
   const [booking, setBooking] = useState(false)
   const [qr, setQr] = useState(false)
+  const [tarot, setTarot] = useState(false)
   const [album, setAlbum] = useState<Album | null>(null)
   /* Which photo set is open and where we are in it -- the set is carried in
      state rather than looked up by id so the arrows stay inside one band. */
@@ -698,32 +733,30 @@ export default function App() {
         <main className="space-y-4">
           {activeTab === "Links" && (
             <>
-              {LINKS.map(({ icon: Icon, title, meta, href, external }) => (
-                <a
-                  key={title}
-                  href={href}
-                  className="card-surface group block transform rounded-lg p-4 transition-all duration-300 hover:scale-[1.01] hover:border-accent"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="rounded-md bg-muted p-3 text-muted-foreground transition-colors group-hover:bg-brand group-hover:text-on-brand">
-                        <Icon className="h-6 w-6" />
-                      </div>
-                      <div>
-                        <div className="text-base font-bold">{title}</div>
-                        <p className="mono-label mt-1 text-muted-foreground">
-                          {meta}
-                        </p>
-                      </div>
-                    </div>
-                    {external ? (
-                      <ExternalLink className="h-5 w-5 text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-accent-strong" />
-                    ) : (
-                      <ChevronRight className="h-5 w-5 text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-accent-strong" />
-                    )}
-                  </div>
-                </a>
-              ))}
+              {LINKS.map((link) =>
+                link.action === "tarot" ? (
+                  <button
+                    key={link.title}
+                    type="button"
+                    onClick={(e) => {
+                      castMagicFrom(e)
+                      setTarot(true)
+                    }}
+                    className={`${LINK_ROW} arcana-row w-full text-left`}
+                  >
+                    <LinkFace link={link} />
+                  </button>
+                ) : (
+                  <a
+                    key={link.title}
+                    href={link.href}
+                    onClick={castMagicFrom}
+                    className={LINK_ROW}
+                  >
+                    <LinkFace link={link} />
+                  </a>
+                ),
+              )}
 
               <TipJar />
             </>
@@ -999,6 +1032,9 @@ export default function App() {
           </div>
         </Overlay>
       )}
+      {/* Tarot spread */}
+      {tarot && <TarotReading onClose={() => setTarot(false)} />}
+
       {/* Photo lightbox */}
       {lightbox && (
         <Lightbox
@@ -1007,6 +1043,8 @@ export default function App() {
           onClose={() => setLightbox(null)}
         />
       )}
+
+      <MagicDust />
 
       <Analytics beforeSend={(event) => (analyticsOptedOut() ? null : event)} />
     </div>
@@ -1027,7 +1065,7 @@ function BrandButton({
   children: React.ReactNode
   variant?: "block" | "pill"
   type?: "button" | "submit"
-  onClick?: () => void
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
   disabled?: boolean
   className?: string
 }) {
@@ -1604,5 +1642,713 @@ function Lightbox({
         )}
       </div>
     </Overlay>
+  )
+}
+
+/* The shared class string for a Links-tab row. It is a const rather than a
+   repeated literal because the row is an <a> for outbound links and a <button>
+   for the tarot -- two elements that have to look identical. */
+const LINK_ROW =
+  "card-surface group block transform rounded-lg p-4 transition-all duration-300 hover:scale-[1.01] hover:border-accent"
+
+/* The inside of a link row, identical for both element types. The tarot row is
+   the one that gets colour: an amber sigil box and a sparkle in place of the
+   chevron, since amber is what the magic is drawn in everywhere else. */
+function LinkFace({ link }: { link: LinkEntry }) {
+  const { icon: Icon, title, meta, external, action } = link
+  const magic = action === "tarot"
+
+  return (
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-4">
+        <div
+          className={`rounded-md p-3 transition-colors ${
+            magic
+              ? "arcana-sigil bg-accent-tint text-accent"
+              : "bg-muted text-muted-foreground group-hover:bg-brand group-hover:text-on-brand"
+          }`}
+        >
+          <Icon className="h-6 w-6" />
+        </div>
+        <div>
+          <div className="text-base font-bold">{title}</div>
+          <p className="mono-label mt-1 text-muted-foreground">{meta}</p>
+        </div>
+      </div>
+      {magic ? (
+        <Sparkles className="h-5 w-5 text-accent transition-transform group-hover:scale-125" />
+      ) : external ? (
+        <ExternalLink className="h-5 w-5 text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-accent-strong" />
+      ) : (
+        <ChevronRight className="h-5 w-5 text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-accent-strong" />
+      )}
+    </div>
+  )
+}
+
+/* ---------------------------------------------------------------------------
+   The magic — a canvas of sparks that dances across the screen when a link is
+   clicked. It sits above everything (including the overlays) and never takes a
+   pointer event, so it is decoration only: nothing here can swallow a tap.
+
+   The particles live in a module-level array rather than React state. They are
+   updated sixty times a second and never read during render, so putting them
+   in state would only buy re-renders nobody wants. `castMagic` pushes into
+   that array from anywhere; the mounted <MagicDust /> is what draws it.
+--------------------------------------------------------------------------- */
+type Mote = {
+  kind: "spark" | "comet" | "ring"
+  x: number
+  y: number
+  vx: number
+  vy: number
+  age: number
+  span: number
+  size: number
+  color: string
+  spin: number
+  wobble: number
+}
+
+const MOTES: Mote[] = []
+
+/* Set by <MagicDust /> while it is mounted. castMagic calls it to restart the
+   animation loop, which parks itself whenever the array empties. */
+let wakeMagic: (() => void) | null = null
+
+/* Ceiling on how much is in the air at once. One burst peaks around 240, so
+   this only bites when somebody mashes the link -- and it trims from the front
+   of the array, dropping the oldest sparks, which are the ones already nearly
+   burned out. Without it, ten fast clicks stack past two thousand sparkles and
+   an older phone starts dropping frames. */
+const MAX_MOTES = 700
+
+/* Amber and off-white carry the magic; the brand red is a rare ember so the
+   burst still ties back to the CTAs without turning into a colour wheel. */
+const MAGIC_INK = [
+  "#FFD84D",
+  "#FFD84D",
+  "#FFE9A3",
+  "#FFFDF7",
+  "#FF5433",
+]
+
+function prefersStillness() {
+  return (
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  )
+}
+
+function pickInk() {
+  return MAGIC_INK[Math.floor(Math.random() * MAGIC_INK.length)]
+}
+
+/* One burst: an expanding ring at the point of contact, a shower of sparks
+   around it, and a handful of comets that streak off across the viewport
+   shedding a trail as they go. */
+function castMagic(x: number, y: number) {
+  if (prefersStillness()) return
+
+  MOTES.push({
+    kind: "ring",
+    x,
+    y,
+    vx: 0,
+    vy: 0,
+    age: 0,
+    span: 620,
+    size: 150,
+    color: "#FFD84D",
+    spin: 0,
+    wobble: 0,
+  })
+
+  for (let i = 0; i < 44; i++) {
+    const angle = Math.random() * Math.PI * 2
+    const speed = 70 + Math.random() * 320
+    MOTES.push({
+      kind: "spark",
+      x,
+      y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - 60,
+      age: 0,
+      span: 620 + Math.random() * 900,
+      size: 3 + Math.random() * 8,
+      color: pickInk(),
+      spin: Math.random() * Math.PI,
+      wobble: Math.random() * Math.PI * 2,
+    })
+  }
+
+  for (let i = 0; i < 6; i++) {
+    const angle = Math.random() * Math.PI * 2
+    const speed = 620 + Math.random() * 620
+    MOTES.push({
+      kind: "comet",
+      x,
+      y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed * 0.7,
+      age: 0,
+      span: 900 + Math.random() * 500,
+      size: 4 + Math.random() * 4,
+      color: pickInk(),
+      spin: Math.random() * Math.PI,
+      wobble: Math.random() * Math.PI * 2,
+    })
+  }
+
+  if (MOTES.length > MAX_MOTES) MOTES.splice(0, MOTES.length - MAX_MOTES)
+  wakeMagic?.()
+}
+
+/* Bursts from where the pointer actually was. Keyboard activation reports
+   0,0 for the click coordinates, so fall back to the middle of the element --
+   otherwise every Enter press throws sparks from the top-left corner. */
+function castMagicFrom(e: React.MouseEvent<HTMLElement>) {
+  if (e.clientX !== 0 || e.clientY !== 0) {
+    castMagic(e.clientX, e.clientY)
+    return
+  }
+  const box = e.currentTarget.getBoundingClientRect()
+  castMagic(box.left + box.width / 2, box.top + box.height / 2)
+}
+
+/* A four-pointed sparkle: four spikes pulled in tight at the waist. Cheaper
+   than an image and it scales to any size without going soft. */
+function sparkle(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  r: number,
+  rot: number,
+) {
+  ctx.save()
+  ctx.translate(x, y)
+  ctx.rotate(rot)
+  ctx.beginPath()
+  ctx.moveTo(0, -r)
+  ctx.quadraticCurveTo(r * 0.16, -r * 0.16, r, 0)
+  ctx.quadraticCurveTo(r * 0.16, r * 0.16, 0, r)
+  ctx.quadraticCurveTo(-r * 0.16, r * 0.16, -r, 0)
+  ctx.quadraticCurveTo(-r * 0.16, -r * 0.16, 0, -r)
+  ctx.closePath()
+  ctx.fill()
+  ctx.restore()
+}
+
+/* One frame of the whole burst: age everything, drop what has burned out, move
+   what has not, and draw it. Module-level rather than buried in the component
+   below so the physics is reachable on its own -- it takes a context and a
+   timestep and touches nothing else.
+
+   Composite mode is "lighter" throughout, so overlapping sparks add up into a
+   glow instead of painting over each other. */
+function advanceMagic(
+  ctx: CanvasRenderingContext2D,
+  dt: number,
+  width: number,
+  height: number,
+) {
+  ctx.clearRect(0, 0, width, height)
+  ctx.globalCompositeOperation = "lighter"
+
+  for (let i = MOTES.length - 1; i >= 0; i--) {
+    const m = MOTES[i]
+    m.age += dt * 1000
+    const life = m.age / m.span
+    if (life >= 1) {
+      MOTES.splice(i, 1)
+      continue
+    }
+
+    if (m.kind === "ring") {
+      const eased = 1 - Math.pow(1 - life, 3)
+      ctx.globalAlpha = (1 - life) * 0.5
+      ctx.strokeStyle = m.color
+      ctx.lineWidth = 2.5 * (1 - life)
+      ctx.beginPath()
+      ctx.arc(m.x, m.y, eased * m.size, 0, Math.PI * 2)
+      ctx.stroke()
+      continue
+    }
+
+    m.wobble += dt * 6
+    if (m.kind === "spark") {
+      /* Drag plus a gentle lift: sparks slow down and drift upward like ash
+         off a fire rather than falling like confetti. */
+      m.vx *= 1 - 2.1 * dt
+      m.vy = m.vy * (1 - 2.1 * dt) - 26 * dt
+      m.x += m.vx * dt + Math.sin(m.wobble) * 14 * dt
+      m.y += m.vy * dt
+    } else {
+      m.vx *= 1 - 0.9 * dt
+      m.vy = m.vy * (1 - 0.9 * dt) + Math.sin(m.wobble * 0.8) * 260 * dt
+      m.x += m.vx * dt
+      m.y += m.vy * dt
+
+      /* The trail: one short-lived spark dropped at the comet's heel every
+         frame, which is what makes it read as a streak rather than a dot.
+         Appended past `i`, so it is not also stepped this frame. */
+      if (MOTES.length < MAX_MOTES) {
+        MOTES.push({
+          kind: "spark",
+          x: m.x,
+          y: m.y,
+          vx: (Math.random() - 0.5) * 40,
+          vy: (Math.random() - 0.5) * 40,
+          age: 0,
+          span: 320 + Math.random() * 380,
+          size: 2 + Math.random() * 4,
+          color: m.color,
+          spin: Math.random() * Math.PI,
+          wobble: Math.random() * Math.PI * 2,
+        })
+      }
+    }
+
+    /* Twinkle: alpha beats faster than the fade, so each spark blinks on its
+       way out instead of dimming evenly. */
+    const twinkle = 0.55 + 0.45 * Math.sin(m.wobble * 2.2)
+    ctx.globalAlpha = Math.max(0, (1 - life) * twinkle)
+    ctx.fillStyle = m.color
+    sparkle(ctx, m.x, m.y, m.size * (1 - life * 0.55), m.spin + m.wobble * 0.4)
+  }
+
+  ctx.globalAlpha = 1
+  ctx.globalCompositeOperation = "source-over"
+}
+
+/* The one canvas the whole app draws its magic on. The loop only runs while
+   there is something to draw: the last frame with an empty array clears the
+   canvas and drops the rAF, and castMagic starts it again. */
+function MagicDust() {
+  const ref = useRef<HTMLCanvasElement>(null)
+
+  useEffect(() => {
+    const canvas = ref.current
+    const ctx = canvas?.getContext("2d")
+    if (!canvas || !ctx) return
+
+    let frame = 0
+    let last = 0
+
+    function resize() {
+      if (!canvas || !ctx) return
+      const ratio = Math.min(window.devicePixelRatio || 1, 2)
+      canvas.width = Math.floor(window.innerWidth * ratio)
+      canvas.height = Math.floor(window.innerHeight * ratio)
+      canvas.style.width = `${window.innerWidth}px`
+      canvas.style.height = `${window.innerHeight}px`
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0)
+    }
+
+    function step(now: number) {
+      if (!canvas || !ctx) return
+      /* Clamp the step so a backgrounded tab does not resume with one enormous
+         frame that teleports every spark off screen. */
+      const dt = Math.min((now - last) / 1000, 0.05)
+      last = now
+
+      advanceMagic(ctx, dt, window.innerWidth, window.innerHeight)
+
+      if (MOTES.length === 0) {
+        frame = 0
+        return
+      }
+      frame = requestAnimationFrame(step)
+    }
+
+    resize()
+    window.addEventListener("resize", resize)
+    wakeMagic = () => {
+      if (frame) return
+      last = performance.now()
+      frame = requestAnimationFrame(step)
+    }
+
+    return () => {
+      cancelAnimationFrame(frame)
+      window.removeEventListener("resize", resize)
+      wakeMagic = null
+      MOTES.length = 0
+    }
+  }, [])
+
+  return <canvas ref={ref} className="magic-canvas" aria-hidden="true" />
+}
+
+/* ---------------------------------------------------------------------------
+   The Midnight Pull — a twenty-two card major arcana rewritten for this scene,
+   dealt three at a time. The deck is the whole point of the feature, so it
+   lives as data like every other list in this file; the reading is just the
+   two lines each card carries, picked by which way up it landed.
+--------------------------------------------------------------------------- */
+type Arcana = {
+  numeral: string
+  name: string
+  icon: typeof Star
+  upright: string
+  reversed: string
+}
+
+const ARCANA: Arcana[] = [
+  {
+    numeral: "0",
+    name: "The Runaway",
+    icon: Footprints,
+    upright: "A door left unlocked behind you. Go, before you talk yourself out of it.",
+    reversed: "You keep packing the same bag and never leaving the room.",
+  },
+  {
+    numeral: "I",
+    name: "The Amplifier",
+    icon: Speaker,
+    upright: "Everything you need is already plugged in. Turn it up.",
+    reversed: "All gain, no signal — volume standing in for something to say.",
+  },
+  {
+    numeral: "II",
+    name: "The Zine",
+    icon: Newspaper,
+    upright: "The truth gets photocopied at 3am and handed out for free.",
+    reversed: "A secret you are keeping has started keeping you.",
+  },
+  {
+    numeral: "III",
+    name: "The Soup Kitchen",
+    icon: Soup,
+    upright: "Feed people. It comes back multiplied, though never in cash.",
+    reversed: "Ladling from an empty pot. Eat something yourself first.",
+  },
+  {
+    numeral: "IV",
+    name: "The Landlord",
+    icon: Building,
+    upright: "A structure holding the keys. Know exactly what it wants from you.",
+    reversed: "The lock is cheaper than it looks. So is the fear.",
+  },
+  {
+    numeral: "V",
+    name: "The Scene",
+    icon: Megaphone,
+    upright: "Old heads, house rules, a room that already knows the words.",
+    reversed: "Tradition curdled into gatekeeping. Kick the door.",
+  },
+  {
+    numeral: "VI",
+    name: "The Split Seven-Inch",
+    icon: Disc,
+    upright: "Two sides, one record. Choose who you get pressed against.",
+    reversed: "One side is doing all the pressing. Renegotiate.",
+  },
+  {
+    numeral: "VII",
+    name: "The Van",
+    icon: Truck,
+    upright: "Six hundred miles on a bad alternator and sheer will. It runs.",
+    reversed: "Driving fast in the wrong direction. Pull over.",
+  },
+  {
+    numeral: "VIII",
+    name: "The Picket",
+    icon: Fence,
+    upright: "Hold the line gently. Strength here is patience, not volume.",
+    reversed: "Bravado covering exhaustion. Ask for a shift change.",
+  },
+  {
+    numeral: "IX",
+    name: "The Night Shift",
+    icon: Flashlight,
+    upright: "Work nobody sees, done under one bare bulb. It still counts.",
+    reversed: "Isolation dressed up as discipline. Call someone.",
+  },
+  {
+    numeral: "X",
+    name: "The Turntable",
+    icon: Radio,
+    upright: "The record comes back around. New needle, same groove.",
+    reversed: "Skipping. You have played this one bar forty times.",
+  },
+  {
+    numeral: "XI",
+    name: "The Court Date",
+    icon: Gavel,
+    upright: "The receipts matter now. Show up, and show up sober.",
+    reversed: "The scales are weighted. Refusing to play is also a verdict.",
+  },
+  {
+    numeral: "XII",
+    name: "The Crowd Surf",
+    icon: Waves,
+    upright: "Let go and be carried. You cannot steer this part.",
+    reversed: "No hands under you yet. Wait for the chorus.",
+  },
+  {
+    numeral: "XIII",
+    name: "The Last Set",
+    icon: Skull,
+    upright: "The band ends. It was always going to. Play it loud anyway.",
+    reversed: "Keeping a corpse on life support because you like the poster.",
+  },
+  {
+    numeral: "XIV",
+    name: "The Four-Track",
+    icon: Cable,
+    upright: "Mix it slow. Every part gets a level and nothing clips.",
+    reversed: "One channel is buried, and it is the one carrying the song.",
+  },
+  {
+    numeral: "XV",
+    name: "The Habit",
+    icon: Cigarette,
+    upright: "You know exactly what this is. It knows you too.",
+    reversed: "The chain has gone slack. This is the week to walk.",
+  },
+  {
+    numeral: "XVI",
+    name: "The Eviction",
+    icon: Bomb,
+    upright: "The floor goes. What is left standing was never the building.",
+    reversed: "A slow collapse. You can still pick the day you leave.",
+  },
+  {
+    numeral: "XVII",
+    name: "The Fire Escape",
+    icon: Star,
+    upright: "A thin iron way out, and sky above it. Breathe.",
+    reversed: "You have forgotten which window it is under. Look up.",
+  },
+  {
+    numeral: "XVIII",
+    name: "The Blackout",
+    icon: CloudMoon,
+    upright: "The whole block goes dark and everything looks like something else.",
+    reversed: "The lights come up. Some of it was never there.",
+  },
+  {
+    numeral: "XIX",
+    name: "The Morning After",
+    icon: Sunrise,
+    upright: "Coffee, ringing ears, and proof that you survived the night.",
+    reversed: "Daylight you are hiding from. It is not the enemy.",
+  },
+  {
+    numeral: "XX",
+    name: "The Reunion Show",
+    icon: Bell,
+    upright: "Everyone you buried turns up for one night. Answer the call.",
+    reversed: "Do not reform for the money. You already know this.",
+  },
+  {
+    numeral: "XXI",
+    name: "The City",
+    icon: Globe,
+    upright: "Concrete, sirens, every friend you have. The circuit closes.",
+    reversed: "Still circling the block. The way in is a person, not a place.",
+  },
+]
+
+/* The three seats in the spread, in the order they are dealt. */
+const SPREAD = [
+  { key: "was", label: "What Was", note: "the tape you cannot unhear" },
+  { key: "is", label: "What Is", note: "the room you are standing in" },
+  { key: "next", label: "What Comes", note: "the door at the end of the hall" },
+] as const
+
+type Pull = {
+  arcana: Arcana
+  reversed: boolean
+  shown: boolean
+}
+
+/* Shuffle the full deck and cut three off the top, so no card can turn up
+   twice in one spread. Roughly a third land reversed. */
+function dealSpread(): Pull[] {
+  const deck = ARCANA.slice()
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    const held = deck[i]
+    deck[i] = deck[j]
+    deck[j] = held
+  }
+  return deck.slice(0, 3).map((arcana) => ({
+    arcana,
+    reversed: Math.random() < 0.34,
+    shown: false,
+  }))
+}
+
+function TarotReading({ onClose }: { onClose: () => void }) {
+  /* Bumped on every shuffle and used as the grid's key, which is what makes
+     React throw the old cards away so the deal animation plays again. */
+  const [round, setRound] = useState(0)
+  const [pulls, setPulls] = useState<Pull[]>(dealSpread)
+  const shown = pulls.filter((pull) => pull.shown)
+  const allShown = shown.length === pulls.length
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose()
+    }
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  }, [onClose])
+
+  function turn(index: number, e: React.MouseEvent<HTMLElement>) {
+    if (pulls[index].shown) return
+    castMagicFrom(e)
+    setPulls((prev) =>
+      prev.map((pull, i) => (i === index ? { ...pull, shown: true } : pull)),
+    )
+  }
+
+  function turnAll(e: React.MouseEvent<HTMLElement>) {
+    castMagicFrom(e)
+    setPulls((prev) => prev.map((pull) => ({ ...pull, shown: true })))
+  }
+
+  function reshuffle(e: React.MouseEvent<HTMLElement>) {
+    castMagicFrom(e)
+    setPulls(dealSpread())
+    setRound((r) => r + 1)
+  }
+
+  return (
+    <Overlay onClose={onClose} size="md">
+      {/* The spread is the tallest thing in any modal here -- three cards plus
+          three readings clears a short phone viewport, and Overlay clips its
+          children rather than scrolling them. So this panel does its own. */}
+      <div className="arcana-veil max-h-[85vh] overflow-y-auto p-6">
+        <span className="mono-label text-accent-strong">Tarot</span>
+        <h2 className="mt-1 text-2xl font-bold">The Midnight Pull</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Twenty-two cards, cut in the dark.{" "}
+          {allShown ? "The spread is open." : "Tap each one to turn it."}
+        </p>
+
+        <div key={round} className="mt-6 grid grid-cols-3 gap-2.5 sm:gap-4">
+          {pulls.map((pull, i) => (
+            <div key={SPREAD[i].key} className="flex flex-col items-center">
+              <span className="mono-label mb-2 text-center text-muted-foreground">
+                {SPREAD[i].label}
+              </span>
+              <TarotCard pull={pull} index={i} onTurn={(e) => turn(i, e)} />
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6 space-y-3">
+          {pulls.map((pull, i) =>
+            pull.shown ? (
+              <div
+                key={`${round}-${SPREAD[i].key}`}
+                className="arcana-reading rounded-md border border-border bg-muted/40 p-3"
+              >
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="text-sm font-bold">
+                    {pull.arcana.name}
+                    {pull.reversed && (
+                      <span className="ml-2 text-xs font-medium text-accent-strong">
+                        reversed
+                      </span>
+                    )}
+                  </span>
+                  <span className="mono-label shrink-0 text-muted-foreground">
+                    {SPREAD[i].label}
+                  </span>
+                </div>
+                <p className="mt-1.5 text-sm leading-snug text-muted-foreground">
+                  {pull.reversed ? pull.arcana.reversed : pull.arcana.upright}
+                </p>
+              </div>
+            ) : (
+              <div
+                key={`${round}-${SPREAD[i].key}`}
+                className="rounded-md border border-dashed border-border/70 p-3"
+              >
+                <p className="mono-label text-muted-foreground">
+                  {SPREAD[i].label} — {SPREAD[i].note}
+                </p>
+              </div>
+            ),
+          )}
+        </div>
+
+        {allShown && (
+          <p className="arcana-reading mt-5 text-center text-xs italic text-muted-foreground">
+            The deck has no authority over you. Neither does anyone else.
+          </p>
+        )}
+
+        <BrandButton
+          className="mt-6"
+          onClick={allShown ? reshuffle : turnAll}
+        >
+          {allShown ? (
+            <>
+              <Shuffle size={18} /> Shuffle and cut again
+            </>
+          ) : (
+            <>
+              <Sparkles size={18} /> Turn all three
+            </>
+          )}
+        </BrandButton>
+      </div>
+    </Overlay>
+  )
+}
+
+/* One card in the spread. The flip is a CSS 3D rotation on .tarot-inner, so
+   the two faces have to be siblings pinned on top of each other -- the state
+   here only decides which way the container is turned. A reversed card rotates
+   its artwork rather than the face itself, which would fight the flip. */
+function TarotCard({
+  pull,
+  index,
+  onTurn,
+}: {
+  pull: Pull
+  index: number
+  onTurn: (e: React.MouseEvent<HTMLElement>) => void
+}) {
+  const Glyph = pull.arcana.icon
+
+  return (
+    <button
+      type="button"
+      onClick={onTurn}
+      disabled={pull.shown}
+      data-face={pull.shown ? "up" : "down"}
+      style={{ "--deal": index } as React.CSSProperties}
+      aria-label={
+        pull.shown
+          ? `${pull.arcana.name}${pull.reversed ? ", reversed" : ""}`
+          : "Turn this card"
+      }
+      className="tarot-card"
+    >
+      <div className="tarot-inner">
+        {/* Both faces are always in the DOM -- that is what the CSS flip turns
+            between. backface-visibility hides the one facing away from the eye,
+            so aria-hidden hides the same one from a screen reader. */}
+        <div className="tarot-back" aria-hidden={pull.shown}>
+          <div className="tarot-frame" />
+          <Sparkles className="tarot-mark h-7 w-7" />
+        </div>
+
+        <div className="tarot-front" aria-hidden={!pull.shown}>
+          <div className="tarot-frame" />
+          <div className="tarot-art" data-reversed={pull.reversed}>
+            <span className="tarot-numeral">{pull.arcana.numeral}</span>
+            <Glyph className="h-7 w-7 text-accent" />
+            <span className="tarot-name">{pull.arcana.name}</span>
+          </div>
+        </div>
+      </div>
+    </button>
   )
 }

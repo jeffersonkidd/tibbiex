@@ -419,3 +419,268 @@ body::after {
     display: none;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   The magic layer — one canvas pinned over the whole viewport for the sparks
+   thrown by a link click. It sits above the modals (z-50) so a burst thrown
+   inside the tarot spread still dances across the panel, and it never takes a
+   pointer event, so nothing here can swallow a tap.
+--------------------------------------------------------------------------- */
+.magic-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Tarot — the Midnight Pull.
+
+   Amber, not brand red, is the magic colour throughout: red stays reserved for
+   the CTAs and the active tab, so the spread reads as lit from a different
+   source than the buttons around it.
+--------------------------------------------------------------------------- */
+
+/* The tarot row in the Links tab, marked out from the plain outbound rows by a
+   slow amber breath rather than by a different shape. */
+.arcana-row {
+  animation: arcana-breathe 4.6s ease-in-out infinite;
+}
+
+@keyframes arcana-breathe {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 216, 77, 0);
+  }
+  50% {
+    box-shadow: 0 0 24px -8px rgba(255, 216, 77, 0.55);
+  }
+}
+
+.arcana-sigil {
+  animation: arcana-breathe 4.6s ease-in-out infinite;
+}
+
+/* A faint amber wash bleeding down over the spread, so the panel behind the
+   cards is lit rather than flat. */
+.arcana-veil {
+  background-image: radial-gradient(
+    120% 60% at 50% 0%,
+    rgba(255, 216, 77, 0.09) 0%,
+    transparent 62%
+  );
+}
+
+/* Each reading fades up as its card turns, so the text arrives with the flip
+   instead of snapping in under it. */
+.arcana-reading {
+  animation: arcana-rise 420ms ease-out backwards;
+}
+
+@keyframes arcana-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The card itself is only the perspective box and the deal animation; the flip
+   lives on .tarot-inner below. --deal is set per card in the markup and staggers
+   the deal across the three seats. */
+.tarot-card {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  perspective: 900px;
+  animation: tarot-deal 560ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: calc(var(--deal, 0) * 130ms);
+}
+
+.tarot-card:disabled {
+  cursor: default;
+}
+
+@keyframes tarot-deal {
+  from {
+    opacity: 0;
+    transform: translateY(28px) rotate(-9deg) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The flip. Both faces are pinned on top of each other inside this box and
+   hidden from behind, so rotating it a half turn swaps which one is showing. */
+.tarot-inner {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  transform-style: preserve-3d;
+  transition: transform 780ms cubic-bezier(0.2, 0.85, 0.25, 1);
+}
+
+.tarot-card[data-face="up"] .tarot-inner {
+  transform: rotateY(180deg);
+}
+
+.tarot-card[data-face="down"]:hover .tarot-inner {
+  transform: translateY(-5px);
+}
+
+.tarot-back,
+.tarot-front {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--border\/default\/secondary);
+  border-radius: calc(var(--radius\/400) * 1px);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Card back: the same screen-print hatching as the page, pulled up in amber. */
+.tarot-back {
+  background-color: #0e0f13;
+  background-image:
+    repeating-linear-gradient(
+      -45deg,
+      rgba(255, 216, 77, 0.09) 0px,
+      rgba(255, 216, 77, 0.09) 1px,
+      transparent 1px,
+      transparent 6px
+    ),
+    radial-gradient(120% 100% at 50% 0%, rgba(255, 216, 77, 0.16) 0%, transparent 62%);
+  color: rgba(255, 216, 77, 0.75);
+}
+
+/* A sheen drifting across the backs, so the deck looks alive while it waits. */
+.tarot-back::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 40%,
+    rgba(255, 216, 77, 0.22) 50%,
+    transparent 60%
+  );
+  transform: translateX(-130%);
+  animation: tarot-sheen 3.8s ease-in-out infinite;
+  animation-delay: calc(var(--deal, 0) * 420ms);
+}
+
+@keyframes tarot-sheen {
+  0% {
+    transform: translateX(-130%);
+  }
+  55%,
+  100% {
+    transform: translateX(130%);
+  }
+}
+
+.tarot-mark {
+  animation: tarot-turn 16s linear infinite;
+}
+
+@keyframes tarot-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* The face, parked a half turn round so the flip lands it upright. */
+.tarot-front {
+  transform: rotateY(180deg);
+  background-color: #101117;
+  background-image: radial-gradient(
+    95% 70% at 50% 0%,
+    rgba(255, 216, 77, 0.14) 0%,
+    transparent 66%
+  );
+  color: var(--text\/default\/default);
+}
+
+/* One flash of amber as the card lands. */
+.tarot-card[data-face="up"] .tarot-front {
+  animation: tarot-strike 1500ms ease-out 260ms;
+}
+
+@keyframes tarot-strike {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 216, 77, 0);
+  }
+  22% {
+    box-shadow: 0 0 32px 3px rgba(255, 216, 77, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 216, 77, 0);
+  }
+}
+
+/* The hairline inside the border, on both faces. */
+.tarot-frame {
+  position: absolute;
+  inset: 5px;
+  border: 1px solid rgba(255, 216, 77, 0.28);
+  border-radius: calc(var(--radius\/100) * 1px);
+  pointer-events: none;
+}
+
+/* A reversed card turns its artwork, not its face -- rotating the face itself
+   would fight the flip transform above. */
+.tarot-art {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 10px 6px;
+  text-align: center;
+}
+
+.tarot-art[data-reversed="true"] {
+  transform: rotate(180deg);
+}
+
+.tarot-numeral {
+  font-family: "Roboto Mono", var(--default-mono-font-family);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: rgba(255, 216, 77, 0.75);
+}
+
+.tarot-name {
+  font-family: "Special Elite", cursive, var(--default-font-family, sans-serif);
+  font-size: 11px;
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arcana-row,
+  .arcana-sigil,
+  .arcana-reading,
+  .tarot-card,
+  .tarot-back::after,
+  .tarot-mark,
+  .tarot-card[data-face="up"] .tarot-front {
+    animation: none;
+  }
+  .tarot-inner,
+  .tarot-card[data-face="down"]:hover .tarot-inner {
+    transition: none;
+  }
+  .tarot-card[data-face="down"]:hover .tarot-inner {
+    transform: none;
+  }
+}
