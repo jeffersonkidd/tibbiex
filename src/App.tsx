@@ -671,14 +671,14 @@ export default function App() {
           <MessageSquare className="h-4 w-4" /> Book / Contact
         </BrandButton>
 
-        {/* Rehearsal Status */}
+        {/* Status Bar */}
         <div className="card-surface mb-8 rounded-lg p-5">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
               <ReaganYouthMark />
               <div>
                 <div className="text-base font-bold">
-                  Practicing w/ Reagan Youth
+                  Practicing with<br />Reagan Youth
                 </div>
                 <p className="mono-label mt-1 text-muted-foreground">
                   The next generation — L.E.S.
