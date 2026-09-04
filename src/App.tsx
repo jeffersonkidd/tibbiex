@@ -2012,10 +2012,12 @@ const READINGS: Reading[] = [
 
 /* The menu. One tier is always selected -- the hour, since it is the one most
    people want -- so the button at the bottom always has something to say. Like
-   the tip jar, this panel only composes a hand-off: the deposit opens Venmo in
-   a new tab and the time itself is settled in a DM. */
+   the tip jar, this panel only composes a hand-off: it takes no money itself,
+   it hands the deposit to whichever rail the reader picked. */
 function ReadingMenu({ onClose }: { onClose: () => void }) {
   const [pickedId, setPickedId] = useState("hour")
+  const [rail, setRail] = useState<Rail>("venmo")
+  const [sending, setSending] = useState(false)
   const picked = READINGS.find((reading) => reading.id === pickedId) ?? READINGS[0]
 
   useEffect(() => {
@@ -2031,13 +2033,32 @@ function ReadingMenu({ onClose }: { onClose: () => void }) {
     setPickedId(id)
   }
 
-  function hold(e: React.MouseEvent<HTMLElement>) {
+  /* The same two rails the tip jar runs on, carrying the tier as the note.
+     Venmo opens in a new tab; Stripe takes the whole tab, because its return
+     trip only lands where it left from. */
+  async function hold(e: React.MouseEvent<HTMLElement>) {
     castMagicFrom(e)
-    window.open(
-      venmoPayUrl(picked.price, `${picked.minutes}-minute reading`),
-      "_blank",
-      "noopener,noreferrer",
-    )
+    const note = `${picked.minutes}-minute reading`
+
+    if (rail === "venmo") {
+      window.open(
+        venmoPayUrl(picked.price, note),
+        "_blank",
+        "noopener,noreferrer",
+      )
+      toast.success("Venmo is open — the slot is yours once it lands.")
+      return
+    }
+
+    setSending(true)
+    try {
+      window.location.href = await stripeCheckoutUrl(picked.price, note)
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Could not reach Stripe.",
+      )
+      setSending(false)
+    }
   }
 
   return (
@@ -2071,9 +2092,37 @@ function ReadingMenu({ onClose }: { onClose: () => void }) {
           authority over you.
         </p>
 
-        <BrandButton className="mt-4" onClick={hold}>
-          <Sparkles size={18} /> Hold {picked.minutes} minutes — ${picked.price}
+        {/* Which rail the deposit travels on -- the same segmented control the
+            tip jar uses, so "selected" looks the same everywhere on the page. */}
+        <div className="mt-4 flex gap-2 rounded-md border border-border bg-input-background p-1">
+          {RAILS.map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setRail(id)}
+              className={`flex flex-1 items-center justify-center gap-1.5 rounded-sm py-2 text-xs font-bold transition-all ${
+                rail === id
+                  ? "brand-surface brand-pop bg-brand text-on-brand"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <Icon size={14} /> {label}
+            </button>
+          ))}
+        </div>
+
+        <BrandButton className="mt-3" onClick={hold} disabled={sending}>
+          <Sparkles size={18} />
+          {sending
+            ? "Opening Stripe…"
+            : `Hold ${picked.minutes} minutes — $${picked.price}`}
         </BrandButton>
+
+        <p className="mt-2 text-center text-[11px] text-muted-foreground">
+          {rail === "venmo"
+            ? `Opens Venmo to pay @${VENMO_HANDLE} directly.`
+            : "Card payments are processed by Stripe."}
+        </p>
       </div>
     </Overlay>
   )
