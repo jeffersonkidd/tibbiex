@@ -671,21 +671,30 @@ export default function App() {
           <MessageSquare className="h-4 w-4" /> Book / Contact
         </BrandButton>
 
-        {/* Studio Status */}
+        {/* Rehearsal Status */}
         <div className="card-surface mb-8 rounded-lg p-5">
-          <div className="flex items-center justify-between">
-            <div className="text-base font-bold">Studio Status</div>
-            <span className="mono-label text-muted-foreground">66%</span>
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <ReaganYouthMark />
+              <div>
+                <div className="text-base font-bold">
+                  Practicing with Reagan Youth
+                </div>
+                <p className="mono-label mt-1 text-muted-foreground">
+                  The next generation — L.E.S.
+                </p>
+              </div>
+            </div>
+            <span className="mono-label shrink-0 text-muted-foreground">
+              80%
+            </span>
           </div>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Recording new bass tracks for the split EP. Rehearsing the fall
-            setlist.
+          <p className="mt-3 text-xs text-muted-foreground">
+            Three nights a week in a Lower East Side basement, running the set
+            end to end. Carrying the songs forward, not covering them.
           </p>
-          <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-muted">
-            <div
-              className="h-full rounded-full bg-accent"
-              style={{ width: "66%" }}
-            />
+          <div className="meter-track mt-3 h-2.5">
+            <div className="meter-fill" style={{ width: "80%" }} />
           </div>
         </div>
 
@@ -1064,6 +1073,24 @@ function BrandButton({
     >
       {children}
     </button>
+  )
+}
+
+/* The Reagan Youth mark on the rehearsal panel, set in the zine display face
+   rather than pulled from an image. The band's own logo is hand-drawn artwork
+   nobody has published under a licence this repo could use, and hotlinking a
+   merch shop's copy would break the first time they reorganise their assets.
+   Drop the real file in src/assets/ and swap the two spans for an <img> if you
+   have a copy you are entitled to use. */
+function ReaganYouthMark() {
+  return (
+    <div
+      aria-label="Reagan Youth"
+      className="ry-mark grid shrink-0 place-items-center rounded-md border border-border bg-muted/60 px-2 py-1.5 text-center leading-none"
+    >
+      <span className="ry-mark-top">REAGAN</span>
+      <span className="ry-mark-bottom">YOUTH</span>
+    </div>
   )
 }
 
