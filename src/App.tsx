@@ -605,7 +605,7 @@ export default function App() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/40 to-transparent" />
             <span className="mono-label absolute left-4 top-4 flex items-center gap-1.5 rounded-full border border-border bg-card/90 px-2.5 py-1 text-accent-strong backdrop-blur-sm">
-              <Radio size={12} /> Recording Now
+              <Radio size={12} /> Practicing Now
             </span>
           </div>
 
