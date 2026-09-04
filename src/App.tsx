@@ -27,27 +27,8 @@ import {
   Calendar,
   Guitar,
   Sparkles,
-  Shuffle,
-  Footprints,
-  Speaker,
-  Newspaper,
-  Soup,
-  Building,
-  Megaphone,
-  Truck,
-  Fence,
-  Flashlight,
-  Gavel,
-  Waves,
-  Skull,
-  Cable,
-  Cigarette,
-  Bomb,
+  Check,
   Star,
-  CloudMoon,
-  Sunrise,
-  Bell,
-  Globe,
 } from "lucide-react"
 
 import profilePic from "./assets/tibbie_profile.jpeg"
@@ -206,12 +187,12 @@ const BUY: ShopItem[] = [
 
 /* The first tab. Rows are outbound links, except one: a row carrying `action`
    is a button that opens something inside the app instead of navigating away.
-   The tarot spread is the only one so far. */
+   The reading menu is the only one so far. */
 const LINKS = [
   {
     icon: Sparkles,
     title: "The Midnight Pull",
-    meta: "Tarot — three cards, no gods",
+    meta: "Tarot readings — 30, 60 or 90 minutes",
     href: "#",
     action: "tarot",
   },
@@ -1032,8 +1013,8 @@ export default function App() {
           </div>
         </Overlay>
       )}
-      {/* Tarot spread */}
-      {tarot && <TarotReading onClose={() => setTarot(false)} />}
+      {/* Reading menu */}
+      {tarot && <ReadingMenu onClose={() => setTarot(false)} />}
 
       {/* Photo lightbox */}
       {lightbox && (
@@ -1981,213 +1962,61 @@ function MagicDust() {
 }
 
 /* ---------------------------------------------------------------------------
-   The Midnight Pull — a twenty-two card major arcana rewritten for this scene,
-   dealt three at a time. The deck is the whole point of the feature, so it
-   lives as data like every other list in this file; the reading is just the
-   two lines each card carries, picked by which way up it landed.
+   The Midnight Pull — readings sold by the half hour. Three tiers, and like
+   every other list in this file they live as data: the panel below only lays
+   them out, so changing what a session costs or includes is a data edit.
+
+   Amber, not brand red, stays the colour of this corner of the app.
 --------------------------------------------------------------------------- */
-type Arcana = {
-  numeral: string
-  name: string
-  icon: typeof Star
-  upright: string
-  reversed: string
+type Reading = {
+  id: string
+  label: string
+  minutes: number
+  price: number
+  blurb: string
+  includes: string[]
+  featured?: boolean
 }
 
-const ARCANA: Arcana[] = [
+const READINGS: Reading[] = [
   {
-    numeral: "0",
-    name: "The Runaway",
-    icon: Footprints,
-    upright: "A door left unlocked behind you. Go, before you talk yourself out of it.",
-    reversed: "You keep packing the same bag and never leaving the room.",
+    id: "half",
+    label: "Half Hour",
+    minutes: 30,
+    price: 45,
+    blurb: "One question, cut clean.",
+    includes: ["Three-card spread", "Voice note recap"],
   },
   {
-    numeral: "I",
-    name: "The Amplifier",
-    icon: Speaker,
-    upright: "Everything you need is already plugged in. Turn it up.",
-    reversed: "All gain, no signal — volume standing in for something to say.",
+    id: "hour",
+    label: "Full Hour",
+    minutes: 60,
+    price: 80,
+    blurb: "The whole board, front to back.",
+    includes: [
+      "Celtic cross",
+      "Voice note recap",
+      "One follow-up card by text",
+    ],
+    featured: true,
   },
   {
-    numeral: "II",
-    name: "The Zine",
-    icon: Newspaper,
-    upright: "The truth gets photocopied at 3am and handed out for free.",
-    reversed: "A secret you are keeping has started keeping you.",
-  },
-  {
-    numeral: "III",
-    name: "The Soup Kitchen",
-    icon: Soup,
-    upright: "Feed people. It comes back multiplied, though never in cash.",
-    reversed: "Ladling from an empty pot. Eat something yourself first.",
-  },
-  {
-    numeral: "IV",
-    name: "The Landlord",
-    icon: Building,
-    upright: "A structure holding the keys. Know exactly what it wants from you.",
-    reversed: "The lock is cheaper than it looks. So is the fear.",
-  },
-  {
-    numeral: "V",
-    name: "The Scene",
-    icon: Megaphone,
-    upright: "Old heads, house rules, a room that already knows the words.",
-    reversed: "Tradition curdled into gatekeeping. Kick the door.",
-  },
-  {
-    numeral: "VI",
-    name: "The Split Seven-Inch",
-    icon: Disc,
-    upright: "Two sides, one record. Choose who you get pressed against.",
-    reversed: "One side is doing all the pressing. Renegotiate.",
-  },
-  {
-    numeral: "VII",
-    name: "The Van",
-    icon: Truck,
-    upright: "Six hundred miles on a bad alternator and sheer will. It runs.",
-    reversed: "Driving fast in the wrong direction. Pull over.",
-  },
-  {
-    numeral: "VIII",
-    name: "The Picket",
-    icon: Fence,
-    upright: "Hold the line gently. Strength here is patience, not volume.",
-    reversed: "Bravado covering exhaustion. Ask for a shift change.",
-  },
-  {
-    numeral: "IX",
-    name: "The Night Shift",
-    icon: Flashlight,
-    upright: "Work nobody sees, done under one bare bulb. It still counts.",
-    reversed: "Isolation dressed up as discipline. Call someone.",
-  },
-  {
-    numeral: "X",
-    name: "The Turntable",
-    icon: Radio,
-    upright: "The record comes back around. New needle, same groove.",
-    reversed: "Skipping. You have played this one bar forty times.",
-  },
-  {
-    numeral: "XI",
-    name: "The Court Date",
-    icon: Gavel,
-    upright: "The receipts matter now. Show up, and show up sober.",
-    reversed: "The scales are weighted. Refusing to play is also a verdict.",
-  },
-  {
-    numeral: "XII",
-    name: "The Crowd Surf",
-    icon: Waves,
-    upright: "Let go and be carried. You cannot steer this part.",
-    reversed: "No hands under you yet. Wait for the chorus.",
-  },
-  {
-    numeral: "XIII",
-    name: "The Last Set",
-    icon: Skull,
-    upright: "The band ends. It was always going to. Play it loud anyway.",
-    reversed: "Keeping a corpse on life support because you like the poster.",
-  },
-  {
-    numeral: "XIV",
-    name: "The Four-Track",
-    icon: Cable,
-    upright: "Mix it slow. Every part gets a level and nothing clips.",
-    reversed: "One channel is buried, and it is the one carrying the song.",
-  },
-  {
-    numeral: "XV",
-    name: "The Habit",
-    icon: Cigarette,
-    upright: "You know exactly what this is. It knows you too.",
-    reversed: "The chain has gone slack. This is the week to walk.",
-  },
-  {
-    numeral: "XVI",
-    name: "The Eviction",
-    icon: Bomb,
-    upright: "The floor goes. What is left standing was never the building.",
-    reversed: "A slow collapse. You can still pick the day you leave.",
-  },
-  {
-    numeral: "XVII",
-    name: "The Fire Escape",
-    icon: Star,
-    upright: "A thin iron way out, and sky above it. Breathe.",
-    reversed: "You have forgotten which window it is under. Look up.",
-  },
-  {
-    numeral: "XVIII",
-    name: "The Blackout",
-    icon: CloudMoon,
-    upright: "The whole block goes dark and everything looks like something else.",
-    reversed: "The lights come up. Some of it was never there.",
-  },
-  {
-    numeral: "XIX",
-    name: "The Morning After",
-    icon: Sunrise,
-    upright: "Coffee, ringing ears, and proof that you survived the night.",
-    reversed: "Daylight you are hiding from. It is not the enemy.",
-  },
-  {
-    numeral: "XX",
-    name: "The Reunion Show",
-    icon: Bell,
-    upright: "Everyone you buried turns up for one night. Answer the call.",
-    reversed: "Do not reform for the money. You already know this.",
-  },
-  {
-    numeral: "XXI",
-    name: "The City",
-    icon: Globe,
-    upright: "Concrete, sirens, every friend you have. The circuit closes.",
-    reversed: "Still circling the block. The way in is a person, not a place.",
+    id: "long",
+    label: "Hour and a Half",
+    minutes: 90,
+    price: 110,
+    blurb: "Deep read, nobody watching the clock.",
+    includes: ["Two spreads, your pick", "Voice note recap", "Written summary"],
   },
 ]
 
-/* The three seats in the spread, in the order they are dealt. */
-const SPREAD = [
-  { key: "was", label: "What Was", note: "the tape you cannot unhear" },
-  { key: "is", label: "What Is", note: "the room you are standing in" },
-  { key: "next", label: "What Comes", note: "the door at the end of the hall" },
-] as const
-
-type Pull = {
-  arcana: Arcana
-  reversed: boolean
-  shown: boolean
-}
-
-/* Shuffle the full deck and cut three off the top, so no card can turn up
-   twice in one spread. Roughly a third land reversed. */
-function dealSpread(): Pull[] {
-  const deck = ARCANA.slice()
-  for (let i = deck.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    const held = deck[i]
-    deck[i] = deck[j]
-    deck[j] = held
-  }
-  return deck.slice(0, 3).map((arcana) => ({
-    arcana,
-    reversed: Math.random() < 0.34,
-    shown: false,
-  }))
-}
-
-function TarotReading({ onClose }: { onClose: () => void }) {
-  /* Bumped on every shuffle and used as the grid's key, which is what makes
-     React throw the old cards away so the deal animation plays again. */
-  const [round, setRound] = useState(0)
-  const [pulls, setPulls] = useState<Pull[]>(dealSpread)
-  const shown = pulls.filter((pull) => pull.shown)
-  const allShown = shown.length === pulls.length
+/* The menu. One tier is always selected -- the hour, since it is the one most
+   people want -- so the button at the bottom always has something to say. Like
+   the tip jar, this panel only composes a hand-off: the deposit opens Venmo in
+   a new tab and the time itself is settled in a DM. */
+function ReadingMenu({ onClose }: { onClose: () => void }) {
+  const [pickedId, setPickedId] = useState("hour")
+  const picked = READINGS.find((reading) => reading.id === pickedId) ?? READINGS[0]
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -2197,158 +2026,100 @@ function TarotReading({ onClose }: { onClose: () => void }) {
     return () => window.removeEventListener("keydown", onKey)
   }, [onClose])
 
-  function turn(index: number, e: React.MouseEvent<HTMLElement>) {
-    if (pulls[index].shown) return
+  function pick(id: string, e: React.MouseEvent<HTMLElement>) {
     castMagicFrom(e)
-    setPulls((prev) =>
-      prev.map((pull, i) => (i === index ? { ...pull, shown: true } : pull)),
+    setPickedId(id)
+  }
+
+  function hold(e: React.MouseEvent<HTMLElement>) {
+    castMagicFrom(e)
+    window.open(
+      venmoPayUrl(picked.price, `${picked.minutes}-minute reading`),
+      "_blank",
+      "noopener,noreferrer",
     )
-  }
-
-  function turnAll(e: React.MouseEvent<HTMLElement>) {
-    castMagicFrom(e)
-    setPulls((prev) => prev.map((pull) => ({ ...pull, shown: true })))
-  }
-
-  function reshuffle(e: React.MouseEvent<HTMLElement>) {
-    castMagicFrom(e)
-    setPulls(dealSpread())
-    setRound((r) => r + 1)
   }
 
   return (
     <Overlay onClose={onClose} size="md">
-      {/* The spread is the tallest thing in any modal here -- three cards plus
-          three readings clears a short phone viewport, and Overlay clips its
-          children rather than scrolling them. So this panel does its own. */}
+      {/* Three cards plus their lists clear a short phone viewport, and Overlay
+          clips its children rather than scrolling them. So this panel does its
+          own scrolling. */}
       <div className="arcana-veil max-h-[85vh] overflow-y-auto p-6">
-        <span className="mono-label text-accent-strong">Tarot</span>
+        <span className="mono-label text-accent-strong">Readings</span>
         <h2 className="mt-1 text-2xl font-bold">The Midnight Pull</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Twenty-two cards, cut in the dark.{" "}
-          {allShown ? "The spread is open." : "Tap each one to turn it."}
+          Twenty-two cards, cut in the dark. Pick how long you want the table
+          open.
         </p>
 
-        <div key={round} className="mt-6 grid grid-cols-3 gap-2.5 sm:gap-4">
-          {pulls.map((pull, i) => (
-            <div key={SPREAD[i].key} className="flex flex-col items-center">
-              <span className="mono-label mb-2 text-center text-muted-foreground">
-                {SPREAD[i].label}
-              </span>
-              <TarotCard pull={pull} index={i} onTurn={(e) => turn(i, e)} />
-            </div>
+        <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
+          {READINGS.map((reading, i) => (
+            <PriceCard
+              key={reading.id}
+              reading={reading}
+              index={i}
+              selected={reading.id === picked.id}
+              onPick={(e) => pick(reading.id, e)}
+            />
           ))}
         </div>
 
-        <div className="mt-6 space-y-3">
-          {pulls.map((pull, i) =>
-            pull.shown ? (
-              <div
-                key={`${round}-${SPREAD[i].key}`}
-                className="arcana-reading rounded-md border border-border bg-muted/40 p-3"
-              >
-                <div className="flex items-baseline justify-between gap-3">
-                  <span className="text-sm font-bold">
-                    {pull.arcana.name}
-                    {pull.reversed && (
-                      <span className="ml-2 text-xs font-medium text-accent-strong">
-                        reversed
-                      </span>
-                    )}
-                  </span>
-                  <span className="mono-label shrink-0 text-muted-foreground">
-                    {SPREAD[i].label}
-                  </span>
-                </div>
-                <p className="mt-1.5 text-sm leading-snug text-muted-foreground">
-                  {pull.reversed ? pull.arcana.reversed : pull.arcana.upright}
-                </p>
-              </div>
-            ) : (
-              <div
-                key={`${round}-${SPREAD[i].key}`}
-                className="rounded-md border border-dashed border-border/70 p-3"
-              >
-                <p className="mono-label text-muted-foreground">
-                  {SPREAD[i].label} — {SPREAD[i].note}
-                </p>
-              </div>
-            ),
-          )}
-        </div>
+        <p className="mt-5 text-xs leading-snug text-muted-foreground">
+          The deposit holds the slot; we settle the time by DM. In person or
+          over video, your call. No gods, no gatekeeping — the deck has no
+          authority over you.
+        </p>
 
-        {allShown && (
-          <p className="arcana-reading mt-5 text-center text-xs italic text-muted-foreground">
-            The deck has no authority over you. Neither does anyone else.
-          </p>
-        )}
-
-        <BrandButton
-          className="mt-6"
-          onClick={allShown ? reshuffle : turnAll}
-        >
-          {allShown ? (
-            <>
-              <Shuffle size={18} /> Shuffle and cut again
-            </>
-          ) : (
-            <>
-              <Sparkles size={18} /> Turn all three
-            </>
-          )}
+        <BrandButton className="mt-4" onClick={hold}>
+          <Sparkles size={18} /> Hold {picked.minutes} minutes — ${picked.price}
         </BrandButton>
       </div>
     </Overlay>
   )
 }
 
-/* One card in the spread. The flip is a CSS 3D rotation on .tarot-inner, so
-   the two faces have to be siblings pinned on top of each other -- the state
-   here only decides which way the container is turned. A reversed card rotates
-   its artwork rather than the face itself, which would fight the flip. */
-function TarotCard({
-  pull,
+/* One tier. It is a button because picking it drives the CTA below, and it
+   keeps the spread's deal-in animation: the cards still land one after the
+   other, staggered by the --deal index set here. */
+function PriceCard({
+  reading,
   index,
-  onTurn,
+  selected,
+  onPick,
 }: {
-  pull: Pull
+  reading: Reading
   index: number
-  onTurn: (e: React.MouseEvent<HTMLElement>) => void
+  selected: boolean
+  onPick: (e: React.MouseEvent<HTMLElement>) => void
 }) {
-  const Glyph = pull.arcana.icon
-
   return (
     <button
       type="button"
-      onClick={onTurn}
-      disabled={pull.shown}
-      data-face={pull.shown ? "up" : "down"}
+      onClick={onPick}
+      aria-pressed={selected}
+      data-state={selected ? "on" : "off"}
       style={{ "--deal": index } as React.CSSProperties}
-      aria-label={
-        pull.shown
-          ? `${pull.arcana.name}${pull.reversed ? ", reversed" : ""}`
-          : "Turn this card"
-      }
-      className="tarot-card"
+      aria-label={`${reading.label}, ${reading.minutes} minutes, $${reading.price}`}
+      className="price-card"
     >
-      <div className="tarot-inner">
-        {/* Both faces are always in the DOM -- that is what the CSS flip turns
-            between. backface-visibility hides the one facing away from the eye,
-            so aria-hidden hides the same one from a screen reader. */}
-        <div className="tarot-back" aria-hidden={pull.shown}>
-          <div className="tarot-frame" />
-          <Sparkles className="tarot-mark h-7 w-7" />
-        </div>
-
-        <div className="tarot-front" aria-hidden={!pull.shown}>
-          <div className="tarot-frame" />
-          <div className="tarot-art" data-reversed={pull.reversed}>
-            <span className="tarot-numeral">{pull.arcana.numeral}</span>
-            <Glyph className="h-7 w-7 text-accent" />
-            <span className="tarot-name">{pull.arcana.name}</span>
-          </div>
-        </div>
-      </div>
+      <div className="price-frame" />
+      {reading.featured && <span className="price-flag">Most asked for</span>}
+      <span className="mono-label price-duration">{reading.minutes} min</span>
+      <span className="price-name">{reading.label}</span>
+      <span className="price-amount">
+        ${reading.price}
+        <span className="price-unit">flat</span>
+      </span>
+      <p className="price-blurb">{reading.blurb}</p>
+      <ul className="price-includes">
+        {reading.includes.map((line) => (
+          <li key={line}>
+            <Check className="h-3.5 w-3.5 shrink-0 text-accent" />
+            {line}
+          </li>
+        ))}
+      </ul>
     </button>
   )
 }
