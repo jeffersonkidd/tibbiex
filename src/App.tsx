@@ -678,7 +678,7 @@ export default function App() {
               <ReaganYouthMark />
               <div>
                 <div className="text-base font-bold">
-                  Practicing with Reagan Youth
+                  Practicing w/ Reagan Youth
                 </div>
                 <p className="mono-label mt-1 text-muted-foreground">
                   The next generation — L.E.S.
