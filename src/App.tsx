@@ -191,8 +191,8 @@ const BUY: ShopItem[] = [
 const LINKS = [
   {
     icon: Sparkles,
-    title: "The Midnight Pull",
-    meta: "Tarot readings — 30, 60 or 90 minutes",
+    title: "1-on-1 Tarot Readings",
+    meta: "Over FaceTime — 30, 60 or 90 minutes",
     href: "#",
     action: "tarot",
   },
@@ -1657,7 +1657,7 @@ function LinkFace({ link }: { link: LinkEntry }) {
         </div>
       </div>
       {magic ? (
-        <Sparkles className="h-5 w-5 text-accent transition-transform group-hover:scale-125" />
+        <Sparkles className="arcana-spark h-5 w-5 text-accent" />
       ) : external ? (
         <ExternalLink className="h-5 w-5 text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-accent-strong" />
       ) : (
@@ -1962,7 +1962,7 @@ function MagicDust() {
 }
 
 /* ---------------------------------------------------------------------------
-   The Midnight Pull — readings sold by the half hour. Three tiers, and like
+   1-on-1 tarot readings, sold by the half hour. Three tiers, and like
    every other list in this file they live as data: the panel below only lays
    them out, so changing what a session costs or includes is a data edit.
 
@@ -2068,10 +2068,10 @@ function ReadingMenu({ onClose }: { onClose: () => void }) {
           own scrolling. */}
       <div className="arcana-veil max-h-[85vh] overflow-y-auto p-6">
         <span className="mono-label text-accent-strong">Readings</span>
-        <h2 className="mt-1 text-2xl font-bold">The Midnight Pull</h2>
+        <h2 className="mt-1 text-2xl font-bold">1-on-1 Tarot Readings</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Twenty-two cards, cut in the dark. Pick how long you want the table
-          open.
+          Twenty-two cards, cut in the dark, read live over FaceTime. Pick how
+          long you want the table open.
         </p>
 
         <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
@@ -2087,9 +2087,9 @@ function ReadingMenu({ onClose }: { onClose: () => void }) {
         </div>
 
         <p className="mt-5 text-xs leading-snug text-muted-foreground">
-          The deposit holds the slot; we settle the time by DM. In person or
-          over video, your call. No gods, no gatekeeping — the deck has no
-          authority over you.
+          The deposit holds the slot; we settle the time by DM and I call you
+          when it comes round. In person instead if you are local. No gods, no
+          gatekeeping — the deck has no authority over you.
         </p>
 
         {/* Which rail the deposit travels on -- the same segmented control the
