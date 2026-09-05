@@ -9,7 +9,7 @@ import {
   Radio,
   Instagram,
   Facebook,
-  Coffee,
+  Mic,
   Send,
   CreditCard,
   Youtube,
@@ -501,13 +501,28 @@ const SOCIALS = [
   },
 ]
 
-const TIP_PRESETS = [3, 5, 10, 25]
+const TIP_PRESETS = [10, 25, 50, 100]
 
-/* Real supporters only — fill this in from what actually arrives, on either
-   rail (Venmo's activity feed, or Stripe's payments with their note metadata).
-   Shape: { name: "Ratface", msg: "for the new strings", amount: 10 }.
-   The feed hides itself while this is empty rather than showing invented names. */
-const SUPPORTERS: { name: string; msg: string; amount: number }[] = []
+/* PLACEHOLDER DATA — these five are invented, to see the feed laid out. Replace
+   them with what actually arrives on either rail (Venmo's activity feed, or
+   Stripe's payments with their note metadata) before this goes in front of
+   anyone, and empty the array back out in the meantime if it ships first: the
+   feed hides itself when there is nothing real to show. */
+const SUPPORTERS: { name: string; msg: string; amount: number }[] = [
+  { name: "Sewer Tony", msg: "for the Reagan Youth episode", amount: 100 },
+  { name: "Gary", msg: "keep the mics on", amount: 75 },
+  { name: "Deb Void", msg: "still alive, still loud", amount: 50 },
+  { name: "Ratface", msg: "gas money to the next one", amount: 25 },
+  { name: "Kat Static", msg: "from the old Trenton crowd", amount: 10 },
+]
+
+/* The feed ranks by amount rather than by arrival: entries carry no timestamp,
+   so "recent" would only ever mean "wherever it sits in the array above", while
+   the amount is real data. Sorted on a copy -- sort() mutates, and SUPPORTERS is
+   the source every other reading of the list would come from. */
+const TOP_CONTRIBUTORS = [...SUPPORTERS]
+  .sort((a, b) => b.amount - a.amount)
+  .slice(0, 5)
 
 /* The two ways money can arrive. Venmo is a hand-off to an app the visitor
    already has; Stripe is a card checkout that this site's one serverless
@@ -523,7 +538,7 @@ function venmoPayUrl(amount: number, note: string) {
   const params = new URLSearchParams({
     txn: "pay",
     amount: amount.toFixed(2),
-    note: note.trim() || "Supporting Tibbie X",
+    note: note.trim() || "Still Alive podcast",
   })
   return `https://venmo.com/${VENMO_HANDLE}?${params}`
 }
@@ -1396,33 +1411,34 @@ function TipJar() {
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           <div className="rounded-md border border-accent-soft bg-accent-tint p-2 text-accent-strong">
-            <Coffee className="h-5 w-5" />
+            <Mic className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="text-base font-normal">Fuel the Next Record</h2>
+            <h2 className="text-base font-normal">Fund “Still Alive”</h2>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              Strings, van gas and studio time
+              Tibbie X interviews the East Coast punks who kept it going
             </p>
           </div>
         </div>
         <span className="mono-label shrink-0 rounded-full border border-border bg-muted/50 px-2.5 py-1 text-accent-strong">
-          Tip Jar
+          Podcast Fund
         </span>
       </div>
 
       <form onSubmit={handleSubmit} className="mt-4 space-y-3">
-        {/* Which rail the money travels on. Same segmented treatment as the
-            tab strip, so "selected" looks the same everywhere on the page. */}
+        {/* Which rail the money travels on. Outlined rather than brand red:
+            inside these panels the only red belongs to the submit button, so a
+            selected rail or preset reads as a lighter outline instead. */}
         <div className="flex gap-2 rounded-md border border-border bg-input-background p-1">
           {RAILS.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
               type="button"
               onClick={() => setRail(id)}
-              className={`flex flex-1 items-center justify-center gap-1.5 rounded-sm py-2 text-xs font-bold transition-all ${
+              className={`flex flex-1 items-center justify-center gap-1.5 rounded-sm border py-2 text-xs font-bold transition-all ${
                 rail === id
-                  ? "brand-surface brand-pop bg-brand text-on-brand"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "brand-pop border-foreground/40 bg-muted text-foreground"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
               }`}
             >
               <Icon size={14} /> {label}
@@ -1441,10 +1457,10 @@ function TipJar() {
                   setPreset(amt)
                   setCustom("")
                 }}
-                className={`rounded-md py-2 text-sm font-bold transition-all ${
+                className={`rounded-md border py-2 text-sm font-bold transition-all ${
                   selected
-                    ? "brand-surface brand-pop bg-brand text-on-brand"
-                    : "border border-border bg-input-background text-muted-foreground hover:border-accent hover:text-foreground"
+                    ? "brand-pop border-foreground/40 bg-muted text-foreground"
+                    : "border-border bg-input-background text-muted-foreground hover:border-foreground/30 hover:text-foreground"
                 }`}
               >
                 ${amt}
@@ -1497,25 +1513,28 @@ function TipJar() {
         </p>
       </form>
 
-      {SUPPORTERS.length > 0 && (
+      {TOP_CONTRIBUTORS.length > 0 && (
         <div className="mt-4 border-t border-border pt-4">
           <span className="mono-label block text-muted-foreground">
-            Recent Supporters
+            Top Contributors
           </span>
           <div className="hide-scrollbar mt-2 max-h-32 space-y-1.5 overflow-y-auto">
-            {SUPPORTERS.map((sup) => (
+            {TOP_CONTRIBUTORS.map((sup, i) => (
               <div
                 key={`${sup.name}-${sup.msg}`}
-                className="flex items-center justify-between gap-2 rounded-md border border-border bg-muted/40 p-2 text-xs"
+                className="flex items-center gap-2 rounded-md border border-border bg-muted/40 p-2 text-xs"
               >
-                <p className="truncate">
+                <span className="mono-label w-4 shrink-0 text-muted-foreground">
+                  {i + 1}
+                </span>
+                <p className="min-w-0 flex-1 truncate">
                   <span className="font-bold">{sup.name}</span>
                   <span className="ml-1.5 text-muted-foreground">
                     “{sup.msg}”
                   </span>
                 </p>
                 <span className="shrink-0 font-bold text-accent-strong">
-                  +${sup.amount}
+                  ${sup.amount}
                 </span>
               </div>
             ))}
@@ -2230,17 +2249,17 @@ function ReadingMenu({ onClose }: { onClose: () => void }) {
         </p>
 
         {/* Which rail the deposit travels on -- the same segmented control the
-            tip jar uses, so "selected" looks the same everywhere on the page. */}
+            tip jar uses, outlined so the red below stays the only red here. */}
         <div className="mt-4 flex gap-2 rounded-md border border-border bg-input-background p-1">
           {RAILS.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
               type="button"
               onClick={() => setRail(id)}
-              className={`flex flex-1 items-center justify-center gap-1.5 rounded-sm py-2 text-xs font-bold transition-all ${
+              className={`flex flex-1 items-center justify-center gap-1.5 rounded-sm border py-2 text-xs font-bold transition-all ${
                 rail === id
-                  ? "brand-surface brand-pop bg-brand text-on-brand"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "brand-pop border-foreground/40 bg-muted text-foreground"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
               }`}
             >
               <Icon size={14} /> {label}

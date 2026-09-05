@@ -77,7 +77,8 @@ export async function POST(request: Request) {
     "line_items[0][quantity]": "1",
     "line_items[0][price_data][currency]": "usd",
     "line_items[0][price_data][unit_amount]": String(cents),
-    "line_items[0][price_data][product_data][name]": "Support Tibbie X",
+    "line_items[0][price_data][product_data][name]":
+      "Still Alive Podcast — Tibbie X",
     success_url: `${origin}/?tip=thanks`,
     cancel_url: `${origin}/?tip=cancelled`,
     "metadata[source]": "tip-jar",
