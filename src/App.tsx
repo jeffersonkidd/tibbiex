@@ -579,6 +579,9 @@ export default function App() {
   /* Which band the Buy tab is narrowed to. Set from a portfolio section's
      shop link, and resettable from the filter strip. */
   const [shopBand, setShopBand] = useState<ShopGroupId | "all">("all")
+  /* The same idea one tab over, except the Portfolio strip always has exactly
+     one band selected -- there is no "all" view of the credits. */
+  const [portfolioBand, setPortfolioBand] = useState<BandId>(PORTFOLIO[0].id)
   const tabsRef = useRef<HTMLElement>(null)
   const pendingScroll = useRef<BandId | null>(null)
 
@@ -605,6 +608,7 @@ export default function App() {
      hence the ref handed to the effect below rather than a scroll right here. */
   function openPortfolio(band: BandId) {
     pendingScroll.current = band
+    setPortfolioBand(band)
     setActiveTab("Portfolio")
   }
 
@@ -867,56 +871,74 @@ export default function App() {
             </div>
           )}
 
-          {activeTab === "Portfolio" &&
-            PORTFOLIO.map((entry) => (
-              <section
-                key={entry.id}
-                id={`portfolio-${entry.id}`}
-                className="card-surface scroll-mt-4 rounded-lg p-5"
-              >
-                <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-                  <h2 className="text-2xl uppercase leading-none tracking-tight">
-                    {entry.band}
-                  </h2>
-                  <span className="mono-label text-muted-foreground">
-                    {entry.years}
+          {activeTab === "Portfolio" && (
+            <>
+              {/* Band strip -- the same filter treatment the Buy tab uses, and
+                  where a shop group's "View credits" link lands. */}
+              <div className="card-surface hide-scrollbar flex gap-2 overflow-x-auto rounded-lg bg-card/50 p-1.5">
+                {PORTFOLIO.map((entry) => (
+                  <FilterPill
+                    key={entry.id}
+                    label={entry.band}
+                    active={portfolioBand === entry.id}
+                    onClick={() => setPortfolioBand(entry.id)}
+                  />
+                ))}
+              </div>
+
+              {PORTFOLIO.filter((entry) => entry.id === portfolioBand).map((
+                entry,
+              ) => (
+                <section
+                  key={entry.id}
+                  id={`portfolio-${entry.id}`}
+                  className="card-surface scroll-mt-4 rounded-lg p-5"
+                >
+                  <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                    <h2 className="text-2xl uppercase leading-none tracking-tight">
+                      {entry.band}
+                    </h2>
+                    <span className="mono-label text-muted-foreground">
+                      {entry.years}
+                    </span>
+                  </div>
+
+                  <span className="mono-label mt-3 inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/50 px-2.5 py-1 text-accent-strong">
+                    <Guitar size={12} /> {entry.role}
                   </span>
-                </div>
 
-                <span className="mono-label mt-3 inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/50 px-2.5 py-1 text-accent-strong">
-                  <Guitar size={12} /> {entry.role}
-                </span>
+                  <p className="mt-3 text-sm text-muted-foreground">
+                    {entry.blurb}
+                  </p>
 
-                <p className="mt-3 text-sm text-muted-foreground">
-                  {entry.blurb}
-                </p>
+                  <dl className="mt-4 space-y-2 border-t border-border pt-4">
+                    {entry.highlights.map(({ label, detail }) => (
+                      <div
+                        key={label}
+                        className="flex items-baseline justify-between gap-4"
+                      >
+                        <dt className="mono-label shrink-0 text-muted-foreground">
+                          {label}
+                        </dt>
+                        <dd className="text-right text-sm font-medium">
+                          {detail}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
 
-                <dl className="mt-4 space-y-2 border-t border-border pt-4">
-                  {entry.highlights.map(({ label, detail }) => (
-                    <div
-                      key={label}
-                      className="flex items-baseline justify-between gap-4"
-                    >
-                      <dt className="mono-label shrink-0 text-muted-foreground">
-                        {label}
-                      </dt>
-                      <dd className="text-right text-sm font-medium">
-                        {detail}
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
+                  <ShopLink entry={entry} onOpen={openShop} />
 
-                <ShopLink entry={entry} onOpen={openShop} />
-
-                <PhotoGrid
-                  photos={entry.photos}
-                  onOpen={(index) =>
-                    setLightbox({ photos: entry.photos, index })
-                  }
-                />
-              </section>
-            ))}
+                  <PhotoGrid
+                    photos={entry.photos}
+                    onOpen={(index) =>
+                      setLightbox({ photos: entry.photos, index })
+                    }
+                  />
+                </section>
+              ))}
+            </>
+          )}
 
           {activeTab === "Tour" &&
             SHOWS.map((show) => (
@@ -949,13 +971,13 @@ export default function App() {
               {/* Filter strip -- also the way back out of a band the portfolio
                   dropped the visitor into. */}
               <div className="card-surface hide-scrollbar flex gap-2 overflow-x-auto rounded-lg bg-card/50 p-1.5">
-                <ShopFilter
+                <FilterPill
                   label="All"
                   active={shopBand === "all"}
                   onClick={() => setShopBand("all")}
                 />
                 {SHOP_GROUPS.map((group) => (
-                  <ShopFilter
+                  <FilterPill
                     key={group.id}
                     label={group.title}
                     active={shopBand === group.id}
@@ -1595,7 +1617,7 @@ function priceValue(item: ShopItem) {
   return Number(item.price.replace(/[^0-9.]/g, "")) || 0
 }
 
-function ShopFilter({
+function FilterPill({
   label,
   active,
   onClick,
