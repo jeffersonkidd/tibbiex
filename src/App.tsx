@@ -47,9 +47,28 @@ type Album = {
   year: string
   role: string
   image: string
+  /* The one song called out for this record. Optional -- only the rehearsal
+     panel's target carries it today, and the modal hides the line without it. */
+  track?: string
+}
+
+/* The rehearsal panel's destination, named so the panel can reach it without
+   re-finding it in the list. `role` deliberately does not claim a credit on the
+   1984 recording -- this is the live set with the current lineup. Confirm the
+   wording, and the featured song, before this goes live. */
+const REAGAN_YOUTH_LP: Album = {
+  id: "d0",
+  album: "Youth Anthems for the New Order",
+  band: "Reagan Youth",
+  year: "1984",
+  role: "Live — current lineup",
+  track: "Degenerated",
+  image:
+    "https://images.unsplash.com/photo-1526394931762-90052e97b376?q=80&w=400&auto=format&fit=crop",
 }
 
 const DISCOGRAPHY: Album[] = [
+  REAGAN_YOUTH_LP,
   {
     id: "d1",
     album: "Constructs of the State",
@@ -185,9 +204,15 @@ const BUY: ShopItem[] = [
   },
 ]
 
-/* The first tab. Rows are outbound links, except one: a row carrying `action`
-   is a button that opens something inside the app instead of navigating away.
-   The reading menu is the only one so far. */
+/* The first tab. Rows are outbound links, except those carrying `action`: such
+   a row is a button that opens something inside the app instead of navigating
+   away -- the reading menu, the featured merch offer and the booking form.
+   The offer row's title, pairing and price are improvised placeholders: it is
+   a hand-off to the Reagan Youth shelf, not a real bundle SKU.
+
+   `enabled: false` takes a row off the page while leaving its data here to
+   switch back on. Unlike TABS, the flag is opt-out -- a row without it shows --
+   so a new link cannot go missing by forgetting to add one. */
 const LINKS = [
   {
     icon: Sparkles,
@@ -201,12 +226,14 @@ const LINKS = [
     title: "Listen on Spotify",
     meta: "Leftover Crack · SFH",
     href: "#",
+    enabled: false,
   },
   {
     icon: Youtube,
     title: "Live Videos",
     meta: "Shows, squats & riots",
     href: "#",
+    enabled: false,
   },
   {
     icon: Heart,
@@ -214,10 +241,27 @@ const LINKS = [
     meta: "Mutual aid links",
     href: "#",
     external: true,
+    enabled: false,
+  },
+  {
+    icon: ShoppingBag,
+    title: "Youth Anthems Bundle",
+    meta: "Reissue LP + logo tee, $50 — 20 numbered",
+    href: "#",
+    action: "offer",
+  },
+  {
+    icon: MessageSquare,
+    title: "Book / Contact",
+    meta: "Shows, sessions & readings",
+    href: "#",
+    action: "booking",
   },
 ]
 
 type LinkEntry = typeof LINKS[number]
+
+const VISIBLE_LINKS = LINKS.filter((link) => link.enabled !== false)
 
 // Portfolio entries: one section per band/project. Dates and credits below are
 // placeholders — confirm them before this goes live.
@@ -419,7 +463,7 @@ const SHOP_GROUPS: { id: ShopGroupId; title: string; items: ShopItem[] }[] = [
 // every label, so the tab's data and its panel below stay compiled and
 // typechecked while it is off — turning it back on is a one-word change.
 const TABS = [
-  { label: "Links", enabled: true },
+  { label: "Home", enabled: true },
   { label: "Music", enabled: true },
   { label: "Portfolio", enabled: true },
   { label: "Tour", enabled: false },
@@ -547,6 +591,15 @@ export default function App() {
     tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
   }
 
+  /* Same shape for the rehearsal panel: open the record's modal and leave the
+     Music tab behind it, so closing the modal lands on the discography rather
+     than back on Home. */
+  function openAlbum(rec: Album) {
+    setAlbum(rec)
+    setActiveTab("Music")
+    tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+  }
+
   /* The return leg. The Portfolio panel is unmounted while Buy is showing, so
      the target section cannot be scrolled to until after the switch renders --
      hence the ref handed to the effect below rather than a scroll right here. */
@@ -619,7 +672,7 @@ export default function App() {
                 />
               </div>
               <div className="flex-1 pb-2">
-                <h1 className="wordmark text-3xl uppercase leading-none tracking-tight sm:text-4xl">
+                <h1 className="wordmark text-4xl uppercase leading-none tracking-tight sm:text-5xl">
                   Tibbie <span className="wordmark-x">X</span>
                 </h1>
                 <div className="mt-2 flex flex-wrap items-center justify-center gap-2 text-muted-foreground sm:justify-start">
@@ -666,38 +719,6 @@ export default function App() {
           ))}
         </div>
 
-        {/* Booking CTA */}
-        <BrandButton onClick={() => setBooking(true)} className="mb-6">
-          <MessageSquare className="h-4 w-4" /> Book / Contact
-        </BrandButton>
-
-        {/* Status Bar */}
-        <div className="card-surface mb-8 rounded-lg p-5">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <ReaganYouthMark />
-              <div>
-                <div className="text-base font-bold">
-                  Practicing with<br />Reagan Youth
-                </div>
-                <p className="mono-label mt-1 text-muted-foreground">
-                  The next generation — L.E.S.
-                </p>
-              </div>
-            </div>
-            <span className="mono-label shrink-0 text-muted-foreground">
-              80%
-            </span>
-          </div>
-          <p className="mt-3 text-xs text-muted-foreground">
-            Three nights a week in a Lower East Side basement, running the set
-            end to end. Carrying the songs forward, not covering them.
-          </p>
-          <div className="meter-track mt-3 h-2.5">
-            <div className="meter-fill" style={{ width: "80%" }} />
-          </div>
-        </div>
-
         {/* Navigation Tabs */}
         <nav
           ref={tabsRef}
@@ -721,9 +742,47 @@ export default function App() {
 
         {/* Content Area */}
         <main className="space-y-4">
-          {activeTab === "Links" && (
+          {activeTab === "Home" && (
             <>
-              {LINKS.map((link) =>
+              {/* Rehearsal status -- also the way into the record it is about */}
+              <button
+                type="button"
+                onClick={() => openAlbum(REAGAN_YOUTH_LP)}
+                className="card-surface group block w-full rounded-lg p-5 text-left transition-colors hover:border-accent"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <ReaganYouthMark />
+                    <div>
+                      <div className="text-base font-bold">
+                        Practicing with<br />Reagan Youth
+                      </div>
+                      <p className="mono-label mt-1 text-muted-foreground">
+                        The next generation — L.E.S.
+                      </p>
+                    </div>
+                  </div>
+                  <span className="mono-label shrink-0 text-muted-foreground">
+                    80%
+                  </span>
+                </div>
+                <p className="mt-3 text-xs text-muted-foreground">
+                  Three nights a week in a Lower East Side basement, running the set
+                  end to end. Carrying the songs forward, not covering them.
+                </p>
+                <div className="meter-track mt-3 h-2.5">
+                  <div className="meter-fill" style={{ width: "80%" }} />
+                </div>
+                <span className="mono-label mt-3 flex items-center gap-1.5 text-accent-strong">
+                  <Disc size={12} /> Hear “{REAGAN_YOUTH_LP.track}”
+                  <ChevronRight
+                    size={12}
+                    className="transition-transform group-hover:translate-x-1"
+                  />
+                </span>
+              </button>
+
+              {VISIBLE_LINKS.map((link) =>
                 link.action === "tarot" ? (
                   <button
                     key={link.title}
@@ -733,6 +792,30 @@ export default function App() {
                       setTarot(true)
                     }}
                     className={`${LINK_ROW} arcana-row w-full text-left`}
+                  >
+                    <LinkFace link={link} />
+                  </button>
+                ) : link.action === "offer" ? (
+                  <button
+                    key={link.title}
+                    type="button"
+                    onClick={(e) => {
+                      castMagicFrom(e)
+                      openShop("reagan-youth")
+                    }}
+                    className={`${LINK_ROW} w-full text-left`}
+                  >
+                    <LinkFace link={link} />
+                  </button>
+                ) : link.action === "booking" ? (
+                  <button
+                    key={link.title}
+                    type="button"
+                    onClick={(e) => {
+                      castMagicFrom(e)
+                      setBooking(true)
+                    }}
+                    className={`${LINK_ROW} w-full text-left`}
                   >
                     <LinkFace link={link} />
                   </button>
@@ -965,6 +1048,11 @@ export default function App() {
             <p className="mt-2 text-sm text-muted-foreground">
               Released {album.year} · {album.role}
             </p>
+            {album.track && (
+              <p className="mono-label mt-3 text-accent-strong">
+                Featured track — “{album.track}”
+              </p>
+            )}
             <BrandButton className="mt-6">
               <Disc size={18} /> Stream Now
             </BrandButton>
@@ -1653,7 +1741,7 @@ function Lightbox({
   )
 }
 
-/* The shared class string for a Links-tab row. It is a const rather than a
+/* The shared class string for a Home-tab row. It is a const rather than a
    repeated literal because the row is an <a> for outbound links and a <button>
    for the tarot -- two elements that have to look identical. */
 const LINK_ROW =
