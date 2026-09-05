@@ -759,7 +759,7 @@ export default function App() {
                     <ReaganYouthMark />
                     <div>
                       <div className="text-base font-bold">
-                        Practicing with<br />Reagan Youth
+                        Practicing with Reagan Youth
                       </div>
                       <p className="mono-label mt-1 text-muted-foreground">
                         The next generation — L.E.S.
@@ -1399,7 +1399,7 @@ function TipJar() {
             <Coffee className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="text-base font-bold">Fuel the Next Record</h2>
+            <h2 className="text-base font-normal">Fuel the Next Record</h2>
             <p className="mt-0.5 text-xs text-muted-foreground">
               Strings, van gas and studio time
             </p>
