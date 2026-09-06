@@ -680,20 +680,20 @@ export default function App() {
             </span>
           </div>
 
-          <div className="relative -mt-20 px-6 pb-6 pt-0">
-            <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-end sm:text-left">
-              <div className="relative h-32 w-32 overflow-hidden rounded-full border-4 border-background shadow-2xl">
+          <div className="relative -mt-16 px-6 pb-6 pt-0 sm:-mt-20">
+            <div className="flex items-end gap-3 text-left sm:gap-4">
+              <div className="relative h-28 w-28 shrink-0 overflow-hidden rounded-full border-4 border-background shadow-2xl sm:h-32 sm:w-32">
                 <img
                   src={profilePic}
                   alt="Tibbie X"
                   className="h-full w-full object-cover"
                 />
               </div>
-              <div className="flex-1 pb-2">
+              <div className="min-w-0 flex-1 pb-2">
                 <h1 className="wordmark text-4xl uppercase leading-none tracking-tight sm:text-5xl">
                   Tibbie <span className="wordmark-x">X</span>
                 </h1>
-                <div className="mt-2 flex flex-wrap items-center justify-center gap-2 text-muted-foreground sm:justify-start">
+                <div className="mt-2 flex flex-wrap items-center justify-start gap-2 text-muted-foreground">
                   <span className="mono-label rounded-full border border-border bg-card px-2 py-1 text-accent-strong">
                     Bass · Vocals
                   </span>
@@ -707,7 +707,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="mt-5 flex flex-wrap justify-center gap-2 sm:justify-start">
+            <div className="mt-5 flex flex-wrap justify-start gap-2">
               {TAGS.map(({ icon: Icon, label }) => (
                 <span
                   key={label}
