@@ -5,15 +5,9 @@ import {
   QrCode,
   Share2,
   MapPin,
-  Mic2,
   Radio,
-  Instagram,
-  Facebook,
   Mic,
   Send,
-  CreditCard,
-  Youtube,
-  MessageSquare,
   Music,
   ChevronRight,
   ChevronLeft,
@@ -23,524 +17,62 @@ import {
   Disc,
   Copy,
   Ticket,
-  Heart,
   Calendar,
   Guitar,
   Sparkles,
   Check,
-  Star,
+  CheckCircle2,
+  Trophy,
+  Instagram,
+  Youtube,
+  Twitch,
+  Twitter,
+  MessageSquare,
 } from "lucide-react"
 
-import profilePic from "./assets/tibbie_profile.jpeg"
-import bannerPic from "./assets/tibbie_background.jpeg"
-import gashPromo from "./assets/gash/gash_promo.jpg"
-import gashLive from "./assets/gash/gash_live.jpeg"
-import gashFlyer from "./assets/gash/gash_flyer.jpg"
-import gashArt from "./assets/gash/gash_artwork.jpg"
-import gashLogo from "./assets/gash/gash_logo.jpg"
+import profilePic from "./assets/tibbie_profile.jpg"
+import bannerPic from "./assets/tibbie_background.jpg"
+
+import {
+  DISCOGRAPHY,
+  PORTFOLIO,
+  RAILS,
+  READINGS,
+  REAGAN_YOUTH_LP,
+  SHOP_GROUPS,
+  SHOWS,
+  SITE_URL,
+  SOCIALS,
+  TAGS,
+  TIP_PRESETS,
+  TOP_CONTRIBUTORS,
+  VENMO_HANDLE,
+  VISIBLE_LINKS,
+  VISIBLE_TABS,
+  shopFor,
+  venmoPayUrl,
+} from "./data"
+import type {
+  Album,
+  BandId,
+  LinkEntry,
+  Photo,
+  PortfolioEntry,
+  Rail,
+  Reading,
+  ShopGroupId,
+  ShopItem,
+  Tab,
+} from "./data"
+import PatreonIcon from "./PatreonIcon"
+import TikTokIcon from "./TikTokIcon"
+
 
 // Layout is a stack of self-contained rounded cards on a dark page (control
 // bar, profile card, socials, tab strip, panels) rather than one monolithic
 // sheet. Colors come from the surface palette in src/index.css (background /
 // card / muted / border), with the buttons and accents on the brand ramp
 // (bg-brand / accent).
-
-type Album = {
-  id: string
-  album: string
-  band: string
-  year: string
-  role: string
-  image: string
-  /* The one song called out for this record. Optional -- only the rehearsal
-     panel's target carries it today, and the modal hides the line without it. */
-  track?: string
-}
-
-/* The rehearsal panel's destination, named so the panel can reach it without
-   re-finding it in the list. `role` deliberately does not claim a credit on the
-   1984 recording -- this is the live set with the current lineup. Confirm the
-   wording, and the featured song, before this goes live. */
-const REAGAN_YOUTH_LP: Album = {
-  id: "d0",
-  album: "Youth Anthems for the New Order",
-  band: "Reagan Youth",
-  year: "1984",
-  role: "Live — current lineup",
-  track: "Degenerated",
-  image:
-    "https://images.unsplash.com/photo-1526394931762-90052e97b376?q=80&w=400&auto=format&fit=crop",
-}
-
-const DISCOGRAPHY: Album[] = [
-  REAGAN_YOUTH_LP,
-  {
-    id: "d1",
-    album: "Constructs of the State",
-    band: "Leftover Crack",
-    year: "2015",
-    role: "Bass, Vocals",
-    image:
-      "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=400&auto=format&fit=crop",
-  },
-  {
-    id: "d2",
-    album: "Never Rest in Peace",
-    band: "Star Fucking Hipsters",
-    year: "2009",
-    role: "Guest Vocals",
-    image:
-      "https://images.unsplash.com/photo-1493225457224-ca2eb444624f?q=80&w=400&auto=format&fit=crop",
-  },
-  {
-    id: "d3",
-    album: "Fuck World Trade",
-    band: "Leftover Crack",
-    year: "2004",
-    role: "Bass",
-    image:
-      "https://images.unsplash.com/photo-1511735111819-9a3f7709049c?q=80&w=400&auto=format&fit=crop",
-  },
-]
-
-const SHOWS = [
-  {
-    id: "s1",
-    venue: "924 Gilman",
-    date: "Oct 31, 2026",
-    city: "Berkeley, CA",
-    status: "Tickets",
-  },
-  {
-    id: "s2",
-    venue: "The Bowery Electric",
-    date: "Nov 15, 2026",
-    city: "New York, NY",
-    status: "Sold Out",
-  },
-  {
-    id: "s3",
-    venue: "Riot Fest",
-    date: "Dec 5, 2026",
-    city: "Chicago, IL",
-    status: "Festival",
-  },
-]
-
-/* One id per band/project. It is the join between a portfolio section and the
-   items it sells, so a typo is a type error rather than an empty shelf at
-   runtime. Anything not tied to one band is tagged "general". */
-type BandId = "leftover-crack" | "reagan-youth" | "gash"
-
-type ShopItem = {
-  id: string
-  item: string
-  price: string
-  image: string
-  band: BandId | "general"
-}
-
-// Placeholder catalogue — stock photography and provisional prices. Confirm
-// the items, prices and artwork before this goes live.
-const BUY: ShopItem[] = [
-  {
-    id: "m1",
-    item: "Logo Patch",
-    price: "$5",
-    image:
-      "https://images.unsplash.com/photo-1614082242765-7c98ca0f3df3?q=80&w=400&auto=format&fit=crop",
-    band: "general",
-  },
-  {
-    id: "m2",
-    item: "Constructs of the State — Vinyl",
-    price: "$25",
-    image:
-      "https://images.unsplash.com/photo-1538356111053-748a48e1acb8?q=80&w=400&auto=format&fit=crop",
-    band: "leftover-crack",
-  },
-  {
-    id: "m3",
-    item: "Signature Bass Pick (3-pack)",
-    price: "$10",
-    image:
-      "https://images.unsplash.com/photo-1519508234239-44619d854291?q=80&w=400&auto=format&fit=crop",
-    band: "general",
-  },
-  {
-    id: "m4",
-    item: "Tour Tee — No Gods",
-    price: "$28",
-    image:
-      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=400&auto=format&fit=crop",
-    band: "leftover-crack",
-  },
-  {
-    id: "m5",
-    item: "Youth Anthems — Reissue LP",
-    price: "$30",
-    image:
-      "https://images.unsplash.com/photo-1526394931762-90052e97b376?q=80&w=400&auto=format&fit=crop",
-    band: "reagan-youth",
-  },
-  {
-    id: "m6",
-    item: "Reagan Youth Logo Tee",
-    price: "$26",
-    image:
-      "https://images.unsplash.com/photo-1503341504253-dff4815485f1?q=80&w=400&auto=format&fit=crop",
-    band: "reagan-youth",
-  },
-  {
-    id: "m7",
-    item: "Gash Demo — Cassette",
-    price: "$8",
-    image:
-      "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?q=80&w=400&auto=format&fit=crop",
-    band: "gash",
-  },
-  {
-    id: "m8",
-    item: 'Gash / Sputter — Split 7"',
-    price: "$12",
-    image:
-      "https://images.unsplash.com/photo-1461360370896-922624d12aa1?q=80&w=400&auto=format&fit=crop",
-    band: "gash",
-  },
-]
-
-/* The first tab. Rows are outbound links, except those carrying `action`: such
-   a row is a button that opens something inside the app instead of navigating
-   away -- the reading menu, the featured merch offer and the booking form.
-   The offer row's title, pairing and price are improvised placeholders: it is
-   a hand-off to the Reagan Youth shelf, not a real bundle SKU.
-
-   `enabled: false` takes a row off the page while leaving its data here to
-   switch back on. Unlike TABS, the flag is opt-out -- a row without it shows --
-   so a new link cannot go missing by forgetting to add one. */
-const LINKS = [
-  {
-    icon: Sparkles,
-    title: "1-on-1 Tarot Readings",
-    meta: "Over FaceTime — 30, 60 or 90 minutes",
-    href: "#",
-    action: "tarot",
-  },
-  {
-    icon: Music,
-    title: "Listen on Spotify",
-    meta: "Leftover Crack · SFH",
-    href: "#",
-    enabled: false,
-  },
-  {
-    icon: Youtube,
-    title: "Live Videos",
-    meta: "Shows, squats & riots",
-    href: "#",
-    enabled: false,
-  },
-  {
-    icon: Heart,
-    title: "Support the Scene",
-    meta: "Mutual aid links",
-    href: "#",
-    external: true,
-    enabled: false,
-  },
-  {
-    icon: ShoppingBag,
-    title: "Youth Anthems Bundle",
-    meta: "Reissue LP + logo tee, $50 — 20 numbered",
-    href: "#",
-    action: "offer",
-  },
-  {
-    icon: MessageSquare,
-    title: "Book / Contact",
-    meta: "Shows, sessions & readings",
-    href: "#",
-    action: "booking",
-  },
-]
-
-type LinkEntry = typeof LINKS[number]
-
-const VISIBLE_LINKS = LINKS.filter((link) => link.enabled !== false)
-
-// Portfolio entries: one section per band/project. Dates and credits below are
-// placeholders — confirm them before this goes live.
-/* Intrinsic pixel dimensions travel with each photo so the masonry columns
-   reserve the right space before the image loads -- without them the whole
-   stack reflows as each one arrives. They must match the w/h in the URL. */
-type Photo = {
-  src: string
-  alt: string
-  width: number
-  height: number
-}
-
-type PortfolioEntry = {
-  id: BandId
-  band: string
-  role: string
-  years: string
-  blurb: string
-  highlights: { label: string; detail: string }[]
-  photos: Photo[]
-}
-
-const PORTFOLIO: PortfolioEntry[] = [
-  {
-    id: "leftover-crack",
-    band: "Leftover Crack",
-    role: "Bass",
-    years: "2015 — present",
-    blurb:
-      "Holding down low end for the crust-punk institution — squat shows, festival stages, and everything in between.",
-    highlights: [
-      { label: "Releases", detail: "Constructs of the State (2015)" },
-      { label: "Live", detail: "924 Gilman · Riot Fest" },
-      { label: "Touring", detail: "US · EU" },
-    ],
-    photos: [
-      {
-        src: "https://images.unsplash.com/photo-1549213783-8284d0336c4f?q=80&w=600&h=450&auto=format&fit=crop",
-        alt: "Leftover Crack on a festival stage",
-        width: 600,
-        height: 450,
-      },
-      {
-        src: "https://images.unsplash.com/photo-1415886541506-6efc5e4b1786?q=80&w=600&h=780&auto=format&fit=crop",
-        alt: "Crowd surge during the set",
-        width: 600,
-        height: 780,
-      },
-      {
-        src: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?q=80&w=600&h=600&auto=format&fit=crop",
-        alt: "Records stacked on a table",
-        width: 600,
-        height: 600,
-      },
-      {
-        src: "https://images.unsplash.com/photo-1462965326201-d02e4f455804?q=80&w=600&h=820&auto=format&fit=crop",
-        alt: "Bass rig backstage before doors",
-        width: 600,
-        height: 820,
-      },
-      {
-        src: "https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=600&h=420&auto=format&fit=crop",
-        alt: "House lights up on an emptying room",
-        width: 600,
-        height: 420,
-      },
-      {
-        src: "https://images.unsplash.com/photo-1508973379184-7517410fb0bc?q=80&w=600&h=760&auto=format&fit=crop",
-        alt: "Guitar neck and hands mid-chord",
-        width: 600,
-        height: 760,
-      },
-    ],
-  },
-  {
-    id: "reagan-youth",
-    band: "Reagan Youth",
-    role: "Bass",
-    years: "2018 — present",
-    blurb:
-      "Low end for the Queens band that helped write the New York hardcore canon, still playing the early catalogue at full volume.",
-    highlights: [
-      { label: "Live", detail: "NYC clubs · punk festivals" },
-      { label: "Touring", detail: "US · EU" },
-      { label: "Set", detail: "Early catalogue, full volume" },
-    ],
-    /* Placeholder gallery: these are stand-ins pulled from the same stock pool
-       as the other sections, not Reagan Youth photos. Swap them for real ones
-       before this goes live, and update alt text and dimensions to match. */
-    photos: [
-      {
-        src: "https://images.unsplash.com/photo-1538356111053-748a48e1acb8?q=80&w=600&h=600&auto=format&fit=crop",
-        alt: "Vinyl pressings stacked on the table by the door",
-        width: 600,
-        height: 600,
-      },
-      {
-        src: "https://images.unsplash.com/photo-1614082242765-7c98ca0f3df3?q=80&w=600&h=780&auto=format&fit=crop",
-        alt: "Patches sewn across a battle jacket",
-        width: 600,
-        height: 780,
-      },
-      {
-        src: "https://images.unsplash.com/photo-1519508234239-44619d854291?q=80&w=600&h=450&auto=format&fit=crop",
-        alt: "Picks and spare strings in an open gig bag",
-        width: 600,
-        height: 450,
-      },
-    ],
-  },
-  {
-    id: "gash",
-    band: "Gash",
-    role: "Bass · Vocals",
-    years: "2019 — present",
-    blurb:
-      "Bass and co-vocals in the NYC four-piece — fast, ugly, and built for basement rooms.",
-    highlights: [
-      { label: "Releases", detail: 'Demo tape · split 7"' },
-      { label: "Live", detail: "East coast DIY circuit" },
-      { label: "Writing", detail: "Co-writes the full set" },
-    ],
-    photos: [
-      {
-        src: gashPromo,
-        alt: "Gash promo shot — the band's vocalist on a red-lit stage beneath the logo",
-        width: 960,
-        height: 960,
-      },
-      {
-        src: gashLive,
-        alt: "Black-and-white live shot of Gash mid-set, guitarist behind the vocalist",
-        width: 905,
-        height: 905,
-      },
-      {
-        src: gashFlyer,
-        alt: "Show flyer: Gash with Ballroom Zombies, Danse de Sade and Thorazine at North Star Bar",
-        width: 685,
-        height: 960,
-      },
-      {
-        src: gashArt,
-        alt: "Gash artwork — a screamed face in red and black beside the band logo",
-        width: 960,
-        height: 540,
-      },
-      {
-        src: gashLogo,
-        alt: "The Gash logo in white brushstrokes on black",
-        width: 777,
-        height: 777,
-      },
-    ],
-  },
-]
-
-/* Portfolio -> Buy wiring. The groups are derived from the two arrays above
-   rather than maintained by hand, so adding a band or a product needs no edit
-   here. `SHOP_BY_BAND` keeps the catalogue order within each group, and
-   "general" is rendered last as the everything-else shelf. */
-const SHOP_BY_BAND = BUY.reduce(
-  (groups, item) => {
-    ;(groups[item.band] ??= []).push(item)
-    return groups
-  },
-  {} as Record<ShopGroupId, ShopItem[] | undefined>,
-)
-
-function shopFor(band: BandId) {
-  return SHOP_BY_BAND[band] ?? []
-}
-
-/* Group order for the Buy tab: the bands in portfolio order, then the
-   unaffiliated items. Groups with nothing in them drop out. */
-type ShopGroupId = BandId | "general"
-
-const SHOP_GROUPS: { id: ShopGroupId; title: string; items: ShopItem[] }[] = [
-  ...PORTFOLIO.map((entry) => ({
-    id: entry.id,
-    title: entry.band,
-    items: shopFor(entry.id),
-  })),
-  {
-    id: "general" as const,
-    title: "Everything Else",
-    items: SHOP_BY_BAND.general ?? [],
-  },
-].filter((group) => group.items.length > 0)
-
-// Flip `enabled` to hide a tab from the strip. The Tab union still includes
-// every label, so the tab's data and its panel below stay compiled and
-// typechecked while it is off — turning it back on is a one-word change.
-const TABS = [
-  { label: "Home", enabled: true },
-  { label: "Music", enabled: true },
-  { label: "Portfolio", enabled: true },
-  { label: "Tour", enabled: false },
-  { label: "Buy", enabled: true },
-] as const
-
-type Tab = typeof TABS[number]["label"]
-
-const VISIBLE_TABS = TABS.filter((tab) => tab.enabled)
-
-/* The tip jar has no backend — "Send Support" hands the amount and note to
-   Venmo and lets the app (or venmo.com) take the payment from there. */
-const VENMO_HANDLE = "TibbieSkyeX"
-
-const SOCIALS = [
-  {
-    icon: Instagram,
-    label: "Instagram — @tibbie_x",
-    href: "https://www.instagram.com/tibbie_x",
-  },
-  {
-    icon: Instagram,
-    label: "Instagram — @tibbiexstudios",
-    href: "https://www.instagram.com/tibbiexstudios",
-  },
-  {
-    icon: Facebook,
-    label: "Facebook — Tibbie.X",
-    href: "https://www.facebook.com/Tibbie.X",
-  },
-  {
-    icon: VenmoIcon,
-    label: `Venmo — @${VENMO_HANDLE}`,
-    href: `https://venmo.com/u/${VENMO_HANDLE}`,
-  },
-]
-
-const TIP_PRESETS = [10, 25, 50, 100]
-
-/* PLACEHOLDER DATA — these five are invented, to see the feed laid out. Replace
-   them with what actually arrives on either rail (Venmo's activity feed, or
-   Stripe's payments with their note metadata) before this goes in front of
-   anyone, and empty the array back out in the meantime if it ships first: the
-   feed hides itself when there is nothing real to show. */
-const SUPPORTERS: { name: string; msg: string; amount: number }[] = [
-  { name: "Sewer Tony", msg: "for the Reagan Youth episode", amount: 100 },
-  { name: "Gary", msg: "keep the mics on", amount: 75 },
-  { name: "Deb Void", msg: "still alive, still loud", amount: 50 },
-  { name: "Ratface", msg: "gas money to the next one", amount: 25 },
-  { name: "Kat Static", msg: "from the old Trenton crowd", amount: 10 },
-]
-
-/* The feed ranks by amount rather than by arrival: entries carry no timestamp,
-   so "recent" would only ever mean "wherever it sits in the array above", while
-   the amount is real data. Sorted on a copy -- sort() mutates, and SUPPORTERS is
-   the source every other reading of the list would come from. */
-const TOP_CONTRIBUTORS = [...SUPPORTERS]
-  .sort((a, b) => b.amount - a.amount)
-  .slice(0, 5)
-
-/* The two ways money can arrive. Venmo is a hand-off to an app the visitor
-   already has; Stripe is a card checkout that this site's one serverless
-   function opens. Same amount and note feed both. */
-const RAILS = [
-  { id: "venmo", label: "Venmo", icon: VenmoIcon },
-  { id: "card", label: "Card", icon: CreditCard },
-] as const
-
-type Rail = typeof RAILS[number]["id"]
-
-function venmoPayUrl(amount: number, note: string) {
-  const params = new URLSearchParams({
-    txn: "pay",
-    amount: amount.toFixed(2),
-    note: note.trim() || "Still Alive podcast",
-  })
-  return `https://venmo.com/${VENMO_HANDLE}?${params}`
-}
 
 /* Asks the serverless function for a Stripe Checkout Session and returns the
    hosted page's URL. Errors come back as a thrown message the widget can put
@@ -564,12 +96,6 @@ async function stripeCheckoutUrl(amount: number, note: string) {
   }
   return data.url as string
 }
-
-const TAGS = [
-  { icon: MapPin, label: "NYC" },
-  { icon: Mic2, label: "Squatting" },
-  { icon: Disc, label: "No Gods No Masters" },
-]
 
 async function copyLink() {
   const text = SITE_URL
@@ -639,11 +165,11 @@ export default function App() {
     <div className="flex min-h-screen justify-center pb-20 font-sans text-foreground selection:bg-accent-soft">
       <Toaster position="top-center" richColors />
 
-      <div className="w-full max-w-2xl px-4 pt-6 sm:px-6">
+      <div className="w-full min-w-0 max-w-2xl px-4 pt-6 sm:px-6">
         {/* Header Controls */}
-        <header className="card-surface mb-8 flex items-center justify-between rounded-lg bg-card/60 p-3">
+        <header className="card-surface mb-8 flex items-center justify-between rounded-lg bg-card p-3">
           <span className="mono-label px-2 text-muted-foreground">
-            tibbiex.vercel.app
+            tibbiex.studio
           </span>
           <div className="flex gap-2">
             <button
@@ -666,46 +192,141 @@ export default function App() {
           </div>
         </header>
 
-        {/* Profile Section */}
-        <div className="card-surface relative mb-8 overflow-hidden rounded-xl shadow-[0_30px_80px_-32px_rgba(0,0,0,0.85)]">
-          <div className="relative h-48 w-full overflow-hidden bg-muted sm:h-56">
+       {/* HERO HEADER & AVATAR CARD */}
+        <section className="card-surface bg-card rounded-3xl overflow-hidden mb-6 backdrop-blur-xl">
+          {/* Animated Banner Cover */}
+
+   
+
+          <div className="relative h-72 w-full overflow-hidden bg-muted sm:h-88">
             <img
               src={bannerPic}
               alt="Tibbie X performing live"
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover object-top opacity-100 hover:scale-105 transition-transform duration-700"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/40 to-transparent" />
-            <span className="mono-label absolute left-4 top-4 flex items-center gap-1.5 rounded-full border border-border bg-card/90 px-2.5 py-1 text-accent-strong backdrop-blur-sm">
+
+            <span className="hidden mono-label absolute left-4 top-4 flex items-center gap-1.5 rounded-full border border-border bg-card/90 px-2.5 py-1 text-accent-strong backdrop-blur-sm">
               <Radio size={12} /> Practicing Now
             </span>
+
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+            
+            {/* Live Streaming Badge */}
+            <div className="absolute top-3 left-3 bg-emerald-600/90 text-white text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-lg backdrop-blur-md animate-pulse">
+              <span className="w-2 h-2 rounded-full bg-white" />
+                LIVE ON TIKTOK
+            </div>
+
+            {/* Verification & Award Ribbon */}
+            <div className="hidden absolute top-3 right-3 bg-slate-900/80 backdrop-blur-md text-amber-300 text-xs font-medium px-3 py-1 rounded-full border border-amber-500/30 flex items-center gap-1">
+              <Trophy className="w-3.5 h-3.5 text-amber-400" /> East Coast Punk Legend
+            </div>
           </div>
 
-          <div className="relative -mt-16 px-6 pb-6 pt-0 sm:-mt-20">
-            <div className="flex items-end gap-3 text-left sm:gap-4">
-              <div className="relative h-28 w-28 shrink-0 overflow-hidden rounded-full border-4 border-background shadow-2xl sm:h-32 sm:w-32">
+          {/* Avatar & Profile Details */}
+          <div className="px-6 pb-6 pt-0 relative -mt-16 sm:-mt-48">
+            <div className="flex flex-col sm:flex-row items-center sm:items-end gap-4 text-center sm:text-left">
+              {/* Profile Avatar Frame with Glow */}
+              <div className="relative group">
+                <div className={`absolute -inset-1 rounded-full bg-gradient-to-t from-red-500 via-yellow-500 to-white opacity-80 blur-md group-hover:opacity-100 transition duration-500`} />
                 <img
                   src={profilePic}
-                  alt="Tibbie X"
-                  className="h-full w-full object-cover"
+                  alt="Tibbie X Profile"
+                  className="relative w-36 h-36 sm:w-36 sm:h-36 rounded-full object-cover border-4 border-slate-950 shadow-2xl"
                 />
+                <span className="absolute bottom-4 right-2 bg-emerald-400 w-5 h-5 rounded-full border-4 border-slate-950" title="Online & Crafting" />
               </div>
-              <div className="min-w-0 flex-1 pb-2">
-                <h1 className="wordmark text-4xl uppercase leading-none tracking-tight sm:text-5xl">
+
+              {/* Identity Info */}
+              <div className="flex-1">
+
+                <h1 className="wordmark uppercase leading-none tracking-tight text-4xl sm:text-5xl">
                   Tibbie <span className="wordmark-x">X</span>
                 </h1>
-                <div className="mt-2 flex flex-wrap items-center justify-start gap-2 text-muted-foreground">
-                  <span className="mono-label rounded-full border border-border bg-card px-2 py-1 text-accent-strong">
-                    Bass · Vocals
+
+                <span className="hidden text-sm font-medium rounded-full bg-amber-500/20 text-amber-300 border-amber-500/40">
+                  @TibbieX
+                </span>
+
+                <span className="mono-label text-sm rounded-full font-medium border border-border bg-card px-2 py-1 text-accent-strong">
+                  Bass & Vocals
+                </span>
+
+                <span className="hidden text-xs px-2.5 py-0.5 rounded-full font-semibold border ">
+                    Bass + Vocals
+                </span>
+
+                
+                <ul className="text-xs max-w-xs list-disc list-inside flex flex-wrap my-4 items-center sm:items-end justify-center sm:justify-start text-slate-300 gap-x-3.5 gap-y-1"> 
+                 <li>Leftover Crack</li> <li>Reagan Youth</li> <li>GASH</li> <li>X-Possibles</li> <li>Kissy Kamikaze</li>
+                </ul>
+                
+
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1">
+                    <MapPin className="w-3.5 h-3.5 text-pink-400" /> New York, NY
                   </span>
-                  {/* basis-full drops the band list onto its own row under the
-                      Bass · Vocals pill at every width. */}
-                  <span className="basis-full text-sm">
-                    • Leftover Crack • GASH • Reagan Youth • X-Possibles • Kissy Kamikaze
+                  <span className="hidden flex items-center gap-1">
+                    <Calendar className="w-3.5 h-3.5 text-purple-400" /> Next: Katsucon '26 (#B-42)
+                  </span>
+                  <span className="hidden flex items-center gap-1 text-emerald-400 font-medium">
+                    <CheckCircle2 className="w-3.5 h-3.5" /> Bookings Open
                   </span>
                 </div>
+
               </div>
             </div>
 
+            {/* Social Quick Bar */}
+            <div className="grid grid-cols-5 gap-2 mt-5 pt-4 border-t border-border">
+              <a
+                href="https://instagram.com/tibbie_x"
+                target="_blank"
+                rel="noreferrer"
+                className="flex flex-col items-center justify-center p-2 rounded-xl border-border border border-border bg-card shadow-sm backdrop-blur-xl hover:bg-pink-500/10 hover:text-pink-400 text-slate-300 transition-all group"
+              >
+                <Instagram className="w-5 h-5 mb-1 group-hover:scale-110 transition-transform" />
+                <span className="text-[10px] font-semibold">185K</span>
+              </a>
+
+              <a
+                href="https://patreon.com/tibbie_x"
+                target="_blank"
+                rel="noreferrer"
+                className="flex flex-col items-center justify-center p-2 rounded-xl border-border border border-border bg-card shadow-sm backdrop-blur-xl hover:bg-purple-500/10 hover:text-purple-400 text-slate-300 transition-all group"
+              >
+                <PatreonIcon className="w-5 h-5 mb-1 group-hover:scale-110 transition-transform" />
+                <span className="text-[10px] font-semibold">95K</span>
+              </a>
+              <a
+                href="https://www.youtube.com/@tibbieskyex"
+                target="_blank"
+                rel="noreferrer"
+                className="flex flex-col items-center justify-center p-2 rounded-xl border-border border border-border bg-card shadow-sm backdrop-blur-xl hover:bg-red-500/10 hover:text-red-400 text-slate-300 transition-all group"
+              >
+                <Youtube className="w-5 h-5 mb-1 group-hover:scale-110 transition-transform" />
+                <span className="text-[10px] font-semibold">320K</span>
+              </a>
+              <a
+                href="https://www.tiktok.com/@tibbieskyex"
+                target="_blank"
+                rel="noreferrer"
+                className="flex flex-col items-center justify-center p-2 rounded-xl border-border border border-border bg-card shadow-sm backdrop-blur-xl hover:bg-cyan-500/10 hover:text-cyan-400 text-slate-300 transition-all group"
+              >
+                <TikTokIcon className="w-5 h-5 mb-1 group-hover:scale-110 transition-transform" />
+                <span className="text-[10px] font-semibold">140K</span>
+              </a>
+              <button
+               
+                className="flex flex-col items-center justify-center p-2 rounded-xl bg-red-500/15 hover:bg-red-500/25 text-red-300 border border-red-500/30 transition-all group"
+              >
+                <MessageSquare className="w-5 h-5 mb-1 group-hover:scale-110 transition-transform" />
+                <span className="text-[10px] font-bold">Inquire</span>
+              </button>
+            </div>
+
+            {/* Tags */}
             <div className="mt-5 flex flex-wrap justify-start gap-2">
               {TAGS.map(({ icon: Icon, label }) => (
                 <span
@@ -716,8 +337,9 @@ export default function App() {
                 </span>
               ))}
             </div>
+
           </div>
-        </div>
+        </section>
 
         {/* Social Icons */}
         <div className="mb-6 flex justify-center gap-4">
@@ -1145,6 +767,7 @@ export default function App() {
           </div>
         </Overlay>
       )}
+
       {/* Reading menu */}
       {tarot && <ReadingMenu onClose={() => setTarot(false)} />}
 
@@ -1224,8 +847,6 @@ function ReaganYouthMark() {
    carries the mandatory 4-module quiet zone, and the light background travels
    with the symbol: QR readers need dark-on-light, and the modal panel it sits
    on is dark. Regenerate the path if SITE_URL ever changes. */
-const SITE_URL = "https://tibbiex.vercel.app"
-
 function SiteQrCode({ size = 148 }: { size?: number }) {
   return (
     <svg
@@ -1242,36 +863,6 @@ function SiteQrCode({ size = 148 }: { size?: number }) {
         d="M0 0h7v1h-7zM8 0h3v1h-3zM12 0h1v1h-1zM16 0h1v1h-1zM18 0h7v1h-7zM0 1h1v1h-1zM6 1h1v1h-1zM8 1h5v1h-5zM18 1h1v1h-1zM24 1h1v1h-1zM0 2h1v1h-1zM2 2h3v1h-3zM6 2h1v1h-1zM10 2h1v1h-1zM12 2h4v1h-4zM18 2h1v1h-1zM20 2h3v1h-3zM24 2h1v1h-1zM0 3h1v1h-1zM2 3h3v1h-3zM6 3h1v1h-1zM8 3h4v1h-4zM13 3h4v1h-4zM18 3h1v1h-1zM20 3h3v1h-3zM24 3h1v1h-1zM0 4h1v1h-1zM2 4h3v1h-3zM6 4h1v1h-1zM9 4h1v1h-1zM11 4h1v1h-1zM15 4h2v1h-2zM18 4h1v1h-1zM20 4h3v1h-3zM24 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM9 5h1v1h-1zM16 5h1v1h-1zM18 5h1v1h-1zM24 5h1v1h-1zM0 6h7v1h-7zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM18 6h7v1h-7zM8 7h2v1h-2zM12 7h1v1h-1zM14 7h3v1h-3zM0 8h1v1h-1zM2 8h2v1h-2zM5 8h3v1h-3zM10 8h1v1h-1zM12 8h1v1h-1zM14 8h3v1h-3zM18 8h1v1h-1zM21 8h1v1h-1zM23 8h2v1h-2zM2 9h2v1h-2zM8 9h5v1h-5zM19 9h1v1h-1zM23 9h1v1h-1zM1 10h1v1h-1zM6 10h1v1h-1zM10 10h2v1h-2zM13 10h2v1h-2zM17 10h2v1h-2zM20 10h1v1h-1zM1 11h1v1h-1zM5 11h1v1h-1zM8 11h1v1h-1zM11 11h4v1h-4zM16 11h2v1h-2zM21 11h2v1h-2zM0 12h2v1h-2zM3 12h1v1h-1zM5 12h3v1h-3zM9 12h6v1h-6zM16 12h5v1h-5zM22 12h3v1h-3zM1 13h4v1h-4zM8 13h1v1h-1zM10 13h2v1h-2zM14 13h7v1h-7zM24 13h1v1h-1zM1 14h2v1h-2zM4 14h4v1h-4zM9 14h2v1h-2zM13 14h2v1h-2zM20 14h1v1h-1zM22 14h2v1h-2zM0 15h1v1h-1zM3 15h2v1h-2zM7 15h2v1h-2zM10 15h1v1h-1zM12 15h1v1h-1zM14 15h3v1h-3zM19 15h2v1h-2zM24 15h1v1h-1zM2 16h2v1h-2zM5 16h3v1h-3zM9 16h1v1h-1zM11 16h3v1h-3zM16 16h9v1h-9zM8 17h5v1h-5zM16 17h1v1h-1zM20 17h1v1h-1zM22 17h1v1h-1zM24 17h1v1h-1zM0 18h7v1h-7zM8 18h1v1h-1zM10 18h1v1h-1zM12 18h1v1h-1zM14 18h1v1h-1zM16 18h1v1h-1zM18 18h1v1h-1zM20 18h1v1h-1zM22 18h3v1h-3zM0 19h1v1h-1zM6 19h1v1h-1zM8 19h2v1h-2zM11 19h1v1h-1zM14 19h3v1h-3zM20 19h1v1h-1zM23 19h2v1h-2zM0 20h1v1h-1zM2 20h3v1h-3zM6 20h1v1h-1zM9 20h1v1h-1zM12 20h1v1h-1zM16 20h6v1h-6zM24 20h1v1h-1zM0 21h1v1h-1zM2 21h3v1h-3zM6 21h1v1h-1zM8 21h1v1h-1zM10 21h2v1h-2zM13 21h1v1h-1zM17 21h2v1h-2zM20 21h5v1h-5zM0 22h1v1h-1zM2 22h3v1h-3zM6 22h1v1h-1zM8 22h1v1h-1zM10 22h4v1h-4zM16 22h3v1h-3zM20 22h1v1h-1zM22 22h2v1h-2zM0 23h1v1h-1zM6 23h1v1h-1zM9 23h1v1h-1zM13 23h1v1h-1zM20 23h1v1h-1zM22 23h1v1h-1zM0 24h7v1h-7zM8 24h2v1h-2zM12 24h3v1h-3zM19 24h6v1h-6z"
         fill="#0B0B0D"
       />
-    </svg>
-  )
-}
-
-/* lucide-react ships no Venmo glyph, so this is a hand-drawn one in the same
-   idiom as the rest of the set: 24x24 viewBox, currentColor stroke, 2px
-   round-joined strokes and a `size` prop, so it drops into the SOCIALS row
-   beside the lucide icons without reading as a different weight. The shape is
-   Venmo's app tile -- a rounded square around the angled V, its right arm
-   curved the way the mark's is. */
-function VenmoIcon({
-  size = 24,
-  ...props
-}: { size?: number } & React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      {...props}
-    >
-      <rect x="3" y="3" width="18" height="18" rx="4.5" />
-      <path d="M8.3 7.9l3.3 8.4c2.4-2.6 3.9-5.7 4.1-8.4" />
     </svg>
   )
 }
@@ -2115,55 +1706,6 @@ function MagicDust() {
   return <canvas ref={ref} className="magic-canvas" aria-hidden="true" />
 }
 
-/* ---------------------------------------------------------------------------
-   1-on-1 tarot readings, sold by the half hour. Three tiers, and like
-   every other list in this file they live as data: the panel below only lays
-   them out, so changing what a session costs or includes is a data edit.
-
-   Amber, not brand red, stays the colour of this corner of the app.
---------------------------------------------------------------------------- */
-type Reading = {
-  id: string
-  label: string
-  minutes: number
-  price: number
-  blurb: string
-  includes: string[]
-  featured?: boolean
-}
-
-const READINGS: Reading[] = [
-  {
-    id: "half",
-    label: "Half Hour",
-    minutes: 30,
-    price: 45,
-    blurb: "One question, cut clean.",
-    includes: ["Three-card spread", "Voice note recap"],
-  },
-  {
-    id: "hour",
-    label: "Full Hour",
-    minutes: 60,
-    price: 80,
-    blurb: "The whole board, front to back.",
-    includes: [
-      "Celtic cross",
-      "Voice note recap",
-      "One follow-up card by text",
-    ],
-    featured: true,
-  },
-  {
-    id: "long",
-    label: "Hour and a Half",
-    minutes: 90,
-    price: 110,
-    blurb: "Deep read, nobody watching the clock.",
-    includes: ["Two spreads, your pick", "Voice note recap", "Written summary"],
-  },
-]
-
 /* The menu. One tier is always selected -- the hour, since it is the one most
    people want -- so the button at the bottom always has something to say. Like
    the tip jar, this panel only composes a hand-off: it takes no money itself,
@@ -2326,3 +1868,5 @@ function PriceCard({
     </button>
   )
 }
+
+

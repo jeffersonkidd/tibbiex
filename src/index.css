@@ -18,14 +18,13 @@
   --color-brand: var(--background\/brand\/default);
   --color-brand-hover: var(--background\/brand\/hover);
   --color-on-brand: var(--text\/brand\/on-brand);
-  --color-accent: var(--pink\/500);
-  --color-accent-strong: var(--pink\/600);
-  --color-accent-ink: var(--pink\/800);
-  --color-accent-soft: var(--pink\/200);
-  --color-accent-tint: var(--pink\/100);
+  --color-accent: var(--amber\/500);
+  --color-accent-strong: var(--amber\/600);
+  --color-accent-ink: var(--amber\/800);
+  --color-accent-soft: var(--amber\/200);
+  --color-accent-tint: var(--amber\/100);
   --color-line: var(--border\/default\/default);
   --color-line-strong: var(--border\/default\/secondary);
-  --color-positive: var(--background\/positive\/default);
 
   --radius-sm: calc(var(--radius\/100) * 1px);
   --radius-md: calc(var(--radius\/200) * 1px);
@@ -67,7 +66,7 @@ h1, h2, h3, h4, h5, h6 {
     var(--background\/brand\/default) 50%,
     var(--background\/brand\/deep) 100%
   );
-  filter: drop-shadow(0 3px 10px rgba(236, 32, 15, 0.5));
+  filter: drop-shadow(0 3px 10px rgb(var(--brand\/rgb) / 0.5));
 }
 
 /* Only paint the gradient through the glyph where the browser can clip to
@@ -103,24 +102,31 @@ body,
   --background\/default\/secondary: #16171b;
   --background\/default\/tertiary: #26282e;
   
-  --text\/default\/default: #FFFDF7;
-  --text\/default\/secondary: rgba(255, 253, 247, 0.7);
-  --text\/default\/tertiary: rgba(255, 253, 247, 0.5);
+  /* Each hue is declared once as bare `R G B` channels. Rules that need it at
+     some alpha write rgb(var(--<hue>\/rgb) / <a>) rather than restating the
+     colour, so there is one place to change it. */
+  --ink\/rgb: 255 253 247;
+  --brand\/rgb: 236 32 15;
+  --amber\/rgb: 255 216 77;
+
+  --text\/default\/default: rgb(var(--ink\/rgb));
+  --text\/default\/secondary: rgb(var(--ink\/rgb) / 0.7);
+  --text\/default\/tertiary: rgb(var(--ink\/rgb) / 0.5);
   
-  --background\/brand\/default: #EC200F;
+  --background\/brand\/default: rgb(var(--brand\/rgb));
   --background\/brand\/hover: #d11a0d;
   --background\/brand\/lift: #FF5433;
   --background\/brand\/deep: #B8150A;
-  --text\/brand\/on-brand: #FFFDF7;
+  --text\/brand\/on-brand: var(--text\/default\/default);
   
-  --pink\/100: rgba(255, 216, 77, 0.1);
-  --pink\/200: rgba(255, 216, 77, 0.2);
-  --pink\/500: #FFD84D;
-  --pink\/600: #e6c245;
-  --pink\/800: #b39736;
+  --amber\/100: rgb(var(--amber\/rgb) / 0.1);
+  --amber\/200: rgb(var(--amber\/rgb) / 0.2);
+  --amber\/500: rgb(var(--amber\/rgb));
+  --amber\/600: #e6c245;
+  --amber\/800: #b39736;
   
-  --border\/default\/default: rgba(255, 253, 247, 0.1);
-  --border\/default\/secondary: rgba(255, 253, 247, 0.2);
+  --border\/default\/default: rgb(var(--ink\/rgb) / 0.1);
+  --border\/default\/secondary: rgb(var(--ink\/rgb) / 0.2);
 
   /* Radius ramp. These feed rounded-sm / -md / -lg via the @theme inline block
      at the top of this file, so they -- not Tailwind's default scale -- are
@@ -150,9 +156,9 @@ body,
     var(--background\/brand\/deep) 100%
   );
   box-shadow:
-    inset 0 1px 0 rgba(255, 253, 247, 0.3),
+    inset 0 1px 0 rgb(var(--ink\/rgb) / 0.3),
     inset 0 -1px 0 rgba(0, 0, 0, 0.22),
-    0 8px 20px -10px rgba(236, 32, 15, 0.8);
+    0 8px 20px -10px rgb(var(--brand\/rgb) / 0.8);
   transition:
     box-shadow 220ms ease,
     transform 220ms ease,
@@ -168,7 +174,7 @@ body,
   background: linear-gradient(
     115deg,
     transparent 38%,
-    rgba(255, 253, 247, 0.26) 50%,
+    rgb(var(--ink\/rgb) / 0.26) 50%,
     transparent 62%
   );
   transform: translateX(-130%);
@@ -182,9 +188,9 @@ body,
 .brand-surface:hover {
   filter: brightness(1.07);
   box-shadow:
-    inset 0 1px 0 rgba(255, 253, 247, 0.38),
+    inset 0 1px 0 rgb(var(--ink\/rgb) / 0.38),
     inset 0 -1px 0 rgba(0, 0, 0, 0.22),
-    0 12px 26px -10px rgba(236, 32, 15, 0.95);
+    0 12px 26px -10px rgb(var(--brand\/rgb) / 0.95);
 }
 
 /* CTA buttons lift on hover; the segmented tab deliberately does not. */
@@ -243,30 +249,17 @@ body,
   --foreground: oklch(0.97 0.01 85);
 
   --card: oklch(0.22 0.007 260 / 0.82);
-  --card-foreground: oklch(0.97 0.01 85);
+  --card-foreground: var(--foreground);
 
   --popover: oklch(0.22 0.007 260 / 0.92);
-  --popover-foreground: oklch(0.97 0.01 85);
-
-  --primary: oklch(0.58 0.22 28);
-  --primary-foreground: oklch(0.97 0.01 85);
-
-  --secondary: oklch(0.29 0.008 260);
-  --secondary-foreground: oklch(0.97 0.01 85);
+  --popover-foreground: var(--foreground);
 
   --muted: oklch(0.29 0.008 260 / 0.7);
   --muted-foreground: oklch(0.74 0.008 260);
 
-  --accent-2: oklch(0.72 0.22 330);
-  --accent-2-foreground: oklch(0.16 0.02 275);
-
-  --destructive: oklch(0.62 0.23 25);
-  --destructive-foreground: oklch(0.98 0.01 25);
-
   --border: oklch(0.42 0.009 260 / 0.5);
-  --input: oklch(0.42 0.009 260 / 0.5);
+  --input: var(--border);
   --input-background: oklch(0.19 0.007 260 / 0.8);
-  --ring: oklch(0.58 0.22 28);
 }
 
 @theme inline {
@@ -278,20 +271,11 @@ body,
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-  --color-accent-2: var(--accent-2);
-  --color-accent-2-foreground: var(--accent-2-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-input-background: var(--input-background);
-  --color-ring: var(--ring);
 }
 
 /* ---------------------------------------------------------------------------
@@ -314,7 +298,7 @@ body,
    the only saturated thing on screen.
 --------------------------------------------------------------------------- */
 body {
-  background-color: #0b0b0d;
+  background-color: var(--background\/default\/default);
 }
 
 /* The record rides its own fixed layer rather than sitting on `body` under
@@ -421,17 +405,17 @@ body::before {
 @keyframes arcana-breathe {
   0%,
   100% {
-    border-color: rgba(255, 216, 77, 0.24);
+    border-color: rgb(var(--amber\/rgb) / 0.24);
     box-shadow:
-      0 0 20px -12px rgba(255, 216, 77, 0.55),
-      inset 0 0 0 1px rgba(255, 216, 77, 0.08);
+      0 0 20px -12px rgb(var(--amber\/rgb) / 0.55),
+      inset 0 0 0 1px rgb(var(--amber\/rgb) / 0.08);
   }
   50% {
-    border-color: rgba(255, 216, 77, 0.68);
+    border-color: rgb(var(--amber\/rgb) / 0.68);
     box-shadow:
-      0 0 44px -6px rgba(255, 216, 77, 0.8),
+      0 0 44px -6px rgb(var(--amber\/rgb) / 0.8),
       0 0 90px -24px rgba(255, 138, 46, 0.45),
-      inset 0 0 22px -8px rgba(255, 216, 77, 0.5);
+      inset 0 0 22px -8px rgb(var(--amber\/rgb) / 0.5);
   }
 }
 
@@ -445,7 +429,7 @@ body::before {
   background: linear-gradient(
     115deg,
     transparent 38%,
-    rgba(255, 216, 77, 0.16) 50%,
+    rgb(var(--amber\/rgb) / 0.16) 50%,
     transparent 62%
   );
   transform: translateX(-130%);
@@ -473,13 +457,13 @@ body::before {
   0%,
   100% {
     transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(255, 216, 77, 0);
+    box-shadow: 0 0 0 0 rgb(var(--amber\/rgb) / 0);
   }
   50% {
     transform: scale(1.07);
     box-shadow:
-      0 0 26px -4px rgba(255, 216, 77, 0.8),
-      inset 0 0 14px -6px rgba(255, 216, 77, 0.9);
+      0 0 26px -4px rgb(var(--amber\/rgb) / 0.8),
+      inset 0 0 14px -6px rgb(var(--amber\/rgb) / 0.9);
   }
 }
 
@@ -488,7 +472,7 @@ body::before {
    drop shadow is what makes it read as lit rather than merely amber. */
 .arcana-spark {
   animation: arcana-twinkle 3.4s ease-in-out infinite;
-  filter: drop-shadow(0 0 7px rgba(255, 216, 77, 0.8));
+  filter: drop-shadow(0 0 7px rgb(var(--amber\/rgb) / 0.8));
 }
 
 @keyframes arcana-twinkle {
@@ -512,7 +496,7 @@ body::before {
 .arcana-veil {
   background-image: radial-gradient(
     120% 60% at 50% 0%,
-    rgba(255, 216, 77, 0.09) 0%,
+    rgb(var(--amber\/rgb) / 0.09) 0%,
     transparent 62%
   );
 }
@@ -534,7 +518,7 @@ body::before {
   background-color: #101117;
   background-image: radial-gradient(
     95% 70% at 50% 0%,
-    rgba(255, 216, 77, 0.12) 0%,
+    rgb(var(--amber\/rgb) / 0.12) 0%,
     transparent 66%
   );
   border: 1px solid var(--border\/default\/secondary);
@@ -549,13 +533,13 @@ body::before {
 
 .price-card:hover {
   transform: translateY(-4px);
-  border-color: rgba(255, 216, 77, 0.45);
+  border-color: rgb(var(--amber\/rgb) / 0.45);
 }
 
 /* The picked tier, lit the way a turned card was. */
 .price-card[data-state="on"] {
-  border-color: rgba(255, 216, 77, 0.7);
-  box-shadow: 0 0 30px -10px rgba(255, 216, 77, 0.65);
+  border-color: rgb(var(--amber\/rgb) / 0.7);
+  box-shadow: 0 0 30px -10px rgb(var(--amber\/rgb) / 0.65);
 }
 
 @keyframes price-deal {
@@ -573,7 +557,7 @@ body::before {
 .price-frame {
   position: absolute;
   inset: 5px;
-  border: 1px solid rgba(255, 216, 77, 0.28);
+  border: 1px solid rgb(var(--amber\/rgb) / 0.28);
   border-radius: calc(var(--radius\/100) * 1px);
   pointer-events: none;
 }
@@ -587,13 +571,13 @@ body::before {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #0e0f13;
-  background: rgba(255, 216, 77, 0.85);
+  background: rgb(var(--amber\/rgb) / 0.85);
   padding: 2px 6px;
   border-radius: calc(var(--radius\/full) * 1px);
 }
 
 .price-duration {
-  color: rgba(255, 216, 77, 0.75);
+  color: rgb(var(--amber\/rgb) / 0.75);
 }
 
 .price-name {
@@ -633,7 +617,7 @@ body::before {
   gap: 4px;
   margin-top: 10px;
   padding-top: 10px;
-  border-top: 1px solid rgba(255, 216, 77, 0.16);
+  border-top: 1px solid rgb(var(--amber\/rgb) / 0.16);
   width: 100%;
   font-size: 11px;
   line-height: 1.3;
@@ -714,7 +698,13 @@ body::before {
       rgba(255, 255, 255, 0.24) 0 2px,
       transparent 2px 7px
     ),
-    linear-gradient(90deg, #8c3d0a 0%, #d9631a 38%, #ff9c2e 72%, #ffd84d 100%);
+    linear-gradient(
+      90deg,
+      #8c3d0a 0%,
+      #d9631a 38%,
+      #ff9c2e 72%,
+      rgb(var(--amber\/rgb)) 100%
+    );
   background-size:
     20px 20px,
     100% 100%;
