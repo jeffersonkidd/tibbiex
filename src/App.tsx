@@ -33,6 +33,11 @@ import {
 
 import profilePic from "./assets/tibbie_profile.jpeg"
 import bannerPic from "./assets/tibbie_background.jpeg"
+import gashPromo from "./assets/gash/gash_promo.jpg"
+import gashLive from "./assets/gash/gash_live.jpeg"
+import gashFlyer from "./assets/gash/gash_flyer.jpg"
+import gashArt from "./assets/gash/gash_artwork.jpg"
+import gashLogo from "./assets/gash/gash_logo.jpg"
 
 // Layout follows the added.tsx reference: a stack of self-contained rounded
 // cards on a dark page (control bar, profile card, socials, tab strip, panels)
@@ -387,40 +392,34 @@ const PORTFOLIO: PortfolioEntry[] = [
     ],
     photos: [
       {
-        src: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=600&h=800&auto=format&fit=crop",
-        alt: "Gash mid-set in a packed basement room",
-        width: 600,
-        height: 800,
+        src: gashPromo,
+        alt: "Gash promo shot — the band's vocalist on a red-lit stage beneath the logo",
+        width: 960,
+        height: 960,
       },
       {
-        src: "https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?q=80&w=600&h=400&auto=format&fit=crop",
-        alt: "Stage lights over the crowd at a Gash show",
-        width: 600,
-        height: 400,
+        src: gashLive,
+        alt: "Black-and-white live shot of Gash mid-set, guitarist behind the vocalist",
+        width: 905,
+        height: 905,
       },
       {
-        src: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&h=750&auto=format&fit=crop",
-        alt: "Guitarist leaning into the front row",
-        width: 600,
-        height: 750,
+        src: gashFlyer,
+        alt: "Show flyer: Gash with Ballroom Zombies, Danse de Sade and Thorazine at North Star Bar",
+        width: 685,
+        height: 960,
       },
       {
-        src: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?q=80&w=600&h=450&auto=format&fit=crop",
-        alt: "Wide shot of the band from the back of the room",
-        width: 600,
-        height: 450,
+        src: gashArt,
+        alt: "Gash artwork — a screamed face in red and black beside the band logo",
+        width: 960,
+        height: 540,
       },
       {
-        src: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=600&h=600&auto=format&fit=crop",
-        alt: "Drum kit lit from the side",
-        width: 600,
-        height: 600,
-      },
-      {
-        src: "https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?q=80&w=600&h=820&auto=format&fit=crop",
-        alt: "Vocal mic in a smoke-filled spotlight",
-        width: 600,
-        height: 820,
+        src: gashLogo,
+        alt: "The Gash logo in white brushstrokes on black",
+        width: 777,
+        height: 777,
       },
     ],
   },
