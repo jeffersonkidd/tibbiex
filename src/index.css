@@ -1,14 +1,13 @@
-/* Design system (Crust / MonoFly DSP) tokens + typography — the team's
-   source of truth. Editing this file re-skins the whole app. It also @imports
-   the display faces Special Elite + VT323. */
-/* Load the body/mono faces the design-system typography classes reference. */
+/* Design tokens + typography for the whole app. Editing this file re-skins it.
+   It also @imports the faces the type classes reference: Inter for body,
+   Roboto Mono for the mono labels, Special Elite for the display wordmark. */
 @import "https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Roboto+Mono:wght@400;500&family=Special+Elite&display=swap";
 @import "tailwindcss";
 
-/* Expose the design-system tokens as Tailwind utilities so every color, radius
-   and surface in the UI resolves back to a variable in the kit stylesheet.
-   The kit declares its tokens with escaped slashes (e.g. --text\/default\/default),
-   so we alias them to clean names here and reference only these downstream. */
+/* Expose the primitive tokens as Tailwind utilities so every color, radius and
+   surface in the UI resolves back to a variable declared below. The primitives
+   are named with escaped slashes (e.g. --text\/default\/default), so we alias
+   them to clean names here and reference only these downstream. */
 @theme inline {
   --color-surface: var(--background\/default\/default);
   --color-surface-2: var(--background\/default\/secondary);
@@ -82,7 +81,7 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Small uppercase metadata label in the design system's mono face. */
+/* Small uppercase metadata label in the mono face. */
 .mono-label {
   font-family: "Roboto Mono", var(--default-mono-font-family);
   font-size: 11px;
@@ -99,7 +98,7 @@ body,
 }
 
 :root {
-  /* Override kit tokens with requested palette ramps for dark theme */
+  /* The primitive ramps for the dark theme. */
   --background\/default\/default: #0b0b0d;
   --background\/default\/secondary: #16171b;
   --background\/default\/tertiary: #26282e;
@@ -232,19 +231,18 @@ body,
 }
 
 /* ---------------------------------------------------------------------------
-   Palette adopted from the added.css design tokens (dark cyberpunk ramp:
-   cyan primary, magenta accent, slate-violet surfaces). These names are what
-   the UI in App.tsx references — background/card/muted/border/primary/accent.
+   Surface palette — the plain-named tokens App.tsx reaches for directly:
+   background/card/muted/border/primary/accent.
 --------------------------------------------------------------------------- */
 :root {
-  /* Near-neutral charcoal surfaces with a faint cool cast, matching the page
-     ramp. Card and popover are translucent so the gradient, screen lines and
-     grain read through them; every card surface pairs this with a backdrop
-     blur. Text stays a warm off-white so it reads as paper, not screen white. */
+  /* Near-neutral charcoal surfaces with a faint cool cast. Card and popover
+     are translucent so the record photograph reads through them; every card
+     surface pairs this with a backdrop blur. Text stays a warm off-white so it
+     reads as paper, not screen white. */
   --background: oklch(0.16 0.006 260);
   --foreground: oklch(0.97 0.01 85);
 
-  --card: oklch(0.22 0.007 260 / 0.72);
+  --card: oklch(0.22 0.007 260 / 0.82);
   --card-foreground: oklch(0.97 0.01 85);
 
   --popover: oklch(0.22 0.007 260 / 0.92);
@@ -297,94 +295,53 @@ body,
 }
 
 /* ---------------------------------------------------------------------------
-   Page background — a xeroxed-zine treatment in four stacked layers, all fixed
-   so they stay put while the content scrolls:
+   Page background — the black vinyl record photograph under a flat 5% black
+   scrim.
 
-     body            near-black charcoal ramp + a cool toner wash
-     body::before    one slow, desaturated light leak (motion, behind content)
-     body::after     screen-print lines + halftone dots + grain + vignette
-     #root           the app, lifted above all of it
+     body     the scrim, then the record, both fixed to the viewport
+     #root    the app, lifted above them
 
-   The page is deliberately colourless. Brand red is reserved for the CTAs and
-   the active tab, so those read as the only saturated thing on screen.
+   The xeroxed-zine treatment that used to sit on top of this — a charcoal ramp
+   and toner wash on `body`, an animated light leak on `body::before`, and a
+   screen-print/halftone/vignette/grain pass on `body::after` — has been
+   removed. The scrim is the only thing over the photo: keep it flat and
+   neutral, and do not reintroduce texture, a gradient or a vignette without
+   being asked. Recover the old rules from git history if they are ever wanted
+   back.
+
+   The page is still deliberately colourless: the record is greyscale, and
+   brand red stays reserved for the CTAs and the active tab so those read as
+   the only saturated thing on screen.
 --------------------------------------------------------------------------- */
 body {
   background-color: #0b0b0d;
   background-image:
-    /* toner wash bleeding in from the top-left, like a bad photocopy */
-    radial-gradient(95% 65% at 12% -10%, rgba(214, 220, 232, 0.09) 0%, transparent 62%),
-    /* faint counter-light low-right so the ramp is not perfectly flat */
-    radial-gradient(70% 55% at 100% 88%, rgba(190, 198, 214, 0.05) 0%, transparent 65%),
-    /* the one warm note, tying back to the amber accent */
-    radial-gradient(40% 30% at 78% 22%, rgba(255, 216, 77, 0.035) 0%, transparent 70%),
-    /* base vertical ramp: charcoal at the top, near-black at the bottom */
-    linear-gradient(180deg, #191a1e 0%, #121317 45%, #0c0c0f 75%, #08080a 100%);
-  background-attachment: fixed;
-}
-
-/* A single slow light leak. Desaturated on purpose — it reads as uneven paper
-   rather than a glow. Its own layer, so the animation never repaints the
-   gradient underneath it. */
-body::before {
-  content: "";
-  position: fixed;
-  inset: -20%;
-  z-index: 0;
-  pointer-events: none;
-  background-image:
-    radial-gradient(40% 32% at 32% 28%, rgba(206, 214, 228, 0.07) 0%, transparent 70%),
-    radial-gradient(34% 28% at 70% 72%, rgba(170, 180, 200, 0.05) 0%, transparent 70%);
-  filter: blur(40px);
-  animation: paper-drift 34s ease-in-out infinite alternate;
-}
-
-@keyframes paper-drift {
-  from {
-    transform: translate3d(-2%, -1%, 0) scale(1);
-  }
-  to {
-    transform: translate3d(3%, 2%, 0) scale(1.1);
-  }
-}
-
-/* Texture pass, in print order: diagonal screen-print hatching, a halftone dot
-   screen, a vignette pulling the corners down, and toner grain on top. */
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.55;
-  background-image:
-    repeating-linear-gradient(
-      -45deg,
-      rgba(255, 253, 247, 0.022) 0px,
-      rgba(255, 253, 247, 0.022) 1px,
-      transparent 1px,
-      transparent 7px
-    ),
-    radial-gradient(rgba(255, 253, 247, 0.045) 1px, transparent 1px),
-    radial-gradient(118% 92% at 50% 42%, transparent 42%, rgba(0, 0, 0, 0.62) 100%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+    /* Flat 5% black scrim — just enough to seat the photo, and light enough
+       that the record reads as itself. Two identical stops, so it is an even
+       wash rather than a gradient. */
+    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3)),
+    url("./assets/black_record.jpg");
+  background-position:
+    0 0,
+    center center;
+  background-repeat:
+    repeat,
+    no-repeat;
+  /* Same result as `cover`, spelled out in viewport units: `cover` measures
+     the positioning area, and iOS Safari makes that the whole document for a
+     fixed background rather than the viewport, which blows the record up. A
+     square filling a W×H viewport is max(W, H) on both axes — the two axes
+     stay equal, so it still cannot stretch. */
   background-size:
     auto,
-    20px 20px,
-    100% 100%,
-    160px 160px;
-  mix-blend-mode: soft-light;
+    max(100vw, 100vh) max(100vw, 100vh);
+  background-attachment: fixed;
 }
 
 /* The app sits above every background layer. */
 #root {
   position: relative;
   z-index: 1;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  body::before {
-    animation: none;
-  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -399,8 +356,8 @@ body::after {
   .card-surface {
     background-color: var(--card);
     border: 1px solid var(--border);
-    /* Matches backdrop-blur-xl; --card is translucent, so the page gradient
-       and grain read through every panel. */
+    /* Matches backdrop-blur-xl; --card is translucent, so the record reads
+       through every panel. */
     backdrop-filter: blur(24px);
   }
 }
@@ -721,9 +678,9 @@ body::after {
 
 /* ---------------------------------------------------------------------------
    The rehearsal meter. A flat amber bar read as a loading spinner more than a
-   measure, so the fill is a hot gradient under the same diagonal screen-print
-   hatching the page background uses -- the stripes crawl, which is what makes
-   it read as work in progress rather than a static percentage.
+   measure, so the fill is a hot gradient under diagonal screen-print hatching
+   -- the stripes crawl, which is what makes it read as work in progress rather
+   than a static percentage.
 --------------------------------------------------------------------------- */
 .meter-track {
   position: relative;

@@ -23,7 +23,9 @@ logs/
 
 # Agent instruction files, kept local rather than shared with the repo.
 /CLAUDE.md
-/AGENTS.md
 /.claude/
 
 CHANGELOG.md
+
+# Full-res image masters: the shipped assets are downscaled cuts of these.
+src/assets/*.png

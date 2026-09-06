@@ -39,11 +39,11 @@ import gashFlyer from "./assets/gash/gash_flyer.jpg"
 import gashArt from "./assets/gash/gash_artwork.jpg"
 import gashLogo from "./assets/gash/gash_logo.jpg"
 
-// Layout follows the added.tsx reference: a stack of self-contained rounded
-// cards on a dark page (control bar, profile card, socials, tab strip, panels)
-// rather than one monolithic sheet. Colors come from the added.css token set
-// mirrored into src/index.css (background / card / muted / border), with the
-// buttons and accents kept on the original brand ramp (bg-brand / accent).
+// Layout is a stack of self-contained rounded cards on a dark page (control
+// bar, profile card, socials, tab strip, panels) rather than one monolithic
+// sheet. Colors come from the surface palette in src/index.css (background /
+// card / muted / border), with the buttons and accents on the brand ramp
+// (bg-brand / accent).
 
 type Album = {
   id: string
@@ -700,8 +700,7 @@ export default function App() {
                   {/* basis-full drops the band list onto its own row under the
                       Bass · Vocals pill at every width. */}
                   <span className="basis-full text-sm">
-                    • Leftover Crack • GASH • Reagan Youth
-                    <br />• X-Possibles • Kissy Kamikaze
+                    • Leftover Crack • GASH • Reagan Youth • X-Possibles • Kissy Kamikaze
                   </span>
                 </div>
               </div>
