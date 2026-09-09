@@ -25,7 +25,7 @@ import {
   Youtube,
 } from "lucide-react"
 
-import VenmoIcon from "./VenmoIcon"
+import VenmoIcon from "./icons/VenmoIcon"
 
 import gashPromo from "./assets/gash/gash_promo.jpg"
 import gashLive from "./assets/gash/gash_live.jpeg"

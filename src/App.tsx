@@ -64,8 +64,8 @@ import type {
   ShopItem,
   Tab,
 } from "./data"
-import PatreonIcon from "./PatreonIcon"
-import TikTokIcon from "./TikTokIcon"
+import PatreonIcon from "./icons/PatreonIcon"
+import TikTokIcon from "./icons/TikTokIcon"
 
 
 // Layout is a stack of self-contained rounded cards on a dark page (control
