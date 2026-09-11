@@ -453,7 +453,7 @@ export const TABS = [
   { label: "Home", enabled: true },
   { label: "Music", enabled: true },
   { label: "Portfolio", enabled: true },
-  { label: "Tour", enabled: false },
+  { label: "Tour", enabled: true },
   { label: "Buy", enabled: true },
 ] as const
 
