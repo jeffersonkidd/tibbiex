@@ -27,6 +27,16 @@ import {
 
 import VenmoIcon from "./icons/VenmoIcon"
 
+/* Content-status convention. Anything shown to a visitor that is a stand-in --
+   stock art, invented numbers, provisional prices, wording nobody has signed
+   off -- carries `staged: true` so it is placeholder in the type system, not
+   only in a comment above it. content-status.ts collects every flag into a
+   go-live checklist and warns in the dev console, so a placeholder cannot quietly
+   harden into truth across a run of quick fixes. `markStaged` tags a whole set
+   at once, for the lists that are placeholder end to end. */
+const markStaged = <T>(items: T[]): (T & { staged: true })[] =>
+  items.map((item) => ({ ...item, staged: true }))
+
 import gashPromo from "./assets/gash/gash_promo.jpg"
 import gashLive from "./assets/gash/gash_live.jpeg"
 import gashFlyer from "./assets/gash/gash_flyer.jpg"
@@ -43,6 +53,8 @@ export type Album = {
   /* The one song called out for this record. Optional -- only the rehearsal
      panel's target carries it today, and the modal hides the line without it. */
   track?: string
+  /* Placeholder art or unconfirmed wording -- see the content-status note. */
+  staged?: true
 }
 
 /* The rehearsal panel's destination, named so the panel can reach it without
@@ -58,6 +70,7 @@ export const REAGAN_YOUTH_LP: Album = {
   track: "Degenerated",
   image:
     "https://images.unsplash.com/photo-1526394931762-90052e97b376?q=80&w=400&auto=format&fit=crop",
+  staged: true,
 }
 
 export const DISCOGRAPHY: Album[] = [
@@ -126,11 +139,14 @@ export type ShopItem = {
   price: string
   image: string
   band: BandId | "general"
+  /* Stock art or a provisional price -- see the content-status note. */
+  staged?: true
 }
 
 // Placeholder catalogue — stock photography and provisional prices. Confirm
-// the items, prices and artwork before this goes live.
-export const BUY: ShopItem[] = [
+// the items, prices and artwork before this goes live. The whole set is
+// stand-in, so markStaged flags every item at once.
+export const BUY: ShopItem[] = markStaged([
   {
     id: "m1",
     item: "Logo Patch",
@@ -195,7 +211,7 @@ export const BUY: ShopItem[] = [
       "https://images.unsplash.com/photo-1461360370896-922624d12aa1?q=80&w=400&auto=format&fit=crop",
     band: "gash",
   },
-]
+])
 
 /* The first tab. Rows are outbound links, except those carrying `action`: such
    a row is a button that opens something inside the app instead of navigating
@@ -242,6 +258,8 @@ export const LINKS = [
     meta: "Reissue LP + logo tee, $50 — 20 numbered",
     href: "#",
     action: "offer",
+    /* Improvised bundle -- not a real SKU. See the content-status note. */
+    staged: true,
   },
   {
     icon: MessageSquare,
@@ -266,6 +284,8 @@ export type Photo = {
   alt: string
   width: number
   height: number
+  /* A stand-in image, not a real photo of this band -- see content-status. */
+  staged?: true
 }
 
 export type PortfolioEntry = {
@@ -344,8 +364,9 @@ export const PORTFOLIO: PortfolioEntry[] = [
     ],
     /* Placeholder gallery: these are stand-ins pulled from the same stock pool
        as the other sections, not Reagan Youth photos. Swap them for real ones
-       before this goes live, and update alt text and dimensions to match. */
-    photos: [
+       before this goes live, and update alt text and dimensions to match.
+       markStaged flags the whole set until real photos land. */
+    photos: markStaged([
       {
         src: "https://images.unsplash.com/photo-1538356111053-748a48e1acb8?q=80&w=600&h=600&auto=format&fit=crop",
         alt: "Vinyl pressings stacked on the table by the door",
@@ -364,7 +385,7 @@ export const PORTFOLIO: PortfolioEntry[] = [
         width: 600,
         height: 450,
       },
-    ],
+    ]),
   },
   {
     id: "gash",
@@ -453,7 +474,7 @@ export const TABS = [
   { label: "Home", enabled: true },
   { label: "Music", enabled: true },
   { label: "Portfolio", enabled: true },
-  { label: "Tour", enabled: true },
+  { label: "Tour", enabled: false },
   { label: "Buy", enabled: true },
 ] as const
 
@@ -495,13 +516,18 @@ export const TIP_PRESETS = [10, 25, 50, 100]
    Stripe's payments with their note metadata) before this goes in front of
    anyone, and empty the array back out in the meantime if it ships first: the
    feed hides itself when there is nothing real to show. */
-export const SUPPORTERS: { name: string; msg: string; amount: number }[] = [
+export const SUPPORTERS: {
+  name: string
+  msg: string
+  amount: number
+  staged?: true
+}[] = markStaged([
   { name: "Sewer Tony", msg: "for the Reagan Youth episode", amount: 100 },
   { name: "Gary", msg: "keep the mics on", amount: 75 },
   { name: "Deb Void", msg: "still alive, still loud", amount: 50 },
   { name: "Ratface", msg: "gas money to the next one", amount: 25 },
   { name: "Kat Static", msg: "from the old Trenton crowd", amount: 10 },
-]
+])
 
 /* The feed ranks by amount rather than by arrival: entries carry no timestamp,
    so "recent" would only ever mean "wherever it sits in the array above", while
