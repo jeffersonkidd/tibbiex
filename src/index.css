@@ -4,32 +4,35 @@
 @import "https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Roboto+Mono:wght@400;500&family=Special+Elite&display=swap";
 @import "tailwindcss";
 
-/* Expose the primitive tokens as Tailwind utilities so every color, radius and
-   surface in the UI resolves back to a variable declared below. The primitives
-   are named with escaped slashes (e.g. --text\/default\/default), so we alias
-   them to clean names here and reference only these downstream. */
+/* Expose the tokens declared in :root below as Tailwind utilities. Only the
+   utilities the markup actually uses are listed. Every var() here must be
+   declared in :root: an undefined one makes the property invalid, and for a
+   radius that silently squares the corner off. */
 @theme inline {
-  --color-surface: var(--background\/default\/default);
-  --color-surface-2: var(--background\/default\/secondary);
-  --color-surface-3: var(--background\/default\/tertiary);
-  --color-ink: var(--text\/default\/default);
-  --color-ink-2: var(--text\/default\/secondary);
-  --color-ink-3: var(--text\/default\/tertiary);
-  --color-brand: var(--background\/brand\/default);
-  --color-brand-hover: var(--background\/brand\/hover);
-  --color-on-brand: var(--text\/brand\/on-brand);
-  --color-accent: var(--amber\/500);
-  --color-accent-strong: var(--amber\/600);
-  --color-accent-ink: var(--amber\/800);
-  --color-accent-soft: var(--amber\/200);
-  --color-accent-tint: var(--amber\/100);
-  --color-line: var(--border\/default\/default);
-  --color-line-strong: var(--border\/default\/secondary);
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 
-  --radius-sm: calc(var(--radius\/100) * 1px);
-  --radius-md: calc(var(--radius\/200) * 1px);
-  --radius-lg: calc(var(--radius\/400) * 1px);
-  --radius-full: calc(var(--radius\/full) * 1px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-popover: var(--popover);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input-background: var(--input-background);
+
+  --color-brand: var(--brand);
+  --color-on-brand: var(--on-brand);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-tint: var(--accent-tint);
+
+  /* rounded-sm / -md / -lg / -full resolve to these, not Tailwind's default
+     scale; rounded-xl and up still come from Tailwind. */
+  --radius-sm: var(--radius-100);
+  --radius-md: var(--radius-200);
+  --radius-lg: var(--radius-400);
+  --radius-full: var(--radius-pill);
 }
 
 /* Distressed display face for headings and wordmarks */
@@ -59,14 +62,14 @@ h1, h2, h3, h4, h5, h6 {
   margin: -0.18em -0.04em -0.08em -0.15em;
   vertical-align: -0.06em;
   transform: rotate(-3deg);
-  color: var(--background\/brand\/default);
+  color: var(--brand);
   background-image: linear-gradient(
     155deg,
-    var(--background\/brand\/lift) 0%,
-    var(--background\/brand\/default) 50%,
-    var(--background\/brand\/deep) 100%
+    var(--brand-lift) 0%,
+    var(--brand) 50%,
+    var(--brand-deep) 100%
   );
-  filter: drop-shadow(0 3px 10px rgb(var(--brand\/rgb) / 0.5));
+  filter: drop-shadow(0 3px 10px rgb(var(--brand-rgb) / 0.5));
 }
 
 /* Only paint the gradient through the glyph where the browser can clip to
@@ -96,47 +99,54 @@ body,
   min-height: 100%;
 }
 
+/* ---------------------------------------------------------------------------
+   Design tokens — the one place colours and radii are declared. The @theme
+   inline block at the top of this file turns them into utilities; the rules
+   in this file read them directly. Mirrored as variables in the Figma file
+   RjhP5XJqNtBhAHTqdcq4T4.
+--------------------------------------------------------------------------- */
 :root {
-  /* The primitive ramps for the dark theme. */
-  --background\/default\/default: #0b0b0d;
-  --background\/default\/secondary: #16171b;
-  --background\/default\/tertiary: #26282e;
-  
   /* Each hue is declared once as bare `R G B` channels. Rules that need it at
-     some alpha write rgb(var(--<hue>\/rgb) / <a>) rather than restating the
+     some alpha write rgb(var(--<hue>-rgb) / <a>) rather than restating the
      colour, so there is one place to change it. */
-  --ink\/rgb: 255 253 247;
-  --brand\/rgb: 236 32 15;
-  --amber\/rgb: 255 216 77;
+  --ink-rgb: 255 253 247;
+  --brand-rgb: 236 32 15;
+  --amber-rgb: 255 216 77;
 
-  --text\/default\/default: rgb(var(--ink\/rgb));
-  --text\/default\/secondary: rgb(var(--ink\/rgb) / 0.7);
-  --text\/default\/tertiary: rgb(var(--ink\/rgb) / 0.5);
-  
-  --background\/brand\/default: rgb(var(--brand\/rgb));
-  --background\/brand\/hover: #d11a0d;
-  --background\/brand\/lift: #FF5433;
-  --background\/brand\/deep: #B8150A;
-  --text\/brand\/on-brand: var(--text\/default\/default);
-  
-  --amber\/100: rgb(var(--amber\/rgb) / 0.1);
-  --amber\/200: rgb(var(--amber\/rgb) / 0.2);
-  --amber\/500: rgb(var(--amber\/rgb));
-  --amber\/600: #e6c245;
-  --amber\/800: #b39736;
-  
-  --border\/default\/default: rgb(var(--ink\/rgb) / 0.1);
-  --border\/default\/secondary: rgb(var(--ink\/rgb) / 0.2);
+  /* Text. A warm off-white, so it reads as paper rather than screen white. */
+  --foreground: rgb(var(--ink-rgb));
+  --muted-foreground: oklch(0.74 0.008 260);
 
-  /* Radius ramp. These feed rounded-sm / -md / -lg via the @theme inline block
-     at the top of this file, so they -- not Tailwind's default scale -- are
-     what those utilities resolve to. Kept deliberately tight for a squarer,
-     more printed-flyer feel. --radius/full must be defined or rounded-full
-     compiles to an invalid calc() and collapses to 0. */
-  --radius\/100: 4;
-  --radius\/200: 6;
-  --radius\/400: 10;
-  --radius\/full: 9999;
+  /* Surfaces. --page is the base under the record photo. Card and popover
+     carry their own alpha so the photo reads through them (every card surface
+     pairs this with a backdrop blur); bg-card/60 etc. multiply against it. */
+  --page: #0b0b0d;
+  --background: oklch(0.16 0.006 260);
+  --card: oklch(0.22 0.007 260 / 0.82);
+  --popover: oklch(0.22 0.007 260 / 0.92);
+  --muted: oklch(0.29 0.008 260 / 0.7);
+  --input-background: oklch(0.19 0.007 260 / 0.8);
+  --border: oklch(0.42 0.009 260 / 0.5);
+  --border-strong: rgb(var(--ink-rgb) / 0.2);
+
+  /* Brand red: CTAs and the active tab only. lift and deep are the ends of
+     the gradient on .brand-surface and .wordmark-x. */
+  --brand: rgb(var(--brand-rgb));
+  --brand-lift: #ff5433;
+  --brand-deep: #b8150a;
+  --on-brand: var(--foreground);
+
+  /* Amber: the tarot system. */
+  --accent: rgb(var(--amber-rgb));
+  --accent-strong: #e6c245;
+  --accent-soft: rgb(var(--amber-rgb) / 0.2);
+  --accent-tint: rgb(var(--amber-rgb) / 0.1);
+
+  /* Radius ramp, kept tight for a squarer, printed-flyer feel. */
+  --radius-100: 4px;
+  --radius-200: 6px;
+  --radius-400: 10px;
+  --radius-pill: 9999px;
 }
 
 /* ---------------------------------------------------------------------------
@@ -151,14 +161,14 @@ body,
   overflow: hidden;
   background-image: linear-gradient(
     145deg,
-    var(--background\/brand\/lift) 0%,
-    var(--background\/brand\/default) 48%,
-    var(--background\/brand\/deep) 100%
+    var(--brand-lift) 0%,
+    var(--brand) 48%,
+    var(--brand-deep) 100%
   );
   box-shadow:
-    inset 0 1px 0 rgb(var(--ink\/rgb) / 0.3),
+    inset 0 1px 0 rgb(var(--ink-rgb) / 0.3),
     inset 0 -1px 0 rgba(0, 0, 0, 0.22),
-    0 8px 20px -10px rgb(var(--brand\/rgb) / 0.8);
+    0 8px 20px -10px rgb(var(--brand-rgb) / 0.8);
   transition:
     box-shadow 220ms ease,
     transform 220ms ease,
@@ -174,7 +184,7 @@ body,
   background: linear-gradient(
     115deg,
     transparent 38%,
-    rgb(var(--ink\/rgb) / 0.26) 50%,
+    rgb(var(--ink-rgb) / 0.26) 50%,
     transparent 62%
   );
   transform: translateX(-130%);
@@ -188,9 +198,9 @@ body,
 .brand-surface:hover {
   filter: brightness(1.07);
   box-shadow:
-    inset 0 1px 0 rgb(var(--ink\/rgb) / 0.38),
+    inset 0 1px 0 rgb(var(--ink-rgb) / 0.38),
     inset 0 -1px 0 rgba(0, 0, 0, 0.22),
-    0 12px 26px -10px rgb(var(--brand\/rgb) / 0.95);
+    0 12px 26px -10px rgb(var(--brand-rgb) / 0.95);
 }
 
 /* CTA buttons lift on hover; the segmented tab deliberately does not. */
@@ -237,48 +247,6 @@ body,
 }
 
 /* ---------------------------------------------------------------------------
-   Surface palette — the plain-named tokens App.tsx reaches for directly:
-   background/card/muted/border/primary/accent.
---------------------------------------------------------------------------- */
-:root {
-  /* Near-neutral charcoal surfaces with a faint cool cast. Card and popover
-     are translucent so the record photograph reads through them; every card
-     surface pairs this with a backdrop blur. Text stays a warm off-white so it
-     reads as paper, not screen white. */
-  --background: oklch(0.16 0.006 260);
-  --foreground: oklch(0.97 0.01 85);
-
-  --card: oklch(0.22 0.007 260 / 0.82);
-  --card-foreground: var(--foreground);
-
-  --popover: oklch(0.22 0.007 260 / 0.92);
-  --popover-foreground: var(--foreground);
-
-  --muted: oklch(0.29 0.008 260 / 0.7);
-  --muted-foreground: oklch(0.74 0.008 260);
-
-  --border: oklch(0.42 0.009 260 / 0.5);
-  --input: var(--border);
-  --input-background: oklch(0.19 0.007 260 / 0.8);
-}
-
-@theme inline {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-input-background: var(--input-background);
-}
-
-/* ---------------------------------------------------------------------------
    Page background — the black vinyl record photograph under a flat 5% black
    scrim.
 
@@ -298,7 +266,7 @@ body,
    the only saturated thing on screen.
 --------------------------------------------------------------------------- */
 body {
-  background-color: var(--background\/default\/default);
+  background-color: var(--page);
 }
 
 /* The record rides its own fixed layer rather than sitting on `body` under
@@ -405,17 +373,17 @@ body::before {
 @keyframes arcana-breathe {
   0%,
   100% {
-    border-color: rgb(var(--amber\/rgb) / 0.24);
+    border-color: rgb(var(--amber-rgb) / 0.24);
     box-shadow:
-      0 0 20px -12px rgb(var(--amber\/rgb) / 0.55),
-      inset 0 0 0 1px rgb(var(--amber\/rgb) / 0.08);
+      0 0 20px -12px rgb(var(--amber-rgb) / 0.55),
+      inset 0 0 0 1px rgb(var(--amber-rgb) / 0.08);
   }
   50% {
-    border-color: rgb(var(--amber\/rgb) / 0.68);
+    border-color: rgb(var(--amber-rgb) / 0.68);
     box-shadow:
-      0 0 44px -6px rgb(var(--amber\/rgb) / 0.8),
+      0 0 44px -6px rgb(var(--amber-rgb) / 0.8),
       0 0 90px -24px rgba(255, 138, 46, 0.45),
-      inset 0 0 22px -8px rgb(var(--amber\/rgb) / 0.5);
+      inset 0 0 22px -8px rgb(var(--amber-rgb) / 0.5);
   }
 }
 
@@ -429,7 +397,7 @@ body::before {
   background: linear-gradient(
     115deg,
     transparent 38%,
-    rgb(var(--amber\/rgb) / 0.16) 50%,
+    rgb(var(--amber-rgb) / 0.16) 50%,
     transparent 62%
   );
   transform: translateX(-130%);
@@ -457,13 +425,13 @@ body::before {
   0%,
   100% {
     transform: scale(1);
-    box-shadow: 0 0 0 0 rgb(var(--amber\/rgb) / 0);
+    box-shadow: 0 0 0 0 rgb(var(--amber-rgb) / 0);
   }
   50% {
     transform: scale(1.07);
     box-shadow:
-      0 0 26px -4px rgb(var(--amber\/rgb) / 0.8),
-      inset 0 0 14px -6px rgb(var(--amber\/rgb) / 0.9);
+      0 0 26px -4px rgb(var(--amber-rgb) / 0.8),
+      inset 0 0 14px -6px rgb(var(--amber-rgb) / 0.9);
   }
 }
 
@@ -472,7 +440,7 @@ body::before {
    drop shadow is what makes it read as lit rather than merely amber. */
 .arcana-spark {
   animation: arcana-twinkle 3.4s ease-in-out infinite;
-  filter: drop-shadow(0 0 7px rgb(var(--amber\/rgb) / 0.8));
+  filter: drop-shadow(0 0 7px rgb(var(--amber-rgb) / 0.8));
 }
 
 @keyframes arcana-twinkle {
@@ -496,7 +464,7 @@ body::before {
 .arcana-veil {
   background-image: radial-gradient(
     120% 60% at 50% 0%,
-    rgb(var(--amber\/rgb) / 0.09) 0%,
+    rgb(var(--amber-rgb) / 0.09) 0%,
     transparent 62%
   );
 }
@@ -514,15 +482,15 @@ body::before {
   padding: 16px 14px 14px;
   text-align: left;
   cursor: pointer;
-  color: var(--text\/default\/default);
+  color: var(--foreground);
   background-color: #101117;
   background-image: radial-gradient(
     95% 70% at 50% 0%,
-    rgb(var(--amber\/rgb) / 0.12) 0%,
+    rgb(var(--amber-rgb) / 0.12) 0%,
     transparent 66%
   );
-  border: 1px solid var(--border\/default\/secondary);
-  border-radius: calc(var(--radius\/400) * 1px);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-400);
   transition:
     transform 200ms ease,
     border-color 200ms ease,
@@ -533,13 +501,13 @@ body::before {
 
 .price-card:hover {
   transform: translateY(-4px);
-  border-color: rgb(var(--amber\/rgb) / 0.45);
+  border-color: rgb(var(--amber-rgb) / 0.45);
 }
 
 /* The picked tier, lit the way a turned card was. */
 .price-card[data-state="on"] {
-  border-color: rgb(var(--amber\/rgb) / 0.7);
-  box-shadow: 0 0 30px -10px rgb(var(--amber\/rgb) / 0.65);
+  border-color: rgb(var(--amber-rgb) / 0.7);
+  box-shadow: 0 0 30px -10px rgb(var(--amber-rgb) / 0.65);
 }
 
 @keyframes price-deal {
@@ -557,8 +525,8 @@ body::before {
 .price-frame {
   position: absolute;
   inset: 5px;
-  border: 1px solid rgb(var(--amber\/rgb) / 0.28);
-  border-radius: calc(var(--radius\/100) * 1px);
+  border: 1px solid rgb(var(--amber-rgb) / 0.28);
+  border-radius: var(--radius-100);
   pointer-events: none;
 }
 
@@ -571,13 +539,13 @@ body::before {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #0e0f13;
-  background: rgb(var(--amber\/rgb) / 0.85);
+  background: rgb(var(--amber-rgb) / 0.85);
   padding: 2px 6px;
-  border-radius: calc(var(--radius\/full) * 1px);
+  border-radius: var(--radius-pill);
 }
 
 .price-duration {
-  color: rgb(var(--amber\/rgb) / 0.75);
+  color: rgb(var(--amber-rgb) / 0.75);
 }
 
 .price-name {
@@ -617,7 +585,7 @@ body::before {
   gap: 4px;
   margin-top: 10px;
   padding-top: 10px;
-  border-top: 1px solid rgb(var(--amber\/rgb) / 0.16);
+  border-top: 1px solid rgb(var(--amber-rgb) / 0.16);
   width: 100%;
   font-size: 11px;
   line-height: 1.3;
@@ -653,7 +621,7 @@ body::before {
 .ry-mark {
   transform: rotate(-3deg);
   font-family: "Special Elite", cursive, var(--default-font-family, sans-serif);
-  color: var(--text\/default\/default);
+  color: var(--foreground);
 }
 
 .ry-mark-top {
@@ -703,7 +671,7 @@ body::before {
       #8c3d0a 0%,
       #d9631a 38%,
       #ff9c2e 72%,
-      rgb(var(--amber\/rgb)) 100%
+      rgb(var(--amber-rgb)) 100%
     );
   background-size:
     20px 20px,
