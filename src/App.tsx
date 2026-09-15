@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { Toaster, toast } from "sonner"
 import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/react"
 import {
   Calendar,
   CheckCircle2,
@@ -650,6 +651,7 @@ export default function App() {
       <MagicDust />
 
       <Analytics beforeSend={(event) => (analyticsOptedOut() ? null : event)} />
+      <SpeedInsights beforeSend={(event) => (analyticsOptedOut() ? null : event)} />
     </div>
   )
 }
