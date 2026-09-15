@@ -660,7 +660,7 @@ export default function App() {
           />
           <div className="p-6">
             <span className="mono-label text-accent-strong">{album.band}</span>
-            <h2 className="mt-1 text-2xl font-bold">{album.album}</h2>
+            <h2 className="mt-1 text-2xl">{album.album}</h2>
             <p className="mt-2 text-sm text-muted-foreground">
               Released {album.year} · {album.role}
             </p>
@@ -687,7 +687,7 @@ export default function App() {
             }}
             className="p-6"
           >
-            <h2 className="text-2xl font-bold">Book / Contact</h2>
+            <h2 className="text-2xl">Book / Contact</h2>
             <p className="mt-1 text-sm text-muted-foreground">
               For booking, press, or hate mail.
             </p>
@@ -712,7 +712,7 @@ export default function App() {
       {qr && (
         <Overlay onClose={() => setQr(false)} size="xs">
           <div className="p-6 text-center">
-            <h2 className="text-2xl font-bold">Scan &amp; Share</h2>
+            <h2 className="text-2xl">Scan &amp; Share</h2>
             <div className="mx-auto mt-5 w-fit rounded-md border border-border bg-muted p-4">
               <SiteQrCode size={148} />
             </div>

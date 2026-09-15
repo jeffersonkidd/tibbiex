@@ -68,7 +68,7 @@ export default function ReadingMenu({ onClose }: { onClose: () => void }) {
           own scrolling. */}
       <div className="arcana-veil max-h-[85vh] overflow-y-auto p-6">
         <span className="mono-label text-accent-strong">Readings</span>
-        <h2 className="mt-1 text-2xl font-bold">1-on-1 Tarot Readings</h2>
+        <h2 className="mt-1 text-2xl">1-on-1 Tarot Readings</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           Twenty-two cards, cut in the dark, read live over FaceTime. Pick how
           long you want the table open.

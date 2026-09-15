@@ -87,7 +87,7 @@ export default function TipJar() {
             <Mic className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="text-base font-normal">Fund “Still Alive”</h2>
+            <h2 className="text-base">Fund “Still Alive”</h2>
             <p className="mt-0.5 text-xs text-muted-foreground">
               Tibbie X interviews the East Coast punks who kept it going
             </p>

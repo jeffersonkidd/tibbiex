@@ -23,23 +23,36 @@
 :root {
   /* Each hue is declared once as bare `R G B` channels. Rules that need it at
      some alpha write rgb(var(--<hue>-rgb) / <a>) rather than restating the
-     colour, so there is one place to change it. */
+     colour, so there is one place to change it.
+
+     Ink and paper are the site printed in negative: a warm off-white ink on a
+     dark stock. Ink is everything that sits on a surface (text, highlights,
+     hairlines); paper is the surface itself, used at full strength for panels
+     and as a heavier sheet for modals. Change --paper-rgb and every panel,
+     sheet and knockout moves together. */
   --ink-rgb: 255 253 247;
+  --paper-rgb: 22 23 27;
   --brand-rgb: 236 32 15;
   --accent-rgb: 255 216 77;
 
-  /* Text. A warm off-white, so it reads as paper rather than screen white. */
+  /* Text. Ink, so it reads as print rather than screen white. */
   --foreground: rgb(var(--ink-rgb));
   --muted-foreground: oklch(0.74 0.008 260);
 
-  /* Surfaces. --page is the base under the record photo. Card and popover
-     carry their own alpha so the photo reads through them (every card surface
-     pairs this with a backdrop blur); bg-card/60 etc. multiply against it. */
+  /* Surfaces. --page is the base under the record photo, deeper than any
+     paper. The paper tokens are the same stock:
+       background  opaque paper, the bg-background fill
+       card        opaque paper, the panels in the stack
+       popover     a sheet at 0.92, so the blurred page still reads behind a
+                   modal
+     The panels are opaque on purpose -- the record shows only in the gaps
+     between them. bg-card/50 etc. are the sheer exceptions (the tab strips).
+     --muted (raised) and --input-background (recessed) sit either side of
+     paper in lightness, so they are declared on their own. */
   --page: #0b0b0d;
-  --background: #16171b;
-  --card: #16171b;
-  --card-hover: #1d1f24;
-  --popover: oklch(0.22 0.007 260 / 0.92);
+  --background: rgb(var(--paper-rgb));
+  --card: rgb(var(--paper-rgb));
+  --popover: rgb(var(--paper-rgb) / 0.92);
   --muted: oklch(0.29 0.008 260 / 0.7);
   --input-background: oklch(0.19 0.007 260 / 0.8);
   --border: oklch(0.42 0.009 260 / 0.5);
@@ -146,7 +159,7 @@ body::before {
   pointer-events: none;
   background-image:
     /* The scrim, heavier at the top where the header and profile card sit. */
-    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3)),
+    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)),
     url("./assets/black_record.jpg");
   background-repeat: no-repeat;
   /* Top-aligned: the viewport crops the record from its top edge down, rather
@@ -241,8 +254,8 @@ h1, h2, h3, h4, h5, h6 {
   .surface {
     background-color: var(--card);
     border: 1px solid var(--border);
-    /* Matches backdrop-blur-xl; --card is translucent, so the record reads
-       through every panel. */
+    /* Matches backdrop-blur-xl. --card is opaque, so the blur only shows
+       where a utility sheers the fill (bg-card/50 on the tab strips). */
     backdrop-filter: blur(24px);
   }
 }
@@ -550,7 +563,8 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 8px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #0e0f13;
+  /* A knockout: the paper showing through the amber. */
+  color: rgb(var(--paper-rgb));
   background: rgb(var(--accent-rgb) / 0.85);
   padding: 2px 6px;
   border-radius: var(--radius-pill);
@@ -659,10 +673,10 @@ h1, h2, h3, h4, h5, h6 {
   position: relative;
   overflow: hidden;
   border-radius: 999px;
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgb(var(--ink-rgb) / 0.05);
   background-image: repeating-linear-gradient(
     -45deg,
-    rgba(255, 255, 255, 0.05) 0 1px,
+    rgb(var(--ink-rgb) / 0.05) 0 1px,
     transparent 1px 5px
   );
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.7);
@@ -677,7 +691,7 @@ h1, h2, h3, h4, h5, h6 {
   background-image:
     repeating-linear-gradient(
       -45deg,
-      rgba(255, 255, 255, 0.24) 0 2px,
+      rgb(var(--ink-rgb) / 0.24) 0 2px,
       transparent 2px 7px
     ),
     linear-gradient(
@@ -692,7 +706,7 @@ h1, h2, h3, h4, h5, h6 {
     100% 100%;
   box-shadow:
     0 0 20px -4px rgba(255, 170, 60, 0.85),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    inset 0 1px 0 rgb(var(--ink-rgb) / 0.4);
   animation: meter-crawl 1.4s linear infinite;
 }
 
