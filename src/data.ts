@@ -6,9 +6,9 @@
    declarations, so one referenced inside another must be declared above it --
    VENMO_HANDLE sitting below SOCIALS is a TS2448 at build time.
 
-   Constants tied to a single component stay with that component in App.tsx
-   (OVERLAY_WIDTHS, LINK_ROW, the MOTES/MAGIC_INK spark state,
-   ANALYTICS_OPT_OUT_KEY); they are implementation, not content. */
+   Constants tied to a single module stay with that module (OVERLAY_WIDTHS,
+   the MOTES/MAGIC_INK spark state, ANALYTICS_OPT_OUT_KEY); they are
+   implementation, not content. */
 
 import {
   CreditCard,
@@ -127,6 +127,8 @@ export const SHOWS = [
     status: "Festival",
   },
 ]
+
+export type Show = typeof SHOWS[number]
 
 /* One id per band/project. It is the join between a portfolio section and the
    items it sells, so a typo is a type error rather than an empty shelf at
@@ -474,7 +476,7 @@ export const TABS = [
   { label: "Home", enabled: true },
   { label: "Music", enabled: true },
   { label: "Portfolio", enabled: true },
-  { label: "Tour", enabled: false },
+  { label: "Tour", enabled: true },
   { label: "Buy", enabled: true },
 ] as const
 
@@ -516,12 +518,14 @@ export const TIP_PRESETS = [10, 25, 50, 100]
    Stripe's payments with their note metadata) before this goes in front of
    anyone, and empty the array back out in the meantime if it ships first: the
    feed hides itself when there is nothing real to show. */
-export const SUPPORTERS: {
+export type Supporter = {
   name: string
   msg: string
   amount: number
   staged?: true
-}[] = markStaged([
+}
+
+export const SUPPORTERS: Supporter[] = markStaged([
   { name: "Sewer Tony", msg: "for the Reagan Youth episode", amount: 100 },
   { name: "Gary", msg: "keep the mics on", amount: 75 },
   { name: "Deb Void", msg: "still alive, still loud", amount: 50 },

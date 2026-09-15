@@ -14,8 +14,6 @@ import {
   QrCode,
   Radio,
   Share2,
-  ShoppingBag,
-  Ticket,
   Trophy,
   Youtube,
 } from "lucide-react"
@@ -40,20 +38,22 @@ import PatreonIcon from "./icons/PatreonIcon"
 import TikTokIcon from "./icons/TikTokIcon"
 
 import { analyticsOptedOut } from "./lib/analytics"
-import { castMagicFrom } from "./lib/magic-dust"
 import { copyLink } from "./lib/share"
 
+import AlbumTile from "./components/AlbumTile"
 import BrandButton from "./components/BrandButton"
 import Field from "./components/Field"
 import FilterPill from "./components/FilterPill"
 import Lightbox from "./components/Lightbox"
 import type { LightboxState } from "./components/Lightbox"
-import LinkFace, { LINK_ROW } from "./components/LinkFace"
+import LinkRow from "./components/LinkRow"
 import MagicDust from "./components/MagicDust"
 import Overlay from "./components/Overlay"
 import PhotoGrid from "./components/PhotoGrid"
 import ReaganYouthMark from "./components/ReaganYouthMark"
+import ShopCard from "./components/ShopCard"
 import ShopLink from "./components/ShopLink"
+import ShowRow from "./components/ShowRow"
 import SiteQrCode from "./components/SiteQrCode"
 
 import ReadingMenu from "./features/ReadingMenu"
@@ -218,7 +218,11 @@ export default function App() {
 
 
                 <ul className="text-xs max-w-xs list-disc list-inside flex flex-wrap my-4 items-center sm:items-end justify-center sm:justify-start text-slate-300 gap-x-3.5 gap-y-1">
-                 <li>Leftover Crack</li> <li>Reagan Youth</li> <li>GASH</li> <li>X-Possibles</li> <li>Kissy Kamikaze</li>
+                 <li>Leftover Crack</li> 
+                 <li>Reagan Youth</li>
+                 <li>GASH</li>
+                 <li>X-Possibles</li>
+                 <li>Kissy Kamikaze</li>
                 </ul>
 
 
@@ -380,54 +384,21 @@ export default function App() {
                 </span>
               </button>
 
-              {VISIBLE_LINKS.map((link) =>
-                link.action === "tarot" ? (
-                  <button
-                    key={link.title}
-                    type="button"
-                    onClick={(e) => {
-                      castMagicFrom(e)
-                      setTarot(true)
-                    }}
-                    className={`${LINK_ROW} arcana-row w-full text-left`}
-                  >
-                    <LinkFace link={link} />
-                  </button>
-                ) : link.action === "offer" ? (
-                  <button
-                    key={link.title}
-                    type="button"
-                    onClick={(e) => {
-                      castMagicFrom(e)
-                      openShop("reagan-youth")
-                    }}
-                    className={`${LINK_ROW} w-full text-left`}
-                  >
-                    <LinkFace link={link} />
-                  </button>
-                ) : link.action === "booking" ? (
-                  <button
-                    key={link.title}
-                    type="button"
-                    onClick={(e) => {
-                      castMagicFrom(e)
-                      setBooking(true)
-                    }}
-                    className={`${LINK_ROW} w-full text-left`}
-                  >
-                    <LinkFace link={link} />
-                  </button>
-                ) : (
-                  <a
-                    key={link.title}
-                    href={link.href}
-                    onClick={castMagicFrom}
-                    className={LINK_ROW}
-                  >
-                    <LinkFace link={link} />
-                  </a>
-                ),
-              )}
+              {VISIBLE_LINKS.map((link) => (
+                <LinkRow
+                  key={link.title}
+                  link={link}
+                  onOpen={
+                    link.action === "tarot"
+                      ? () => setTarot(true)
+                      : link.action === "offer"
+                        ? () => openShop("reagan-youth")
+                        : link.action === "booking"
+                          ? () => setBooking(true)
+                          : undefined
+                  }
+                />
+              ))}
 
               <TipJar />
             </>
@@ -436,31 +407,11 @@ export default function App() {
           {activeTab === "Music" && (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {DISCOGRAPHY.map((rec) => (
-                <button
+                <AlbumTile
                   key={rec.id}
-                  type="button"
-                  onClick={() => setAlbum(rec)}
-                  className="surface group relative cursor-pointer overflow-hidden rounded-lg text-left transition-colors hover:border-accent"
-                >
-                  <div className="h-48 overflow-hidden">
-                    <img
-                      src={rec.image}
-                      alt={rec.album}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                  </div>
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background/80 to-transparent p-4 pt-12">
-                    <div className="text-lg font-bold leading-tight">
-                      {rec.album}
-                    </div>
-                    <p className="text-xs font-medium text-accent-strong">
-                      {rec.band}
-                    </p>
-                    <p className="mono-label mt-1 text-muted-foreground">
-                      {rec.year} · {rec.role}
-                    </p>
-                  </div>
-                </button>
+                  album={rec}
+                  onOpen={() => setAlbum(rec)}
+                />
               ))}
             </div>
           )}
@@ -536,28 +487,7 @@ export default function App() {
 
           {activeTab === "Tour" &&
             SHOWS.map((show) => (
-              <div key={show.id} className="surface rounded-lg p-5">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <div className="text-lg font-bold">{show.venue}</div>
-                    <div className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
-                      <Calendar className="h-4 w-4" /> {show.date}
-                    </div>
-                    <div className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
-                      <MapPin className="h-4 w-4" /> {show.city}
-                    </div>
-                  </div>
-                  {show.status === "Tickets" ? (
-                    <BrandButton variant="pill">
-                      <Ticket className="h-4 w-4" /> Tickets
-                    </BrandButton>
-                  ) : (
-                    <span className="rounded-full bg-accent-tint px-3 py-1 text-xs font-bold text-accent-strong">
-                      {show.status}
-                    </span>
-                  )}
-                </div>
-              </div>
+              <ShowRow key={show.id} show={show} />
             ))}
 
           {activeTab === "Buy" && (
@@ -613,29 +543,7 @@ export default function App() {
 
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                       {group.items.map((item) => (
-                        <div
-                          key={item.id}
-                          className="surface group cursor-pointer overflow-hidden rounded-lg transition-colors hover:border-accent"
-                        >
-                          <div className="h-48 overflow-hidden">
-                            <img
-                              src={item.image}
-                              alt={item.item}
-                              loading="lazy"
-                              decoding="async"
-                              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                            />
-                          </div>
-                          <div className="flex items-center justify-between gap-3 p-4">
-                            <div className="text-sm font-bold leading-tight">
-                              {item.item}
-                            </div>
-                            <span className="flex shrink-0 items-center gap-1.5 text-base font-bold text-accent-strong">
-                              {item.price}{" "}
-                              <ShoppingBag className="h-4 w-4 text-muted-foreground" />
-                            </span>
-                          </div>
-                        </div>
+                        <ShopCard key={item.id} item={item} />
                       ))}
                     </div>
                   </section>

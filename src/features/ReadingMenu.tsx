@@ -62,7 +62,7 @@ export default function ReadingMenu({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <Overlay onClose={onClose} size="md">
+    <Overlay onClose={onClose} size="lg">
       {/* Three cards plus their lists clear a short phone viewport, and Overlay
           clips its children rather than scrolling them. So this panel does its
           own scrolling. */}

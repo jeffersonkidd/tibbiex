@@ -44,8 +44,8 @@ src/
     magic-dust.ts      the click-spark particle engine
   components/        reusable presentational pieces
     BrandButton, Field, Overlay, Lightbox, PhotoGrid,
-    ShopLink, LinkFace, FilterPill, SiteQrCode,
-    ReaganYouthMark, MagicDust
+    LinkRow, ShowRow, SupporterRow, ShopCard, AlbumTile,
+    ShopLink, FilterPill, SiteQrCode, ReaganYouthMark, MagicDust
   features/          the two stateful panels
     TipJar.tsx         podcast tip jar (Venmo / card)
     ReadingMenu.tsx    tarot reading tiers

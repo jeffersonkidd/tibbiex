@@ -11,7 +11,7 @@ export default defineConfig({
     // (e.g. sonner), otherwise its hooks see a null dispatcher.
     dedupe: ["react", "react-dom"],
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@": path.resolve(import.meta.dirname, "./src"),
     },
   },
   optimizeDeps: {

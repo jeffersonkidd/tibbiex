@@ -13,6 +13,7 @@ import type { Rail } from "../data"
 import { stripeCheckoutUrl } from "../lib/payments"
 import BrandButton from "../components/BrandButton"
 import Field from "../components/Field"
+import SupporterRow from "../components/SupporterRow"
 
 /* Tip jar under the link rows. One amount and one note, two ways out: Venmo
    hands off to the app with both in the query string, while Card posts them to
@@ -193,23 +194,11 @@ export default function TipJar() {
           </span>
           <div className="hide-scrollbar mt-2 max-h-32 space-y-1.5 overflow-y-auto">
             {TOP_CONTRIBUTORS.map((sup, i) => (
-              <div
+              <SupporterRow
                 key={`${sup.name}-${sup.msg}`}
-                className="flex items-center gap-2 rounded-md border border-border bg-muted/40 p-2 text-xs"
-              >
-                <span className="mono-label w-4 shrink-0 text-muted-foreground">
-                  {i + 1}
-                </span>
-                <p className="min-w-0 flex-1 truncate">
-                  <span className="font-bold">{sup.name}</span>
-                  <span className="ml-1.5 text-muted-foreground">
-                    “{sup.msg}”
-                  </span>
-                </p>
-                <span className="shrink-0 font-bold text-accent-strong">
-                  ${sup.amount}
-                </span>
-              </div>
+                supporter={sup}
+                rank={i + 1}
+              />
             ))}
           </div>
         </div>
