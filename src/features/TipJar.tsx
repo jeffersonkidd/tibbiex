@@ -80,7 +80,7 @@ export default function TipJar() {
   }
 
   return (
-    <section className="card-surface rounded-lg p-5">
+    <section className="surface rounded-lg p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           <div className="rounded-md border border-accent-soft bg-accent-tint p-2 text-accent-strong">

@@ -6,7 +6,7 @@ import type { LinkEntry } from "../data"
    repeated literal because the row is an <a> for outbound links and a <button>
    for the tarot -- two elements that have to look identical. */
 export const LINK_ROW =
-  "card-surface group block transform rounded-lg p-4 transition-all duration-300 hover:scale-[1.01] hover:border-accent"
+  "surface group block transform rounded-lg p-4 transition-all duration-300 hover:scale-[1.01] hover:border-accent"
 
 /* The inside of a link row, identical for both element types. The tarot row is
    the one that gets colour: an amber sigil box and a sparkle in place of the

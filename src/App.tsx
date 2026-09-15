@@ -126,7 +126,7 @@ export default function App() {
 
       <div className="w-full min-w-0 max-w-2xl px-4 pt-6 sm:px-6">
         {/* Header Controls */}
-        <header className="card-surface mb-8 flex items-center justify-between rounded-lg bg-card p-3">
+        <header className="surface mb-8 flex items-center justify-between rounded-lg p-3">
           <span className="mono-label px-2 text-muted-foreground">
             tibbiex.studio
           </span>
@@ -152,7 +152,7 @@ export default function App() {
         </header>
 
        {/* HERO HEADER & AVATAR CARD */}
-        <section className="card-surface bg-card rounded-3xl overflow-hidden mb-6 backdrop-blur-xl">
+        <section className="surface rounded-3xl overflow-hidden mb-6">
           {/* Animated Banner Cover */}
 
 
@@ -243,7 +243,7 @@ export default function App() {
                 href="https://instagram.com/tibbie_x"
                 target="_blank"
                 rel="noreferrer"
-                className="flex flex-col items-center justify-center p-2 rounded-xl border-border border border-border bg-card shadow-sm backdrop-blur-xl hover:bg-pink-500/10 hover:text-pink-400 text-slate-300 transition-all group"
+                className="surface flex flex-col items-center justify-center p-2 rounded-xl shadow-sm hover:bg-pink-500/10 hover:text-pink-400 text-slate-300 transition-all group"
               >
                 <Instagram className="w-5 h-5 mb-1 group-hover:scale-110 transition-transform" />
                 <span className="text-[10px] font-semibold">185K</span>
@@ -253,7 +253,7 @@ export default function App() {
                 href="https://patreon.com/tibbie_x"
                 target="_blank"
                 rel="noreferrer"
-                className="flex flex-col items-center justify-center p-2 rounded-xl border-border border border-border bg-card shadow-sm backdrop-blur-xl hover:bg-purple-500/10 hover:text-purple-400 text-slate-300 transition-all group"
+                className="surface flex flex-col items-center justify-center p-2 rounded-xl shadow-sm hover:bg-purple-500/10 hover:text-purple-400 text-slate-300 transition-all group"
               >
                 <PatreonIcon className="w-5 h-5 mb-1 group-hover:scale-110 transition-transform" />
                 <span className="text-[10px] font-semibold">95K</span>
@@ -262,7 +262,7 @@ export default function App() {
                 href="https://www.youtube.com/@tibbieskyex"
                 target="_blank"
                 rel="noreferrer"
-                className="flex flex-col items-center justify-center p-2 rounded-xl border-border border border-border bg-card shadow-sm backdrop-blur-xl hover:bg-red-500/10 hover:text-red-400 text-slate-300 transition-all group"
+                className="surface flex flex-col items-center justify-center p-2 rounded-xl shadow-sm hover:bg-red-500/10 hover:text-red-400 text-slate-300 transition-all group"
               >
                 <Youtube className="w-5 h-5 mb-1 group-hover:scale-110 transition-transform" />
                 <span className="text-[10px] font-semibold">320K</span>
@@ -271,7 +271,7 @@ export default function App() {
                 href="https://www.tiktok.com/@tibbieskyex"
                 target="_blank"
                 rel="noreferrer"
-                className="flex flex-col items-center justify-center p-2 rounded-xl border-border border border-border bg-card shadow-sm backdrop-blur-xl hover:bg-cyan-500/10 hover:text-cyan-400 text-slate-300 transition-all group"
+                className="surface flex flex-col items-center justify-center p-2 rounded-xl shadow-sm hover:bg-cyan-500/10 hover:text-cyan-400 text-slate-300 transition-all group"
               >
                 <TikTokIcon className="w-5 h-5 mb-1 group-hover:scale-110 transition-transform" />
                 <span className="text-[10px] font-semibold">140K</span>
@@ -310,7 +310,7 @@ export default function App() {
               rel="noreferrer noopener"
               aria-label={label}
               title={label}
-              className="flex h-12 w-12 transform items-center justify-center rounded-full border border-border bg-card shadow-sm backdrop-blur-xl transition-all hover:-translate-y-1 hover:bg-brand hover:text-on-brand"
+              className="surface flex h-12 w-12 transform items-center justify-center rounded-full shadow-sm transition-all hover:-translate-y-1 hover:bg-brand hover:text-on-brand"
             >
               <Icon size={20} />
             </a>
@@ -320,7 +320,7 @@ export default function App() {
         {/* Navigation Tabs */}
         <nav
           ref={tabsRef}
-          className="card-surface hide-scrollbar mb-6 flex scroll-mt-4 gap-2 overflow-x-auto rounded-lg bg-card/50 p-1.5"
+          className="surface hide-scrollbar mb-6 flex scroll-mt-4 gap-2 overflow-x-auto rounded-lg bg-card/50 p-1.5"
         >
           {VISIBLE_TABS.map(({ label }) => (
             <button
@@ -346,7 +346,7 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => openAlbum(REAGAN_YOUTH_LP)}
-                className="card-surface group block w-full rounded-lg p-5 text-left transition-colors hover:border-accent"
+                className="surface group block w-full rounded-lg p-5 text-left transition-colors hover:border-accent"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
@@ -440,7 +440,7 @@ export default function App() {
                   key={rec.id}
                   type="button"
                   onClick={() => setAlbum(rec)}
-                  className="card-surface group relative cursor-pointer overflow-hidden rounded-lg text-left transition-colors hover:border-accent"
+                  className="surface group relative cursor-pointer overflow-hidden rounded-lg text-left transition-colors hover:border-accent"
                 >
                   <div className="h-48 overflow-hidden">
                     <img
@@ -469,7 +469,7 @@ export default function App() {
             <>
               {/* Band strip -- the same filter treatment the Buy tab uses, and
                   where a shop group's "View credits" link lands. */}
-              <div className="card-surface hide-scrollbar flex gap-2 overflow-x-auto rounded-lg bg-card/50 p-1.5">
+              <div className="surface hide-scrollbar flex gap-2 overflow-x-auto rounded-lg bg-card/50 p-1.5">
                 {PORTFOLIO.map((entry) => (
                   <FilterPill
                     key={entry.id}
@@ -486,7 +486,7 @@ export default function App() {
                 <section
                   key={entry.id}
                   id={`portfolio-${entry.id}`}
-                  className="card-surface scroll-mt-4 rounded-lg p-5"
+                  className="surface scroll-mt-4 rounded-lg p-5"
                 >
                   <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
                     <h2 className="text-2xl uppercase leading-none tracking-tight">
@@ -536,7 +536,7 @@ export default function App() {
 
           {activeTab === "Tour" &&
             SHOWS.map((show) => (
-              <div key={show.id} className="card-surface rounded-lg p-5">
+              <div key={show.id} className="surface rounded-lg p-5">
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="text-lg font-bold">{show.venue}</div>
@@ -564,7 +564,7 @@ export default function App() {
             <>
               {/* Filter strip -- also the way back out of a band the portfolio
                   dropped the visitor into. */}
-              <div className="card-surface hide-scrollbar flex gap-2 overflow-x-auto rounded-lg bg-card/50 p-1.5">
+              <div className="surface hide-scrollbar flex gap-2 overflow-x-auto rounded-lg bg-card/50 p-1.5">
                 <FilterPill
                   label="All"
                   active={shopBand === "all"}
@@ -615,7 +615,7 @@ export default function App() {
                       {group.items.map((item) => (
                         <div
                           key={item.id}
-                          className="card-surface group cursor-pointer overflow-hidden rounded-lg transition-colors hover:border-accent"
+                          className="surface group cursor-pointer overflow-hidden rounded-lg transition-colors hover:border-accent"
                         >
                           <div className="h-48 overflow-hidden">
                             <img
