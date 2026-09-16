@@ -1,9 +1,11 @@
 // The shared input treatment. The booking form uses it uncontrolled and
-// required; the tip jar passes value/onChange and opts out of required, so
-// both forms keep the same border, fill and focus colour.
+// required, reading the values back by `name` through FormData; the tip jar
+// passes value/onChange and opts out of required, so both forms keep the same
+// border, fill and focus colour.
 export default function Field({
   placeholder,
   type,
+  name,
   value,
   onChange,
   required = true,
@@ -14,6 +16,7 @@ export default function Field({
 }: {
   placeholder: string
   type: string
+  name?: string
   value?: string
   onChange?: (value: string) => void
   required?: boolean
@@ -26,6 +29,7 @@ export default function Field({
     <input
       required={required}
       type={type}
+      name={name}
       placeholder={placeholder}
       value={value}
       onChange={onChange ? (e) => onChange(e.target.value) : undefined}
