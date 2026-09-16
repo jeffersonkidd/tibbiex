@@ -31,3 +31,4 @@ CHANGELOG.md
 src/assets/*.png
 
 .files
+.vercel

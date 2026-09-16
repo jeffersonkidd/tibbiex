@@ -568,7 +568,7 @@ export const TAGS = [
 
 /* The address the QR module path in `SiteQrCode` encodes. Regenerate that
    path if this ever changes, or the code points at the old site. */
-export const SITE_URL = "https://tibbiex.vercel.app"
+export const SITE_URL = "https://tibbiex.studio"
 
 /* ---------------------------------------------------------------------------
    1-on-1 tarot readings, sold by the half hour. Three tiers, and like
