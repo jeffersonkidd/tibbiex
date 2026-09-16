@@ -164,6 +164,10 @@ export default function App() {
             <img
               src={bannerPic}
               alt="Tibbie X performing live"
+              /* The LCP element. It is imported through JS, so it is not in the
+                 HTML for the preload scanner to find -- this at least moves it
+                 to the front of the queue once the bundle resolves it. */
+              fetchPriority="high"
               className="h-full w-full object-cover object-top opacity-100 hover:scale-105 transition-transform duration-700"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/40 to-transparent" />
@@ -495,6 +499,17 @@ export default function App() {
 
           {activeTab === "Buy" && (
             <>
+              {/* Says who made the goods, which is the studio's whole claim:
+                  the prints, apparel, stickers, patches and pins are its own
+                  work, not stock it resells. This is the visible counterpart
+                  of Product.manufacturer -> #studio in the index.html graph,
+                  so keep the two in step -- and note it is a claim about
+                  making, so it must not sit over anything label-pressed. */}
+              <p className="mono-label pb-1 text-muted-foreground">
+                Made in-house at{" "}
+                <span className="text-accent-strong">Tibbie X Studio</span>
+              </p>
+
               {/* Filter strip -- also the way back out of a band the portfolio
                   dropped the visitor into. */}
               <div className="surface hide-scrollbar flex gap-2 overflow-x-auto rounded-lg bg-card/50 p-1.5">
@@ -556,9 +571,18 @@ export default function App() {
           )}
         </main>
 
-        <p className="mono-label mt-8 text-center text-muted-foreground">
-          Built in the squat · 2026
-        </p>
+        {/* The one place the studio is named as the business rather than the
+            person -- the profile card above stays "Tibbie X", because the
+            performer is who the page is about. Both are asserted in the
+            JSON-LD graph in index.html (Organization #studio, Person
+            #tibbie-x), and Google wants structured data backed by text a
+            visitor can actually see. */}
+        <footer className="mt-8 text-center">
+          <p className="mono-label text-foreground/80">Tibbie X Studio</p>
+          <p className="mono-label mt-1 text-muted-foreground">
+            © 2026 Tibbie X · Built in the squat
+          </p>
+        </footer>
       </div>
 
       {/* Album modal */}

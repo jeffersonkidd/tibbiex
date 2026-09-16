@@ -1,6 +1,11 @@
 /* Design tokens + typography for the whole app. Editing this file re-skins it.
-   It also @imports the faces the type classes reference: Inter for body,
-   Roboto Mono for the mono labels, Special Elite for the display wordmark.
+   The type classes below reference three faces -- Inter for body, Roboto Mono
+   for the mono labels, Special Elite for the display wordmark -- but the faces
+   are NOT loaded here. They are <link>ed from index.html, so the preload
+   scanner finds them in the initial HTML parse; an @import in this file cannot
+   be discovered until this stylesheet has itself downloaded and parsed, which
+   serialises two round trips and lengthens the fallback-font flash. Change the
+   font stack here and change the <link> there to match.
 
    Contents
      1. Tokens        :root values, then the @theme inline utility mapping
@@ -11,7 +16,6 @@
      6. Tarot         the Links row (.arcana-*) and reading menu (.price-*)
      7. Rehearsal     .ry-mark and the meter
      8. Overlays      .magic-canvas, above everything */
-@import "https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Roboto+Mono:wght@400;500&family=Special+Elite&display=swap";
 @import "tailwindcss";
 
 /* ===========================================================================

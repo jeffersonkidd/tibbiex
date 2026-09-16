@@ -3,34 +3,219 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tibbie X</title>
+    <title>Tibbie X Studio — Bass, Vocals, Art &amp; Apparel</title>
     <meta
       name="description"
-      content="Tibbie X — music, shows, links, tarot readings and the 'Still Alive' podcast fundings, all in one place."
+      content="Art prints, apparel, patches and pins made in-house by Tibbie X — bass and vocals for Leftover Crack and Reagan Youth. Music, portfolio and tarot readings."
     />
     <link rel="canonical" href="https://tibbiex.studio/" />
 
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#16171b" />
+
+    <!-- The three faces src/index.css styles with: Inter (body), Roboto Mono
+         (.mono-label), Special Elite (.wordmark and the headings). Loaded here
+         rather than @imported in that stylesheet so the preload scanner starts
+         them during the first HTML parse instead of after index.css has been
+         fetched and parsed. Two preconnects because the CSS and the font files
+         come from different hosts, and gstatic needs `crossorigin` since fonts
+         are fetched in CORS mode. Keep the family list in step with the type
+         classes in src/index.css. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Roboto+Mono:wght@400;500&amp;family=Special+Elite&amp;display=swap"
+    />
+
     <!-- Share cards. URLs must be absolute; keep them in step with SITE_URL in src/data.ts. -->
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Tibbie X" />
+    <meta property="og:site_name" content="Tibbie X Studio" />
     <meta property="og:url" content="https://tibbiex.studio/" />
-    <meta property="og:title" content="Tibbie X" />
+    <meta property="og:title" content="Tibbie X Studio — Bass, Vocals, Art &amp; Apparel" />
     <meta
       property="og:description"
-      content="Music, shows, links, tarot readings and the tip jar, all in one place."
+      content="Art prints, apparel, patches and pins made in-house by Tibbie X — bass and vocals for Leftover Crack and Reagan Youth. Music, portfolio and tarot readings."
     />
     <meta property="og:image" content="https://tibbiex.studio/og.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Tibbie X on stage, facing a packed crowd, in black and white." />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Tibbie X" />
+    <meta name="twitter:title" content="Tibbie X Studio — Bass, Vocals, Art &amp; Apparel" />
     <meta
       name="twitter:description"
-      content="Music, shows, links, tarot readings and the tip jar, all in one place."
+      content="Art prints, apparel, patches and pins made in-house by Tibbie X — bass and vocals for Leftover Crack and Reagan Youth. Music, portfolio and tarot readings."
     />
     <meta name="twitter:image" content="https://tibbiex.studio/og.jpg" />
     <meta name="twitter:image:alt" content="Tibbie X on stage, facing a packed crowd, in black and white." />
+
+    <!-- Structured data. Two entities, deliberately: the studio is what sells,
+         Tibbie X is who performs, and the graph says so by cross-referencing
+         @ids rather than collapsing them into one node. Organization.founder
+         and Person.worksFor close the loop in both directions, so a consumer
+         resolving either one finds the other.
+
+         Hand-maintained here rather than generated from data.ts: the app
+         renders client-side, so anything React injects is invisible to
+         crawlers that do not run JS. The URLs are absolute and must stay in
+         step with SITE_URL, CONTACT_EMAIL and SOCIALS in src/data.ts, and the
+         reading tiers with READINGS.
+
+         Person.image is a square portrait served unhashed from public/, not
+         the wide og.jpg share card: it is the image that stands for the
+         person, and a landscape crowd shot makes a poor thumbnail of her. It
+         has to be a stable URL -- a crawler cannot follow a Vite filename that
+         changes every build -- which is why it and og.jpg both sit in public/
+         rather than being imported. public/tibbie_profile.jpg must stay
+         committed or this points at a 404.
+
+         `sameAs` sits on the Person only. Every one of those handles is a
+         personal profile; repeating them on the Organization would blur which
+         entity they identify, which is the opposite of what they are for.
+
+         Prices come from READINGS, which carries no `staged` flag -- those are
+         confirmed. BUY is markStaged end to end, so the merch catalogue is
+         deliberately absent: structured data has to match confirmed, visible
+         content, and fabricated SKUs are a manual-action risk. SHOWS
+         (MusicEvent) is out for the same reason.
+
+         When the real catalogue lands -- prints, artwork, apparel, stickers,
+         patches, pins -- it wants a second OfferCatalog on #studio, and those
+         are all made in-house, so each Product takes both
+         `manufacturer` and `brand` pointing at #studio, not just
+         `Offer.seller`. That is the whole difference between a maker and a
+         storefront, and it is what earns the studio the entity rather than
+         leaving it a reseller of other people's goods.
+
+         The exception to watch: `manufacturer` is a claim about who physically
+         made a thing, so anything pressed by a label (the LPs, the 7" and the
+         cassette in today's placeholder BUY) takes `Offer.seller` ONLY.
+         Claiming the studio manufactured a Leftover Crack record would be
+         false. If records stay in the shop alongside the studio's own work,
+         that split wants a field on ShopItem in data.ts -- a
+         `made: "studio" | "label"` discriminant -- rather than a judgement
+         call made here at markup time. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://tibbiex.studio/#studio",
+            "name": "Tibbie X Studio",
+            "alternateName": "Tibbie X",
+            "description": "The studio of bassist and vocalist Tibbie X: prints, artwork, apparel, stickers, patches and pins made in-house, plus 1-on-1 tarot readings, all sold direct.",
+            "knowsAbout": [
+              "Art prints",
+              "Apparel",
+              "Original artwork",
+              "Stickers",
+              "Embroidered patches",
+              "Enamel pins",
+              "Tarot reading",
+              "Punk music"
+            ],
+            "url": "https://tibbiex.studio/",
+            "logo": "https://tibbiex.studio/apple-touch-icon.png",
+            "image": "https://tibbiex.studio/og.jpg",
+            "email": "mailto:contact@tibbiex.studio",
+            "founder": { "@id": "https://tibbiex.studio/#tibbie-x" },
+            "employee": { "@id": "https://tibbiex.studio/#tibbie-x" },
+            "hasOfferCatalog": { "@id": "https://tibbiex.studio/#readings" }
+          },
+          {
+            "@type": "Person",
+            "@id": "https://tibbiex.studio/#tibbie-x",
+            "name": "Tibbie X",
+            "alternateName": "Tibbie Skye X",
+            "jobTitle": "Bassist and vocalist",
+            "url": "https://tibbiex.studio/",
+            "image": "https://tibbiex.studio/tibbie_profile.jpg",
+            "email": "mailto:contact@tibbiex.studio",
+            "worksFor": { "@id": "https://tibbiex.studio/#studio" },
+            "memberOf": [
+              { "@type": "MusicGroup", "name": "Leftover Crack" },
+              { "@type": "MusicGroup", "name": "Reagan Youth" },
+              { "@type": "MusicGroup", "name": "GASH" },
+              { "@type": "MusicGroup", "name": "X-Possibles" },
+              { "@type": "MusicGroup", "name": "Kissy Kamikaze" }
+            ],
+            "sameAs": [
+              "https://www.instagram.com/tibbie_x",
+              "https://www.facebook.com/Tibbie.X",
+              "https://www.youtube.com/@tibbieskyex",
+              "https://www.tiktok.com/@tibbieskyex",
+              "https://patreon.com/tibbie_x"
+            ]
+          },
+          {
+            "@type": "OfferCatalog",
+            "@id": "https://tibbiex.studio/#readings",
+            "name": "1-on-1 Tarot Readings",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "price": "45.00",
+                "priceCurrency": "USD",
+                "availability": "https://schema.org/InStock",
+                "url": "https://tibbiex.studio/",
+                "seller": { "@id": "https://tibbiex.studio/#studio" },
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Half Hour Tarot Reading",
+                  "serviceType": "Tarot reading",
+                  "description": "Thirty minutes over FaceTime. One question, cut clean: a three-card spread and a voice note recap.",
+                  "provider": { "@id": "https://tibbiex.studio/#tibbie-x" }
+                }
+              },
+              {
+                "@type": "Offer",
+                "price": "80.00",
+                "priceCurrency": "USD",
+                "availability": "https://schema.org/InStock",
+                "url": "https://tibbiex.studio/",
+                "seller": { "@id": "https://tibbiex.studio/#studio" },
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Full Hour Tarot Reading",
+                  "serviceType": "Tarot reading",
+                  "description": "Sixty minutes over FaceTime. The whole board, front to back: a Celtic cross, a voice note recap and one follow-up card by text.",
+                  "provider": { "@id": "https://tibbiex.studio/#tibbie-x" }
+                }
+              },
+              {
+                "@type": "Offer",
+                "price": "110.00",
+                "priceCurrency": "USD",
+                "availability": "https://schema.org/InStock",
+                "url": "https://tibbiex.studio/",
+                "seller": { "@id": "https://tibbiex.studio/#studio" },
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Hour and a Half Tarot Reading",
+                  "serviceType": "Tarot reading",
+                  "description": "Ninety minutes over FaceTime. A deep read with nobody watching the clock: two spreads of your choosing, a voice note recap and a written summary.",
+                  "provider": { "@id": "https://tibbiex.studio/#tibbie-x" }
+                }
+              }
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://tibbiex.studio/#website",
+            "url": "https://tibbiex.studio/",
+            "name": "Tibbie X Studio",
+            "alternateName": "Tibbie X",
+            "description": "The studio shop, the discography, the photo portfolio and the tarot reading menu, on one page.",
+            "inLanguage": "en",
+            "about": { "@id": "https://tibbiex.studio/#tibbie-x" },
+            "publisher": { "@id": "https://tibbiex.studio/#studio" }
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
