@@ -9,6 +9,6 @@ export const TABS = [
   { label: "Buy", enabled: true },
 ] as const
 
-export type Tab = typeof TABS[number]["label"]
+export type Tab = (typeof TABS)[number]["label"]
 
 export const VISIBLE_TABS = TABS.filter((tab) => tab.enabled)

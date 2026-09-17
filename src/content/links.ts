@@ -64,6 +64,6 @@ export const LINKS = [
   },
 ]
 
-export type LinkEntry = typeof LINKS[number]
+export type LinkEntry = (typeof LINKS)[number]
 
 export const VISIBLE_LINKS = LINKS.filter((link) => link.enabled !== false)

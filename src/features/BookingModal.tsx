@@ -28,10 +28,18 @@ export default function BookingModal({ onClose }: { onClose: () => void }) {
           toast.success("Opening your mail app.")
         }}
       >
-        <OverlayBody title="Book / Contact" sub="For booking, press, or hate mail.">
+        <OverlayBody
+          title="Book / Contact"
+          sub="For booking, press, or hate mail."
+        >
           <div className="mt-5 flex flex-col gap-3">
             <Field placeholder="Name" type="text" name="name" label="Name" />
-            <Field placeholder="Email" type="email" name="email" label="Email" />
+            <Field
+              placeholder="Email"
+              type="email"
+              name="email"
+              label="Email"
+            />
             <textarea
               required
               rows={4}

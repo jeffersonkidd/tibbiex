@@ -28,7 +28,10 @@ export function collectStaged(): StagedEntry[] {
 
   for (const album of DISCOGRAPHY) {
     if (album.staged) {
-      entries.push({ area: "Discography", label: `${album.band} — ${album.album}` })
+      entries.push({
+        area: "Discography",
+        label: `${album.band} — ${album.album}`,
+      })
     }
   }
 

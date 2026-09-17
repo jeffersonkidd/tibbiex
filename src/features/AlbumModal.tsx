@@ -15,7 +15,11 @@ export default function AlbumModal({
 }) {
   return (
     <Overlay onClose={onClose}>
-      <img src={album.image} alt={album.album} className="h-56 w-full object-cover" />
+      <img
+        src={album.image}
+        alt={album.album}
+        className="h-56 w-full object-cover"
+      />
       <OverlayBody eyebrow={album.band} title={album.album}>
         <p className="mt-2 text-sm text-muted-foreground">
           Released {album.year} · {album.role}

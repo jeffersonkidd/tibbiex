@@ -144,7 +144,9 @@ export default function App() {
           )}
 
           {activeTab === "Music" && (
-            <MusicTab onOpenAlbum={(album) => setModal({ kind: "album", album })} />
+            <MusicTab
+              onOpenAlbum={(album) => setModal({ kind: "album", album })}
+            />
           )}
 
           {activeTab === "Portfolio" && (
@@ -173,7 +175,9 @@ export default function App() {
         <SiteFooter />
       </div>
 
-      {modal?.kind === "album" && <AlbumModal album={modal.album} onClose={close} />}
+      {modal?.kind === "album" && (
+        <AlbumModal album={modal.album} onClose={close} />
+      )}
       {modal?.kind === "booking" && <BookingModal onClose={close} />}
       {modal?.kind === "share" && <ShareModal onClose={close} />}
       {modal?.kind === "readings" && <ReadingMenu onClose={close} />}
@@ -191,7 +195,9 @@ export default function App() {
       <MagicDust />
 
       <Analytics beforeSend={(event) => (analyticsOptedOut() ? null : event)} />
-      <SpeedInsights beforeSend={(event) => (analyticsOptedOut() ? null : event)} />
+      <SpeedInsights
+        beforeSend={(event) => (analyticsOptedOut() ? null : event)}
+      />
     </div>
   )
 }

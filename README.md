@@ -12,21 +12,20 @@ pnpm install
 pnpm dev          # http://localhost:5173
 ```
 
-| Script           | What it does                                        |
-| ---------------- | --------------------------------------------------- |
-| `pnpm dev`       | Vite dev server                                     |
-| `pnpm build`     | Production build to `dist/` (does not typecheck)    |
-| `pnpm preview`   | Serve the built `dist/` locally                     |
-| `pnpm typecheck` | `tsc --noEmit`, covering `src` and `api`            |
-| `pnpm check`     | Typecheck **and** build — the pre-push gate         |
-| `pnpm format`    | Format with oxfmt                                    |
+| Script           | What it does                                     |
+| ---------------- | ------------------------------------------------ |
+| `pnpm dev`       | Vite dev server                                  |
+| `pnpm build`     | Production build to `dist/` (does not typecheck) |
+| `pnpm preview`   | Serve the built `dist/` locally                  |
+| `pnpm typecheck` | `tsc --noEmit`, covering `src` and `api`         |
+| `pnpm check`     | Typecheck **and** build — the pre-push gate      |
+| `pnpm format`    | Format with Prettier                             |
 
 Use pnpm, not npm — the `packageManager` field pins it. There is no test runner
 or linter; `pnpm check` is the gate.
 
-Run `pnpm check` straight after `pnpm format`: oxfmt strips the `;` separators
-inside inline type literals (`{ label: string; detail: string }`), which breaks
-the build. Put back any it removed.
+Prettier runs without semicolons (`.prettierrc`) and skips `pnpm-lock.yaml`
+(`.prettierignore`).
 
 The card rail (`api/checkout.ts`) does not run under `pnpm dev`, which serves
 the static app only. Use `vercel dev` to exercise it, or expect every
@@ -90,7 +89,7 @@ folder only once it has a second file.
 
 ## Editing the content
 
-Everything the site *says* lives in `src/content/` as typed data, one file per
+Everything the site _says_ lives in `src/content/` as typed data, one file per
 subject: `profile.ts` (the card, socials, tags), `links.ts`, `music.ts`,
 `shows.ts`, `portfolio.ts`, `shop.ts`, `fund.ts`, `newsletter.ts`,
 `readings.ts`, `payments.ts` (the rails), `tabs.ts` and `site.ts` (address,

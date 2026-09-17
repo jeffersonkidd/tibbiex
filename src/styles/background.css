@@ -56,9 +56,7 @@ body::before {
   background-position:
     0 0,
     center top;
-  background-size:
-    auto,
-    cover;
+  background-size: auto, cover;
 }
 
 /* The app sits above every background layer. */

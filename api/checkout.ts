@@ -37,8 +37,30 @@ type Purpose = keyof typeof PURPOSES
 
 /* Shop orders ship "US and international"; Stripe needs the list spelled out. */
 const SHIPPING_COUNTRIES = [
-  "US", "CA", "MX", "GB", "IE", "FR", "DE", "NL", "BE", "LU", "ES", "PT", "IT",
-  "AT", "CH", "DK", "SE", "NO", "FI", "PL", "CZ", "AU", "NZ", "JP",
+  "US",
+  "CA",
+  "MX",
+  "GB",
+  "IE",
+  "FR",
+  "DE",
+  "NL",
+  "BE",
+  "LU",
+  "ES",
+  "PT",
+  "IT",
+  "AT",
+  "CH",
+  "DK",
+  "SE",
+  "NO",
+  "FI",
+  "PL",
+  "CZ",
+  "AU",
+  "NZ",
+  "JP",
 ]
 
 /* Loose on purpose: Stripe does the real validation, this only keeps garbage
@@ -77,7 +99,8 @@ export async function POST(request: Request) {
   const { name, submitType } = PURPOSES[purpose]
 
   const email =
-    typeof payload.email === "string" && EMAIL_PATTERN.test(payload.email.trim())
+    typeof payload.email === "string" &&
+    EMAIL_PATTERN.test(payload.email.trim())
       ? payload.email.trim()
       : ""
 
@@ -129,7 +152,10 @@ export async function POST(request: Request) {
   if (email) params.set("customer_email", email)
   if (purpose === "shop") {
     SHIPPING_COUNTRIES.forEach((country, i) =>
-      params.set(`shipping_address_collection[allowed_countries][${i}]`, country),
+      params.set(
+        `shipping_address_collection[allowed_countries][${i}]`,
+        country,
+      ),
     )
   }
 

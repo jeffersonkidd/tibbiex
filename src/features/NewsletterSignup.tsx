@@ -94,7 +94,11 @@ export default function NewsletterSignup() {
 
   return (
     <section className="surface rounded-lg p-5">
-      <PanelHeader icon={Mail} title={NEWSLETTER.title} sub={NEWSLETTER.blurb} />
+      <PanelHeader
+        icon={Mail}
+        title={NEWSLETTER.title}
+        sub={NEWSLETTER.blurb}
+      />
       <form onSubmit={join} noValidate className="mt-4 flex items-start gap-2">
         <div className="min-w-0 flex-1">
           <EmailField

@@ -147,7 +147,11 @@ export function shopFor(band: BandId) {
    unaffiliated items. Groups with nothing in them drop out. */
 export type ShopGroupId = BandId | "general"
 
-export const SHOP_GROUPS: { id: ShopGroupId; title: string; items: ShopItem[] }[] = [
+export const SHOP_GROUPS: {
+  id: ShopGroupId
+  title: string
+  items: ShopItem[]
+}[] = [
   ...PORTFOLIO.map((entry) => ({
     id: entry.id,
     title: entry.band,

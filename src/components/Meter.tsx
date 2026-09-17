@@ -3,7 +3,13 @@
    the fund measures money, so it takes a percentage and a name for screen
    readers and knows nothing else. Height is fixed here; place it with a
    wrapper, not a className. */
-export default function Meter({ value, label }: { value: number; label: string }) {
+export default function Meter({
+  value,
+  label,
+}: {
+  value: number
+  label: string
+}) {
   const percent = Math.max(0, Math.min(100, Math.round(value)))
 
   return (

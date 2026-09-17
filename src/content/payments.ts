@@ -11,7 +11,7 @@ export const RAILS = [
   { id: "card", label: "Card", icon: CreditCard },
 ] as const
 
-export type Rail = typeof RAILS[number]["id"]
+export type Rail = (typeof RAILS)[number]["id"]
 
 export function venmoPayUrl(amount: number, note: string) {
   const params = new URLSearchParams({

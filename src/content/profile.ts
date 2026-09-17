@@ -30,7 +30,13 @@ export const PROFILE = {
     { icon: Volume2, label: "Vocals" },
     { icon: UserPlus, label: "Crowds" },
   ],
-  bands: ["Reagan Youth", "Leftover Crack", "Kissy Kamikaze", "GASH", "X-Possibles"],
+  bands: [
+    "Reagan Youth",
+    "Leftover Crack",
+    "Kissy Kamikaze",
+    "GASH",
+    "X-Possibles",
+  ],
   /* The green badge on the banner and the dot on the avatar. There is no feed
      telling the site she is live, so this is a claim someone has to keep true:
      set it to null when she is not, and the badge and dot both go. */

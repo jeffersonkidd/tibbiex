@@ -85,7 +85,11 @@ export default function ProductModal({
           className="h-64 w-full bg-muted object-cover"
         />
         {photos.length > 1 && (
-          <div className="flex gap-2 px-6 pt-3" role="group" aria-label="Photos">
+          <div
+            className="flex gap-2 px-6 pt-3"
+            role="group"
+            aria-label="Photos"
+          >
             {photos.map((src, i) => (
               <button
                 key={src}

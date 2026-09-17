@@ -22,4 +22,4 @@ export const SHOWS = [
   },
 ]
 
-export type Show = typeof SHOWS[number]
+export type Show = (typeof SHOWS)[number]

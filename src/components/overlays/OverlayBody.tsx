@@ -19,7 +19,9 @@ export default function OverlayBody({
 }) {
   return (
     <div className={`p-6 ${className}`}>
-      {eyebrow && <span className="mono-label text-accent-strong">{eyebrow}</span>}
+      {eyebrow && (
+        <span className="mono-label text-accent-strong">{eyebrow}</span>
+      )}
       <h2 className={`text-2xl ${eyebrow ? "mt-1" : ""}`}>{title}</h2>
       {sub && <div className="mt-1 text-sm text-muted-foreground">{sub}</div>}
       {children}

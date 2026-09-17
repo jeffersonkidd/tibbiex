@@ -36,9 +36,7 @@ export default function PortfolioTab({
         ))}
       </div>
 
-      {PORTFOLIO.filter((entry) => entry.id === band).map((
-        entry,
-      ) => (
+      {PORTFOLIO.filter((entry) => entry.id === band).map((entry) => (
         <section
           key={entry.id}
           id={`portfolio-${entry.id}`}
@@ -59,9 +57,7 @@ export default function PortfolioTab({
             </Pill>
           </div>
 
-          <p className="mt-3 text-sm text-muted-foreground">
-            {entry.blurb}
-          </p>
+          <p className="mt-3 text-sm text-muted-foreground">{entry.blurb}</p>
 
           <div className="mt-4">
             <DetailList items={entry.highlights} />
@@ -71,9 +67,7 @@ export default function PortfolioTab({
 
           <PhotoGrid
             photos={entry.photos}
-            onOpen={(index) =>
-              onOpenPhoto(entry.photos, index)
-            }
+            onOpen={(index) => onOpenPhoto(entry.photos, index)}
           />
         </section>
       ))}
