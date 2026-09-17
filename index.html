@@ -29,7 +29,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Roboto+Mono:wght@400;500&amp;family=Special+Elite&amp;display=swap"
     />
 
-    <!-- Share cards. URLs must be absolute; keep them in step with SITE_URL in src/data.ts. -->
+    <!-- Share cards. URLs must be absolute; keep them in step with SITE_URL in src/content/site.ts. -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Tibbie X Studio" />
     <meta property="og:url" content="https://tibbiex.studio/" />
@@ -57,11 +57,12 @@
          and Person.worksFor close the loop in both directions, so a consumer
          resolving either one finds the other.
 
-         Hand-maintained here rather than generated from data.ts: the app
+         Hand-maintained here rather than generated from src/content/: the app
          renders client-side, so anything React injects is invisible to
          crawlers that do not run JS. The URLs are absolute and must stay in
-         step with SITE_URL, CONTACT_EMAIL and SOCIALS in src/data.ts, and the
-         reading tiers with READINGS.
+         step with SITE_URL and CONTACT_EMAIL (src/content/site.ts) and
+         SOCIALS (src/content/profile.ts), and the reading tiers with
+         READINGS.
 
          Person.image is a square portrait served unhashed from public/, not
          the wide og.jpg share card: it is the image that stands for the
@@ -94,7 +95,7 @@
          cassette in today's placeholder BUY) takes `Offer.seller` ONLY.
          Claiming the studio manufactured a Leftover Crack record would be
          false. If records stay in the shop alongside the studio's own work,
-         that split wants a field on ShopItem in data.ts -- a
+         that split wants a field on ShopItem in content/shop.ts -- a
          `made: "studio" | "label"` discriminant -- rather than a judgement
          call made here at markup time. -->
     <script type="application/ld+json">

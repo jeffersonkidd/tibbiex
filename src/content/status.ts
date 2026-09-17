@@ -1,6 +1,6 @@
 /* The go-live checklist, derived from the data rather than kept by hand.
 
-   Every placeholder in data.ts carries `staged: true` (see the note there).
+   Every placeholder in src/content/ carries `staged: true` (see the note there).
    This module is the one place that reads those flags back: it walks the
    content and lists what is still a stand-in, so the checklist cannot drift
    from the data the way a hand-maintained TODO would. `warnStagedContent` prints
@@ -9,7 +9,12 @@
    When a section is confirmed, drop its `staged` flag at the source and it
    falls off this list automatically. When the list is empty, the site is
    telling the truth end to end. */
-import { DISCOGRAPHY, LINKS, PORTFOLIO, SUPPORTERS } from "./data"
+import { FUND, SUPPORTERS } from "./fund"
+import { LINKS } from "./links"
+import { DISCOGRAPHY } from "./music"
+import { NEWSLETTER } from "./newsletter"
+import { PORTFOLIO } from "./portfolio"
+import { PROFILE } from "./profile"
 
 export type StagedEntry = {
   /* Where it lives, so the checklist reads as a place to go fix it. */
@@ -45,6 +50,27 @@ export function collectStaged(): StagedEntry[] {
     if (supporter.staged) {
       entries.push({ area: "Supporters", label: supporter.name })
     }
+  }
+
+  if (PROFILE.live?.staged) {
+    entries.push({
+      area: "Profile",
+      label: `"${PROFILE.live.label}" badge — nothing checks she is live`,
+    })
+  }
+
+  if (FUND.staged) {
+    entries.push({
+      area: "Fund",
+      label: `Goal, total and backers ($${FUND.raised} of $${FUND.goal})`,
+    })
+  }
+
+  if (NEWSLETTER.staged) {
+    entries.push({
+      area: "Newsletter",
+      label: "Sign-up and restock alerts hand off by email — no list connected",
+    })
   }
 
   return entries

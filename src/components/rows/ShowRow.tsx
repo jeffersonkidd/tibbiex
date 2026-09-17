@@ -1,7 +1,7 @@
 import { Calendar, MapPin, Ticket } from "lucide-react"
 
-import type { Show } from "../data"
-import BrandButton from "./BrandButton"
+import type { Show } from "../../content/shows"
+import BrandButton from "../controls/BrandButton"
 
 /* One entry in the Tour tab. Only "Tickets" gets the CTA; every other status
    ("Sold Out", "Festival"…) is printed in the amber badge, which is why the

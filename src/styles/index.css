@@ -9,8 +9,9 @@
      typography.css    display face and .mono-label
      surfaces.css      .surface, .brand-surface / .brand-lift / .brand-pop
      utilities.css     .hide-scrollbar
-     marks.css         the Tibbie X wordmark's X and the Reagan Youth mark
+     marks.css         the Tibbie X wordmark and the Reagan Youth mark
      treatments/
+       profile.css     the profile card: banner, avatar halo, quote, social keys
        tarot.css       the Links row (.arcana-*) and reading menu (.price-*)
        meter.css       the rehearsal meter
        magic-dust.css  the spark canvas, above everything
@@ -30,6 +31,7 @@
 @import "./surfaces.css";
 @import "./utilities.css";
 @import "./marks.css";
+@import "./treatments/profile.css";
 @import "./treatments/tarot.css";
 @import "./treatments/meter.css";
 @import "./treatments/magic-dust.css";

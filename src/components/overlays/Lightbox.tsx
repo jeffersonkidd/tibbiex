@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
-import type { Photo } from "../data"
+import type { Photo } from "../../content/portfolio"
 import Overlay from "./Overlay"
 
 export type LightboxState = {

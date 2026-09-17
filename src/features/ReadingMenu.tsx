@@ -2,17 +2,21 @@ import { useEffect, useState } from "react"
 import { Check, Sparkles } from "lucide-react"
 import { toast } from "sonner"
 
-import { READINGS, RAILS, VENMO_HANDLE, venmoPayUrl } from "../data"
-import type { Rail, Reading } from "../data"
+import { READINGS } from "../content/readings"
+import type { Reading } from "../content/readings"
+import { railHint } from "../content/payments"
+import type { Rail } from "../content/payments"
 import { castMagicFrom } from "../lib/magic-dust"
-import { stripeCheckoutUrl } from "../lib/payments"
-import BrandButton from "../components/BrandButton"
-import Overlay from "../components/Overlay"
+import { payVia } from "../lib/payments"
+import BrandButton from "../components/controls/BrandButton"
+import RailToggle from "../components/controls/RailToggle"
+import Overlay from "../components/overlays/Overlay"
+import OverlayBody from "../components/overlays/OverlayBody"
 
 /* The menu. One tier is always selected -- the hour, since it is the one most
    people want -- so the button at the bottom always has something to say. Like
-   the tip jar, this panel only composes a hand-off: it takes no money itself,
-   it hands the deposit to whichever rail the reader picked. */
+   the fund, this panel only composes a hand-off: it takes no money itself, it
+   hands the deposit to whichever rail the reader picked. */
 export default function ReadingMenu({ onClose }: { onClose: () => void }) {
   const [pickedId, setPickedId] = useState("hour")
   const [rail, setRail] = useState<Rail>("venmo")
@@ -33,26 +37,20 @@ export default function ReadingMenu({ onClose }: { onClose: () => void }) {
     setPickedId(id)
   }
 
-  /* The same two rails the tip jar runs on, carrying the tier as the note.
-     Venmo opens in a new tab; Stripe takes the whole tab, because its return
-     trip only lands where it left from. */
+  /* The same two rails the fund runs on, carrying the tier as the note. */
   async function hold(e: React.MouseEvent<HTMLElement>) {
     castMagicFrom(e)
-    const note = `${picked.minutes}-minute reading`
-
-    if (rail === "venmo") {
-      window.open(
-        venmoPayUrl(picked.price, note),
-        "_blank",
-        "noopener,noreferrer",
-      )
-      toast.success("Venmo is open — the slot is yours once it lands.")
-      return
-    }
-
-    setSending(true)
+    if (rail === "card") setSending(true)
     try {
-      window.location.href = await stripeCheckoutUrl(picked.price, note)
+      await payVia(rail, {
+        amount: picked.price,
+        note: `${picked.minutes}-minute reading`,
+        purpose: "reading",
+      })
+      /* The card rail is navigating away, so its button keeps saying so. */
+      if (rail === "venmo") {
+        toast.success("Venmo is open — the slot is yours once it lands.")
+      }
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Could not reach Stripe.",
@@ -66,14 +64,14 @@ export default function ReadingMenu({ onClose }: { onClose: () => void }) {
       {/* Three cards plus their lists clear a short phone viewport, and Overlay
           clips its children rather than scrolling them. So this panel does its
           own scrolling. */}
-      <div className="arcana-veil max-h-[85vh] overflow-y-auto p-6">
-        <span className="mono-label text-accent-strong">Readings</span>
-        <h2 className="mt-1 text-2xl">1-on-1 Tarot Readings</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Twenty-two cards, cut in the dark, read live over FaceTime. Pick how
-          long you want the table open.
-        </p>
-
+      <OverlayBody
+        eyebrow="Readings"
+        title="1-on-1 Tarot Readings"
+        sub={
+          "Twenty-two cards, cut in the dark, read live over FaceTime. Pick how long you want the table open."
+        }
+        className="arcana-veil max-h-[85vh] overflow-y-auto"
+      >
         <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
           {READINGS.map((reading, i) => (
             <PriceCard
@@ -92,23 +90,8 @@ export default function ReadingMenu({ onClose }: { onClose: () => void }) {
           gatekeeping — the deck has no authority over you.
         </p>
 
-        {/* Which rail the deposit travels on -- the same segmented control the
-            tip jar uses, outlined so the red below stays the only red here. */}
-        <div className="mt-4 flex gap-2 rounded-md border border-border bg-input-background p-1">
-          {RAILS.map(({ id, label, icon: Icon }) => (
-            <button
-              key={id}
-              type="button"
-              onClick={() => setRail(id)}
-              className={`flex flex-1 items-center justify-center gap-1.5 rounded-sm border py-2 text-xs font-bold transition-all ${
-                rail === id
-                  ? "brand-pop border-foreground/40 bg-muted text-foreground"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <Icon size={14} /> {label}
-            </button>
-          ))}
+        <div className="mt-4">
+          <RailToggle rail={rail} onChange={setRail} />
         </div>
 
         <BrandButton className="mt-3" onClick={hold} disabled={sending}>
@@ -119,11 +102,9 @@ export default function ReadingMenu({ onClose }: { onClose: () => void }) {
         </BrandButton>
 
         <p className="mt-2 text-center text-[11px] text-muted-foreground">
-          {rail === "venmo"
-            ? `Opens Venmo to pay @${VENMO_HANDLE} directly.`
-            : "Card payments are processed by Stripe."}
+          {railHint(rail)}
         </p>
-      </div>
+      </OverlayBody>
     </Overlay>
   )
 }

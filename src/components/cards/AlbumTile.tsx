@@ -1,4 +1,4 @@
-import type { Album } from "../data"
+import type { Album } from "../../content/music"
 
 /* One record in the Music tab: artwork filling the tile, with the text on a
    gradient rising from its bottom edge. */

@@ -1,13 +1,7 @@
 import { ChevronRight, ShoppingBag } from "lucide-react"
 
-import { shopFor } from "../data"
-import type { BandId, PortfolioEntry, ShopItem } from "../data"
-
-/* "$25" -> 25, so the "from" price is the real cheapest item and not just
-   whichever one happens to sort first as a string. */
-function priceValue(item: ShopItem) {
-  return Number(item.price.replace(/[^0-9.]/g, "")) || 0
-}
+import { formatPrice, shopFor } from "../../content/shop"
+import type { BandId, PortfolioEntry } from "../../content/portfolio"
 
 /* The portfolio -> Buy hand-off, rendered inside a portfolio section. It is a
    button rather than an anchor because the destination is a tab in this same
@@ -23,7 +17,7 @@ export default function ShopLink({
   if (items.length === 0) return null
 
   const cheapest = items.reduce((low, item) =>
-    priceValue(item) < priceValue(low) ? item : low,
+    item.price < low.price ? item : low,
   )
 
   return (
@@ -40,7 +34,7 @@ export default function ShopLink({
           <span className="block text-sm font-bold">Shop {entry.band}</span>
           <span className="mono-label mt-0.5 block text-muted-foreground">
             {items.length} {items.length === 1 ? "item" : "items"} · from{" "}
-            {cheapest.price}
+            {formatPrice(cheapest.price)}
           </span>
         </span>
       </span>

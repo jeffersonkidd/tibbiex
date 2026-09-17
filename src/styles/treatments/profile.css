@@ -1,0 +1,106 @@
+/* ===========================================================================
+   Profile — the card at the top of the page, built from the Figma "Profile
+   Card" (Tibbie X - DSP, 4307:25191). Layout lives in the markup; the pieces
+   Tailwind cannot say cleanly live here: the photo and its scrim, the avatar's
+   halo, the silver quote and the bevelled social keys.
+=========================================================================== */
+
+/* The live photo across the top of the card, fading into paper by the time
+   the name sits on it. The card's content scrolls over it, not below it. */
+.profile-banner {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 360px;
+  pointer-events: none;
+}
+
+.profile-banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    180deg,
+    rgb(var(--paper-rgb) / 0) 0%,
+    rgb(var(--paper-rgb) / 0.4) 50%,
+    rgb(var(--paper-rgb) / 0.9) 100%
+  );
+}
+
+/* A hairline of ink, then light falling on it from three sides: white from
+   above, brand red from below, amber either side -- the same three colours
+   the rest of the page is lit in. The inset shadow sinks the photo into the
+   ring. */
+.profile-avatar {
+  border: 1px solid var(--foreground);
+  border-radius: var(--radius-pill);
+  box-shadow:
+    0 -4.5px 10px rgb(var(--ink-rgb)),
+    0 4px 12px rgb(var(--brand-rgb)),
+    4px 0 8px var(--accent-strong),
+    -4px 0 4px var(--accent-strong),
+    inset 0 0 6px #000;
+}
+
+/* The quote is printed in brushed silver: a texture exported from the Figma
+   card, painted through the letters. */
+.profile-quote {
+  color: rgb(var(--ink-rgb) / 0.8);
+}
+
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .profile-quote {
+    background: url("../../graphics/imagery/silver-texture.png") center / cover
+      no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    opacity: 0.8;
+  }
+}
+
+/* --- Social keys ----------------------------------------------------------
+   The square buttons in the quick bar: a dark key with a bevel -- light
+   catching the top-left edge, shade pooling bottom-right -- ringed in a thin
+   brand glow (the Figma effect style "Brand/Surface Rest"). They press in
+   rather than lift, since they sit flush in a row. */
+.social-key {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--on-brand);
+  border-radius: var(--radius-200);
+  background-color: var(--page);
+  color: var(--foreground);
+  box-shadow:
+    0 0 2px rgb(var(--brand-rgb) / 0.95),
+    inset 1px 2px 2px rgb(var(--ink-rgb) / 0.9),
+    inset -2px -2px 8px #000;
+  transition:
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.social-key:hover {
+  box-shadow:
+    0 0 8px 2px rgb(var(--brand-rgb) / 0.95),
+    inset 1px 2px 2px rgb(var(--ink-rgb) / 0.9),
+    inset -2px -2px 8px #000;
+}
+
+.social-key:active {
+  transform: translateY(1px);
+  box-shadow:
+    0 0 2px rgb(var(--brand-rgb) / 0.95),
+    inset 2px 2px 6px #000;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .social-key {
+    transition: none;
+  }
+  .social-key:active {
+    transform: none;
+  }
+}

@@ -1,8 +1,9 @@
-/* Stripe Checkout for the tip jar.
+/* Stripe Checkout for every card payment on the site: the podcast fund, reading
+ * deposits and shop orders.
  *
  * The site is a static SPA, so this is the one piece of server it has: it takes
- * an amount and a note from the widget, opens a Checkout Session and hands the
- * hosted payment page's URL back. Stripe's secret key never reaches the
+ * an amount, a note and a purpose from a panel, opens a Checkout Session and
+ * hands the hosted payment page's URL back. Stripe's secret key never reaches the
  * browser, and the amount is re-validated here -- whatever the client sends is
  * a suggestion, not a fact.
  *
@@ -22,6 +23,28 @@ const MAX_CENTS = 100_000
 
 const NOTE_MAX_LENGTH = 200
 
+/* Everything Stripe shows about a payment comes from here, keyed by the
+   purpose the client names -- so a request can choose which kind of payment it
+   is, but never write the line item. Keep in step with CheckoutPurpose in
+   src/lib/payments.ts. */
+const PURPOSES = {
+  fund: { name: "Still Alive Podcast — Tibbie X", submitType: "donate" },
+  reading: { name: "1-on-1 Tarot Reading — deposit", submitType: "book" },
+  shop: { name: "Tibbie X Studio order", submitType: "pay" },
+} as const
+
+type Purpose = keyof typeof PURPOSES
+
+/* Shop orders ship "US and international"; Stripe needs the list spelled out. */
+const SHIPPING_COUNTRIES = [
+  "US", "CA", "MX", "GB", "IE", "FR", "DE", "NL", "BE", "LU", "ES", "PT", "IT",
+  "AT", "CH", "DK", "SE", "NO", "FI", "PL", "CZ", "AU", "NZ", "JP",
+]
+
+/* Loose on purpose: Stripe does the real validation, this only keeps garbage
+   out of the session request. */
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 function badRequest(message: string) {
   return Response.json({ error: message }, { status: 400 })
 }
@@ -35,12 +58,28 @@ export async function POST(request: Request) {
     )
   }
 
-  let payload: { amount?: unknown; note?: unknown }
+  let payload: {
+    amount?: unknown
+    note?: unknown
+    purpose?: unknown
+    email?: unknown
+  }
   try {
     payload = await request.json()
   } catch {
     return badRequest("Expected a JSON body.")
   }
+
+  const purpose: Purpose =
+    typeof payload.purpose === "string" && payload.purpose in PURPOSES
+      ? (payload.purpose as Purpose)
+      : "fund"
+  const { name, submitType } = PURPOSES[purpose]
+
+  const email =
+    typeof payload.email === "string" && EMAIL_PATTERN.test(payload.email.trim())
+      ? payload.email.trim()
+      : ""
 
   const amount = Number(payload.amount)
   if (!Number.isFinite(amount)) {
@@ -73,20 +112,26 @@ export async function POST(request: Request) {
 
   const params = new URLSearchParams({
     mode: "payment",
-    submit_type: "donate",
+    submit_type: submitType,
     "line_items[0][quantity]": "1",
     "line_items[0][price_data][currency]": "usd",
     "line_items[0][price_data][unit_amount]": String(cents),
-    "line_items[0][price_data][product_data][name]":
-      "Still Alive Podcast — Tibbie X",
-    success_url: `${origin}/?tip=thanks`,
-    cancel_url: `${origin}/?tip=cancelled`,
-    "metadata[source]": "tip-jar",
+    "line_items[0][price_data][product_data][name]": name,
+    success_url: `${origin}/?checkout=thanks`,
+    cancel_url: `${origin}/?checkout=cancelled`,
+    "metadata[source]": purpose,
     "metadata[note]": note,
     /* Mirrored onto the PaymentIntent so the note survives on the charge
        itself, which is what a webhook-driven supporter feed would read. */
     "payment_intent_data[metadata][note]": note,
   })
+
+  if (email) params.set("customer_email", email)
+  if (purpose === "shop") {
+    SHIPPING_COUNTRIES.forEach((country, i) =>
+      params.set(`shipping_address_collection[allowed_countries][${i}]`, country),
+    )
+  }
 
   const stripeResponse = await fetch(STRIPE_API, {
     method: "POST",

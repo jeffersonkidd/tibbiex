@@ -1,6 +1,6 @@
-import type { Supporter } from "../data"
+import type { Supporter } from "../../content/fund"
 
-/* One line of the tip jar's Top Contributors feed. `rank` is the position in
+/* One line of the fund's Top Contributors feed. `rank` is the position in
    TOP_CONTRIBUTORS, not a field on the supporter. */
 export default function SupporterRow({
   supporter,

@@ -1,6 +1,6 @@
 import { toast } from "sonner"
 
-import { SITE_URL } from "../data"
+import { SITE_URL } from "../content/site"
 
 export async function copyLink() {
   try {

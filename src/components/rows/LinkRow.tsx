@@ -1,7 +1,7 @@
 import { ChevronRight, ExternalLink, Sparkles } from "lucide-react"
 
-import type { LinkEntry } from "../data"
-import { castMagicFrom } from "../lib/magic-dust"
+import type { LinkEntry } from "../../content/links"
+import { castMagicFrom } from "../../lib/magic-dust"
 
 const ROW =
   "surface group block w-full transform rounded-lg p-4 text-left transition-all duration-300 hover:scale-[1.01] hover:border-accent"

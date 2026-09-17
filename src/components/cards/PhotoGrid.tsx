@@ -1,4 +1,4 @@
-import type { Photo } from "../data"
+import type { Photo } from "../../content/portfolio"
 
 /* Masonry with no library and no measuring pass: CSS multi-column flows the
    photos down each column in turn, and `break-inside-avoid` stops one being
