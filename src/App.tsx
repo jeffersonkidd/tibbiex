@@ -19,8 +19,8 @@ import {
   Youtube,
 } from "lucide-react"
 
-import profilePic from "./assets/tibbie_profile.jpg"
-import bannerPic from "./assets/tibbie_background.jpg"
+import profilePic from "./graphics/imagery/tibbie_profile.jpg"
+import bannerPic from "./graphics/imagery/tibbie_background.jpg"
 
 import {
   CONTACT_EMAIL,
@@ -37,8 +37,8 @@ import {
 } from "./data"
 import type { Album, BandId, ShopGroupId, Tab } from "./data"
 
-import PatreonIcon from "./icons/PatreonIcon"
-import TikTokIcon from "./icons/TikTokIcon"
+import PatreonIcon from "./graphics/icons/PatreonIcon"
+import TikTokIcon from "./graphics/icons/TikTokIcon"
 
 import { analyticsOptedOut } from "./lib/analytics"
 import { copyLink } from "./lib/share"
@@ -53,7 +53,7 @@ import LinkRow from "./components/LinkRow"
 import MagicDust from "./components/MagicDust"
 import Overlay from "./components/Overlay"
 import PhotoGrid from "./components/PhotoGrid"
-import ReaganYouthMark from "./components/ReaganYouthMark"
+import ReaganYouthMark from "./graphics/marks/ReaganYouthMark"
 import ShopCard from "./components/ShopCard"
 import ShopLink from "./components/ShopLink"
 import ShowRow from "./components/ShowRow"
@@ -64,7 +64,7 @@ import TipJar from "./features/TipJar"
 
 // Layout is a stack of self-contained rounded cards on a dark page (control
 // bar, profile card, socials, tab strip, panels) rather than one monolithic
-// sheet. Colors come from the surface palette in src/index.css (background /
+// sheet. Colors come from the surface palette in src/styles/tokens.css (background /
 // card / muted / border), with the buttons and accents on the brand ramp
 // (bg-brand / accent). The pieces themselves live in ./components, ./features
 // and ./lib -- this file only orchestrates them and holds the page's state.

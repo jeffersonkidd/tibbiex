@@ -1,0 +1,117 @@
+/* ===========================================================================
+   Surfaces — structural shapes and material effects: fill, border, blur,
+   the brand gradient and its sheen.
+=========================================================================== */
+
+/* --- Card surface ---------------------------------------------------------
+   The shared treatment for every panel in the stack (header, profile, studio
+   status, tab strip, link rows, tour rows, media tiles). Lives in the
+   components layer so Tailwind utilities still win: a site that wants a
+   sheerer fill or a coloured hover border just adds bg-card/60 or
+   hover:border-accent alongside it. Radius, padding and layout stay in the
+   markup, since those differ per panel. */
+@layer components {
+  .surface {
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    /* Matches backdrop-blur-xl. --card is opaque, so the blur only shows
+       where a utility sheers the fill (bg-card/50 on the tab strips). */
+    backdrop-filter: blur(24px);
+  }
+}
+
+/* --- Brand surface --------------------------------------------------------
+   Shared treatment for the brand-red CTAs and the active tab. A three-stop
+   gradient off the brand ramp plus inset edge highlights give the flat fill
+   some dimension; a sheen sweeps across on hover. Both the gradient and the
+   glow read from the same tokens as bg-brand, so re-skinning :root still
+   drives them. */
+.brand-surface {
+  position: relative;
+  overflow: hidden;
+  background-image: linear-gradient(
+    145deg,
+    var(--brand-lift) 0%,
+    var(--brand) 48%,
+    var(--brand-deep) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgb(var(--ink-rgb) / 0.3),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.22),
+    0 8px 20px -10px rgb(var(--brand-rgb) / 0.8);
+  transition:
+    box-shadow 220ms ease,
+    transform 220ms ease,
+    filter 220ms ease;
+}
+
+.brand-surface:hover {
+  filter: brightness(1.07);
+  box-shadow:
+    inset 0 1px 0 rgb(var(--ink-rgb) / 0.38),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.22),
+    0 12px 26px -10px rgb(var(--brand-rgb) / 0.95);
+}
+
+/* Diagonal sheen, parked off the left edge until hover sweeps it across. */
+.brand-surface::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 38%,
+    rgb(var(--ink-rgb) / 0.26) 50%,
+    transparent 62%
+  );
+  transform: translateX(-130%);
+  transition: transform 650ms ease;
+}
+
+.brand-surface:hover::after {
+  transform: translateX(130%);
+}
+
+/* CTA buttons lift on hover; the segmented tab deliberately does not. */
+.brand-lift:hover {
+  transform: translateY(-1px);
+}
+
+.brand-lift:active {
+  transform: translateY(0);
+  filter: brightness(0.96);
+}
+
+/* Plays when a tab becomes active, so switching tabs has some snap. */
+.brand-pop {
+  animation: brand-pop 260ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes brand-pop {
+  from {
+    transform: scale(0.94);
+    opacity: 0.65;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-surface,
+  .brand-surface::after {
+    transition: none;
+  }
+  .brand-surface:hover::after {
+    transform: translateX(-130%);
+  }
+  .brand-lift:hover,
+  .brand-lift:active {
+    transform: none;
+  }
+  .brand-pop {
+    animation: none;
+  }
+}

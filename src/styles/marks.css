@@ -1,0 +1,64 @@
+/* ===========================================================================
+   Marks — styling for the typographic marks: the X in the Tibbie X wordmark
+   (.wordmark sets the face in typography.css) and the Reagan Youth stand-in
+   in graphics/marks/ReaganYouthMark.tsx.
+=========================================================================== */
+
+/* --- The X in the "Tibbie X" wordmark -------------------------------------
+   Oversized against the rest of the lockup and filled with the brand ramp --
+   bright red at the top-left falling to the deep red at the bottom-right --
+   instead of a flat brand fill. */
+.wordmark-x {
+  display: inline-block;
+  font-size: 1.45em;
+  /* background-clip: text paints only inside the padding box, so the line-box
+     has to be tall enough to contain the glyph -- a tight line-height clipped
+     the top of the X away. The padding gives the gradient headroom; the
+     matching negative margins keep the lockup's spacing unchanged. */
+  line-height: 1;
+  padding: 0.18em 0.06em 0.08em;
+  /* The left margin also pulls the X back toward "Tibbie", tightening the
+     word space in the lockup. */
+  margin: -0.18em -0.04em -0.08em -0.15em;
+  vertical-align: -0.06em;
+  transform: rotate(-3deg);
+  color: var(--brand);
+  background-image: linear-gradient(
+    155deg,
+    var(--brand-lift) 0%,
+    var(--brand) 50%,
+    var(--brand-deep) 100%
+  );
+  filter: drop-shadow(0 3px 10px rgb(var(--brand-rgb) / 0.5));
+}
+
+/* Only paint the gradient through the glyph where the browser can clip to
+   text -- otherwise the flat brand red above stands. */
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .wordmark-x {
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+/* --- The Reagan Youth mark ------------------------------------------------
+   A typographic stand-in for the band's own logo, stamped slightly off-square
+   the way a stencil lands. */
+.ry-mark {
+  transform: rotate(-3deg);
+  font-family: "Special Elite", cursive, var(--default-font-family, sans-serif);
+  color: var(--foreground);
+}
+
+.ry-mark-top {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+}
+
+.ry-mark-bottom {
+  font-size: 13px;
+  letter-spacing: 0.26em;
+  text-indent: 0.26em;
+}

@@ -1,0 +1,12 @@
+/* ===========================================================================
+   Magic dust — the spark layer: one canvas pinned over the whole viewport
+   for the sparks thrown by a link click. It sits above the modals (z-50) so a
+   burst thrown inside the reading menu still dances across the panel, and it
+   never takes a pointer event, so nothing here can swallow a tap.
+=========================================================================== */
+.magic-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+}

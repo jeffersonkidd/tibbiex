@@ -1,0 +1,35 @@
+/* The stylesheet main.tsx loads. Editing the files below re-skins the app.
+
+   Foundations first, then the treatments built on them. Order matters only
+   where two unlayered rules tie; the tokens have to come first because
+   @theme inline reads them.
+
+     tokens.css        :root colours and radii, then the @theme inline mapping
+     background.css    document sizing and the record-photo background
+     typography.css    display face and .mono-label
+     surfaces.css      .surface, .brand-surface / .brand-lift / .brand-pop
+     utilities.css     .hide-scrollbar
+     marks.css         the Tibbie X wordmark's X and the Reagan Youth mark
+     treatments/
+       tarot.css       the Links row (.arcana-*) and reading menu (.price-*)
+       meter.css       the rehearsal meter
+       magic-dust.css  the spark canvas, above everything
+
+   The type rules reference three faces -- Inter for body, Roboto Mono for the
+   mono labels, Special Elite for the display wordmark -- but the faces are NOT
+   loaded here. They are <link>ed from index.html, so the preload scanner finds
+   them in the initial HTML parse; an @import of the font CSS cannot be
+   discovered until this stylesheet has itself downloaded and parsed, which
+   serialises two round trips and lengthens the fallback-font flash. Change the
+   font stack in typography.css and change the <link> there to match. */
+@import "tailwindcss";
+
+@import "./tokens.css";
+@import "./background.css";
+@import "./typography.css";
+@import "./surfaces.css";
+@import "./utilities.css";
+@import "./marks.css";
+@import "./treatments/tarot.css";
+@import "./treatments/meter.css";
+@import "./treatments/magic-dust.css";

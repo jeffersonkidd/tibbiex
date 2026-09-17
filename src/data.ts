@@ -26,7 +26,7 @@ import {
   Youtube,
 } from "lucide-react"
 
-import VenmoIcon from "./icons/VenmoIcon"
+import VenmoIcon from "./graphics/icons/VenmoIcon"
 
 /* Content-status convention. Anything shown to a visitor that is a stand-in --
    stock art, invented numbers, provisional prices, wording nobody has signed
@@ -38,11 +38,11 @@ import VenmoIcon from "./icons/VenmoIcon"
 const markStaged = <T>(items: T[]): (T & { staged: true })[] =>
   items.map((item) => ({ ...item, staged: true }))
 
-import gashPromo from "./assets/gash/gash_promo.jpg"
-import gashLive from "./assets/gash/gash_live.jpeg"
-import gashFlyer from "./assets/gash/gash_flyer.jpg"
-import gashArt from "./assets/gash/gash_artwork.jpg"
-import gashLogo from "./assets/gash/gash_logo.jpg"
+import gashPromo from "./graphics/imagery/gash/gash_promo.jpg"
+import gashLive from "./graphics/imagery/gash/gash_live.jpeg"
+import gashFlyer from "./graphics/imagery/gash/gash_flyer.jpg"
+import gashArt from "./graphics/imagery/gash/gash_artwork.jpg"
+import gashLogo from "./graphics/imagery/gash/gash_logo.jpg"
 
 export type Album = {
   id: string

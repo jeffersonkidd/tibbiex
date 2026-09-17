@@ -28,7 +28,7 @@ logs/
 CHANGELOG.md
 
 # Full-res image masters: the shipped assets are downscaled cuts of these.
-src/assets/*.png
+src/graphics/imagery/**/*.png
 
 .files
 .vercel

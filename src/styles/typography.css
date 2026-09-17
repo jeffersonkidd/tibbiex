@@ -1,0 +1,22 @@
+/* ===========================================================================
+   Typography — the display face and the mono label. The X in the wordmark is
+   in marks.css.
+=========================================================================== */
+
+/* Distressed display face for headings and wordmarks */
+.wordmark,
+.heading,
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Special Elite", cursive, var(--default-font-family, sans-serif);
+  letter-spacing: 0.02em;
+}
+
+/* Small uppercase metadata label in the mono face. */
+.mono-label {
+  font-family: "Roboto Mono", var(--default-mono-font-family);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}

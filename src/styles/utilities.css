@@ -1,0 +1,14 @@
+/* ===========================================================================
+   Utilities
+=========================================================================== */
+
+@layer base {
+  /* Horizontal tab strip scrolls without showing a scrollbar. */
+  .hide-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}

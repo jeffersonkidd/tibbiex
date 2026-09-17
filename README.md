@@ -35,8 +35,16 @@ src/
   App.tsx            page shell — state, tabs, and the modals it owns
   data.ts            ALL site content (see below)
   content-status.ts  the go-live checklist, derived from data.ts
-  index.css          design tokens, typography, component styles
   main.tsx           entry point
+  styles/            foundations: one stylesheet split by concern
+    index.css          the entry: imports the rest in order
+    tokens.css         colours, radii, the @theme inline mapping
+    background.css     the record photo and scrim
+    typography.css     display face, .mono-label
+    surfaces.css       .surface, .brand-* (shapes and material effects)
+    utilities.css      .hide-scrollbar
+    marks.css          the wordmark X, the Reagan Youth mark
+    treatments/        tarot, meter, magic-dust
   lib/               pure logic, no JSX
     payments.ts        Stripe Checkout client call
     share.ts           copy-the-link
@@ -45,19 +53,22 @@ src/
   components/        reusable presentational pieces
     BrandButton, Field, Overlay, Lightbox, PhotoGrid,
     LinkRow, ShowRow, SupporterRow, ShopCard, AlbumTile,
-    ShopLink, FilterPill, SiteQrCode, ReaganYouthMark, MagicDust
+    ShopLink, FilterPill, SiteQrCode, MagicDust
   features/          the two stateful panels
     TipJar.tsx         podcast tip jar (Venmo / card)
     ReadingMenu.tsx    tarot reading tiers
-  icons/             hand-drawn brand glyphs (Venmo, TikTok, Patreon)
-  assets/            images
+  graphics/          everything drawn or photographed, by kind
+    icons/             small symbols that act as controls (Venmo, TikTok, Patreon)
+    marks/             identity: logos and wordmarks (ReaganYouthMark)
+    illustrations/     characters, ornaments, spots -- created as they arrive
+    imagery/           photographs
 api/
   checkout.ts        Vercel serverless: opens a Stripe Checkout Session
 ```
 
 The dependency direction is one way: `features` and `App` use `components` and
-`lib`; `components` use `lib` and `data`; `lib` and `data` depend on nothing
-above them.
+`lib`; `components` use `lib` and `data`; `data` uses only `graphics`; `lib` and
+`graphics` depend on nothing above them.
 
 ## Editing the content
 

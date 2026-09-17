@@ -1,0 +1,86 @@
+/* ===========================================================================
+   Meter — the rehearsal progress bar.
+=========================================================================== */
+
+/* --- The rehearsal meter --------------------------------------------------
+   A flat amber bar read as a loading spinner more than a measure, so the fill
+   is a hot gradient under diagonal screen-print hatching -- the stripes crawl,
+   which is what makes it read as work in progress rather than a static
+   percentage. */
+.meter-track {
+  position: relative;
+  overflow: hidden;
+  border-radius: 999px;
+  background-color: rgb(var(--ink-rgb) / 0.05);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgb(var(--ink-rgb) / 0.05) 0 1px,
+    transparent 1px 5px
+  );
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+/* Two layers: the hatching on top, the ramp underneath. Only the hatching
+   moves -- animating the gradient too would make the whole bar shimmer. */
+.meter-fill {
+  position: relative;
+  height: 100%;
+  border-radius: 999px;
+  background-image:
+    repeating-linear-gradient(
+      -45deg,
+      rgb(var(--ink-rgb) / 0.24) 0 2px,
+      transparent 2px 7px
+    ),
+    linear-gradient(
+      90deg,
+      #8c3d0a 0%,
+      #d9631a 38%,
+      #ff9c2e 72%,
+      rgb(var(--accent-rgb)) 100%
+    );
+  background-size:
+    20px 20px,
+    100% 100%;
+  box-shadow:
+    0 0 20px -4px rgba(255, 170, 60, 0.85),
+    inset 0 1px 0 rgb(var(--ink-rgb) / 0.4);
+  animation: meter-crawl 1.4s linear infinite;
+}
+
+@keyframes meter-crawl {
+  to {
+    background-position:
+      20px 0,
+      0 0;
+  }
+}
+
+/* The working edge: a hot cap at the head of the fill, breathing so the bar
+   has a live end rather than a cut one. */
+.meter-fill::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: 12px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(255, 246, 214, 0.9));
+  animation: meter-head 2.4s ease-in-out infinite;
+}
+
+@keyframes meter-head {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meter-fill,
+  .meter-fill::after {
+    animation: none;
+  }
+}

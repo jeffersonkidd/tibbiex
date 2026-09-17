@@ -1,0 +1,94 @@
+/* ===========================================================================
+   Tokens — the one place colours and radii are declared. The @theme inline
+   block below turns them into utilities; the rules in the other stylesheets
+   read them directly. Mirrored as variables in the Figma file RjhP5XJqNtBhAHTqdcq4T4.
+=========================================================================== */
+
+:root {
+  /* Each hue is declared once as bare `R G B` channels. Rules that need it at
+     some alpha write rgb(var(--<hue>-rgb) / <a>) rather than restating the
+     colour, so there is one place to change it.
+
+     Ink and paper are the site printed in negative: a warm off-white ink on a
+     dark stock. Ink is everything that sits on a surface (text, highlights,
+     hairlines); paper is the surface itself, used at full strength for panels
+     and as a heavier sheet for modals. Change --paper-rgb and every panel,
+     sheet and knockout moves together. */
+  --ink-rgb: 255 253 247;
+  --paper-rgb: 22 23 27;
+  --brand-rgb: 236 32 15;
+  --accent-rgb: 255 216 77;
+
+  /* Text. Ink, so it reads as print rather than screen white. */
+  --foreground: rgb(var(--ink-rgb));
+  --muted-foreground: oklch(0.74 0.008 260);
+
+  /* Surfaces. --page is the base under the record photo, deeper than any
+     paper. The paper tokens are the same stock:
+       background  opaque paper, the bg-background fill
+       card        opaque paper, the panels in the stack
+       popover     a sheet at 0.92, so the blurred page still reads behind a
+                   modal
+     The panels are opaque on purpose -- the record shows only in the gaps
+     between them. bg-card/50 etc. are the sheer exceptions (the tab strips).
+     --muted (raised) and --input-background (recessed) sit either side of
+     paper in lightness, so they are declared on their own. */
+  --page: #0b0b0d;
+  --background: rgb(var(--paper-rgb));
+  --card: rgb(var(--paper-rgb));
+  --popover: rgb(var(--paper-rgb) / 0.92);
+  --muted: oklch(0.29 0.008 260 / 0.7);
+  --input-background: oklch(0.19 0.007 260 / 0.8);
+  --border: oklch(0.42 0.009 260 / 0.5);
+  --border-strong: rgb(var(--ink-rgb) / 0.2);
+
+  /* Brand red: CTAs and the active tab only. lift and deep are the ends of
+     the gradient on .brand-surface and .wordmark-x. */
+  --brand: rgb(var(--brand-rgb));
+  --brand-lift: #ff5433;
+  --brand-deep: #b8150a;
+  --on-brand: var(--foreground);
+
+  /* Amber: the tarot system. */
+  --accent: rgb(var(--accent-rgb));
+  --accent-strong: #e6c245;
+  --accent-soft: rgb(var(--accent-rgb) / 0.2);
+  --accent-tint: rgb(var(--accent-rgb) / 0.1);
+
+  /* Radius ramp, kept tight for a squarer, printed-flyer feel. */
+  --radius-100: 4px;
+  --radius-200: 6px;
+  --radius-400: 10px;
+  --radius-pill: 9999px;
+}
+
+/* Expose the tokens declared in :root above as Tailwind utilities. Only the
+   utilities the markup actually uses are listed. Every var() here must be
+   declared in :root: an undefined one makes the property invalid, and for a
+   radius that silently squares the corner off. */
+@theme inline {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-popover: var(--popover);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input-background: var(--input-background);
+
+  --color-brand: var(--brand);
+  --color-on-brand: var(--on-brand);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-tint: var(--accent-tint);
+
+  /* rounded-sm / -md / -lg / -full resolve to these, not Tailwind's default
+     scale; rounded-xl and up still come from Tailwind. */
+  --radius-sm: var(--radius-100);
+  --radius-md: var(--radius-200);
+  --radius-lg: var(--radius-400);
+  --radius-full: var(--radius-pill);
+}

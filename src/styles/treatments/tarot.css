@@ -1,0 +1,268 @@
+/* ===========================================================================
+   Tarot — the Links row and the 1-on-1 reading menu behind it.
+
+   Amber, not brand red, is the magic colour throughout: red stays reserved for
+   the CTAs and the active tab, so the spread reads as lit from a different
+   source than the buttons around it.
+=========================================================================== */
+
+/* --- The Links row --------------------------------------------------------
+   It is the only row selling anything, so it is lit rather than merely shaped
+   differently: an amber breath on the whole row, a sheen sweeping across it, a
+   pulsing sigil and a turning spark. Every piece runs on the same 3.4s beat so
+   the row reads as one thing breathing, not four animations sharing a box. */
+.arcana-row {
+  position: relative;
+  overflow: hidden;
+  animation: arcana-breathe 3.4s ease-in-out infinite;
+}
+
+/* The border is animated here, which beats the hover:border-accent utility on
+   the row -- deliberately: amber owns this row in every state. */
+@keyframes arcana-breathe {
+  0%,
+  100% {
+    border-color: rgb(var(--accent-rgb) / 0.24);
+    box-shadow:
+      0 0 20px -12px rgb(var(--accent-rgb) / 0.55),
+      inset 0 0 0 1px rgb(var(--accent-rgb) / 0.08);
+  }
+  50% {
+    border-color: rgb(var(--accent-rgb) / 0.68);
+    box-shadow:
+      0 0 44px -6px rgb(var(--accent-rgb) / 0.8),
+      0 0 90px -24px rgba(255, 138, 46, 0.45),
+      inset 0 0 22px -8px rgb(var(--accent-rgb) / 0.5);
+  }
+}
+
+/* A slow sweep of light across the row, the same trick the card backs used
+   while they waited. Nothing here takes a pointer event. */
+.arcana-row::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 38%,
+    rgb(var(--accent-rgb) / 0.16) 50%,
+    transparent 62%
+  );
+  transform: translateX(-130%);
+  animation: arcana-sheen 3.4s ease-in-out infinite;
+}
+
+@keyframes arcana-sheen {
+  0% {
+    transform: translateX(-130%);
+  }
+  60%,
+  100% {
+    transform: translateX(130%);
+  }
+}
+
+/* The icon box, throbbing a half-beat behind the row so the two glows do not
+   land on top of each other. */
+.arcana-sigil {
+  animation: arcana-sigil-pulse 3.4s ease-in-out infinite;
+  animation-delay: 260ms;
+}
+
+@keyframes arcana-sigil-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgb(var(--accent-rgb) / 0);
+  }
+  50% {
+    transform: scale(1.07);
+    box-shadow:
+      0 0 26px -4px rgb(var(--accent-rgb) / 0.8),
+      inset 0 0 14px -6px rgb(var(--accent-rgb) / 0.9);
+  }
+}
+
+/* The spark standing in for the chevron: always turning, and turning faster
+   under the pointer -- which is why the hover scale utility came off it. The
+   drop shadow is what makes it read as lit rather than merely amber. */
+.arcana-spark {
+  animation: arcana-twinkle 3.4s ease-in-out infinite;
+  filter: drop-shadow(0 0 7px rgb(var(--accent-rgb) / 0.8));
+}
+
+.group:hover .arcana-spark {
+  animation-duration: 1.2s;
+}
+
+@keyframes arcana-twinkle {
+  0%,
+  100% {
+    opacity: 0.72;
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: rotate(24deg) scale(1.28);
+  }
+}
+
+/* --- The reading menu -----------------------------------------------------
+   A faint amber wash bleeding down over the spread, so the panel behind the
+   cards is lit rather than flat. */
+.arcana-veil {
+  background-image: radial-gradient(
+    120% 60% at 50% 0%,
+    rgb(var(--accent-rgb) / 0.09) 0%,
+    transparent 62%
+  );
+}
+
+/* One tier in the reading menu. It keeps the deal animation the spread used --
+   the cards still land one after another -- with --deal set per card in the
+   markup to stagger them. */
+.price-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  width: 100%;
+  padding: 16px 14px 14px;
+  text-align: left;
+  cursor: pointer;
+  color: var(--foreground);
+  background-color: #101117;
+  background-image: radial-gradient(
+    95% 70% at 50% 0%,
+    rgb(var(--accent-rgb) / 0.12) 0%,
+    transparent 66%
+  );
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-400);
+  transition:
+    transform 200ms ease,
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+  animation: price-deal 560ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: calc(var(--deal, 0) * 130ms);
+}
+
+.price-card:hover {
+  transform: translateY(-4px);
+  border-color: rgb(var(--accent-rgb) / 0.45);
+}
+
+/* The picked tier, lit the way a turned card was. */
+.price-card[data-state="on"] {
+  border-color: rgb(var(--accent-rgb) / 0.7);
+  box-shadow: 0 0 30px -10px rgb(var(--accent-rgb) / 0.65);
+}
+
+@keyframes price-deal {
+  from {
+    opacity: 0;
+    transform: translateY(28px) rotate(-9deg) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Parts of a price card, top to bottom. */
+
+/* The hairline inside the border, carried over from the card faces. */
+.price-frame {
+  position: absolute;
+  inset: 5px;
+  border: 1px solid rgb(var(--accent-rgb) / 0.28);
+  border-radius: var(--radius-100);
+  pointer-events: none;
+}
+
+.price-flag {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  font-family: "Roboto Mono", var(--default-mono-font-family);
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  /* A knockout: the paper showing through the amber. */
+  color: rgb(var(--paper-rgb));
+  background: rgb(var(--accent-rgb) / 0.85);
+  padding: 2px 6px;
+  border-radius: var(--radius-pill);
+}
+
+.price-duration {
+  color: rgb(var(--accent-rgb) / 0.75);
+}
+
+.price-name {
+  font-family: "Special Elite", cursive, var(--default-font-family, sans-serif);
+  font-size: 15px;
+  line-height: 1.15;
+}
+
+.price-amount {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  margin-top: 2px;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.price-unit {
+  font-family: "Roboto Mono", var(--default-mono-font-family);
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.price-blurb {
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--muted-foreground);
+}
+
+.price-includes {
+  display: grid;
+  gap: 4px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgb(var(--accent-rgb) / 0.16);
+  width: 100%;
+  font-size: 11px;
+  line-height: 1.3;
+  color: var(--muted-foreground);
+}
+
+.price-includes li {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arcana-row,
+  .arcana-row::after,
+  .arcana-sigil,
+  .arcana-spark,
+  .price-card {
+    animation: none;
+  }
+  .price-card {
+    transition: none;
+  }
+  .price-card:hover {
+    transform: none;
+  }
+}
