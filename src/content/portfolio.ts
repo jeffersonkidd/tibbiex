@@ -1,8 +1,8 @@
-import gashPromo from "../graphics/imagery/gash/gash_promo.jpg"
-import gashLive from "../graphics/imagery/gash/gash_live.jpeg"
-import gashFlyer from "../graphics/imagery/gash/gash_flyer.jpg"
-import gashArt from "../graphics/imagery/gash/gash_artwork.jpg"
-import gashLogo from "../graphics/imagery/gash/gash_logo.jpg"
+import gashPromo from "../graphics/imagery/gash/promo.jpg"
+import gashLive from "../graphics/imagery/gash/live.jpg"
+import gashFlyer from "../graphics/imagery/gash/flyer.jpg"
+import gashArt from "../graphics/imagery/gash/artwork.jpg"
+import gashLogo from "../graphics/imagery/gash/logo.jpg"
 
 import { markStaged } from "./staged"
 

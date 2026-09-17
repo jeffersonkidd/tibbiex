@@ -1,7 +1,7 @@
 import { MessageSquare, Radio } from "lucide-react"
 
-import profilePic from "../graphics/imagery/tibbie_profile.jpg"
-import bannerPic from "../graphics/imagery/tibbie_background.jpg"
+import profilePic from "../graphics/imagery/tibbie-portrait.jpg"
+import bannerPic from "../graphics/imagery/tibbie-onstage.jpg"
 import { PROFILE, SOCIALS, TAGS } from "../content/profile"
 import Pill from "../components/Pill"
 

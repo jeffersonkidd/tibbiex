@@ -49,7 +49,7 @@ body::before {
   background-image:
     /* The scrim, heavier at the top where the header and profile card sit. */
     linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)),
-    url("../graphics/imagery/black_record.jpg");
+    url("../graphics/imagery/black-record.jpg");
   background-repeat: no-repeat;
   /* Top-aligned: the viewport crops the record from its top edge down, rather
      than centring it and cropping both ends. */
