@@ -8,7 +8,7 @@ export default function SiteHeader({ onShowQr }: { onShowQr: () => void }) {
   return (
     <header className="surface mb-8 flex items-center justify-between rounded-lg p-3">
       <span className="mono-label px-2 text-muted-foreground">
-        tibbiex.studio
+        Tibbie X Studio
       </span>
       <div className="flex gap-2">
         <button
