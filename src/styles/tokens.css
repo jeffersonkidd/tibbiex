@@ -5,62 +5,114 @@
 =========================================================================== */
 
 :root {
-  /* Each hue is declared once as bare `R G B` channels. Rules that need it at
-     some alpha write rgb(var(--<hue>-rgb) / <a>) rather than restating the
-     colour, so there is one place to change it.
+  /* Material 3 colour roles, pasted from the Material Theme Builder export
+     (.files/md3/css/dark.css: seed #EC200F, Content variant, dark scheme),
+     keeping M3's own --md-sys-color- prefix so they never collide with
+     Tailwind's --color- theme names. Some values are hand-tuned since the
+     export. The site uses this one scheme only. Every value is a complete
+     colour: a rule that needs one at some alpha writes
+     color-mix(in srgb, var(--x) 24%, transparent), the same thing
+     Tailwind's /24 modifier generates. To retheme, re-export and paste over
+     this block; nothing below needs to change. */
 
-     Ink and paper are the site printed in negative: a warm off-white ink on a
-     dark stock. Ink is everything that sits on a surface (text, highlights,
-     hairlines); paper is the surface itself, used at full strength for panels
-     and as a heavier sheet for modals. Change --paper-rgb and every panel,
-     sheet and knockout moves together. */
-  --ink-rgb: 255 253 247;
-  --paper-rgb: 22 23 27;
-  --brand-rgb: 236 32 15;
-  --accent-rgb: 255 216 77;
-  --live-rgb: 20 174 92;
+  --md-sys-color-primary: rgb(255 85 63);
+  --md-sys-color-surface-tint: rgb(255 180 167);
+  --md-sys-color-on-primary: rgb(104 2 0);
+  --md-sys-color-primary-container: rgb(236 32 15);
+  --md-sys-color-on-primary-container: rgb(29 0 0);
+  --md-sys-color-secondary: rgb(255 180 167);
+  --md-sys-color-on-secondary: rgb(104 2 0);
+  --md-sys-color-secondary-container: rgb(144 25 13);
+  --md-sys-color-on-secondary-container: rgb(255 159 143);
+  --md-sys-color-tertiary: rgb(252 187 83);
+  --md-sys-color-on-tertiary: rgb(68 43 0);
+  --md-sys-color-tertiary-container: rgb(191 134 33);
+  --md-sys-color-on-tertiary-container: rgb(16 7 0);
+  --md-sys-color-error: rgb(255 180 171);
+  --md-sys-color-on-error: rgb(105 0 5);
+  --md-sys-color-error-container: rgb(147 0 10);
+  --md-sys-color-on-error-container: rgb(255 218 214);
+  --md-sys-color-background: hsl(9, 10%, 5%);
+  --md-sys-color-on-background: rgb(255, 255, 255);
+  --md-sys-color-surface: hsl(9, 10%, 4%);
+  --md-sys-color-on-surface: hsla(9, 4%, 90%);
+  --md-sys-color-surface-variant: hsl(9, 8%, 28%);
+  --md-sys-color-on-surface-variant: rgb(223, 223, 223);
+  --md-sys-color-outline: hsl(9, 6%, 55%);
+  --md-sys-color-outline-variant: hsl(9, 8%, 28%);
+  --md-sys-color-shadow: rgb(0 0 0);
+  --md-sys-color-scrim: rgb(0 0 0);
+  --md-sys-color-inverse-surface: hsl(9, 10%, 90%);
+  --md-sys-color-inverse-on-surface: hsl(9, 8%, 20%);
+  --md-sys-color-inverse-primary: rgb(191 8 0);
+  --md-sys-color-surface-dim: hsl(9, 10%, 4%);
+  --md-sys-color-surface-bright: hsl(9, 6%, 24%);
+  --md-sys-color-surface-container-lowest: hsl(9, 10%, 3%);
+  --md-sys-color-surface-container-low: hsl(9, 10%, 8%);
+  --md-sys-color-surface-container: hsl(9, 8%, 12%);
+  --md-sys-color-surface-container-high: hsl(9, 7%, 16%);
+  --md-sys-color-surface-container-highest: hsl(9, 6%, 21%);
 
-  /* Text. Ink, so it reads as print rather than screen white. */
-  --foreground: rgb(var(--ink-rgb));
-  --muted-foreground: oklch(0.74 0.008 260);
+  /* shadcn's names, each pointing at an M3 role. The markup and the other
+     stylesheets read these, so a role can be swapped here without touching
+     them. Where there is no shadcn name for something, the stylesheets read
+     the M3 role directly rather than inventing one. */
+
+  /* Text: on-surface for body copy, on-surface-variant for the quieter
+     labels and captions. */
+  --foreground: var(--md-sys-color-on-surface);
+  --muted-foreground: var(--md-sys-color-on-surface-variant);
 
   /* Surfaces. --page is the base under the record photo, deeper than any
-     paper. The paper tokens are the same stock:
-       background  opaque paper, the bg-background fill
-       card        opaque paper, the panels in the stack
-       popover     a sheet at 0.92, so the blurred page still reads behind a
-                   modal
-     The panels are opaque on purpose -- the record shows only in the gaps
-     between them. bg-card/50 etc. are the sheer exceptions (the tab strips).
-     --muted (raised) and --input-background (recessed) sit either side of
-     paper in lightness, so they are declared on their own. */
-  --page: #0b0b0d;
-  --background: rgb(var(--paper-rgb));
-  --card: rgb(var(--paper-rgb));
-  --popover: rgb(var(--paper-rgb) / 0.92);
-  --muted: oklch(0.29 0.008 260 / 0.7);
-  --input-background: oklch(0.19 0.007 260 / 0.8);
-  --border: oklch(0.42 0.009 260 / 0.5);
-  --border-strong: rgb(var(--ink-rgb) / 0.2);
+     panel. The panels are surface containers (M3's card role), opaque on
+     purpose -- the record shows only in the gaps between them. bg-card/50
+     etc. are the sheer exceptions (the tab strips). The popover is a step
+     up, as M3 dialogs are, and stays sheer so the blurred page reads behind
+     a modal. --muted (raised) and --input-background (recessed) sit either
+     side of the panels. */
+  --page: var(--md-sys-color-surface-container-lowest);
+  --background: var(--md-sys-color-surface);
+  --card: var(--md-sys-color-surface-container-low);
+  --popover: color-mix(
+    in srgb,
+    var(--md-sys-color-surface-container-high) 92%,
+    transparent
+  );
+  --muted: color-mix(
+    in srgb,
+    var(--md-sys-color-surface-container-highest) 100%,
+    transparent
+  );
+  --input-background: color-mix(
+    in srgb,
+    var(--md-sys-color-surface-container-lowest) 80%,
+    transparent
+  );
+  --border: var(--md-sys-color-outline-variant);
+  --border-strong: var(--md-sys-color-outline);
 
-  /* Brand red: CTAs and the active tab only. lift and deep are the ends of
-     the gradient on .brand-surface and .wordmark-x. */
-  --brand: rgb(var(--brand-rgb));
-  --brand-lift: #ff5433;
-  --brand-deep: #b8150a;
-  --on-brand: var(--foreground);
+  /* Primary: the red CTAs and the active tab only. shadcn's primary is M3's
+     primary-container here -- the saturated red in this scheme, where M3's
+     own primary is a pale tint -- and primary-foreground is the on-colour M3
+     solves for contrast against it. */
+  --primary: var(--md-sys-color-primary-container);
+  --primary-foreground: var(--md-sys-color-on-surface);
 
-  /* Amber: the tarot system. */
-  --accent: rgb(var(--accent-rgb));
-  --accent-strong: #e6c245;
-  --accent-soft: rgb(var(--accent-rgb) / 0.2);
-  --accent-tint: rgb(var(--accent-rgb) / 0.1);
-
-  /* Green: "live right now" and nothing else -- the banner badge and the dot
-     on the avatar. It is a status light, not a brand colour, so it never
-     fills a button or a panel. */
-  --live: rgb(var(--live-rgb));
-  --on-live: #ebffee;
+  /* Accent: M3's tertiary, for the tarot system and the rehearsal meter.
+     --accent-strong is the text colour, which in M3 is the same role as the
+     accent itself. */
+  --accent: var(--md-sys-color-tertiary);
+  --accent-strong: var(--md-sys-color-tertiary);
+  --accent-soft: color-mix(
+    in srgb,
+    var(--md-sys-color-tertiary) 20%,
+    transparent
+  );
+  --accent-tint: color-mix(
+    in srgb,
+    var(--md-sys-color-tertiary) 10%,
+    transparent
+  );
 
   /* Radius ramp, kept tight for a squarer, printed-flyer feel. */
   --radius-100: 4px;
@@ -86,15 +138,19 @@
   --color-border: var(--border);
   --color-input-background: var(--input-background);
 
-  --color-brand: var(--brand);
-  --color-on-brand: var(--on-brand);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
   --color-accent: var(--accent);
   --color-accent-strong: var(--accent-strong);
   --color-accent-soft: var(--accent-soft);
   --color-accent-tint: var(--accent-tint);
 
-  --color-live: var(--live);
-  --color-on-live: var(--on-live);
+  /* Green: "live right now" and nothing else -- the banner badge and the dot
+     on the avatar. M3 has no status-green role, so it comes from Tailwind's
+     default palette for now. A status light, not a brand colour: it never
+     fills a button or a panel. */
+  --color-live: var(--color-green-600);
+  --color-on-live: var(--color-green-50);
   --color-border-strong: var(--border-strong);
 
   /* rounded-sm / -md / -lg / -full resolve to these, not Tailwind's default

@@ -1,9 +1,9 @@
 /* ===========================================================================
    Tarot — the Links row and the 1-on-1 reading menu behind it.
 
-   Amber, not brand red, is the magic colour throughout: red stays reserved for
-   the CTAs and the active tab, so the spread reads as lit from a different
-   source than the buttons around it.
+   Amber -- the M3 tertiary roles -- not brand red, is the magic colour
+   throughout: red stays reserved for the CTAs and the active tab, so the
+   spread reads as lit from a different source than the buttons around it.
 =========================================================================== */
 
 /* --- The Links row --------------------------------------------------------
@@ -22,17 +22,22 @@
 @keyframes arcana-breathe {
   0%,
   100% {
-    border-color: rgb(var(--accent-rgb) / 0.24);
+    border-color: color-mix(in srgb, var(--accent) 24%, transparent);
     box-shadow:
-      0 0 20px -12px rgb(var(--accent-rgb) / 0.55),
-      inset 0 0 0 1px rgb(var(--accent-rgb) / 0.08);
+      0 0 20px -12px color-mix(in srgb, var(--accent) 55%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, var(--accent) 8%, transparent);
   }
   50% {
-    border-color: rgb(var(--accent-rgb) / 0.68);
+    border-color: color-mix(in srgb, var(--accent) 68%, transparent);
     box-shadow:
-      0 0 44px -6px rgb(var(--accent-rgb) / 0.8),
-      0 0 90px -24px rgba(255, 138, 46, 0.45),
-      inset 0 0 22px -8px rgb(var(--accent-rgb) / 0.5);
+      0 0 44px -6px color-mix(in srgb, var(--accent) 80%, transparent),
+      0 0 90px -24px
+        color-mix(
+          in srgb,
+          var(--md-sys-color-tertiary-container) 45%,
+          transparent
+        ),
+      inset 0 0 22px -8px color-mix(in srgb, var(--accent) 50%, transparent);
   }
 }
 
@@ -46,7 +51,7 @@
   background: linear-gradient(
     115deg,
     transparent 38%,
-    rgb(var(--accent-rgb) / 0.16) 50%,
+    color-mix(in srgb, var(--accent) 16%, transparent) 50%,
     transparent 62%
   );
   transform: translateX(-130%);
@@ -74,13 +79,13 @@
   0%,
   100% {
     transform: scale(1);
-    box-shadow: 0 0 0 0 rgb(var(--accent-rgb) / 0);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 0%, transparent);
   }
   50% {
     transform: scale(1.07);
     box-shadow:
-      0 0 26px -4px rgb(var(--accent-rgb) / 0.8),
-      inset 0 0 14px -6px rgb(var(--accent-rgb) / 0.9);
+      0 0 26px -4px color-mix(in srgb, var(--accent) 80%, transparent),
+      inset 0 0 14px -6px color-mix(in srgb, var(--accent) 90%, transparent);
   }
 }
 
@@ -89,7 +94,9 @@
    drop shadow is what makes it read as lit rather than merely amber. */
 .arcana-spark {
   animation: arcana-twinkle 3.4s ease-in-out infinite;
-  filter: drop-shadow(0 0 7px rgb(var(--accent-rgb) / 0.8));
+  filter: drop-shadow(
+    0 0 7px color-mix(in srgb, var(--accent) 80%, transparent)
+  );
 }
 
 .group:hover .arcana-spark {
@@ -114,7 +121,7 @@
 .arcana-veil {
   background-image: radial-gradient(
     120% 60% at 50% 0%,
-    rgb(var(--accent-rgb) / 0.09) 0%,
+    color-mix(in srgb, var(--accent) 9%, transparent) 0%,
     transparent 62%
   );
 }
@@ -133,10 +140,10 @@
   text-align: left;
   cursor: pointer;
   color: var(--foreground);
-  background-color: #101117;
+  background-color: var(--md-sys-color-surface-container-lowest);
   background-image: radial-gradient(
     95% 70% at 50% 0%,
-    rgb(var(--accent-rgb) / 0.12) 0%,
+    color-mix(in srgb, var(--accent) 12%, transparent) 0%,
     transparent 66%
   );
   border: 1px solid var(--border-strong);
@@ -151,13 +158,13 @@
 
 .price-card:hover {
   transform: translateY(-4px);
-  border-color: rgb(var(--accent-rgb) / 0.45);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
 }
 
 /* The picked tier, lit the way a turned card was. */
 .price-card[data-state="on"] {
-  border-color: rgb(var(--accent-rgb) / 0.7);
-  box-shadow: 0 0 30px -10px rgb(var(--accent-rgb) / 0.65);
+  border-color: color-mix(in srgb, var(--accent) 70%, transparent);
+  box-shadow: 0 0 30px -10px color-mix(in srgb, var(--accent) 65%, transparent);
 }
 
 @keyframes price-deal {
@@ -177,7 +184,7 @@
 .price-frame {
   position: absolute;
   inset: 5px;
-  border: 1px solid rgb(var(--accent-rgb) / 0.28);
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
   border-radius: var(--radius-100);
   pointer-events: none;
 }
@@ -190,15 +197,15 @@
   font-size: 8px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  /* A knockout: the paper showing through the amber. */
-  color: rgb(var(--paper-rgb));
-  background: rgb(var(--accent-rgb) / 0.85);
+  /* The tertiary pair: on-tertiary text on the tertiary fill. */
+  color: var(--md-sys-color-on-tertiary);
+  background: color-mix(in srgb, var(--accent) 85%, transparent);
   padding: 2px 6px;
   border-radius: var(--radius-pill);
 }
 
 .price-duration {
-  color: rgb(var(--accent-rgb) / 0.75);
+  color: color-mix(in srgb, var(--accent) 75%, transparent);
 }
 
 .price-name {
@@ -238,7 +245,7 @@
   gap: 4px;
   margin-top: 10px;
   padding-top: 10px;
-  border-top: 1px solid rgb(var(--accent-rgb) / 0.16);
+  border-top: 1px solid color-mix(in srgb, var(--accent) 16%, transparent);
   width: 100%;
   font-size: 11px;
   line-height: 1.3;

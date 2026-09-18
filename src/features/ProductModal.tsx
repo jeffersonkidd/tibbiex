@@ -147,7 +147,7 @@ export default function ProductModal({
                     ))}
                   </div>
                   {sizeError && (
-                    <p role="alert" className="mt-1.5 text-xs text-brand">
+                    <p role="alert" className="mt-1.5 text-xs text-primary">
                       Pick a size first.
                     </p>
                   )}

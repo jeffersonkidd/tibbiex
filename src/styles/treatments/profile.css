@@ -5,7 +5,7 @@
    halo, the silver quote and the bevelled social keys.
 =========================================================================== */
 
-/* The live photo across the top of the card, fading into paper by the time
+/* The live photo across the top of the card, fading into the card by the time
    the name sits on it. The card's content scrolls over it, not below it. */
 .profile-banner {
   position: absolute;
@@ -20,9 +20,9 @@
   inset: 0;
   background-image: linear-gradient(
     180deg,
-    rgb(var(--paper-rgb) / 0) 0%,
-    rgb(var(--paper-rgb) / 0.4) 50%,
-    rgb(var(--paper-rgb) / 0.9) 100%
+    color-mix(in srgb, var(--card) 0%, transparent) 0%,
+    color-mix(in srgb, var(--card) 40%, transparent) 50%,
+    color-mix(in srgb, var(--card) 90%, transparent) 100%
   );
 }
 
@@ -34,8 +34,8 @@
   border: 1px solid var(--foreground);
   border-radius: var(--radius-pill);
   box-shadow:
-    0 -4.5px 10px rgb(var(--ink-rgb)),
-    0 4px 12px rgb(var(--brand-rgb)),
+    0 -4.5px 10px var(--foreground),
+    0 4px 12px var(--primary),
     4px 0 8px var(--accent-strong),
     -4px 0 4px var(--accent-strong),
     inset 0 0 6px #000;
@@ -44,7 +44,7 @@
 /* The quote is printed in brushed silver: a texture exported from the Figma
    card, painted through the letters. */
 .profile-quote {
-  color: rgb(var(--ink-rgb) / 0.8);
+  color: color-mix(in srgb, var(--foreground) 80%, transparent);
 }
 
 @supports (background-clip: text) or (-webkit-background-clip: text) {
@@ -69,13 +69,13 @@
   place-items: center;
   width: 40px;
   height: 40px;
-  border: 1px solid var(--on-brand);
+  border: 1px solid var(--border);
   border-radius: var(--radius-200);
   background-color: var(--page);
   color: var(--foreground);
   box-shadow:
-    0 0 2px rgb(var(--brand-rgb) / 0.95),
-    inset 1px 2px 2px rgb(var(--ink-rgb) / 0.9),
+    0 0 2px color-mix(in srgb, var(--primary) 95%, transparent),
+    inset 1px 2px 2px color-mix(in srgb, var(--foreground) 50%, transparent),
     inset -2px -2px 8px #000;
   transition:
     box-shadow 180ms ease,
@@ -84,15 +84,15 @@
 
 .social-key:hover {
   box-shadow:
-    0 0 8px 2px rgb(var(--brand-rgb) / 0.95),
-    inset 1px 2px 2px rgb(var(--ink-rgb) / 0.9),
+    0 0 8px 2px color-mix(in srgb, var(--primary) 95%, transparent),
+    inset 1px 2px 2px color-mix(in srgb, var(--foreground) 90%, transparent),
     inset -2px -2px 8px #000;
 }
 
 .social-key:active {
   transform: translateY(1px);
   box-shadow:
-    0 0 2px rgb(var(--brand-rgb) / 0.95),
+    0 0 2px color-mix(in srgb, var(--primary) 95%, transparent),
     inset 2px 2px 6px #000;
 }
 

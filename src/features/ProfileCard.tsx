@@ -14,7 +14,7 @@ export default function ProfileCard({ onContact }: { onContact: () => void }) {
   const { live } = PROFILE
 
   return (
-    <section className="relative mb-6 overflow-hidden rounded-xl border border-border-strong bg-background">
+    <section className="surface relative mb-6 overflow-hidden rounded-lg">
       <div className="profile-banner">
         <img
           src={bannerPic}
@@ -87,7 +87,7 @@ export default function ProfileCard({ onContact }: { onContact: () => void }) {
           ))}
         </ul>
 
-        <div className="flex w-full flex-wrap items-center justify-between gap-3 border-t border-border-strong pt-4">
+        <div className="flex w-full flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
           <ul className="flex flex-wrap gap-2" aria-label="Elsewhere">
             {SOCIALS.map(({ icon: Icon, label, href }) => (
               <li key={href}>
@@ -108,7 +108,7 @@ export default function ProfileCard({ onContact }: { onContact: () => void }) {
           <button
             type="button"
             onClick={onContact}
-            className="brand-surface brand-lift flex items-center gap-2 rounded-sm border border-border-strong bg-brand p-2 font-mono text-sm font-bold uppercase leading-none tracking-[0.07em] text-on-brand"
+            className="brand-surface brand-lift flex items-center gap-2 rounded-sm border border-border-strong bg-primary p-2 font-mono text-sm uppercase leading-none tracking-[0.07em] text-primary-foreground"
           >
             <MessageSquare size={20} aria-hidden /> Contact
           </button>

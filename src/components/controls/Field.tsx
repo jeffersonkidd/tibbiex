@@ -57,7 +57,7 @@ export default function Field({
       inputMode={inputMode}
       autoComplete={autoComplete}
       className={`w-full rounded-md border bg-input-background text-base text-foreground outline-none sm:text-sm transition-colors placeholder:text-muted-foreground focus:border-accent ${
-        invalid ? "border-brand" : "border-border"
+        invalid ? "border-primary" : "border-border"
       } ${FIELD_SIZES[size]}`}
     />
   )

@@ -28,7 +28,7 @@ export default function BrandButton({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`brand-surface brand-lift flex items-center justify-center bg-brand font-bold text-on-brand disabled:pointer-events-none disabled:opacity-60 ${shape} ${className}`}
+      className={`brand-surface brand-lift flex items-center justify-center bg-primary font-bold text-primary-foreground disabled:pointer-events-none disabled:opacity-60 ${shape} ${className}`}
     >
       {children}
     </button>

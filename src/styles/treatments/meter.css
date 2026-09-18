@@ -11,10 +11,10 @@
   position: relative;
   overflow: hidden;
   border-radius: 999px;
-  background-color: rgb(var(--ink-rgb) / 0.05);
+  background-color: color-mix(in srgb, var(--foreground) 5%, transparent);
   background-image: repeating-linear-gradient(
     -45deg,
-    rgb(var(--ink-rgb) / 0.05) 0 1px,
+    color-mix(in srgb, var(--foreground) 5%, transparent) 0 1px,
     transparent 1px 5px
   );
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.7);
@@ -29,22 +29,21 @@
   background-image:
     repeating-linear-gradient(
       -45deg,
-      rgb(var(--ink-rgb) / 0.24) 0 2px,
+      color-mix(in srgb, var(--foreground) 24%, transparent) 0 2px,
       transparent 2px 7px
     ),
     linear-gradient(
       90deg,
-      #8c3d0a 0%,
-      #d9631a 38%,
-      #ff9c2e 72%,
-      rgb(var(--accent-rgb)) 100%
+      var(--md-sys-color-on-tertiary) 0%,
+      var(--md-sys-color-tertiary-container) 45%,
+      var(--accent) 100%
     );
   background-size:
     20px 20px,
     100% 100%;
   box-shadow:
-    0 0 20px -4px rgba(255, 170, 60, 0.85),
-    inset 0 1px 0 rgb(var(--ink-rgb) / 0.4);
+    0 0 20px -4px color-mix(in srgb, var(--accent) 85%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--foreground) 40%, transparent);
   animation: meter-crawl 1.4s linear infinite;
 }
 

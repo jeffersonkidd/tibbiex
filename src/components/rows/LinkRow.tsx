@@ -31,7 +31,7 @@ export default function LinkRow({
           className={`rounded-md p-3 transition-colors ${
             tarot
               ? "arcana-sigil bg-accent-tint text-accent"
-              : "bg-muted text-muted-foreground group-hover:bg-brand group-hover:text-on-brand"
+              : "bg-muted text-muted-foreground group-hover:bg-primary group-hover:text-primary-foreground"
           }`}
         >
           <Icon className="h-6 w-6" />
