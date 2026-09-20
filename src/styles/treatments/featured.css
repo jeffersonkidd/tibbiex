@@ -1,0 +1,124 @@
+/* ===========================================================================
+   Featured highlight — the one block on a tab that is lit rather than merely
+   shaped differently.
+
+   Amber -- the M3 tertiary roles -- not brand red: red stays reserved for the
+   CTAs and the active tab, so the featured block reads as lit from a different
+   source than the buttons inside it.
+
+   Three pieces, worn together by whatever is being featured: `.featured` on
+   the panel or row, `.featured-sigil` on its icon box, `.featured-spark` on
+   the glyph that stands in for a chevron or badge. Every piece runs on the
+   same 3.4s beat so the block reads as one thing breathing, not three
+   animations sharing a box; changing one duration desynchronises it. Only one
+   block should carry this at a time -- two featured things feature nothing.
+=========================================================================== */
+
+/* An amber breath on the whole block, with a sheen sweeping across it. */
+.featured {
+  position: relative;
+  overflow: hidden;
+  animation: featured-breathe 3.4s ease-in-out infinite;
+}
+
+/* The border is animated here, which beats a hover:border-accent utility on
+   the same element -- deliberately: amber owns this block in every state. */
+@keyframes featured-breathe {
+  0%,
+  100% {
+    border-color: color-mix(in srgb, var(--accent) 24%, transparent);
+    box-shadow:
+      0 0 20px -12px color-mix(in srgb, var(--accent) 55%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, var(--accent) 8%, transparent);
+  }
+  50% {
+    border-color: color-mix(in srgb, var(--accent) 68%, transparent);
+    box-shadow:
+      0 0 44px -6px color-mix(in srgb, var(--accent) 80%, transparent),
+      0 0 90px -24px
+        color-mix(
+          in srgb,
+          var(--md-sys-color-tertiary-container) 45%,
+          transparent
+        ),
+      inset 0 0 22px -8px color-mix(in srgb, var(--accent) 50%, transparent);
+  }
+}
+
+/* The slow sweep of light across the block. Nothing here takes a pointer
+   event, and the block's own border-radius clips it. */
+.featured::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 38%,
+    color-mix(in srgb, var(--accent) 16%, transparent) 50%,
+    transparent 62%
+  );
+  transform: translateX(-130%);
+  animation: featured-sheen 3.4s ease-in-out infinite;
+}
+
+@keyframes featured-sheen {
+  0% {
+    transform: translateX(-130%);
+  }
+  60%,
+  100% {
+    transform: translateX(130%);
+  }
+}
+
+/* The icon box, throbbing a half-beat behind the block so the two glows do not
+   land on top of each other. */
+.featured-sigil {
+  animation: featured-sigil-pulse 3.4s ease-in-out infinite;
+  animation-delay: 260ms;
+}
+
+@keyframes featured-sigil-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 0%, transparent);
+  }
+  50% {
+    transform: scale(1.07);
+    box-shadow:
+      0 0 26px -4px color-mix(in srgb, var(--accent) 80%, transparent),
+      inset 0 0 14px -6px color-mix(in srgb, var(--accent) 90%, transparent);
+  }
+}
+
+/* The turning glyph. The drop shadow is what makes it read as lit rather than
+   merely amber. */
+.featured-spark {
+  animation: featured-twinkle 3.4s ease-in-out infinite;
+  filter: drop-shadow(
+    0 0 7px color-mix(in srgb, var(--accent) 80%, transparent)
+  );
+}
+
+@keyframes featured-twinkle {
+  0%,
+  100% {
+    opacity: 0.72;
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: rotate(24deg) scale(1.28);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .featured,
+  .featured::after,
+  .featured-sigil,
+  .featured-spark {
+    animation: none;
+  }
+}

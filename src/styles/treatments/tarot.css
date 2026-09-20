@@ -1,119 +1,12 @@
 /* ===========================================================================
-   Tarot — the Links row and the 1-on-1 reading menu behind it.
+   Tarot — the 1-on-1 reading menu.
 
    Amber -- the M3 tertiary roles -- not brand red, is the magic colour
    throughout: red stays reserved for the CTAs and the active tab, so the
    spread reads as lit from a different source than the buttons around it.
+   The lighting the Links row used to wear now lives in featured.css, on
+   whichever block is the featured one.
 =========================================================================== */
-
-/* --- The Links row --------------------------------------------------------
-   It is the only row selling anything, so it is lit rather than merely shaped
-   differently: an amber breath on the whole row, a sheen sweeping across it, a
-   pulsing sigil and a turning spark. Every piece runs on the same 3.4s beat so
-   the row reads as one thing breathing, not four animations sharing a box. */
-.arcana-row {
-  position: relative;
-  overflow: hidden;
-  animation: arcana-breathe 3.4s ease-in-out infinite;
-}
-
-/* The border is animated here, which beats the hover:border-accent utility on
-   the row -- deliberately: amber owns this row in every state. */
-@keyframes arcana-breathe {
-  0%,
-  100% {
-    border-color: color-mix(in srgb, var(--accent) 24%, transparent);
-    box-shadow:
-      0 0 20px -12px color-mix(in srgb, var(--accent) 55%, transparent),
-      inset 0 0 0 1px color-mix(in srgb, var(--accent) 8%, transparent);
-  }
-  50% {
-    border-color: color-mix(in srgb, var(--accent) 68%, transparent);
-    box-shadow:
-      0 0 44px -6px color-mix(in srgb, var(--accent) 80%, transparent),
-      0 0 90px -24px
-        color-mix(
-          in srgb,
-          var(--md-sys-color-tertiary-container) 45%,
-          transparent
-        ),
-      inset 0 0 22px -8px color-mix(in srgb, var(--accent) 50%, transparent);
-  }
-}
-
-/* A slow sweep of light across the row, the same trick the card backs used
-   while they waited. Nothing here takes a pointer event. */
-.arcana-row::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(
-    115deg,
-    transparent 38%,
-    color-mix(in srgb, var(--accent) 16%, transparent) 50%,
-    transparent 62%
-  );
-  transform: translateX(-130%);
-  animation: arcana-sheen 3.4s ease-in-out infinite;
-}
-
-@keyframes arcana-sheen {
-  0% {
-    transform: translateX(-130%);
-  }
-  60%,
-  100% {
-    transform: translateX(130%);
-  }
-}
-
-/* The icon box, throbbing a half-beat behind the row so the two glows do not
-   land on top of each other. */
-.arcana-sigil {
-  animation: arcana-sigil-pulse 3.4s ease-in-out infinite;
-  animation-delay: 260ms;
-}
-
-@keyframes arcana-sigil-pulse {
-  0%,
-  100% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 0%, transparent);
-  }
-  50% {
-    transform: scale(1.07);
-    box-shadow:
-      0 0 26px -4px color-mix(in srgb, var(--accent) 80%, transparent),
-      inset 0 0 14px -6px color-mix(in srgb, var(--accent) 90%, transparent);
-  }
-}
-
-/* The spark standing in for the chevron: always turning, and turning faster
-   under the pointer -- which is why the hover scale utility came off it. The
-   drop shadow is what makes it read as lit rather than merely amber. */
-.arcana-spark {
-  animation: arcana-twinkle 3.4s ease-in-out infinite;
-  filter: drop-shadow(
-    0 0 7px color-mix(in srgb, var(--accent) 80%, transparent)
-  );
-}
-
-.group:hover .arcana-spark {
-  animation-duration: 1.2s;
-}
-
-@keyframes arcana-twinkle {
-  0%,
-  100% {
-    opacity: 0.72;
-    transform: rotate(0deg) scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: rotate(24deg) scale(1.28);
-  }
-}
 
 /* --- The reading menu -----------------------------------------------------
    A faint amber wash bleeding down over the spread, so the panel behind the
@@ -259,14 +152,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .arcana-row,
-  .arcana-row::after,
-  .arcana-sigil,
-  .arcana-spark,
   .price-card {
     animation: none;
-  }
-  .price-card {
     transition: none;
   }
   .price-card:hover {

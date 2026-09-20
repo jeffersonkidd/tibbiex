@@ -9,9 +9,13 @@ import Chip from "../ui/controls/Chip"
 import EmailField from "../ui/controls/EmailField"
 import PanelHeader from "../ui/PanelHeader"
 
-/* "Get told first" -- the sign-up at the foot of the Home tab, from the
+/* "Get told first" -- the sign-up at the head of the Home tab, from the
    component reference in .files/tibbiex-components.html. Two steps: the
    address, then (optionally) what to hear about.
+
+   It is the featured block, so it wears the amber lighting from featured.css
+   while there is still something to do; the confirmation drops it, since a
+   finished thing is not what the eye should be pulled to.
 
    No mailing list is connected yet, so the last step hands a ready-written
    message to the visitor's mail client, the same hand-off the booking form
@@ -60,8 +64,9 @@ export default function NewsletterSignup() {
 
   if (step === "topics") {
     return (
-      <section className="surface rounded-lg p-5" aria-live="polite">
+      <section className="surface featured rounded-lg p-5" aria-live="polite">
         <PanelHeader
+          lit
           icon={Mail}
           title="What do you want to hear about?"
           sub={`Signing up ${email.trim()}. Optional — change it any time.`}
@@ -93,8 +98,9 @@ export default function NewsletterSignup() {
   }
 
   return (
-    <section className="surface rounded-lg p-5">
+    <section className="surface featured rounded-lg p-5">
       <PanelHeader
+        lit
         icon={Mail}
         title={NEWSLETTER.title}
         sub={NEWSLETTER.blurb}

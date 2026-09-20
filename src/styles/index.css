@@ -12,7 +12,8 @@
      marks.css         the Tibbie X wordmark and the Reagan Youth mark
      treatments/
        profile.css     the profile card: banner, avatar halo, quote, social keys
-       tarot.css       the Links row (.arcana-*) and reading menu (.price-*)
+       tarot.css       the reading menu (.arcana-veil, .price-*)
+       featured.css    the amber lighting worn by the featured block
        meter.css       the rehearsal meter
        magic-dust.css  the spark canvas, above everything
 
@@ -33,5 +34,6 @@
 @import "./marks.css";
 @import "./treatments/profile.css";
 @import "./treatments/tarot.css";
+@import "./treatments/featured.css";
 @import "./treatments/meter.css";
 @import "./treatments/magic-dust.css";
