@@ -5,11 +5,9 @@ import { toast } from "sonner"
 import { FUND, TOP_CONTRIBUTORS } from "../content/fund"
 import { CARD_HINT } from "../content/payments"
 import { VENMO_HANDLE } from "../content/site"
-import { isEmail } from "../lib/email"
 import { payVia } from "../lib/payments"
 import BrandButton from "../ui/controls/BrandButton"
 import Chip from "../ui/controls/Chip"
-import EmailField from "../ui/controls/EmailField"
 import Field from "../ui/controls/Field"
 import VenmoLink from "../ui/controls/VenmoLink"
 import Meter from "../ui/Meter"
@@ -23,30 +21,22 @@ const dollars = (n: number) => `$${n.toLocaleString("en-US")}`
    meter the rehearsal panel uses), one amount, one note, out to Stripe. It
    composes a hand-off and never touches the money.
 
-   The form is the card rail, and it asks for an email because Stripe sends
-   the receipt there. Venmo is the link under the button: it mails its own
-   receipt and a Venmo note is public by default, so there is nowhere honest
-   to put an address on that side and it skips the field entirely. */
+   Nobody is asked for an email here: Stripe Checkout collects one on its own
+   page for every card payment, and prefilling it from a field of ours only
+   renders it read-only over there, so a typo could not be corrected. */
 export default function FundPanel() {
   const [amount, setAmount] = useState(FUND.suggested)
   const [note, setNote] = useState("")
-  const [email, setEmail] = useState("")
-  const [emailError, setEmailError] = useState<string | null>(null)
   const [sending, setSending] = useState(false)
 
   const progress = (FUND.raised / FUND.goal) * 100
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!isEmail(email)) {
-      setEmailError("Enter an email for your receipt.")
-      return
-    }
-
     /* Navigating away, so the button keeps saying so. */
     setSending(true)
     try {
-      await payVia("card", { amount, note, purpose: "fund", email })
+      await payVia("card", { amount, note, purpose: "fund" })
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Could not reach Stripe.",
@@ -110,24 +100,6 @@ export default function FundPanel() {
           required={false}
           size="sm"
         />
-
-        <div>
-          <EmailField
-            value={email}
-            onChange={(value) => {
-              setEmail(value)
-              setEmailError(null)
-            }}
-            error={emailError}
-            label="Email for your receipt"
-            size="sm"
-          />
-          {!emailError && (
-            <p className="mt-1.5 text-xs text-muted-foreground">
-              Stripe sends your receipt here.
-            </p>
-          )}
-        </div>
 
         <BrandButton type="submit" disabled={sending}>
           <Send className="h-4 w-4" />

@@ -63,10 +63,6 @@ const SHIPPING_COUNTRIES = [
   "JP",
 ]
 
-/* Loose on purpose: Stripe does the real validation, this only keeps garbage
-   out of the session request. */
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
 function badRequest(message: string) {
   return Response.json({ error: message }, { status: 400 })
 }
@@ -84,7 +80,6 @@ export async function POST(request: Request) {
     amount?: unknown
     note?: unknown
     purpose?: unknown
-    email?: unknown
   }
   try {
     payload = await request.json()
@@ -97,12 +92,6 @@ export async function POST(request: Request) {
       ? (payload.purpose as Purpose)
       : "fund"
   const { name, submitType } = PURPOSES[purpose]
-
-  const email =
-    typeof payload.email === "string" &&
-    EMAIL_PATTERN.test(payload.email.trim())
-      ? payload.email.trim()
-      : ""
 
   const amount = Number(payload.amount)
   if (!Number.isFinite(amount)) {
@@ -149,7 +138,9 @@ export async function POST(request: Request) {
     "payment_intent_data[metadata][note]": note,
   })
 
-  if (email) params.set("customer_email", email)
+  /* No customer_email: Checkout asks for one on its own page, and prefilling
+     it from the client would render that field read-only, so a typo could not
+     be corrected there. */
   if (purpose === "shop") {
     SHIPPING_COUNTRIES.forEach((country, i) =>
       params.set(

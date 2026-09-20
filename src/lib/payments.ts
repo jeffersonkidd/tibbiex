@@ -13,8 +13,6 @@ export type Order = {
   amount: number
   note: string
   purpose: CheckoutPurpose
-  /* Prefills Stripe's receipt address. Venmo has nowhere to put it. */
-  email?: string
 }
 
 /* Client half of the card rail. Asks the serverless function (api/checkout.ts)
