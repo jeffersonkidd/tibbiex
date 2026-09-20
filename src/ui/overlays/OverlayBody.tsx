@@ -3,7 +3,8 @@ import type { ReactNode } from "react"
 /* The inside of a modal: padding, an optional amber eyebrow, the title and an
    optional line under it. Every modal opened from the page starts this way, so
    the heading scale and spacing live here once. `className` is for treatments
-   that don't compete with the padding -- the reading menu's veil and scroll. */
+   that don't compete with the padding -- the reading menu's veil. Not for a
+   height or an overflow: a modal grows and the backdrop scrolls it. */
 export default function OverlayBody({
   title,
   eyebrow,

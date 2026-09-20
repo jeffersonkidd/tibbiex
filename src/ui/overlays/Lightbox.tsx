@@ -44,11 +44,13 @@ export default function Lightbox({
   return (
     <Overlay onClose={onClose} size="lg">
       {/* object-contain, not cover: a lightbox that crops the photo defeats
-          the point of opening it. */}
+          the point of opening it. No height cap either -- a tall photo makes
+          a tall modal and the backdrop scrolls it, the same as everywhere
+          else. */}
       <img
         src={photo.src}
         alt={photo.alt}
-        className="max-h-[70vh] w-full bg-muted object-contain"
+        className="w-full bg-muted object-contain"
       />
 
       <div className="flex items-center gap-3 border-t border-border p-4">

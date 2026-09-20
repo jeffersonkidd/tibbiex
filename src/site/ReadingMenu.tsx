@@ -67,16 +67,13 @@ export default function ReadingMenu({ onClose }: { onClose: () => void }) {
 
   return (
     <Overlay onClose={onClose} size="lg">
-      {/* Three cards plus their lists clear a short phone viewport, and Overlay
-          clips its children rather than scrolling them. So this panel does its
-          own scrolling. */}
       <OverlayBody
         eyebrow="Readings"
         title="1-on-1 Tarot Readings"
         sub={
           "Twenty-two cards, cut in the dark, read live over FaceTime. Pick how long you want the table open."
         }
-        className="arcana-veil max-h-[85vh] overflow-y-auto"
+        className="arcana-veil"
       >
         <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
           {READINGS.map((reading, i) => (

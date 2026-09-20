@@ -91,119 +91,113 @@ export default function ProductModal({
 
   return (
     <Overlay onClose={onClose}>
-      <div className="max-h-[90vh] overflow-y-auto">
-        <img
-          src={photos[photo]}
-          alt={item.item}
-          className="h-64 w-full bg-muted object-cover"
-        />
-        {photos.length > 1 && (
-          <div
-            className="flex gap-2 px-6 pt-3"
-            role="group"
-            aria-label="Photos"
-          >
-            {photos.map((src, i) => (
-              <button
-                key={src}
-                type="button"
-                aria-label={`Photo ${i + 1} of ${photos.length}`}
-                aria-pressed={photo === i}
-                onClick={() => setPhoto(i)}
-                className={`h-12 w-12 overflow-hidden rounded-sm border transition-colors ${
-                  photo === i
-                    ? "border-foreground/60"
-                    : "border-border opacity-60 hover:opacity-100"
-                }`}
-              >
-                <img src={src} alt="" className="h-full w-full object-cover" />
-              </button>
-            ))}
+      <img
+        src={photos[photo]}
+        alt={item.item}
+        className="h-64 w-full bg-muted object-cover"
+      />
+      {photos.length > 1 && (
+        <div className="flex gap-2 px-6 pt-3" role="group" aria-label="Photos">
+          {photos.map((src, i) => (
+            <button
+              key={src}
+              type="button"
+              aria-label={`Photo ${i + 1} of ${photos.length}`}
+              aria-pressed={photo === i}
+              onClick={() => setPhoto(i)}
+              className={`h-12 w-12 overflow-hidden rounded-sm border transition-colors ${
+                photo === i
+                  ? "border-foreground/60"
+                  : "border-border opacity-60 hover:opacity-100"
+              }`}
+            >
+              <img src={src} alt="" className="h-full w-full object-cover" />
+            </button>
+          ))}
+        </div>
+      )}
+
+      <OverlayBody title={item.item}>
+        <div className="mt-2 flex items-baseline gap-3">
+          <span className="text-2xl font-bold text-accent-strong">
+            {formatPrice(item.price)}
+          </span>
+          {item.stock && (
+            <span className="mono-label text-muted-foreground">
+              {soldOut
+                ? `All ${item.stock.of} gone`
+                : `${item.stock.left} of ${item.stock.of} left`}
+            </span>
+          )}
+        </div>
+
+        {!soldOut && (
+          <>
+            {sizes.length > 0 && (
+              <fieldset className="mt-5">
+                <legend className="mono-label mb-2 text-muted-foreground">
+                  Tee size
+                </legend>
+                <div className="grid grid-cols-4 gap-2">
+                  {sizes.map(({ label, soldOut: gone }) => (
+                    <Chip
+                      key={label}
+                      pressed={size === label}
+                      disabled={gone}
+                      label={gone ? `${label}, sold out` : label}
+                      onClick={() => {
+                        setSize(label)
+                        setSizeError(false)
+                      }}
+                    >
+                      {label}
+                    </Chip>
+                  ))}
+                </div>
+                {sizeError && (
+                  <p role="alert" className="mt-1.5 text-xs text-primary">
+                    Pick a size first.
+                  </p>
+                )}
+              </fieldset>
+            )}
+
+            <BrandButton className="mt-5" onClick={buy} disabled={sending}>
+              <ShoppingBag className="h-4 w-4" />
+              {sending
+                ? "Opening Stripe…"
+                : `Buy${size ? ` ${size}` : ""} — ${formatPrice(item.price)}`}
+            </BrandButton>
+            <p className="mt-2 text-center text-[11px] text-muted-foreground">
+              {CARD_HINT} Stripe asks where to ship.
+              {item.ships && (
+                <>
+                  <br />
+                  {item.ships}
+                </>
+              )}
+            </p>
+
+            <div className="mt-2">
+              <VenmoLink handle={VENMO_HANDLE} onClick={payWithVenmo} />
+              <p className="mt-1 text-center text-[11px] text-muted-foreground">
+                Venmo takes no address — DM yours after.
+              </p>
+            </div>
+          </>
+        )}
+
+        {item.includes && (
+          <div className="mt-5">
+            <span className="mono-label mb-2 block text-muted-foreground">
+              What you get
+            </span>
+            <DetailList items={item.includes} />
           </div>
         )}
 
-        <OverlayBody title={item.item}>
-          <div className="mt-2 flex items-baseline gap-3">
-            <span className="text-2xl font-bold text-accent-strong">
-              {formatPrice(item.price)}
-            </span>
-            {item.stock && (
-              <span className="mono-label text-muted-foreground">
-                {soldOut
-                  ? `All ${item.stock.of} gone`
-                  : `${item.stock.left} of ${item.stock.of} left`}
-              </span>
-            )}
-          </div>
-
-          {!soldOut && (
-            <>
-              {sizes.length > 0 && (
-                <fieldset className="mt-5">
-                  <legend className="mono-label mb-2 text-muted-foreground">
-                    Tee size
-                  </legend>
-                  <div className="grid grid-cols-4 gap-2">
-                    {sizes.map(({ label, soldOut: gone }) => (
-                      <Chip
-                        key={label}
-                        pressed={size === label}
-                        disabled={gone}
-                        label={gone ? `${label}, sold out` : label}
-                        onClick={() => {
-                          setSize(label)
-                          setSizeError(false)
-                        }}
-                      >
-                        {label}
-                      </Chip>
-                    ))}
-                  </div>
-                  {sizeError && (
-                    <p role="alert" className="mt-1.5 text-xs text-primary">
-                      Pick a size first.
-                    </p>
-                  )}
-                </fieldset>
-              )}
-
-              <BrandButton className="mt-5" onClick={buy} disabled={sending}>
-                <ShoppingBag className="h-4 w-4" />
-                {sending
-                  ? "Opening Stripe…"
-                  : `Buy${size ? ` ${size}` : ""} — ${formatPrice(item.price)}`}
-              </BrandButton>
-              <p className="mt-2 text-center text-[11px] text-muted-foreground">
-                {CARD_HINT} Stripe asks where to ship.
-                {item.ships && (
-                  <>
-                    <br />
-                    {item.ships}
-                  </>
-                )}
-              </p>
-
-              <div className="mt-2">
-                <VenmoLink handle={VENMO_HANDLE} onClick={payWithVenmo} />
-                <p className="mt-1 text-center text-[11px] text-muted-foreground">
-                  Venmo takes no address — DM yours after.
-                </p>
-              </div>
-            </>
-          )}
-
-          {item.includes && (
-            <div className="mt-5">
-              <span className="mono-label mb-2 block text-muted-foreground">
-                What you get
-              </span>
-              <DetailList items={item.includes} />
-            </div>
-          )}
-
-          <RestockAlert item={item} size={size} soldOut={soldOut} />
-        </OverlayBody>
-      </div>
+        <RestockAlert item={item} size={size} soldOut={soldOut} />
+      </OverlayBody>
     </Overlay>
   )
 }

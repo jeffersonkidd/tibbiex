@@ -118,7 +118,7 @@ export default function FundPanel() {
           <span className="mono-label block text-muted-foreground">
             Top Contributors
           </span>
-          <div className="hide-scrollbar mt-2 max-h-32 space-y-1.5 overflow-y-auto">
+          <div className="mt-2 space-y-1.5">
             {TOP_CONTRIBUTORS.map((sup, i) => (
               <SupporterRow
                 key={`${sup.name}-${sup.msg}`}
