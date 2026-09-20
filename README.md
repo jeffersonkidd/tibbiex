@@ -28,8 +28,9 @@ Prettier runs without semicolons (`.prettierrc`) and skips `pnpm-lock.yaml`
 (`.prettierignore`).
 
 The card rail (`api/checkout.ts`) does not run under `pnpm dev`, which serves
-the static app only. Use `vercel dev` to exercise it, or expect every
-Card option to report "Card payments only run on the deployed site."
+the static app only. Use `vercel dev` to exercise it, or expect every buy,
+deposit and contribute button to report "Card payments only run on the
+deployed site." The Venmo links beside them work either way.
 
 ## Layout
 
@@ -52,14 +53,14 @@ src/
     FundPanel, NewsletterSignup,
     AlbumModal, BookingModal, ShareModal, ReadingMenu, ProductModal
   ui/                reusable, props only
-    controls/          BrandButton, Field, EmailField, Chip, FilterPill, RailToggle
+    controls/          BrandButton, Field, EmailField, Chip, FilterPill, VenmoLink
     rows/              LinkRow, ShowRow, SupporterRow
     cards/             ShopCard, AlbumTile, PhotoGrid, ShopLink
     overlays/          Overlay, OverlayBody, Lightbox
     Meter, Pill, PanelHeader, DetailList, MagicDust, SiteQrCode
   content/           ALL site content, one file per subject (see below)
   lib/               pure logic, no JSX
-    payments.ts        payVia() for both rails, the Stripe call, the return toast
+    payments.ts        payVia() for either rail, the Stripe call, the return toast
     email.ts           the address check
     share.ts           copy-the-link
     analytics.ts       Analytics and Speed Insights self-exclusion
@@ -72,7 +73,7 @@ src/
     surfaces.css       .surface, .brand-* (shapes and material effects)
     utilities.css      .hide-scrollbar
     marks.css          the Tibbie X wordmark, the Reagan Youth mark
-    treatments/        profile, tarot, meter, magic-dust
+    treatments/        profile, featured, tarot, meter, magic-dust
   assets/            everything drawn or photographed, by kind
     icons/             small symbols that act as controls (Venmo, TikTok, Patreon)
     marks/             identity: logos and wordmarks (ReaganYouthMark)
@@ -80,6 +81,8 @@ src/
     imagery/           photographs and the raster textures CSS paints with
 api/
   checkout.ts        Vercel serverless: opens a Stripe Checkout Session
+public/              files needing a stable, unhashed URL: og.jpg, the portrait
+                     the structured data points at, icons, robots, sitemap
 ```
 
 Imports run one way: `App` → `tabs` → `site` → `ui` → `lib` and
@@ -87,12 +90,29 @@ Imports run one way: `App` → `tabs` → `site` → `ui` → `lib` and
 import other tabs, and `assets` imports nothing from the app. A site block gets
 its own folder only once it has a second file.
 
+## Paying
+
+`FundPanel`, `ReadingMenu` and `ProductModal` each build one order (amount,
+note, purpose) and hand it to `payVia()`. The site never touches the money: it
+composes hand-offs.
+
+Card is the rail each panel is built around — its form, its button and the
+Stripe Checkout Session `api/checkout.ts` opens — because it is the one that
+returns the payer to the site, mails a receipt and can collect a shipping
+address. Venmo is a link under the button (`VenmoLink`), not half a toggle:
+nothing comes back from it, the note is public, and on desktop it often ignores
+the amount in the URL.
+
+No panel asks for an email. Stripe Checkout collects one on its own page for
+every card payment, and prefilling it would render that field read-only, so a
+typo could not be fixed there.
+
 ## Editing the content
 
 Everything the site _says_ lives in `src/content/` as typed data, one file per
 subject: `profile.ts` (the card, socials, tags), `links.ts`, `music.ts`,
 `shows.ts`, `portfolio.ts`, `shop.ts`, `fund.ts`, `newsletter.ts`,
-`readings.ts`, `payments.ts` (the rails), `tabs.ts` and `site.ts` (address,
+`readings.ts`, `payments.ts` (the Venmo URL), `tabs.ts` and `site.ts` (address,
 inbox, Venmo handle). Changing what the site shows is an edit there, not to any
 JSX.
 
