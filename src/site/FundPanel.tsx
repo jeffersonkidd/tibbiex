@@ -3,15 +3,15 @@ import { Mic, Send } from "lucide-react"
 import { toast } from "sonner"
 
 import { FUND, TOP_CONTRIBUTORS } from "../content/fund"
-import { railHint } from "../content/payments"
-import type { Rail } from "../content/payments"
+import { CARD_HINT } from "../content/payments"
+import { VENMO_HANDLE } from "../content/site"
 import { isEmail } from "../lib/email"
 import { payVia } from "../lib/payments"
 import BrandButton from "../ui/controls/BrandButton"
 import Chip from "../ui/controls/Chip"
 import EmailField from "../ui/controls/EmailField"
 import Field from "../ui/controls/Field"
-import RailToggle from "../ui/controls/RailToggle"
+import VenmoLink from "../ui/controls/VenmoLink"
 import Meter from "../ui/Meter"
 import PanelHeader from "../ui/PanelHeader"
 import SupporterRow from "../ui/rows/SupporterRow"
@@ -20,14 +20,14 @@ const dollars = (n: number) => `$${n.toLocaleString("en-US")}`
 
 /* Fund "Still Alive" -- the podcast fund on the Home tab, from the component
    reference in .files/tibbiex-components.html. How far along it is (the amber
-   meter the rehearsal panel uses), one amount, one note, two rails out. It
+   meter the rehearsal panel uses), one amount, one note, out to Stripe. It
    composes a hand-off and never touches the money.
 
-   The email field only appears on the card rail, where Stripe sends the
-   receipt to it. Venmo mails its own receipt, and a Venmo note is public by
-   default, so on that rail there is nowhere honest to put an address. */
+   The form is the card rail, and it asks for an email because Stripe sends
+   the receipt there. Venmo is the link under the button: it mails its own
+   receipt and a Venmo note is public by default, so there is nowhere honest
+   to put an address on that side and it skips the field entirely. */
 export default function FundPanel() {
-  const [rail, setRail] = useState<Rail>("venmo")
   const [amount, setAmount] = useState(FUND.suggested)
   const [note, setNote] = useState("")
   const [email, setEmail] = useState("")
@@ -38,29 +38,28 @@ export default function FundPanel() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (rail === "card" && !isEmail(email)) {
+    if (!isEmail(email)) {
       setEmailError("Enter an email for your receipt.")
       return
     }
 
-    if (rail === "card") setSending(true)
+    /* Navigating away, so the button keeps saying so. */
+    setSending(true)
     try {
-      await payVia(rail, {
-        amount,
-        note,
-        purpose: "fund",
-        email: rail === "card" ? email : undefined,
-      })
-      /* The card rail is navigating away, so its button keeps saying so. */
-      if (rail === "venmo") {
-        toast.success("Venmo is open — thank you, seriously.")
-      }
+      await payVia("card", { amount, note, purpose: "fund", email })
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Could not reach Stripe.",
       )
       setSending(false)
     }
+  }
+
+  /* No await ahead of payVia here: the Venmo tab has to open inside the click
+     or the browser blocks it. */
+  function payWithVenmo() {
+    payVia("venmo", { amount, note, purpose: "fund" })
+    toast.success("Venmo is open — thank you, seriously.")
   }
 
   return (
@@ -112,27 +111,23 @@ export default function FundPanel() {
           size="sm"
         />
 
-        <RailToggle rail={rail} onChange={setRail} />
-
-        {rail === "card" && (
-          <div>
-            <EmailField
-              value={email}
-              onChange={(value) => {
-                setEmail(value)
-                setEmailError(null)
-              }}
-              error={emailError}
-              label="Email for your receipt"
-              size="sm"
-            />
-            {!emailError && (
-              <p className="mt-1.5 text-xs text-muted-foreground">
-                Stripe sends your receipt here.
-              </p>
-            )}
-          </div>
-        )}
+        <div>
+          <EmailField
+            value={email}
+            onChange={(value) => {
+              setEmail(value)
+              setEmailError(null)
+            }}
+            error={emailError}
+            label="Email for your receipt"
+            size="sm"
+          />
+          {!emailError && (
+            <p className="mt-1.5 text-xs text-muted-foreground">
+              Stripe sends your receipt here.
+            </p>
+          )}
+        </div>
 
         <BrandButton type="submit" disabled={sending}>
           <Send className="h-4 w-4" />
@@ -140,8 +135,10 @@ export default function FundPanel() {
         </BrandButton>
 
         <p className="text-center text-[11px] text-muted-foreground">
-          {railHint(rail)}
+          {CARD_HINT}
         </p>
+
+        <VenmoLink handle={VENMO_HANDLE} onClick={payWithVenmo} />
       </form>
 
       {TOP_CONTRIBUTORS.length > 0 && (

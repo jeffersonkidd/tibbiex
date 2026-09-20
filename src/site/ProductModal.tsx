@@ -3,8 +3,8 @@ import { BellRing, ShoppingBag } from "lucide-react"
 import { toast } from "sonner"
 
 import { restockMailtoUrl } from "../content/newsletter"
-import { railHint } from "../content/payments"
-import type { Rail } from "../content/payments"
+import { CARD_HINT } from "../content/payments"
+import { VENMO_HANDLE } from "../content/site"
 import { formatPrice } from "../content/shop"
 import type { ShopItem } from "../content/shop"
 import { isEmail } from "../lib/email"
@@ -12,20 +12,21 @@ import { payVia } from "../lib/payments"
 import BrandButton from "../ui/controls/BrandButton"
 import Chip from "../ui/controls/Chip"
 import EmailField from "../ui/controls/EmailField"
-import RailToggle from "../ui/controls/RailToggle"
+import VenmoLink from "../ui/controls/VenmoLink"
 import DetailList from "../ui/DetailList"
 import Overlay from "../ui/overlays/Overlay"
 import OverlayBody from "../ui/overlays/OverlayBody"
 
 /* One item from the shop, opened from its card or from the Home tab's offer
    row -- from the component reference in .files/tibbiex-components.html.
-   Gallery, run count, sizes, what's in the box, then buy on either rail. Every
+   Gallery, run count, sizes, what's in the box, then the buy button. Every
    section is optional and drops out when the item has no data for it, so a
    plain patch and the numbered bundle share this one modal.
 
-   Card orders go to Stripe, which collects the shipping address. Venmo has no
-   address field, so that rail says to send one by DM. Under it all, a restock
-   alert for a run that is gone or a size that sold out. */
+   The button goes to Stripe, which collects the shipping address -- which is
+   why it is the button and Venmo is only the link under it: a Venmo order
+   arrives with no address, so that line says to send one by DM. Under it all,
+   a restock alert for a run that is gone or a size that sold out. */
 export default function ProductModal({
   item,
   onClose,
@@ -40,7 +41,6 @@ export default function ProductModal({
   const [photo, setPhoto] = useState(0)
   const [size, setSize] = useState<string | null>(null)
   const [sizeError, setSizeError] = useState(false)
-  const [rail, setRail] = useState<Rail>("venmo")
   const [sending, setSending] = useState(false)
 
   useEffect(() => {
@@ -51,29 +51,42 @@ export default function ProductModal({
     return () => window.removeEventListener("keydown", onKey)
   }, [onClose])
 
-  async function buy() {
+  /* Both ways out need a size on an item that has them. */
+  function sizeMissing() {
     if (sizes.length > 0 && !size) {
       setSizeError(true)
-      return
+      return true
     }
+    return false
+  }
 
-    if (rail === "card") setSending(true)
+  const order = {
+    amount: item.price,
+    note: size ? `${item.item} — ${size}` : item.item,
+    purpose: "shop",
+  } as const
+
+  async function buy() {
+    if (sizeMissing()) return
+
+    /* Navigating away, so the button keeps saying so. */
+    setSending(true)
     try {
-      await payVia(rail, {
-        amount: item.price,
-        note: size ? `${item.item} — ${size}` : item.item,
-        purpose: "shop",
-      })
-      /* The card rail is navigating away, so its button keeps saying so. */
-      if (rail === "venmo") {
-        toast.success("Venmo is open — DM your shipping address to finish.")
-      }
+      await payVia("card", order)
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Could not reach Stripe.",
       )
       setSending(false)
     }
+  }
+
+  /* No await ahead of payVia here: the Venmo tab has to open inside the click
+     or the browser blocks it. */
+  function payWithVenmo() {
+    if (sizeMissing()) return
+    payVia("venmo", order)
+    toast.success("Venmo is open — DM your shipping address to finish.")
   }
 
   return (
@@ -154,20 +167,14 @@ export default function ProductModal({
                 </fieldset>
               )}
 
-              <div className="mt-5">
-                <RailToggle rail={rail} onChange={setRail} />
-              </div>
-
-              <BrandButton className="mt-3" onClick={buy} disabled={sending}>
+              <BrandButton className="mt-5" onClick={buy} disabled={sending}>
                 <ShoppingBag className="h-4 w-4" />
                 {sending
                   ? "Opening Stripe…"
                   : `Buy${size ? ` ${size}` : ""} — ${formatPrice(item.price)}`}
               </BrandButton>
               <p className="mt-2 text-center text-[11px] text-muted-foreground">
-                {rail === "venmo"
-                  ? `${railHint(rail)} DM your shipping address after.`
-                  : `${railHint(rail)} Stripe asks where to ship.`}
+                {CARD_HINT} Stripe asks where to ship.
                 {item.ships && (
                   <>
                     <br />
@@ -175,6 +182,13 @@ export default function ProductModal({
                   </>
                 )}
               </p>
+
+              <div className="mt-2">
+                <VenmoLink handle={VENMO_HANDLE} onClick={payWithVenmo} />
+                <p className="mt-1 text-center text-[11px] text-muted-foreground">
+                  Venmo takes no address — DM yours after.
+                </p>
+              </div>
             </>
           )}
 

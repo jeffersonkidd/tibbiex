@@ -4,22 +4,22 @@ import { toast } from "sonner"
 
 import { READINGS } from "../content/readings"
 import type { Reading } from "../content/readings"
-import { railHint } from "../content/payments"
-import type { Rail } from "../content/payments"
+import { CARD_HINT } from "../content/payments"
+import { VENMO_HANDLE } from "../content/site"
 import { castMagicFrom } from "../lib/magic-dust"
 import { payVia } from "../lib/payments"
 import BrandButton from "../ui/controls/BrandButton"
-import RailToggle from "../ui/controls/RailToggle"
+import VenmoLink from "../ui/controls/VenmoLink"
 import Overlay from "../ui/overlays/Overlay"
 import OverlayBody from "../ui/overlays/OverlayBody"
 
 /* The menu. One tier is always selected -- the hour, since it is the one most
    people want -- so the button at the bottom always has something to say. Like
-   the fund, this panel only composes a hand-off: it takes no money itself, it
-   hands the deposit to whichever rail the reader picked. */
+   the fund, this panel only composes a hand-off: it takes no money itself. The
+   button hands the deposit to Stripe; the link under it hands the same deposit
+   to Venmo. */
 export default function ReadingMenu({ onClose }: { onClose: () => void }) {
   const [pickedId, setPickedId] = useState("hour")
-  const [rail, setRail] = useState<Rail>("venmo")
   const [sending, setSending] = useState(false)
   const picked =
     READINGS.find((reading) => reading.id === pickedId) ?? READINGS[0]
@@ -37,26 +37,32 @@ export default function ReadingMenu({ onClose }: { onClose: () => void }) {
     setPickedId(id)
   }
 
-  /* The same two rails the fund runs on, carrying the tier as the note. */
+  const deposit = {
+    amount: picked.price,
+    note: `${picked.minutes}-minute reading`,
+    purpose: "reading",
+  } as const
+
+  /* The same hand-off the fund makes, carrying the tier as the note. */
   async function hold(e: React.MouseEvent<HTMLElement>) {
     castMagicFrom(e)
-    if (rail === "card") setSending(true)
+    /* Navigating away, so the button keeps saying so. */
+    setSending(true)
     try {
-      await payVia(rail, {
-        amount: picked.price,
-        note: `${picked.minutes}-minute reading`,
-        purpose: "reading",
-      })
-      /* The card rail is navigating away, so its button keeps saying so. */
-      if (rail === "venmo") {
-        toast.success("Venmo is open — the slot is yours once it lands.")
-      }
+      await payVia("card", deposit)
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Could not reach Stripe.",
       )
       setSending(false)
     }
+  }
+
+  /* No await ahead of payVia here: the Venmo tab has to open inside the click
+     or the browser blocks it. */
+  function payWithVenmo() {
+    payVia("venmo", deposit)
+    toast.success("Venmo is open — the slot is yours once it lands.")
   }
 
   return (
@@ -90,11 +96,7 @@ export default function ReadingMenu({ onClose }: { onClose: () => void }) {
           gatekeeping — the deck has no authority over you.
         </p>
 
-        <div className="mt-4">
-          <RailToggle rail={rail} onChange={setRail} />
-        </div>
-
-        <BrandButton className="mt-3" onClick={hold} disabled={sending}>
+        <BrandButton className="mt-4" onClick={hold} disabled={sending}>
           <Sparkles size={18} />
           {sending
             ? "Opening Stripe…"
@@ -102,8 +104,12 @@ export default function ReadingMenu({ onClose }: { onClose: () => void }) {
         </BrandButton>
 
         <p className="mt-2 text-center text-[11px] text-muted-foreground">
-          {railHint(rail)}
+          {CARD_HINT}
         </p>
+
+        <div className="mt-2">
+          <VenmoLink handle={VENMO_HANDLE} onClick={payWithVenmo} />
+        </div>
       </OverlayBody>
     </Overlay>
   )
