@@ -61,6 +61,8 @@ export const LINKS = [
     meta: "Shows, sessions & readings",
     href: "#",
     action: "booking",
+    /* Off: the profile card's contact button opens the same form. */
+    enabled: false,
   },
 ]
 
