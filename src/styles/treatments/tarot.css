@@ -102,7 +102,7 @@
 }
 
 .price-name {
-  font-family: "Special Elite", cursive, var(--default-font-family, sans-serif);
+  font-family: var(--font-display);
   font-size: 15px;
   line-height: 1.15;
 }

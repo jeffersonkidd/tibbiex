@@ -7,9 +7,10 @@
 /* --- The Tibbie X wordmark ------------------------------------------------
    Matches the Figma "Profile Card" (Tibbie X - DSP, 4307:25191): "Tibbie" in
    brushed chrome, the X a size up in hot red with a glow burning off its top
-   edge. Figma sets it in American Typewriter, which is an Apple system face
-   the web cannot load; Special Elite is the site's typewriter face and stands
-   in. Never bold it -- Special Elite has one weight.
+   edge. Figma sets it in American Typewriter, an Apple system face that cannot
+   be downloaded; Cutive is the site's typewriter face and renders the same
+   everywhere. The letter-spacing below is tuned to it. Never bold it -- Cutive
+   has one weight, so a bold would be a synthesised smear.
 
    Both parts paint a gradient through the glyph. background-clip: text only
    paints inside the padding box, so each part carries padding for headroom
@@ -84,7 +85,7 @@
    the way a stencil lands. */
 .ry-mark {
   transform: rotate(-3deg);
-  font-family: "Special Elite", cursive, var(--default-font-family, sans-serif);
+  font-family: var(--font-display);
   color: var(--foreground);
 }
 

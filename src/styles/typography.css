@@ -3,7 +3,8 @@
    in marks.css.
 =========================================================================== */
 
-/* Distressed display face for headings and wordmarks */
+/* The typewriter display face for headings and wordmarks -- --font-display in
+   tokens.css, which is Cutive from Google Fonts. */
 .wordmark,
 .heading,
 h1,
@@ -12,7 +13,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Special Elite", cursive, var(--default-font-family, sans-serif);
+  font-family: var(--font-display);
   letter-spacing: 0.02em;
 }
 
