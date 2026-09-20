@@ -75,15 +75,6 @@ export default function App() {
     tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
   }
 
-  /* Same shape for the rehearsal panel: open the record's modal and leave the
-     Music tab behind it, so closing the modal lands on the discography rather
-     than back on Home. */
-  function openAlbumFromHome(album: Album) {
-    setModal({ kind: "album", album })
-    setActiveTab("Music")
-    tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
-  }
-
   /* The return leg. The Portfolio panel is unmounted while Buy is showing, so
      the target section cannot be scrolled to until after the switch renders --
      hence the ref handed to the effect below rather than a scroll right here. */
@@ -134,7 +125,6 @@ export default function App() {
         <main className="space-y-4">
           {activeTab === "Home" && (
             <HomeTab
-              onOpenRehearsal={() => openAlbumFromHome(REAGAN_YOUTH_LP)}
               onOpenReadings={() => setModal({ kind: "readings" })}
               onOpenOffer={() =>
                 setModal({ kind: "product", item: YOUTH_ANTHEMS_BUNDLE })
@@ -145,6 +135,9 @@ export default function App() {
 
           {activeTab === "Music" && (
             <MusicTab
+              onOpenRehearsal={() =>
+                setModal({ kind: "album", album: REAGAN_YOUTH_LP })
+              }
               onOpenAlbum={(album) => setModal({ kind: "album", album })}
             />
           )}
