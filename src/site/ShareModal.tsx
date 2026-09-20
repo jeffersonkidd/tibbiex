@@ -1,9 +1,9 @@
 import { Copy } from "lucide-react"
 
 import { copyLink } from "../lib/share"
-import Overlay from "../components/overlays/Overlay"
-import OverlayBody from "../components/overlays/OverlayBody"
-import SiteQrCode from "../components/SiteQrCode"
+import Overlay from "../ui/overlays/Overlay"
+import OverlayBody from "../ui/overlays/OverlayBody"
+import SiteQrCode from "../ui/SiteQrCode"
 
 /* Scan & Share: the pre-computed QR for SITE_URL, plus copy-the-link. */
 export default function ShareModal({ onClose }: { onClose: () => void }) {

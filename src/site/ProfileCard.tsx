@@ -1,9 +1,9 @@
 import { MessageSquare, Radio } from "lucide-react"
 
-import profilePic from "../graphics/imagery/tibbie-portrait.jpg"
-import bannerPic from "../graphics/imagery/tibbie-onstage.jpg"
+import profilePic from "../assets/imagery/tibbie-portrait.jpg"
+import bannerPic from "../assets/imagery/tibbie-onstage.jpg"
 import { PROFILE, SOCIALS, TAGS } from "../content/profile"
-import Pill from "../components/Pill"
+import Pill from "../ui/Pill"
 
 /* The card at the top of the page, built from the Figma "Profile Card"
    (Tibbie X - DSP, 4307:25191). The live photo runs behind the top of the

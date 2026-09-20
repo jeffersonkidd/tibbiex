@@ -1,10 +1,10 @@
 import { toast } from "sonner"
 
 import { CONTACT_EMAIL, bookingMailtoUrl } from "../content/site"
-import BrandButton from "../components/controls/BrandButton"
-import Field from "../components/controls/Field"
-import Overlay from "../components/overlays/Overlay"
-import OverlayBody from "../components/overlays/OverlayBody"
+import BrandButton from "../ui/controls/BrandButton"
+import Field from "../ui/controls/Field"
+import Overlay from "../ui/overlays/Overlay"
+import OverlayBody from "../ui/overlays/OverlayBody"
 
 /* Book / Contact. There is no contact endpoint: the form composes a mailto:
    and hands it to the visitor's own mail client. */

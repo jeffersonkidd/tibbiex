@@ -1,8 +1,8 @@
 import { VISIBLE_LINKS } from "../content/links"
-import LinkRow from "../components/rows/LinkRow"
-import RehearsalPanel from "../features/RehearsalPanel"
-import FundPanel from "../features/FundPanel"
-import NewsletterSignup from "../features/NewsletterSignup"
+import LinkRow from "../ui/rows/LinkRow"
+import RehearsalPanel from "../site/RehearsalPanel"
+import FundPanel from "../site/FundPanel"
+import NewsletterSignup from "../site/NewsletterSignup"
 
 /* The first tab: rehearsal status, the link rows, then the fund and the
    sign-up. Rows with an `action` open something in this view instead of

@@ -1,9 +1,9 @@
 import { Disc } from "lucide-react"
 
 import type { Album } from "../content/music"
-import BrandButton from "../components/controls/BrandButton"
-import Overlay from "../components/overlays/Overlay"
-import OverlayBody from "../components/overlays/OverlayBody"
+import BrandButton from "../ui/controls/BrandButton"
+import Overlay from "../ui/overlays/Overlay"
+import OverlayBody from "../ui/overlays/OverlayBody"
 
 /* One record, opened from the Music tab or the rehearsal panel. */
 export default function AlbumModal({

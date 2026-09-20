@@ -1,6 +1,6 @@
 import { CreditCard } from "lucide-react"
 
-import VenmoIcon from "../graphics/icons/VenmoIcon"
+import VenmoIcon from "../assets/icons/VenmoIcon"
 import { VENMO_HANDLE } from "./site"
 
 /* The two ways money can arrive. Venmo is a hand-off to an app the visitor

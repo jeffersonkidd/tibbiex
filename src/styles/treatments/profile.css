@@ -49,7 +49,7 @@
 
 @supports (background-clip: text) or (-webkit-background-clip: text) {
   .profile-quote {
-    background: url("../../graphics/imagery/silver-texture.png") center / cover
+    background: url("../../assets/imagery/silver-texture.png") center / cover
       no-repeat;
     -webkit-background-clip: text;
     background-clip: text;

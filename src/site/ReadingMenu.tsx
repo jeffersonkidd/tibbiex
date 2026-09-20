@@ -8,10 +8,10 @@ import { railHint } from "../content/payments"
 import type { Rail } from "../content/payments"
 import { castMagicFrom } from "../lib/magic-dust"
 import { payVia } from "../lib/payments"
-import BrandButton from "../components/controls/BrandButton"
-import RailToggle from "../components/controls/RailToggle"
-import Overlay from "../components/overlays/Overlay"
-import OverlayBody from "../components/overlays/OverlayBody"
+import BrandButton from "../ui/controls/BrandButton"
+import RailToggle from "../ui/controls/RailToggle"
+import Overlay from "../ui/overlays/Overlay"
+import OverlayBody from "../ui/overlays/OverlayBody"
 
 /* The menu. One tier is always selected -- the hour, since it is the one most
    people want -- so the button at the bottom always has something to say. Like

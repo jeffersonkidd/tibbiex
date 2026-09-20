@@ -1,6 +1,6 @@
 import { DISCOGRAPHY } from "../content/music"
 import type { Album } from "../content/music"
-import AlbumTile from "../components/cards/AlbumTile"
+import AlbumTile from "../ui/cards/AlbumTile"
 
 export default function MusicTab({
   onOpenAlbum,

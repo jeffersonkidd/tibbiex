@@ -4,10 +4,10 @@ import { toast } from "sonner"
 
 import { NEWSLETTER, signupMailtoUrl } from "../content/newsletter"
 import { isEmail } from "../lib/email"
-import BrandButton from "../components/controls/BrandButton"
-import Chip from "../components/controls/Chip"
-import EmailField from "../components/controls/EmailField"
-import PanelHeader from "../components/PanelHeader"
+import BrandButton from "../ui/controls/BrandButton"
+import Chip from "../ui/controls/Chip"
+import EmailField from "../ui/controls/EmailField"
+import PanelHeader from "../ui/PanelHeader"
 
 /* "Get told first" -- the sign-up at the foot of the Home tab, from the
    component reference in .files/tibbiex-components.html. Two steps: the

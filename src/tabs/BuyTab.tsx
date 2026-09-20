@@ -3,8 +3,8 @@ import { ChevronRight } from "lucide-react"
 import { SHOP_GROUPS } from "../content/shop"
 import type { ShopGroupId, ShopItem } from "../content/shop"
 import type { BandId } from "../content/portfolio"
-import FilterPill from "../components/controls/FilterPill"
-import ShopCard from "../components/cards/ShopCard"
+import FilterPill from "../ui/controls/FilterPill"
+import ShopCard from "../ui/cards/ShopCard"
 
 export default function BuyTab({
   band: shopBand,

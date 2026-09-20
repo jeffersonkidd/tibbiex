@@ -2,11 +2,11 @@ import { Guitar } from "lucide-react"
 
 import { PORTFOLIO } from "../content/portfolio"
 import type { BandId, Photo } from "../content/portfolio"
-import DetailList from "../components/DetailList"
-import FilterPill from "../components/controls/FilterPill"
-import Pill from "../components/Pill"
-import PhotoGrid from "../components/cards/PhotoGrid"
-import ShopLink from "../components/cards/ShopLink"
+import DetailList from "../ui/DetailList"
+import FilterPill from "../ui/controls/FilterPill"
+import Pill from "../ui/Pill"
+import PhotoGrid from "../ui/cards/PhotoGrid"
+import ShopLink from "../ui/cards/ShopLink"
 
 /* One section per band, narrowed by the strip at the top. Each section carries
    an `id` so the Buy tab's "View credits" link can scroll straight to it. */

@@ -2,7 +2,7 @@
    rather than pulled from an image. The band's own logo is hand-drawn artwork
    nobody has published under a licence this repo could use, and hotlinking a
    merch shop's copy would break the first time they reorganise their assets.
-   Drop the real file in src/graphics/marks/ and swap the two spans for an <img> if you
+   Drop the real file in src/assets/marks/ and swap the two spans for an <img> if you
    have a copy you are entitled to use. */
 export default function ReaganYouthMark() {
   return (

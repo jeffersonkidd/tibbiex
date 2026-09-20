@@ -37,21 +37,21 @@ Card option to report "Card payments only run on the deployed site."
 whichever tab is showing and whichever modal is open. Everything it lays out
 sorts by one question — is it tied to this site's content?
 
-- **components** are reusable and content-blind: everything arrives as props.
-- **features** are one-off blocks tied to specific content. They may read
+- **ui** is reusable and content-blind: everything arrives as props.
+- **site** is one-off blocks tied to this site's content. They may read
   `content/`, hold state and hand off to Venmo, Stripe or a mail client.
-- **tabs** arrange features and components for one tab.
+- **tabs** arrange site blocks and ui for one tab.
 
 ```
 src/
   App.tsx            page shell — the tab and modal state that crosses between parts
   main.tsx           entry point
   tabs/              HomeTab, MusicTab, PortfolioTab, TourTab, BuyTab
-  features/          content-bound blocks
+  site/              content-bound blocks
     SiteHeader, SiteFooter, ProfileCard, RehearsalPanel,
     FundPanel, NewsletterSignup,
     AlbumModal, BookingModal, ShareModal, ReadingMenu, ProductModal
-  components/        reusable, props only
+  ui/                reusable, props only
     controls/          BrandButton, Field, EmailField, Chip, FilterPill, RailToggle
     rows/              LinkRow, ShowRow, SupporterRow
     cards/             ShopCard, AlbumTile, PhotoGrid, ShopLink
@@ -73,7 +73,7 @@ src/
     utilities.css      .hide-scrollbar
     marks.css          the Tibbie X wordmark, the Reagan Youth mark
     treatments/        profile, tarot, meter, magic-dust
-  graphics/          everything drawn or photographed, by kind
+  assets/            everything drawn or photographed, by kind
     icons/             small symbols that act as controls (Venmo, TikTok, Patreon)
     marks/             identity: logos and wordmarks (ReaganYouthMark)
     illustrations/     characters, ornaments, spots -- created as they arrive
@@ -82,10 +82,10 @@ api/
   checkout.ts        Vercel serverless: opens a Stripe Checkout Session
 ```
 
-Imports run one way: `App` → `tabs` → `features` → `components` → `lib` and
-`content` → `graphics`. Features never import other features, tabs never import
-other tabs, and `graphics` imports nothing from the app. A feature gets its own
-folder only once it has a second file.
+Imports run one way: `App` → `tabs` → `site` → `ui` → `lib` and
+`content` → `assets`. Site blocks never import other site blocks, tabs never
+import other tabs, and `assets` imports nothing from the app. A site block gets
+its own folder only once it has a second file.
 
 ## Editing the content
 
@@ -139,6 +139,6 @@ tracking back on.
 The site lives at `https://tibbiex.studio`; the `.vercel.app` address only
 redirects there. If the domain changes, update `SITE_URL` in
 `src/content/site.ts`, regenerate the pre-computed QR module path in
-`components/SiteQrCode.tsx`, and hand-edit the absolute URLs in `index.html`
+`ui/SiteQrCode.tsx`, and hand-edit the absolute URLs in `index.html`
 (canonical, Open Graph and Twitter tags, structured data). Otherwise they keep
 pointing at the old address.

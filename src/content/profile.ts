@@ -11,9 +11,9 @@ import {
   Youtube,
 } from "lucide-react"
 
-import PatreonIcon from "../graphics/icons/PatreonIcon"
-import TikTokIcon from "../graphics/icons/TikTokIcon"
-import VenmoIcon from "../graphics/icons/VenmoIcon"
+import PatreonIcon from "../assets/icons/PatreonIcon"
+import TikTokIcon from "../assets/icons/TikTokIcon"
+import VenmoIcon from "../assets/icons/VenmoIcon"
 import { VENMO_HANDLE } from "./site"
 
 /* Everything the profile card says. The card is the Figma "Profile Card"
