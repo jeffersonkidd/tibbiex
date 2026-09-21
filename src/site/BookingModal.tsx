@@ -71,14 +71,12 @@ export default function BookingModal({ onClose }: { onClose: () => void }) {
               {sending ? "Sending…" : "Send Message"}
             </BrandButton>
           </div>
+          {/* The address is shown, not linked. A mailto: directly under the
+              submit button is a trap on a phone: a tap landing slightly low
+              opens a mail client for a form that already sends. It stays
+              selectable for anyone who would rather write themselves. */}
           <p className="mt-4 text-center text-xs text-muted-foreground">
-            Or write to{" "}
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="text-foreground underline underline-offset-2 transition-colors hover:text-accent-strong"
-            >
-              {CONTACT_EMAIL}
-            </a>
+            Or write to <span className="text-foreground">{CONTACT_EMAIL}</span>
           </p>
         </OverlayBody>
       </form>
