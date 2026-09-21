@@ -15,6 +15,7 @@ import EmailField from "../ui/controls/EmailField"
 import Honeypot from "../ui/controls/Honeypot"
 import VenmoLink from "../ui/controls/VenmoLink"
 import DetailList from "../ui/DetailList"
+import Separator from "../ui/Separator"
 import Overlay from "../ui/overlays/Overlay"
 import OverlayBody from "../ui/overlays/OverlayBody"
 
@@ -189,12 +190,13 @@ export default function ProductModal({
         )}
 
         {item.includes && (
-          <div className="mt-5">
+          <>
+            <Separator space="md" />
             <span className="mono-label mb-2 block text-muted-foreground">
               What you get
             </span>
             <DetailList items={item.includes} />
-          </div>
+          </>
         )}
 
         <RestockAlert item={item} size={size} soldOut={soldOut} />
@@ -249,44 +251,44 @@ function RestockAlert({
   }
 
   return (
-    <form
-      onSubmit={notify}
-      noValidate
-      className="mt-5 border-t border-border pt-4"
-    >
-      <p className="text-sm text-muted-foreground">
-        {soldOut
-          ? "This run is gone. Get told if there’s another."
-          : "Sold out, or your size is gone? Get told when it’s back."}
-      </p>
-      {sent ? (
-        <p className="mono-label mt-3 text-accent" aria-live="polite">
-          Asked for. You’ll hear when it’s back.
+    <>
+      <Separator space="md" />
+
+      <form onSubmit={notify} noValidate>
+        <p className="text-sm text-muted-foreground">
+          {soldOut
+            ? "This run is gone. Get told if there’s another."
+            : "Sold out, or your size is gone? Get told when it’s back."}
         </p>
-      ) : (
-        <div className="mt-3 flex items-start gap-2">
-          <div className="min-w-0 flex-1">
-            <EmailField
-              value={email}
-              onChange={(value) => {
-                setEmail(value)
-                setError(null)
-              }}
-              error={error}
-              size="sm"
-            />
+        {sent ? (
+          <p className="mono-label mt-3 text-accent" aria-live="polite">
+            Asked for. You’ll hear when it’s back.
+          </p>
+        ) : (
+          <div className="mt-3 flex items-start gap-2">
+            <div className="min-w-0 flex-1">
+              <EmailField
+                value={email}
+                onChange={(value) => {
+                  setEmail(value)
+                  setError(null)
+                }}
+                error={error}
+                size="sm"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={sending}
+              className="flex shrink-0 items-center gap-1.5 rounded-md border border-border px-3 py-2.5 text-sm font-bold text-foreground transition-colors hover:bg-muted disabled:opacity-60"
+            >
+              <BellRing className="h-4 w-4" />{" "}
+              {sending ? "Sending…" : "Notify me"}
+            </button>
+            <Honeypot onChange={setTrap} />
           </div>
-          <button
-            type="submit"
-            disabled={sending}
-            className="flex shrink-0 items-center gap-1.5 rounded-md border border-border px-3 py-2.5 text-sm font-bold text-foreground transition-colors hover:bg-muted disabled:opacity-60"
-          >
-            <BellRing className="h-4 w-4" />{" "}
-            {sending ? "Sending…" : "Notify me"}
-          </button>
-          <Honeypot onChange={setTrap} />
-        </div>
-      )}
-    </form>
+        )}
+      </form>
+    </>
   )
 }

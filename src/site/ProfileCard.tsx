@@ -6,6 +6,8 @@ import { PROFILE, SOCIALS, TAGS } from "../content/profile"
 import Avatar from "../ui/Avatar"
 import SocialButton from "../ui/controls/SocialButton"
 import Pill from "../ui/Pill"
+import Separator from "../ui/Separator"
+
 
 /* The card at the top of the page, built from the Figma "Profile Card"
    (Tibbie X - DSP, 4307:25191). The live photo runs behind the top of the
@@ -45,8 +47,12 @@ export default function ProfileCard({ onContact }: { onContact: () => void }) {
           )}
         </div>
 
-        <div className="my-4">  
-        <Avatar src={profilePic} alt={PROFILE.name} live={live && live.label} />
+        <div className="my-4">
+          <Avatar
+            src={profilePic}
+            alt={PROFILE.name}
+            live={live && live.label}
+          />
         </div>
 
         <h1 className="wordmark flex items-center gap-2 text-5xl leading-none">
@@ -79,7 +85,9 @@ export default function ProfileCard({ onContact }: { onContact: () => void }) {
           ))}
         </ul>
 
-        <div className="flex w-full flex-wrap items-center justify-between gap-3 border-t border-border pt-6">
+        <Separator space="none" />
+
+        <div className="flex w-full flex-wrap items-center justify-between gap-3">
           <ul className="flex flex-wrap gap-2" aria-label="Elsewhere">
             {SOCIALS.map(({ icon, label, href }) => (
               <li key={href}>

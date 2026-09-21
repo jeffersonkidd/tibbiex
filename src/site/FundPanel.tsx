@@ -10,6 +10,7 @@ import BrandButton from "../ui/controls/BrandButton"
 import Chip from "../ui/controls/Chip"
 import Field from "../ui/controls/Field"
 import VenmoLink from "../ui/controls/VenmoLink"
+import Separator from "../ui/Separator"
 import Meter from "../ui/Meter"
 import PanelHeader from "../ui/PanelHeader"
 import SupporterRow from "../ui/rows/SupporterRow"
@@ -114,7 +115,8 @@ export default function FundPanel() {
       </form>
 
       {TOP_CONTRIBUTORS.length > 0 && (
-        <div className="mt-4 border-t border-border pt-4">
+        <>
+          <Separator space="sm" />
           <span className="mono-label block text-muted-foreground">
             Top Contributors
           </span>
@@ -127,7 +129,7 @@ export default function FundPanel() {
               />
             ))}
           </div>
-        </div>
+        </>
       )}
     </section>
   )

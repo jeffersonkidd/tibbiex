@@ -1,5 +1,7 @@
 import type { Photo } from "../../content/portfolio"
 
+import Separator from "../Separator"
+
 /* Masonry with no library and no measuring pass: CSS multi-column flows the
    photos down each column in turn, and `break-inside-avoid` stops one being
    split across a column boundary. The trade is a ragged bottom edge, which
@@ -14,7 +16,8 @@ export default function PhotoGrid({
   if (photos.length === 0) return null
 
   return (
-    <div className="mt-5 border-t border-border pt-4">
+    <>
+      <Separator space="md" />
       <span className="mono-label text-muted-foreground">Photos</span>
 
       <div className="mt-3 columns-2 gap-2 sm:columns-3">
@@ -38,6 +41,6 @@ export default function PhotoGrid({
           </button>
         ))}
       </div>
-    </div>
+    </>
   )
 }

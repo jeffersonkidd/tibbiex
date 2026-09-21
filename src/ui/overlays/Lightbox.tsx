@@ -2,6 +2,7 @@ import { useEffect } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
 import type { Photo } from "../../content/portfolio"
+import Separator from "../Separator"
 import Overlay from "./Overlay"
 
 export type LightboxState = {
@@ -53,7 +54,9 @@ export default function Lightbox({
         className="w-full bg-muted object-contain"
       />
 
-      <div className="flex items-center gap-3 border-t border-border p-4">
+      <Separator />
+
+      <div className="flex items-center gap-3 p-4">
         {photos.length > 1 && (
           <button
             type="button"

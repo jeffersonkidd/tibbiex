@@ -3,6 +3,7 @@ import { Guitar } from "lucide-react"
 import { PORTFOLIO } from "../content/portfolio"
 import type { BandId, Photo } from "../content/portfolio"
 import DetailList from "../ui/DetailList"
+import Separator from "../ui/Separator"
 import FilterPill from "../ui/controls/FilterPill"
 import Pill from "../ui/Pill"
 import PhotoGrid from "../ui/cards/PhotoGrid"
@@ -59,9 +60,8 @@ export default function PortfolioTab({
 
           <p className="mt-3 text-sm text-muted-foreground">{entry.blurb}</p>
 
-          <div className="mt-4">
-            <DetailList items={entry.highlights} />
-          </div>
+          <Separator space="sm" />
+          <DetailList items={entry.highlights} />
 
           <ShopLink entry={entry} onOpen={onOpenShop} />
 
