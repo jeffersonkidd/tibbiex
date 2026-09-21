@@ -24,7 +24,7 @@ export default function AlbumTile({
       </div>
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background/80 to-transparent p-4 pt-12">
         <div className="text-lg font-bold leading-tight">{album.album}</div>
-        <p className="text-xs font-medium text-accent-strong">{album.band}</p>
+        <p className="text-xs font-medium text-accent">{album.band}</p>
         <p className="mono-label mt-1 text-muted-foreground">
           {album.year} · {album.role}
         </p>

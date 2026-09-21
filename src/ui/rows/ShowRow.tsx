@@ -25,7 +25,7 @@ export default function ShowRow({ show }: { show: Show }) {
             <Ticket className="h-4 w-4" /> Tickets
           </BrandButton>
         ) : (
-          <span className="rounded-full bg-accent-tint px-3 py-1 text-xs font-bold text-accent-strong">
+          <span className="rounded-full bg-accent-tint px-3 py-1 text-xs font-bold text-accent">
             {show.status}
           </span>
         )}

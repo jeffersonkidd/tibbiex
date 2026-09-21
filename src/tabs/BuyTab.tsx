@@ -26,8 +26,7 @@ export default function BuyTab({
           so keep the two in step -- and note it is a claim about
           making, so it must not sit over anything label-pressed. */}
       <p className="mono-label pb-1 text-muted-foreground">
-        Made in-house at{" "}
-        <span className="text-accent-strong">Tibbie X Studio</span>
+        Made in-house at <span className="text-accent">Tibbie X Studio</span>
       </p>
 
       {/* Filter strip -- also the way back out of a band the portfolio
@@ -72,7 +71,7 @@ export default function BuyTab({
                 <button
                   type="button"
                   onClick={() => onOpenPortfolio(band)}
-                  className="mono-label flex items-center gap-1 text-muted-foreground transition-colors hover:text-accent-strong"
+                  className="mono-label flex items-center gap-1 text-muted-foreground transition-colors hover:text-accent"
                 >
                   View credits <ChevronRight className="h-3.5 w-3.5" />
                 </button>

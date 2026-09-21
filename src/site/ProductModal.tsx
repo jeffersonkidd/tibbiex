@@ -120,7 +120,7 @@ export default function ProductModal({
 
       <OverlayBody title={item.item}>
         <div className="mt-2 flex items-baseline gap-3">
-          <span className="text-2xl font-bold text-accent-strong">
+          <span className="text-2xl font-bold text-accent">
             {formatPrice(item.price)}
           </span>
           {item.stock && (
@@ -260,7 +260,7 @@ function RestockAlert({
           : "Sold out, or your size is gone? Get told when it’s back."}
       </p>
       {sent ? (
-        <p className="mono-label mt-3 text-accent-strong" aria-live="polite">
+        <p className="mono-label mt-3 text-accent" aria-live="polite">
           Asked for. You’ll hear when it’s back.
         </p>
       ) : (

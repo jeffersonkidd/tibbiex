@@ -36,8 +36,8 @@
   box-shadow:
     0 -4.5px 10px var(--foreground),
     0 4px 12px var(--primary),
-    4px 0 8px var(--accent-strong),
-    -4px 0 4px var(--accent-strong),
+    4px 0 8px var(--accent),
+    -4px 0 4px var(--accent),
     inset 0 0 6px #000;
 }
 

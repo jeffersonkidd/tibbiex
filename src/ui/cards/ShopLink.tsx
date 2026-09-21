@@ -38,7 +38,7 @@ export default function ShopLink({
           </span>
         </span>
       </span>
-      <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-accent-strong" />
+      <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-accent" />
     </button>
   )
 }

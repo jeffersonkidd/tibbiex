@@ -78,11 +78,7 @@
     var(--md-sys-color-surface-container-high) 92%,
     transparent
   );
-  --muted: color-mix(
-    in srgb,
-    var(--md-sys-color-surface-container-highest) 100%,
-    transparent
-  );
+  --muted: var(--md-sys-color-surface-container-highest);
   --input-background: color-mix(
     in srgb,
     var(--md-sys-color-surface-container-lowest) 80%,
@@ -98,11 +94,11 @@
   --primary: var(--md-sys-color-primary-container);
   --primary-foreground: var(--md-sys-color-on-surface);
 
-  /* Accent: M3's tertiary, for the tarot system and the rehearsal meter.
-     --accent-strong is the text colour, which in M3 is the same role as the
-     accent itself. */
+  /* Accent: M3's tertiary -- the featured highlight, the reading menu and the
+     rehearsal meter. One value for fill and text alike: M3 gives the two the
+     same role, so there is no "strong" variant to pick. --accent-soft and
+     --accent-tint below are the same colour at lower alphas. */
   --accent: var(--md-sys-color-tertiary);
-  --accent-strong: var(--md-sys-color-tertiary);
   --accent-soft: color-mix(
     in srgb,
     var(--md-sys-color-tertiary) 20%,
@@ -146,7 +142,6 @@
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-accent: var(--accent);
-  --color-accent-strong: var(--accent-strong);
   --color-accent-soft: var(--accent-soft);
   --color-accent-tint: var(--accent-tint);
 

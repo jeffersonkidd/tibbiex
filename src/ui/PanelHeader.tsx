@@ -27,7 +27,7 @@ export default function PanelHeader({
     <div className="flex flex-wrap items-start justify-between gap-3">
       <div className="flex min-w-0 flex-[1_1_14rem] items-center gap-3">
         <div
-          className={`rounded-md border border-accent-soft bg-accent-tint p-2 text-accent-strong ${
+          className={`rounded-md border border-accent-soft bg-accent-tint p-2 text-accent ${
             lit ? "featured-sigil" : ""
           }`}
         >
@@ -39,7 +39,7 @@ export default function PanelHeader({
         </div>
       </div>
       {badge ? (
-        <span className="mono-label shrink-0 rounded-full border border-border bg-muted/50 px-2.5 py-1 text-accent-strong">
+        <span className="mono-label shrink-0 rounded-full border border-border bg-muted/50 px-2.5 py-1 text-accent">
           {badge}
         </span>
       ) : (

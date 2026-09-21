@@ -25,7 +25,7 @@ export default function AlbumModal({
           Released {album.year} · {album.role}
         </p>
         {album.track && (
-          <p className="mono-label mt-3 text-accent-strong">
+          <p className="mono-label mt-3 text-accent">
             Featured track — “{album.track}”
           </p>
         )}

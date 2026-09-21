@@ -18,7 +18,7 @@ export default function SupporterRow({
         <span className="font-bold">{supporter.name}</span>
         <span className="ml-1.5 text-muted-foreground">“{supporter.msg}”</span>
       </p>
-      <span className="shrink-0 font-bold text-accent-strong">
+      <span className="shrink-0 font-bold text-accent">
         ${supporter.amount}
       </span>
     </div>

@@ -4,7 +4,7 @@ import type { ComponentType, ReactNode } from "react"
    amber credit -- what someone plays, on the profile and on a portfolio
    section. `tag` is the Tag Pill: muted context, not a credit. */
 const PILL_VARIANTS = {
-  role: "bg-accent-tint px-2.5 py-1 text-accent-strong",
+  role: "bg-accent-tint px-2.5 py-1 text-accent",
   tag: "bg-muted px-3 py-1.5 text-muted-foreground",
 }
 

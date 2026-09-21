@@ -33,7 +33,7 @@ export default function RehearsalPanel({ onOpen }: { onOpen: () => void }) {
       <div className="mt-3">
         <Meter value={80} label="Set rehearsed" />
       </div>
-      <span className="mono-label mt-3 flex items-center gap-1.5 text-accent-strong">
+      <span className="mono-label mt-3 flex items-center gap-1.5 text-accent">
         <Disc size={12} /> Hear “{REAGAN_YOUTH_LP.track}”
         <ChevronRight
           size={12}
