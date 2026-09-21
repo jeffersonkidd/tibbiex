@@ -26,7 +26,7 @@ export default function SocialButton({
       title={label}
       className="social-key"
     >
-      <Icon size={20} />
+      <Icon size={24} />
     </a>
   )
 }
