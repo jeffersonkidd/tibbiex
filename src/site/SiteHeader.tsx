@@ -8,7 +8,7 @@ import IconButton from "../ui/controls/IconButton"
    label, which appears from the sm breakpoint up. */
 export default function SiteHeader({ onShowQr }: { onShowQr: () => void }) {
   return (
-    <header className="surface mb-8 flex items-center justify-between rounded-lg p-3">
+    <header className="surface flex items-center justify-between rounded-lg p-3">
       <span className="mono-label px-2 text-muted-foreground">
         Tibbie X Studio
       </span>

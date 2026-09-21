@@ -5,7 +5,7 @@
    visitor can actually see. */
 export default function SiteFooter() {
   return (
-    <footer className="mt-8 text-center">
+    <footer className="text-center">
       <p className="mono-label text-foreground/80">Tibbie X Studio</p>
       <p className="mono-label mt-1 text-muted-foreground">
         © 2026 Tibbie X · Built in the squat

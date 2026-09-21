@@ -16,7 +16,7 @@ export default function ProfileCard({ onContact }: { onContact: () => void }) {
   const { live } = PROFILE
 
   return (
-    <section className="surface relative mb-6 overflow-hidden rounded-lg">
+    <section className="surface relative overflow-hidden rounded-lg">
       <div className="profile-banner">
         <img
           src={bannerPic}
@@ -29,7 +29,7 @@ export default function ProfileCard({ onContact }: { onContact: () => void }) {
         />
       </div>
 
-      <div className="relative flex flex-col items-start gap-4 p-5">
+      <div className="relative flex flex-col items-start gap-6 p-5">
         {/* Reserves the badge's height when she is not live, so the avatar
             does not jump when the badge comes and goes. */}
         <div className="min-h-[26px]">
@@ -45,13 +45,7 @@ export default function ProfileCard({ onContact }: { onContact: () => void }) {
           )}
         </div>
 
-        <div className="mt-3">
-          <Avatar
-            src={profilePic}
-            alt={PROFILE.name}
-            live={live && live.label}
-          />
-        </div>
+        <Avatar src={profilePic} alt={PROFILE.name} live={live && live.label} />
 
         <h1 className="wordmark flex items-center gap-2 text-5xl leading-none">
           <span className="wordmark-chrome">{PROFILE.name}</span>
@@ -83,7 +77,7 @@ export default function ProfileCard({ onContact }: { onContact: () => void }) {
           ))}
         </ul>
 
-        <div className="flex w-full flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
+        <div className="flex w-full flex-wrap items-center justify-between gap-3 border-t border-border pt-6">
           <ul className="flex flex-wrap gap-2" aria-label="Elsewhere">
             {SOCIALS.map(({ icon, label, href }) => (
               <li key={href}>
