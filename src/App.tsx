@@ -16,6 +16,7 @@ import { analyticsOptedOut } from "./lib/analytics"
 import { useCheckoutReturn } from "./lib/payments"
 
 import Lightbox from "./ui/overlays/Lightbox"
+import TabItem from "./ui/controls/TabItem"
 import MagicDust from "./ui/MagicDust"
 
 import AlbumModal from "./site/AlbumModal"
@@ -107,18 +108,12 @@ export default function App() {
           className="surface hide-scrollbar mb-6 flex scroll-mt-4 gap-2 overflow-x-auto rounded-lg bg-card/50 p-1.5"
         >
           {VISIBLE_TABS.map(({ label }) => (
-            <button
+            <TabItem
               key={label}
-              type="button"
-              onClick={() => setActiveTab(label)}
-              className={`min-w-[80px] flex-1 rounded-md py-2.5 text-sm font-bold transition-all ${
-                activeTab === label
-                  ? "brand-surface brand-pop bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
-              }`}
-            >
-              {label}
-            </button>
+              label={label}
+              active={activeTab === label}
+              onSelect={() => setActiveTab(label)}
+            />
           ))}
         </nav>
 
