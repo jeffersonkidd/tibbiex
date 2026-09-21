@@ -17,6 +17,16 @@
    and matching negative margins so the lockup's spacing is unchanged. Glows
    are filter drop-shadows, not text-shadow: with a transparent fill a
    text-shadow shows through the letters and muddies the gradient. */
+/* The X is 1.333em with line-height 1, so it -- not the chrome -- sets the
+   lockup's box: 64px tall where the h1 is 48. An uppercase X has no
+   descender, so the bottom fifth of that box is empty, and the card's gap-6
+   lands under empty space rather than under the letters. This trims the
+   slack so the gap the eye sees is the gap the layout declares. Adjust it
+   with the X's size, not on its own. */
+.wordmark {
+  margin-bottom: -0.3em;
+}
+
 .wordmark-chrome,
 .wordmark-x {
   display: inline-block;

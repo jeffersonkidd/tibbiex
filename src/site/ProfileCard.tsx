@@ -29,7 +29,7 @@ export default function ProfileCard({ onContact }: { onContact: () => void }) {
         />
       </div>
 
-      <div className="relative flex flex-col items-start gap-6 p-5">
+      <div className="relative flex flex-col items-start gap-4 p-5">
         {/* Reserves the badge's height when she is not live, so the avatar
             does not jump when the badge comes and goes. */}
         <div className="min-h-[26px]">
@@ -45,7 +45,9 @@ export default function ProfileCard({ onContact }: { onContact: () => void }) {
           )}
         </div>
 
+        <div className="my-4">  
         <Avatar src={profilePic} alt={PROFILE.name} live={live && live.label} />
+        </div>
 
         <h1 className="wordmark flex items-center gap-2 text-5xl leading-none">
           <span className="wordmark-chrome">{PROFILE.name}</span>
