@@ -41,7 +41,7 @@
     transparent 66%
   );
   border: 1px solid var(--border-strong);
-  border-radius: var(--radius-400);
+  border-radius: var(--radius-lg);
   transition:
     transform 200ms ease,
     border-color 200ms ease,
@@ -79,7 +79,7 @@
   position: absolute;
   inset: var(--spacing);
   border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
-  border-radius: var(--radius-100);
+  border-radius: var(--radius-sm);
   pointer-events: none;
 }
 
@@ -95,7 +95,7 @@
   color: var(--md-sys-color-on-tertiary);
   background: color-mix(in srgb, var(--accent) 85%, transparent);
   padding: calc(var(--spacing) * 0.5) calc(var(--spacing) * 1.5);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-full);
 }
 
 .price-duration {

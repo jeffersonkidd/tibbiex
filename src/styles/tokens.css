@@ -109,12 +109,6 @@
     var(--md-sys-color-tertiary) 10%,
     transparent
   );
-
-  /* Radius ramp, kept tight for a squarer, printed-flyer feel. */
-  --radius-100: 4px;
-  --radius-200: 6px;
-  --radius-400: 10px;
-  --radius-pill: 9999px;
 }
 
 /* Expose the tokens declared in :root above as Tailwind utilities. Only the
@@ -165,8 +159,15 @@
 
   /* rounded-sm / -md / -lg / -full resolve to these, not Tailwind's default
      scale; rounded-xl and up still come from Tailwind. */
-  --radius-sm: var(--radius-100);
-  --radius-md: var(--radius-200);
-  --radius-lg: var(--radius-400);
-  --radius-full: var(--radius-pill);
+  /* Radius ramp, kept tight for a squarer, printed-flyer feel: every step is
+     smaller than Tailwind ships. Declared in Tailwind's own names so there is
+     one vocabulary — a stylesheet writes var(--radius-lg) and the markup
+     writes rounded-lg for the same 10px. xl is declared at its Tailwind
+     default rather than left implicit, so the whole ramp is ours and nothing
+     silently falls back to a second scale. */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-full: 9999px;
 }
