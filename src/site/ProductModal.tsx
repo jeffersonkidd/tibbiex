@@ -2,16 +2,17 @@ import { useEffect, useState } from "react"
 import { BellRing, ShoppingBag } from "lucide-react"
 import { toast } from "sonner"
 
-import { restockMailtoUrl } from "../content/newsletter"
 import { CARD_HINT } from "../content/payments"
 import { VENMO_HANDLE } from "../content/site"
 import { formatPrice } from "../content/shop"
 import type { ShopItem } from "../content/shop"
 import { isEmail } from "../lib/email"
+import { sendMessage } from "../lib/messages"
 import { payVia } from "../lib/payments"
 import BrandButton from "../ui/controls/BrandButton"
 import Chip from "../ui/controls/Chip"
 import EmailField from "../ui/controls/EmailField"
+import Honeypot from "../ui/controls/Honeypot"
 import VenmoLink from "../ui/controls/VenmoLink"
 import DetailList from "../ui/DetailList"
 import Overlay from "../ui/overlays/Overlay"
@@ -202,8 +203,10 @@ export default function ProductModal({
   )
 }
 
-/* "Tell me when it's back." Like the sign-up, there is no list behind it yet,
-   so it writes the request into the visitor's mail client. */
+/* "Tell me when it's back." Posts to api/contact.ts as a restock request --
+   the item and size ride along as the subject -- so it arrives in the inbox
+   whether or not the visitor has a mail app. It is a one-off note, not a list
+   subscription, which is why it does not touch the audience. */
 function RestockAlert({
   item,
   size,
@@ -216,20 +219,33 @@ function RestockAlert({
   const [email, setEmail] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [sent, setSent] = useState(false)
+  const [sending, setSending] = useState(false)
+  const [trap, setTrap] = useState("")
   const anySizeGone = item.sizes?.some((s) => s.soldOut)
 
   /* Only worth offering when something is, or could be, gone. */
   if (!soldOut && !item.stock && !anySizeGone) return null
 
-  function notify(e: React.FormEvent) {
+  async function notify(e: React.FormEvent) {
     e.preventDefault()
     if (!isEmail(email)) {
       setError("Enter an email first.")
       return
     }
-    window.location.href = restockMailtoUrl(email, item.item, size ?? undefined)
-    toast.success("Opening your mail app.")
-    setSent(true)
+
+    setSending(true)
+    try {
+      await sendMessage({
+        purpose: "restock",
+        email,
+        subject: size ? `${item.item} (${size})` : item.item,
+        website: trap,
+      })
+      setSent(true)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not send that.")
+      setSending(false)
+    }
   }
 
   return (
@@ -245,7 +261,7 @@ function RestockAlert({
       </p>
       {sent ? (
         <p className="mono-label mt-3 text-accent-strong" aria-live="polite">
-          Hit send in your mail app and you’re on the list.
+          Asked for. You’ll hear when it’s back.
         </p>
       ) : (
         <div className="mt-3 flex items-start gap-2">
@@ -262,10 +278,13 @@ function RestockAlert({
           </div>
           <button
             type="submit"
-            className="flex shrink-0 items-center gap-1.5 rounded-md border border-border px-3 py-2.5 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+            disabled={sending}
+            className="flex shrink-0 items-center gap-1.5 rounded-md border border-border px-3 py-2.5 text-sm font-bold text-foreground transition-colors hover:bg-muted disabled:opacity-60"
           >
-            <BellRing className="h-4 w-4" /> Notify me
+            <BellRing className="h-4 w-4" />{" "}
+            {sending ? "Sending…" : "Notify me"}
           </button>
+          <Honeypot onChange={setTrap} />
         </div>
       )}
     </form>

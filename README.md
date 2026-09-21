@@ -27,10 +27,11 @@ or linter; `pnpm check` is the gate.
 Prettier runs without semicolons (`.prettierrc`) and skips `pnpm-lock.yaml`
 (`.prettierignore`).
 
-The card rail (`api/checkout.ts`) does not run under `pnpm dev`, which serves
-the static app only. Use `vercel dev` to exercise it, or expect every buy,
-deposit and contribute button to report "Card payments only run on the
-deployed site." The Venmo links beside them work either way.
+Nothing in `api/` runs under `pnpm dev`, which serves the static app only. Use
+`vercel dev` to exercise the endpoints, or expect every buy, deposit and
+contribute button to report "Card payments only run on the deployed site" and
+every form to report "Messages only send on the deployed site." The Venmo
+links work either way.
 
 ## Layout
 
@@ -53,7 +54,8 @@ src/
     FundPanel, NewsletterSignup,
     AlbumModal, BookingModal, ShareModal, ReadingMenu, ProductModal
   ui/                reusable, props only
-    controls/          BrandButton, Field, EmailField, Chip, FilterPill, VenmoLink
+    controls/          BrandButton, Field, EmailField, Chip, FilterPill, VenmoLink,
+                       Honeypot
     rows/              LinkRow, ShowRow, SupporterRow
     cards/             ShopCard, AlbumTile, PhotoGrid, ShopLink
     overlays/          Overlay, OverlayBody, Lightbox
@@ -61,6 +63,7 @@ src/
   content/           ALL site content, one file per subject (see below)
   lib/               pure logic, no JSX
     payments.ts        payVia() for either rail, the Stripe call, the return toast
+    messages.ts        sendMessage() and subscribe(), the two mail endpoints
     email.ts           the address check
     share.ts           copy-the-link
     analytics.ts       Analytics and Speed Insights self-exclusion
@@ -81,6 +84,8 @@ src/
     imagery/           photographs and the raster textures CSS paints with
 api/
   checkout.ts        Vercel serverless: opens a Stripe Checkout Session
+  contact.ts         sends the booking and restock messages via Resend
+  subscribe.ts       adds a newsletter contact to the Resend audience
 public/              files needing a stable, unhashed URL: og.jpg, the portrait
                      the structured data points at, icons, robots, sitemap
 ```
@@ -106,6 +111,27 @@ the amount in the URL.
 No panel asks for an email. Stripe Checkout collects one on its own page for
 every card payment, and prefilling it would render that field read-only, so a
 typo could not be fixed there.
+
+## Mail
+
+Every form sends for real, through [Resend](https://resend.com). Two
+functions:
+
+- `api/contact.ts` — the booking form and restock alerts, sent to
+  `CONTACT_EMAIL` with the visitor's address as reply-to, so hitting reply in
+  your inbox answers them.
+- `api/subscribe.ts` — the newsletter, which adds the address to a Resend
+  audience (the actual mailing list, broadcastable from Resend's dashboard)
+  and sends a confirmation.
+
+Two addresses, one job each: mail goes out as `MAIL_FROM` (`hello@`), and
+every message replies to `contact@tibbiex.studio`, which Cloudflare Email
+Routing delivers to your inbox — booking and restock notifications reply to
+the visitor instead, so hitting reply answers them. Resend's DNS records live
+in Cloudflare with the rest of the zone.
+
+Both endpoints carry an off-screen honeypot field, strip newlines out of
+anything that becomes a mail header, and cap every field's length.
 
 ## Editing the content
 
@@ -142,15 +168,21 @@ Deployed on Vercel. The static app builds with `pnpm build`; `api/checkout.ts`
 is picked up as a serverless function automatically. Vercel runs it on the Node
 version set by `engines.node` in `package.json` (24.x).
 
-Set one environment variable in the Vercel project for the card rail:
+Environment variables in the Vercel project:
 
 - `STRIPE_SECRET_KEY` — card checkout for the fund, reading deposits and shop
-  orders. Without it the endpoint returns "Card payments aren't configured yet"
-  and the Venmo rail still works.
+  orders. Set by hand. Without it the endpoint returns "Card payments aren't
+  configured yet" and the Venmo links still work.
+- `RESEND_API_KEY` — from the Resend dashboard. Without it the forms return
+  "Messages aren't configured yet".
+- `MAIL_FROM` — what mail is sent as, e.g. `Tibbie X Studio
+<hello@tibbiex.studio>`. An address that only sends: `contact@` receives
+  through Cloudflare Email Routing, and sending as it invites a loop.
+- `RESEND_AUDIENCE_ID` — the newsletter audience, set by hand. Without it the
+  sign-up returns "The list isn't configured yet".
 
-The newsletter sign-up and restock alerts have no list behind them yet: they
-open the visitor's mail client with the request written out, like the booking
-form. They stay on the go-live checklist until a mailing list is connected.
+Resend will not deliver to anyone but your own address until `tibbiex.studio`
+is verified: add the DKIM and SPF records it shows to Cloudflare DNS.
 
 To keep your own visits out of the Analytics and Speed Insights numbers, open the
 site once with `?no-analytics` in each browser you use. `?analytics` turns

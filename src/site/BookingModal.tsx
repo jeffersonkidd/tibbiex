@@ -1,33 +1,51 @@
+import { useState } from "react"
 import { toast } from "sonner"
 
-import { CONTACT_EMAIL, bookingMailtoUrl } from "../content/site"
+import { CONTACT_EMAIL } from "../content/site"
+import { sendMessage } from "../lib/messages"
 import BrandButton from "../ui/controls/BrandButton"
 import Field from "../ui/controls/Field"
+import Honeypot from "../ui/controls/Honeypot"
 import Overlay from "../ui/overlays/Overlay"
 import OverlayBody from "../ui/overlays/OverlayBody"
 
-/* Book / Contact. There is no contact endpoint: the form composes a mailto:
-   and hands it to the visitor's own mail client. */
+/* Book / Contact. The form posts to api/contact.ts, which sends the message
+   through Resend with the visitor's address as reply-to. It used to compose a
+   mailto: and hand it to their own mail client, which delivered nothing at all
+   on a phone with no mail app configured.
+
+   The modal stays open until the send lands, so a failure has somewhere to be
+   said and the typing is still there to retry with. */
 export default function BookingModal({ onClose }: { onClose: () => void }) {
+  const [sending, setSending] = useState(false)
+
+  async function submit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const entries = new FormData(e.currentTarget)
+    const field = (key: string) => String(entries.get(key) ?? "")
+
+    setSending(true)
+    try {
+      await sendMessage({
+        purpose: "booking",
+        name: field("name"),
+        email: field("email"),
+        message: field("message"),
+        website: field("website"),
+      })
+      onClose()
+      toast.success("Message sent — she'll get back to you.")
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Could not send that.",
+      )
+      setSending(false)
+    }
+  }
+
   return (
     <Overlay onClose={onClose}>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          /* Read before onClose unmounts the form. */
-          const entries = new FormData(e.currentTarget)
-          const field = (key: string) => String(entries.get(key) ?? "")
-          const mailto = bookingMailtoUrl(
-            field("name"),
-            field("email"),
-            field("message"),
-          )
-          onClose()
-          /* Hands off to the mail client; the page itself stays put. */
-          window.location.href = mailto
-          toast.success("Opening your mail app.")
-        }}
-      >
+      <form onSubmit={submit}>
         <OverlayBody
           title="Book / Contact"
           sub="For booking, press, or hate mail."
@@ -48,8 +66,9 @@ export default function BookingModal({ onClose }: { onClose: () => void }) {
               aria-label="Message"
               className="w-full resize-none rounded-md border border-border bg-input-background px-4 py-3 text-base text-foreground outline-none sm:text-sm transition-colors placeholder:text-muted-foreground focus:border-accent"
             />
-            <BrandButton type="submit" className="mt-1">
-              Send Message
+            <Honeypot />
+            <BrandButton type="submit" className="mt-1" disabled={sending}>
+              {sending ? "Sending…" : "Send Message"}
             </BrandButton>
           </div>
           <p className="mt-4 text-center text-xs text-muted-foreground">

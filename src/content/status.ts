@@ -12,7 +12,6 @@
 import { FUND, SUPPORTERS } from "./fund"
 import { LINKS } from "./links"
 import { DISCOGRAPHY } from "./music"
-import { NEWSLETTER } from "./newsletter"
 import { PORTFOLIO } from "./portfolio"
 import { PROFILE } from "./profile"
 
@@ -66,13 +65,6 @@ export function collectStaged(): StagedEntry[] {
     entries.push({
       area: "Fund",
       label: `Goal, total and backers ($${FUND.raised} of $${FUND.goal})`,
-    })
-  }
-
-  if (NEWSLETTER.staged) {
-    entries.push({
-      area: "Newsletter",
-      label: "Sign-up and restock alerts hand off by email — no list connected",
     })
   }
 

@@ -2,11 +2,13 @@ import { useState } from "react"
 import { Check, Mail } from "lucide-react"
 import { toast } from "sonner"
 
-import { NEWSLETTER, signupMailtoUrl } from "../content/newsletter"
+import { NEWSLETTER } from "../content/newsletter"
 import { isEmail } from "../lib/email"
+import { subscribe } from "../lib/messages"
 import BrandButton from "../ui/controls/BrandButton"
 import Chip from "../ui/controls/Chip"
 import EmailField from "../ui/controls/EmailField"
+import Honeypot from "../ui/controls/Honeypot"
 import PanelHeader from "../ui/PanelHeader"
 
 /* "Get told first" -- the sign-up at the head of the Home tab, from the
@@ -17,15 +19,17 @@ import PanelHeader from "../ui/PanelHeader"
    while there is still something to do; the confirmation drops it, since a
    finished thing is not what the eye should be pulled to.
 
-   No mailing list is connected yet, so the last step hands a ready-written
-   message to the visitor's mail client, the same hand-off the booking form
-   uses. The copy says so -- the visitor is on the list once that mail is sent,
-   not when they click Join. */
+   The last step posts to api/subscribe.ts, which writes the address into the
+   Resend audience and sends a confirmation. Until that lands the visitor is
+   not on the list, so the button says what it is doing and a failure comes
+   back as a toast with the address still in the field. */
 export default function NewsletterSignup() {
   const [step, setStep] = useState<"email" | "topics" | "sent">("email")
   const [email, setEmail] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [topics, setTopics] = useState<string[]>([])
+  const [joining, setJoining] = useState(false)
+  const [trap, setTrap] = useState("")
 
   function join(e: React.FormEvent) {
     e.preventDefault()
@@ -44,10 +48,15 @@ export default function NewsletterSignup() {
     )
   }
 
-  function send() {
-    window.location.href = signupMailtoUrl(email, topics)
-    toast.success("Opening your mail app.")
-    setStep("sent")
+  async function send() {
+    setJoining(true)
+    try {
+      await subscribe(email, topics, trap)
+      setStep("sent")
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not add you.")
+      setJoining(false)
+    }
   }
 
   if (step === "sent") {
@@ -55,8 +64,8 @@ export default function NewsletterSignup() {
       <section className="surface rounded-lg p-5" aria-live="polite">
         <PanelHeader
           icon={Check}
-          title="Almost on the list"
-          sub="Hit send in your mail app and you’re in."
+          title="You’re on the list"
+          sub="Check your inbox — there’s a note confirming it."
         />
       </section>
     )
@@ -86,12 +95,16 @@ export default function NewsletterSignup() {
             </Chip>
           ))}
         </div>
-        <BrandButton className="mt-4" onClick={send}>
+        <BrandButton className="mt-4" onClick={send} disabled={joining}>
           <Mail className="h-4 w-4" />
-          {topics.length ? "Send sign-up" : "Send sign-up — everything"}
+          {joining
+            ? "Adding you…"
+            : topics.length
+              ? "Join the list"
+              : "Join the list — everything"}
         </BrandButton>
         <p className="mt-2 text-center text-[11px] text-muted-foreground">
-          Opens your mail app with the sign-up written for you.
+          One confirmation email, then about one a month.
         </p>
       </section>
     )
@@ -117,6 +130,7 @@ export default function NewsletterSignup() {
             size="sm"
           />
         </div>
+        <Honeypot onChange={setTrap} />
         {/* BrandButton is a full-width block, so it gets a sized wrapper
             rather than a competing width utility. */}
         <div className="w-20 shrink-0">
