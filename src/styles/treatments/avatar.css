@@ -1,0 +1,21 @@
+/* ===========================================================================
+   Avatar — the round portrait and its halo, mirroring the Figma "Avatar" set
+   (4307:25132). Four coloured shadows around the rim and one dark inset:
+   white above, brand red below, amber to either side.
+
+   This is the source of truth and the Figma set was matched to it: the red
+   glow below spreads freely rather than being pulled in, the amber is
+   var(--accent) rather than a literal, and the rim is a flat hairline rather
+   than a radial gradient.
+=========================================================================== */
+
+.avatar {
+  border: 1px solid var(--foreground);
+  border-radius: var(--radius-full);
+  box-shadow:
+    0 -4.5px 10px var(--foreground),
+    -4px 0 4px var(--accent),
+    4px 0 8px var(--accent),
+    0 4px 12px var(--primary),
+    inset 0 0 6px #000;
+}

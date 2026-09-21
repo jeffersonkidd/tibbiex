@@ -3,6 +3,7 @@ import { MessageSquare, Radio } from "lucide-react"
 import profilePic from "../assets/imagery/tibbie-portrait.jpg"
 import bannerPic from "../assets/imagery/tibbie-onstage.jpg"
 import { PROFILE, SOCIALS, TAGS } from "../content/profile"
+import Avatar from "../ui/Avatar"
 import Pill from "../ui/Pill"
 
 /* The card at the top of the page, built from the Figma "Profile Card"
@@ -43,18 +44,12 @@ export default function ProfileCard({ onContact }: { onContact: () => void }) {
           )}
         </div>
 
-        <div className="relative mt-3">
-          <img
+        <div className="mt-3">
+          <Avatar
             src={profilePic}
-            alt="Tibbie X"
-            className="profile-avatar h-36 w-36 object-cover sm:h-40 sm:w-40"
+            alt={PROFILE.name}
+            live={live && live.label}
           />
-          {live && (
-            <span
-              className="absolute bottom-2 right-6 h-4 w-4 rounded-full border border-foreground/80 bg-live sm:right-7"
-              title={live.label}
-            />
-          )}
         </div>
 
         <h1 className="wordmark flex items-center gap-2 text-5xl leading-none">

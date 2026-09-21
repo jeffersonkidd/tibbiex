@@ -11,7 +11,8 @@
      utilities.css     .hide-scrollbar
      marks.css         the Tibbie X wordmark and the Reagan Youth mark
      treatments/
-       profile.css     the profile card: banner, avatar halo, quote, social keys
+       profile.css     the profile card: banner, quote, social keys
+       avatar.css      the round portrait and its halo
        tarot.css       the reading menu (.arcana-veil, .price-*)
        featured.css    the amber lighting worn by the featured block
        meter.css       the rehearsal meter
@@ -33,6 +34,7 @@
 @import "./utilities.css";
 @import "./marks.css";
 @import "./treatments/profile.css";
+@import "./treatments/avatar.css";
 @import "./treatments/tarot.css";
 @import "./treatments/featured.css";
 @import "./treatments/meter.css";

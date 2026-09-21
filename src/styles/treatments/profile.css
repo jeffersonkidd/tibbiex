@@ -1,8 +1,9 @@
 /* ===========================================================================
    Profile — the card at the top of the page, built from the Figma "Profile
    Card" (Tibbie X - DSP, 4307:25191). Layout lives in the markup; the pieces
-   Tailwind cannot say cleanly live here: the photo and its scrim, the avatar's
-   halo, the silver quote and the bevelled social keys.
+   Tailwind cannot say cleanly live here: the photo and its scrim, the silver
+   quote and the bevelled social keys. The avatar's halo moved to avatar.css
+   when the portrait became its own component.
 =========================================================================== */
 
 /* The live photo across the top of the card, fading into the card by the time
@@ -30,17 +31,6 @@
    above, brand red from below, amber either side -- the same three colours
    the rest of the page is lit in. The inset shadow sinks the photo into the
    ring. */
-.profile-avatar {
-  border: 1px solid var(--foreground);
-  border-radius: var(--radius-full);
-  box-shadow:
-    0 -4.5px 10px var(--foreground),
-    0 4px 12px var(--primary),
-    4px 0 8px var(--accent),
-    -4px 0 4px var(--accent),
-    inset 0 0 6px #000;
-}
-
 /* The quote is printed in brushed silver: a texture exported from the Figma
    card, painted through the letters. */
 .profile-quote {
