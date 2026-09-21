@@ -3,12 +3,15 @@
    in marks.css.
 =========================================================================== */
 
-/* The typewriter display face for headings and wordmarks -- --font-display in
-   tokens.css, which is Cutive from Google Fonts. */
+/* The typewriter display face for the wordmark and the big headings --
+   --font-display in tokens.css, which is Cutive from Google Fonts.
+
+   h2 is deliberately absent: it is the section heading inside panels and
+   modals, and it reads in the body face, matching Heading/M in Figma. The
+   display face is for the things that are meant to shout. */
 .wordmark,
 .heading,
 h1,
-h2,
 h3,
 h4,
 h5,
@@ -17,12 +20,16 @@ h6 {
   letter-spacing: 0.02em;
 }
 
+h2 {
+  font-family: var(--font-sans);
+}
+
 /* Small uppercase metadata label in the mono face. */
 .mono-label {
-  font-family: "Roboto Mono", var(--default-mono-font-family);
-  font-size: 11px;
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
   font-weight: 500;
   line-height: 1.2;
-  letter-spacing: 0.14em;
+  letter-spacing: var(--tracking-mono);
   text-transform: uppercase;
 }

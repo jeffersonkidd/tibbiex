@@ -130,6 +130,16 @@
      bolded. */
   --font-display: "Cutive", ui-serif, Georgia, serif;
 
+  /* The three type values Tailwind's own scale has no name for: the mono
+     label's size and tracking, and the price amount. Declared here rather
+     than typed as magic numbers in the stylesheets, and they generate
+     text-label / text-amount / tracking-mono for the markup. Tailwind's
+     --text-*, --font-weight-* and --tracking-* namespaces cover the rest. */
+  --text-label: 11px;
+  --text-unit: 8px;
+  --text-amount: 26px;
+  --tracking-mono: 0.14em;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
