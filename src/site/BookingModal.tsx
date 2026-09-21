@@ -6,6 +6,7 @@ import { sendMessage } from "../lib/messages"
 import BrandButton from "../ui/controls/BrandButton"
 import Field from "../ui/controls/Field"
 import Honeypot from "../ui/controls/Honeypot"
+import TextArea from "../ui/controls/TextArea"
 import Overlay from "../ui/overlays/Overlay"
 import OverlayBody from "../ui/overlays/OverlayBody"
 
@@ -58,14 +59,7 @@ export default function BookingModal({ onClose }: { onClose: () => void }) {
               name="email"
               label="Email"
             />
-            <textarea
-              required
-              rows={4}
-              name="message"
-              placeholder="Message"
-              aria-label="Message"
-              className="w-full resize-none rounded-md border border-border bg-input-background px-4 py-3 text-base text-foreground outline-none sm:text-sm transition-colors placeholder:text-muted-foreground focus:border-accent"
-            />
+            <TextArea name="message" placeholder="Message" label="Message" />
             <Honeypot />
             <BrandButton type="submit" className="mt-1" disabled={sending}>
               {sending ? "Sending…" : "Send Message"}

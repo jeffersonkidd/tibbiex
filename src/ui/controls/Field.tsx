@@ -4,10 +4,16 @@
 // the same border, fill and focus colour. Padding is a `size`, not a className:
 // a second padding utility on the element would let the stylesheet's order,
 // not the markup, decide which one wins.
-const FIELD_SIZES = {
+export const FIELD_SIZES = {
   md: "px-4 py-3",
   sm: "px-3 py-2.5",
 }
+
+/* The treatment itself, shared with TextArea so the two cannot drift: one
+   border, one fill, one focus colour across every form on the site. Size and
+   validity are applied on top, per element. */
+export const FIELD_TREATMENT =
+  "w-full rounded-md border bg-input-background text-base text-foreground outline-none sm:text-sm transition-colors placeholder:text-muted-foreground focus:border-accent"
 
 export default function Field({
   placeholder,
@@ -56,7 +62,7 @@ export default function Field({
       step={step}
       inputMode={inputMode}
       autoComplete={autoComplete}
-      className={`w-full rounded-md border bg-input-background text-base text-foreground outline-none sm:text-sm transition-colors placeholder:text-muted-foreground focus:border-accent ${
+      className={`${FIELD_TREATMENT} ${
         invalid ? "border-primary" : "border-border"
       } ${FIELD_SIZES[size]}`}
     />
