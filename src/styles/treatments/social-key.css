@@ -1,0 +1,49 @@
+/* ===========================================================================
+   Social key — the bevelled square under the profile card, mirroring the
+   Figma "Social Button" set. A light inner edge top-left, a dark one
+   bottom-right and a tight red rim: a key to press, not a surface.
+
+   Hover is the one place outside the CTAs where brand red appears, and it
+   spreads the rim rather than filling anything. Active presses the key in.
+=========================================================================== */
+
+.social-key {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--page);
+  color: var(--foreground);
+  box-shadow:
+    0 0 2px color-mix(in srgb, var(--primary) 95%, transparent),
+    inset 1px 2px 2px color-mix(in srgb, var(--foreground) 50%, transparent),
+    inset -2px -2px 8px #000;
+  transition:
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.social-key:hover {
+  box-shadow:
+    0 0 8px 2px color-mix(in srgb, var(--primary) 95%, transparent),
+    inset 1px 2px 2px color-mix(in srgb, var(--foreground) 90%, transparent),
+    inset -2px -2px 8px #000;
+}
+
+.social-key:active {
+  transform: translateY(1px);
+  box-shadow:
+    0 0 2px color-mix(in srgb, var(--primary) 95%, transparent),
+    inset 2px 2px 6px #000;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .social-key {
+    transition: none;
+  }
+  .social-key:active {
+    transform: none;
+  }
+}

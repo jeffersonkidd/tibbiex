@@ -4,6 +4,7 @@ import profilePic from "../assets/imagery/tibbie-portrait.jpg"
 import bannerPic from "../assets/imagery/tibbie-onstage.jpg"
 import { PROFILE, SOCIALS, TAGS } from "../content/profile"
 import Avatar from "../ui/Avatar"
+import SocialButton from "../ui/controls/SocialButton"
 import Pill from "../ui/Pill"
 
 /* The card at the top of the page, built from the Figma "Profile Card"
@@ -84,18 +85,9 @@ export default function ProfileCard({ onContact }: { onContact: () => void }) {
 
         <div className="flex w-full flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
           <ul className="flex flex-wrap gap-2" aria-label="Elsewhere">
-            {SOCIALS.map(({ icon: Icon, label, href }) => (
+            {SOCIALS.map(({ icon, label, href }) => (
               <li key={href}>
-                <a
-                  href={href}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  aria-label={label}
-                  title={label}
-                  className="social-key"
-                >
-                  <Icon size={20} />
-                </a>
+                <SocialButton icon={icon} label={label} href={href} />
               </li>
             ))}
           </ul>

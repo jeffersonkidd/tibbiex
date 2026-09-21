@@ -2,7 +2,8 @@
    Profile — the card at the top of the page, built from the Figma "Profile
    Card" (Tibbie X - DSP, 4307:25191). Layout lives in the markup; the pieces
    Tailwind cannot say cleanly live here: the photo and its scrim, the silver
-   quote and the bevelled social keys. The avatar's halo moved to avatar.css
+   quote. The bevelled keys moved to social-key.css and the avatar's halo to
+   avatar.css when each became its own component. The avatar's halo moved to avatar.css
    when the portrait became its own component.
 =========================================================================== */
 
@@ -46,51 +47,5 @@
     color: transparent;
     -webkit-text-fill-color: transparent;
     opacity: 0.8;
-  }
-}
-
-/* --- Social keys ----------------------------------------------------------
-   The square buttons in the quick bar: a dark key with a bevel -- light
-   catching the top-left edge, shade pooling bottom-right -- ringed in a thin
-   brand glow (the Figma effect style "Brand/Surface Rest"). They press in
-   rather than lift, since they sit flush in a row. */
-.social-key {
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background-color: var(--page);
-  color: var(--foreground);
-  box-shadow:
-    0 0 2px color-mix(in srgb, var(--primary) 95%, transparent),
-    inset 1px 2px 2px color-mix(in srgb, var(--foreground) 50%, transparent),
-    inset -2px -2px 8px #000;
-  transition:
-    box-shadow 180ms ease,
-    transform 180ms ease;
-}
-
-.social-key:hover {
-  box-shadow:
-    0 0 8px 2px color-mix(in srgb, var(--primary) 95%, transparent),
-    inset 1px 2px 2px color-mix(in srgb, var(--foreground) 90%, transparent),
-    inset -2px -2px 8px #000;
-}
-
-.social-key:active {
-  transform: translateY(1px);
-  box-shadow:
-    0 0 2px color-mix(in srgb, var(--primary) 95%, transparent),
-    inset 2px 2px 6px #000;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .social-key {
-    transition: none;
-  }
-  .social-key:active {
-    transform: none;
   }
 }
