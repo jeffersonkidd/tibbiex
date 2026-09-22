@@ -1,4 +1,4 @@
-import { SITE_URL } from "../content/site"
+import { SITE_URL } from "../../content/site"
 
 /* Scannable QR for the bio link, replacing the decorative lucide QrCode glyph
    that used to sit in the modal -- that one encoded nothing. The module path

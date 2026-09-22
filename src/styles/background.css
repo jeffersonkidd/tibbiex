@@ -30,7 +30,7 @@ body,
 }
 
 body {
-  background-color: var(--page);
+  background-color: var(--color-page);
 }
 
 /* The record rides its own fixed layer rather than sitting on `body` under

@@ -6,7 +6,7 @@ import IconButton from "../ui/controls/IconButton"
 /* The control bar above the profile: the address, the QR code and the share
    button. Both controls are the same IconButton -- the share one carries a
    label, which appears from the sm breakpoint up. */
-export default function SiteHeader({ onShowQr }: { onShowQr: () => void }) {
+export default function Header({ onShowQr }: { onShowQr: () => void }) {
   return (
     <header className="surface flex items-center justify-between rounded-lg p-3">
       <span className="mono-label px-2 text-muted-foreground">

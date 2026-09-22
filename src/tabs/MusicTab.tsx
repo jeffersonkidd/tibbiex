@@ -1,6 +1,6 @@
 import { DISCOGRAPHY } from "../content/music"
 import type { Album } from "../content/music"
-import RehearsalPanel from "../site/RehearsalPanel"
+import RehearsalPanel from "../site/panels/RehearsalPanel"
 import AlbumTile from "../ui/cards/AlbumTile"
 
 /* Rehearsal status above the discography: the panel is about the record being

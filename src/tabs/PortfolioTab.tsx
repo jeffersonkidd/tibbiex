@@ -2,10 +2,10 @@ import { Guitar } from "lucide-react"
 
 import { PORTFOLIO } from "../content/portfolio"
 import type { BandId, Photo } from "../content/portfolio"
-import DetailList from "../ui/DetailList"
-import Separator from "../ui/Separator"
+import DetailList from "../ui/display/DetailList"
+import Separator from "../ui/display/Separator"
 import FilterPill from "../ui/controls/FilterPill"
-import Pill from "../ui/Pill"
+import Pill from "../ui/display/Pill"
 import PhotoGrid from "../ui/cards/PhotoGrid"
 import ShopLink from "../ui/cards/ShopLink"
 
@@ -53,9 +53,7 @@ export default function PortfolioTab({
           </div>
 
           <div className="mt-3">
-            <Pill icon={Guitar} variant="role">
-              {entry.role}
-            </Pill>
+            <Pill icon={Guitar}>{entry.role}</Pill>
           </div>
 
           <p className="mt-3 text-sm text-muted-foreground">{entry.blurb}</p>

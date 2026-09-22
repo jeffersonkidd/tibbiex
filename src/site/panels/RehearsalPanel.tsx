@@ -1,8 +1,8 @@
 import { ChevronRight, Disc } from "lucide-react"
 
-import { REAGAN_YOUTH_LP } from "../content/music"
-import ReaganYouthMark from "../assets/marks/ReaganYouthMark"
-import Meter from "../ui/Meter"
+import { REAGAN_YOUTH_LP } from "../../content/music"
+import ReaganYouthMark from "../../assets/marks/ReaganYouthMark"
+import Meter from "../../ui/display/Meter"
 
 /* Rehearsal status -- also the way into the record it is about. */
 export default function RehearsalPanel({ onOpen }: { onOpen: () => void }) {

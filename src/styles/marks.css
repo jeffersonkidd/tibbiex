@@ -5,7 +5,7 @@
 =========================================================================== */
 
 /* --- The Tibbie X wordmark ------------------------------------------------
-   Matches the Figma "Profile Card" (Tibbie X - DSP, 4307:25191): "Tibbie" in
+   Matches the Figma "Profile Card" (Tibbie X - DSP, 4545:73): "Tibbie" in
    brushed chrome, the X a size up in hot red with a glow burning off its top
    edge. Figma sets it in American Typewriter, an Apple system face that cannot
    be downloaded; Cutive is the site's typewriter face and renders the same
@@ -33,7 +33,7 @@
   line-height: 1;
   padding: 0.14em 0.04em 0.1em;
   margin: -0.14em -0.04em -0.1em;
-  color: var(--foreground);
+  color: var(--color-foreground);
 }
 
 .wordmark-chrome {
@@ -54,26 +54,26 @@
   );
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6))
     drop-shadow(
-      0 1px 2px color-mix(in srgb, var(--foreground) 15%, transparent)
+      0 1px 2px color-mix(in srgb, var(--color-foreground) 15%, transparent)
     );
 }
 
 .wordmark-x {
   font-size: 1.333em;
   letter-spacing: 0.02em;
-  color: var(--primary);
+  color: var(--color-primary);
   background-image: linear-gradient(
     90deg,
     #5a0a0a 7%,
     #8a1a1a 15%,
-    color-mix(in srgb, var(--primary) 95%, transparent) 45%,
+    color-mix(in srgb, var(--color-primary) 95%, transparent) 45%,
     #c53e3e 77%,
     #ff5a5a 108%
   );
   filter: drop-shadow(0 -4px 18px rgba(255, 77, 77, 0.6))
     drop-shadow(0 -2px 10px rgba(255, 138, 138, 0.5))
     drop-shadow(
-      0 -10px 18px color-mix(in srgb, var(--foreground) 50%, transparent)
+      0 -10px 18px color-mix(in srgb, var(--color-foreground) 50%, transparent)
     )
     drop-shadow(0 6px 14px rgba(0, 0, 0, 0.1));
 }
@@ -96,7 +96,7 @@
 .ry-mark {
   transform: rotate(-3deg);
   font-family: var(--font-display);
-  color: var(--foreground);
+  color: var(--color-foreground);
 }
 
 .ry-mark-top {

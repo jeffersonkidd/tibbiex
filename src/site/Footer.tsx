@@ -3,7 +3,7 @@
    about. Both are asserted in the JSON-LD graph in index.html (Organization
    #studio, Person #tibbie-x), and Google wants structured data backed by text a
    visitor can actually see. */
-export default function SiteFooter() {
+export default function Footer() {
   return (
     <footer className="text-center">
       <p className="mono-label text-foreground/80">Tibbie X Studio</p>

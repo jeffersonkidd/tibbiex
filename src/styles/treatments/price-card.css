@@ -1,0 +1,152 @@
+/* ===========================================================================
+   Price card — one priced tier in a row of them.
+
+   Cut out of the reading menu it was built for, so any row of priced choices
+   can wear it. Amber -- the M3 tertiary roles -- not brand red: red stays
+   reserved for the CTAs and the active tab, so a row of these reads as lit
+   from a different source than the button that acts on the choice.
+=========================================================================== */
+
+/* The card keeps the deal animation the tarot spread used -- the cards still
+   land one after another -- with --deal set per card in the markup to
+   stagger them. */
+.price-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing);
+  width: 100%;
+  padding: calc(var(--spacing) * 4) calc(var(--spacing) * 3)
+    calc(var(--spacing) * 3);
+  text-align: left;
+  cursor: pointer;
+  color: var(--color-foreground);
+  background-color: var(--color-page);
+  background-image: radial-gradient(
+    95% 70% at 50% 0%,
+    color-mix(in srgb, var(--color-accent) 12%, transparent) 0%,
+    transparent 66%
+  );
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  transition:
+    transform 200ms ease,
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+  animation: price-deal 560ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: calc(var(--deal, 0) * 130ms);
+}
+
+.price-card:hover {
+  transform: translateY(-4px);
+  border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+}
+
+/* The picked tier, lit the way a turned card was. */
+.price-card[data-state="on"] {
+  border-color: color-mix(in srgb, var(--color-accent) 70%, transparent);
+  box-shadow: 0 0 30px -10px
+    color-mix(in srgb, var(--color-accent) 65%, transparent);
+}
+
+@keyframes price-deal {
+  from {
+    opacity: 0;
+    transform: translateY(28px) rotate(-9deg) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Parts of a price card, top to bottom. */
+
+/* The hairline inside the border, carried over from the card faces. */
+.price-frame {
+  position: absolute;
+  inset: var(--spacing);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 28%, transparent);
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+}
+
+.price-flag {
+  position: absolute;
+  right: calc(var(--spacing) * 2.5);
+  top: calc(var(--spacing) * 2.5);
+  font-family: var(--font-mono);
+  font-size: var(--text-unit);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  /* The accent pair: the dark accent text on the amber fill. */
+  color: var(--color-accent-foreground);
+  background: color-mix(in srgb, var(--color-accent) 85%, transparent);
+  padding: calc(var(--spacing) * 0.5) calc(var(--spacing) * 1.5);
+  border-radius: var(--radius-full);
+}
+
+.price-eyebrow {
+  color: color-mix(in srgb, var(--color-accent) 75%, transparent);
+}
+
+.price-name {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  line-height: 1.15;
+}
+
+.price-amount {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing);
+  margin-top: calc(var(--spacing) * 0.5);
+  font-size: var(--text-amount);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.price-unit {
+  font-family: var(--font-mono);
+  font-size: var(--text-unit);
+  font-weight: 400;
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--color-muted-foreground);
+}
+
+.price-blurb {
+  margin-top: var(--spacing);
+  font-size: var(--text-xs);
+  line-height: 1.35;
+  color: var(--color-muted-foreground);
+}
+
+.price-includes {
+  display: grid;
+  gap: var(--spacing);
+  margin-top: calc(var(--spacing) * 2.5);
+  padding-top: calc(var(--spacing) * 2.5);
+  border-top: 1px solid color-mix(in srgb, var(--color-accent) 16%, transparent);
+  width: 100%;
+  font-size: var(--text-label);
+  line-height: 1.3;
+  color: var(--color-muted-foreground);
+}
+
+.price-includes li {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--spacing) * 1.5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .price-card {
+    animation: none;
+    transition: none;
+  }
+  .price-card:hover {
+    transform: none;
+  }
+}

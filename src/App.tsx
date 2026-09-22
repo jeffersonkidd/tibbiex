@@ -19,14 +19,14 @@ import Lightbox from "./ui/overlays/Lightbox"
 import TabItem from "./ui/controls/TabItem"
 import MagicDust from "./ui/MagicDust"
 
-import AlbumModal from "./site/AlbumModal"
-import BookingModal from "./site/BookingModal"
-import ProductModal from "./site/ProductModal"
+import Footer from "./site/Footer"
+import Header from "./site/Header"
 import ProfileCard from "./site/ProfileCard"
-import ReadingMenu from "./site/ReadingMenu"
-import ShareModal from "./site/ShareModal"
-import SiteFooter from "./site/SiteFooter"
-import SiteHeader from "./site/SiteHeader"
+import AlbumModal from "./site/modals/AlbumModal"
+import BookingModal from "./site/modals/BookingModal"
+import ProductModal from "./site/modals/ProductModal"
+import ReadingMenu from "./site/modals/ReadingMenu"
+import ShareModal from "./site/modals/ShareModal"
 
 import BuyTab from "./tabs/BuyTab"
 import HomeTab from "./tabs/HomeTab"
@@ -99,7 +99,7 @@ export default function App() {
       <Toaster position="top-center" richColors />
 
       <div className="w-full min-w-0 max-w-2xl space-y-6 px-4 pt-6 sm:px-6">
-        <SiteHeader onShowQr={() => setModal({ kind: "share" })} />
+        <Header onShowQr={() => setModal({ kind: "share" })} />
 
         <ProfileCard onContact={() => setModal({ kind: "booking" })} />
 
@@ -160,7 +160,7 @@ export default function App() {
           )}
         </main>
 
-        <SiteFooter />
+        <Footer />
       </div>
 
       {modal?.kind === "album" && (

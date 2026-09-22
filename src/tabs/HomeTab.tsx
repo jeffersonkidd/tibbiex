@@ -1,7 +1,7 @@
 import { VISIBLE_LINKS } from "../content/links"
 import LinkRow from "../ui/rows/LinkRow"
-import FundPanel from "../site/FundPanel"
-import NewsletterSignup from "../site/NewsletterSignup"
+import FundPanel from "../site/panels/FundPanel"
+import NewsletterSignup from "../site/panels/NewsletterSignup"
 
 /* The first tab: the sign-up, the link rows, then the fund. Rows with an
    `action` open something in this view instead of navigating away. */

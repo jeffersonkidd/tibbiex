@@ -2,9 +2,9 @@
 
    Foundations first, then the treatments built on them. Order matters only
    where two unlayered rules tie; the tokens have to come first because
-   @theme inline reads them.
+   everything below reads them.
 
-     tokens.css        :root colours and radii, then the @theme inline mapping
+     tokens.css        the one @theme block: colours, type and radii
      background.css    document sizing and the record-photo background
      typography.css    display face and .mono-label
      surfaces.css      .surface, .brand-surface / .brand-lift / .brand-pop
@@ -14,7 +14,8 @@
        profile.css     the profile card: banner, quote, social keys
        avatar.css      the round portrait and its halo
        social-key.css  the bevelled keys under the profile card
-       tarot.css       the reading menu (.arcana-veil, .price-*)
+       tarot.css       the reading menu's amber wash (.arcana-veil)
+       price-card.css  one priced tier in a row of them (.price-*)
        featured.css    the amber lighting worn by the featured block
        meter.css       the rehearsal meter
        magic-dust.css  the spark canvas, above everything
@@ -38,6 +39,7 @@
 @import "./treatments/avatar.css";
 @import "./treatments/social-key.css";
 @import "./treatments/tarot.css";
+@import "./treatments/price-card.css";
 @import "./treatments/featured.css";
 @import "./treatments/meter.css";
 @import "./treatments/magic-dust.css";

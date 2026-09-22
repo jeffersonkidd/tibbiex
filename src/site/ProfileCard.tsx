@@ -2,18 +2,17 @@ import { MessageSquare, Radio } from "lucide-react"
 
 import profilePic from "../assets/imagery/tibbie-portrait.jpg"
 import bannerPic from "../assets/imagery/tibbie-onstage.jpg"
-import { PROFILE, SOCIALS, TAGS } from "../content/profile"
-import Avatar from "../ui/Avatar"
+import { PROFILE, SOCIALS } from "../content/profile"
+import Avatar from "../ui/display/Avatar"
 import SocialButton from "../ui/controls/SocialButton"
-import Pill from "../ui/Pill"
-import Separator from "../ui/Separator"
-
+import Pill from "../ui/display/Pill"
+import Separator from "../ui/display/Separator"
 
 /* The card at the top of the page, built from the Figma "Profile Card"
-   (Tibbie X - DSP, 4307:25191). The live photo runs behind the top of the
+   (Tibbie X - DSP, 4545:73). The live photo runs behind the top of the
    card and everything else sits over it: the live badge, the avatar, the
-   wordmark, what she plays and who with, then the social keys, the contact
-   button and the tags. Every word of it comes from content/profile.ts. */
+   wordmark, what she plays and who with, then the social keys and the
+   contact button. Every word of it comes from content/profile.ts. */
 export default function ProfileCard({ onContact }: { onContact: () => void }) {
   const { live } = PROFILE
 
@@ -63,9 +62,7 @@ export default function ProfileCard({ onContact }: { onContact: () => void }) {
         <ul className="flex flex-wrap gap-2" aria-label="Plays">
           {PROFILE.roles.map(({ icon, label }) => (
             <li key={label}>
-              <Pill icon={icon} variant="role">
-                {label}
-              </Pill>
+              <Pill icon={icon}>{label}</Pill>
             </li>
           ))}
         </ul>
@@ -104,16 +101,6 @@ export default function ProfileCard({ onContact }: { onContact: () => void }) {
             <MessageSquare size={20} aria-hidden /> Contact
           </button>
         </div>
-
-        <ul className="flex flex-wrap gap-x-1.5 gap-y-2" aria-label="About">
-          {TAGS.map(({ icon, label }) => (
-            <li key={label}>
-              <Pill icon={icon} variant="tag">
-                {label}
-              </Pill>
-            </li>
-          ))}
-        </ul>
       </div>
     </section>
   )

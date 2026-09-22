@@ -2,14 +2,14 @@ import { useState } from "react"
 import { Check, Mail } from "lucide-react"
 import { toast } from "sonner"
 
-import { NEWSLETTER } from "../content/newsletter"
-import { isEmail } from "../lib/email"
-import { subscribe } from "../lib/messages"
-import BrandButton from "../ui/controls/BrandButton"
-import Chip from "../ui/controls/Chip"
-import EmailField from "../ui/controls/EmailField"
-import Honeypot from "../ui/controls/Honeypot"
-import PanelHeader from "../ui/PanelHeader"
+import { NEWSLETTER } from "../../content/newsletter"
+import { isEmail } from "../../lib/email"
+import { subscribe } from "../../lib/messages"
+import BrandButton from "../../ui/controls/BrandButton"
+import Chip from "../../ui/controls/Chip"
+import EmailField from "../../ui/controls/EmailField"
+import Honeypot from "../../ui/controls/Honeypot"
+import PanelHeader from "../../ui/display/PanelHeader"
 
 /* "Get told first" -- the sign-up at the head of the Home tab, from the
    component reference in .files/tibbiex-components.html. Two steps: the

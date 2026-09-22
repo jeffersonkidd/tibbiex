@@ -12,8 +12,8 @@
    markup, since those differ per panel. */
 @layer components {
   .surface {
-    background-color: var(--card);
-    border: 1px solid var(--border);
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
     /* Matches backdrop-blur-xl. --card is opaque, so the blur only shows
        where a utility sheers the fill (bg-card/50 on the tab strips). */
     backdrop-filter: blur(24px);
@@ -22,24 +22,25 @@
 
 /* --- Brand surface --------------------------------------------------------
    Shared treatment for the red CTAs and the active tab. A three-stop
-   gradient along the primary palette -- primary lifted toward M3's pale
-   primary, then down to inverse-primary, read for its value as the deep end
-   -- plus inset edge highlights give the flat fill some dimension; a sheen
-   sweeps across on hover. Both the gradient and the glow read from the same
-   tokens as bg-primary, so re-skinning :root still drives them. */
+   gradient across the reds -- the primary token lifted toward its bright end,
+   then down to its deep end -- plus inset edge highlights give the flat fill
+   some dimension; a sheen sweeps across on hover. The two ends exist for this
+   rule alone. Both the gradient and the glow read the same token as
+   bg-primary, so re-skinning the block still drives them. */
 .brand-surface {
   position: relative;
   overflow: hidden;
   background-image: linear-gradient(
     145deg,
-    color-mix(in oklab, var(--primary), var(--md-sys-color-primary) 30%) 0%,
-    var(--primary) 48%,
-    var(--md-sys-color-inverse-primary) 100%
+    color-mix(in oklab, var(--color-primary), var(--color-primary-bright) 30%)
+      0%,
+    var(--color-primary) 48%,
+    var(--color-primary-deep) 100%
   );
   box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--foreground) 30%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--color-foreground) 30%, transparent),
     inset 0 -1px 0 rgba(0, 0, 0, 0.22),
-    0 8px 20px -10px color-mix(in srgb, var(--primary) 80%, transparent);
+    0 8px 20px -10px color-mix(in srgb, var(--color-primary) 80%, transparent);
   transition:
     box-shadow 220ms ease,
     transform 220ms ease,
@@ -49,9 +50,9 @@
 .brand-surface:hover {
   filter: brightness(1.07);
   box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--foreground) 38%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--color-foreground) 38%, transparent),
     inset 0 -1px 0 rgba(0, 0, 0, 0.22),
-    0 12px 26px -10px color-mix(in srgb, var(--primary) 95%, transparent);
+    0 12px 26px -10px color-mix(in srgb, var(--color-primary) 95%, transparent);
 }
 
 /* Diagonal sheen, parked off the left edge until hover sweeps it across. */
@@ -63,7 +64,7 @@
   background: linear-gradient(
     115deg,
     transparent 38%,
-    color-mix(in srgb, var(--foreground) 26%, transparent) 50%,
+    color-mix(in srgb, var(--color-foreground) 26%, transparent) 50%,
     transparent 62%
   );
   transform: translateX(-130%);

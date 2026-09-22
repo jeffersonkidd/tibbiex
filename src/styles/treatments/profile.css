@@ -1,6 +1,6 @@
 /* ===========================================================================
    Profile — the card at the top of the page, built from the Figma "Profile
-   Card" (Tibbie X - DSP, 4307:25191). Layout lives in the markup; the pieces
+   Card" (Tibbie X - DSP, 4545:73). Layout lives in the markup; the pieces
    Tailwind cannot say cleanly live here: the photo and its scrim, the silver
    quote. The bevelled keys moved to social-key.css and the avatar's halo to
    avatar.css when each became its own component. The avatar's halo moved to avatar.css
@@ -22,30 +22,17 @@
   inset: 0;
   background-image: linear-gradient(
     180deg,
-    color-mix(in srgb, var(--card) 0%, transparent) 0%,
-    color-mix(in srgb, var(--card) 40%, transparent) 50%,
-    color-mix(in srgb, var(--card) 90%, transparent) 100%
+    color-mix(in srgb, var(--color-card) 0%, transparent) 0%,
+    color-mix(in srgb, var(--color-card) 40%, transparent) 50%,
+    color-mix(in srgb, var(--color-card) 90%, transparent) 100%
   );
 }
 
-/* A hairline of ink, then light falling on it from three sides: white from
-   above, brand red from below, amber either side -- the same three colours
-   the rest of the page is lit in. The inset shadow sinks the photo into the
-   ring. */
-/* The quote is printed in brushed silver: a texture exported from the Figma
-   card, painted through the letters. */
+/* The quote sits a step back from the rest of the card. It used to be painted
+   through silver-texture.png with background-clip: text; that export turned out
+   to be a flat vertical gradient, which `cover` then cropped to a near-invisible
+   band, so the image and its @supports block are both gone. A plain fill says
+   the same thing. */
 .profile-quote {
-  color: color-mix(in srgb, var(--foreground) 80%, transparent);
-}
-
-@supports (background-clip: text) or (-webkit-background-clip: text) {
-  .profile-quote {
-    background: url("../../assets/imagery/silver-texture.png") center / cover
-      no-repeat;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
-    opacity: 0.8;
-  }
+  color: color-mix(in srgb, var(--color-foreground) 80%, transparent);
 }

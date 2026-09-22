@@ -2,7 +2,7 @@ import { useEffect } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
 import type { Photo } from "../../content/portfolio"
-import Separator from "../Separator"
+import Separator from "../display/Separator"
 import Overlay from "./Overlay"
 
 export type LightboxState = {

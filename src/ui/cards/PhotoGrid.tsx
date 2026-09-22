@@ -1,6 +1,6 @@
 import type { Photo } from "../../content/portfolio"
 
-import Separator from "../Separator"
+import Separator from "../display/Separator"
 
 /* Masonry with no library and no measuring pass: CSS multi-column flows the
    photos down each column in turn, and `break-inside-avoid` stops one being

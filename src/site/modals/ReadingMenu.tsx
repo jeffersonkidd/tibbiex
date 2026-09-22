@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react"
-import { Check, Sparkles } from "lucide-react"
+import { Sparkles } from "lucide-react"
 import { toast } from "sonner"
 
-import { READINGS } from "../content/readings"
-import type { Reading } from "../content/readings"
-import { CARD_HINT } from "../content/payments"
-import { VENMO_HANDLE } from "../content/site"
-import { castMagicFrom } from "../lib/magic-dust"
-import { payVia } from "../lib/payments"
-import BrandButton from "../ui/controls/BrandButton"
-import VenmoLink from "../ui/controls/VenmoLink"
-import Overlay from "../ui/overlays/Overlay"
-import OverlayBody from "../ui/overlays/OverlayBody"
+import { READINGS } from "../../content/readings"
+import { CARD_HINT } from "../../content/payments"
+import { VENMO_HANDLE } from "../../content/site"
+import { castMagicFrom } from "../../lib/magic-dust"
+import { payVia } from "../../lib/payments"
+import PriceCard from "../../ui/cards/PriceCard"
+import BrandButton from "../../ui/controls/BrandButton"
+import VenmoLink from "../../ui/controls/VenmoLink"
+import Overlay from "../../ui/overlays/Overlay"
+import OverlayBody from "../../ui/overlays/OverlayBody"
 
 /* The menu. One tier is always selected -- the hour, since it is the one most
    people want -- so the button at the bottom always has something to say. Like
@@ -79,10 +79,17 @@ export default function ReadingMenu({ onClose }: { onClose: () => void }) {
           {READINGS.map((reading, i) => (
             <PriceCard
               key={reading.id}
-              reading={reading}
               index={i}
-              selected={reading.id === picked.id}
-              onPick={(e) => pick(reading.id, e)}
+              eyebrow={`${reading.minutes} min`}
+              name={reading.label}
+              amount={`$${reading.price}`}
+              unit="flat"
+              blurb={reading.blurb}
+              includes={reading.includes}
+              flag={reading.featured ? "Most asked for" : undefined}
+              pressed={reading.id === picked.id}
+              onClick={(e) => pick(reading.id, e)}
+              label={`${reading.label}, ${reading.minutes} minutes, $${reading.price}`}
             />
           ))}
         </div>
@@ -109,50 +116,5 @@ export default function ReadingMenu({ onClose }: { onClose: () => void }) {
         </div>
       </OverlayBody>
     </Overlay>
-  )
-}
-
-/* One tier. It is a button because picking it drives the CTA below, and it
-   keeps the spread's deal-in animation: the cards still land one after the
-   other, staggered by the --deal index set here. */
-function PriceCard({
-  reading,
-  index,
-  selected,
-  onPick,
-}: {
-  reading: Reading
-  index: number
-  selected: boolean
-  onPick: (e: React.MouseEvent<HTMLElement>) => void
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onPick}
-      aria-pressed={selected}
-      data-state={selected ? "on" : "off"}
-      style={{ "--deal": index } as React.CSSProperties}
-      aria-label={`${reading.label}, ${reading.minutes} minutes, $${reading.price}`}
-      className="price-card"
-    >
-      <div className="price-frame" />
-      {reading.featured && <span className="price-flag">Most asked for</span>}
-      <span className="mono-label price-duration">{reading.minutes} min</span>
-      <span className="price-name">{reading.label}</span>
-      <span className="price-amount">
-        ${reading.price}
-        <span className="price-unit">flat</span>
-      </span>
-      <p className="price-blurb">{reading.blurb}</p>
-      <ul className="price-includes">
-        {reading.includes.map((line) => (
-          <li key={line}>
-            <Check className="h-3.5 w-3.5 shrink-0 text-accent" />
-            {line}
-          </li>
-        ))}
-      </ul>
-    </button>
   )
 }

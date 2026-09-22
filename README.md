@@ -50,16 +50,19 @@ src/
   main.tsx           entry point
   tabs/              HomeTab, MusicTab, PortfolioTab, TourTab, BuyTab
   site/              content-bound blocks
-    SiteHeader, SiteFooter, ProfileCard, RehearsalPanel,
-    FundPanel, NewsletterSignup,
-    AlbumModal, BookingModal, ShareModal, ReadingMenu, ProductModal
+    Header, ProfileCard, Footer   the page shell App stacks
+    panels/            RehearsalPanel, FundPanel, NewsletterSignup
+    modals/            AlbumModal, BookingModal, ShareModal, ReadingMenu,
+                       ProductModal
   ui/                reusable, props only
-    controls/          BrandButton, Field, EmailField, Chip, FilterPill, VenmoLink,
-                       Honeypot
+    controls/          BrandButton, IconButton, SocialButton, TabItem, Field,
+                       TextArea, EmailField, Chip, FilterPill, VenmoLink, Honeypot
     rows/              LinkRow, ShowRow, SupporterRow
-    cards/             ShopCard, AlbumTile, PhotoGrid, ShopLink
+    cards/             ShopCard, AlbumTile, PriceCard, PhotoGrid, ShopLink
     overlays/          Overlay, OverlayBody, Lightbox
-    Meter, Pill, PanelHeader, DetailList, MagicDust, SiteQrCode
+    display/           Avatar, Pill, Meter, PanelHeader, DetailList, Separator,
+                       SiteQrCode
+    MagicDust          the spark canvas, mounted once in App
   content/           ALL site content, one file per subject (see below)
   lib/               pure logic, no JSX
     payments.ts        payVia() for either rail, the Stripe call, the return toast
@@ -76,7 +79,7 @@ src/
     surfaces.css       .surface, .brand-* (shapes and material effects)
     utilities.css      .hide-scrollbar
     marks.css          the Tibbie X wordmark, the Reagan Youth mark
-    treatments/        profile, featured, tarot, meter, magic-dust
+    treatments/        profile, featured, tarot, price-card, meter, magic-dust
   assets/            everything drawn or photographed, by kind
     icons/             small symbols that act as controls (Venmo, TikTok, Patreon)
     marks/             identity: logos and wordmarks (ReaganYouthMark)

@@ -1,10 +1,6 @@
 import {
-  Calendar,
-  Disc,
   Facebook,
   Instagram,
-  MapPin,
-  Mic,
   Music,
   UserPlus,
   Volume2,
@@ -17,7 +13,7 @@ import VenmoIcon from "../assets/icons/VenmoIcon"
 import { VENMO_HANDLE } from "./site"
 
 /* Everything the profile card says. The card is the Figma "Profile Card"
-   (Tibbie X - DSP, node 4307:25191); it lays this out and holds none of it. */
+   (Tibbie X - DSP, node 4545:73); it lays this out and holds none of it. */
 
 const TIKTOK_URL = "https://www.tiktok.com/@tibbieskyex"
 
@@ -79,12 +75,4 @@ export const SOCIALS = [
     label: `Venmo — @${VENMO_HANDLE}`,
     href: `https://venmo.com/u/${VENMO_HANDLE}`,
   },
-]
-
-/* Context, not credits: the muted pills at the foot of the card. */
-export const TAGS = [
-  { icon: MapPin, label: "NYC" },
-  { icon: Mic, label: "Tour Junkie" },
-  { icon: Calendar, label: "Tarot" },
-  { icon: Disc, label: "Punk Historian" },
 ]

@@ -1,10 +1,11 @@
-import gashPromo from "../assets/imagery/gash/promo.jpg"
-import gashLive from "../assets/imagery/gash/live.jpg"
-import gashFlyer from "../assets/imagery/gash/flyer.jpg"
-import gashArt from "../assets/imagery/gash/artwork.jpg"
-import gashLogo from "../assets/imagery/gash/logo.jpg"
-
+import { MEDIA_URL } from "./site"
 import { markStaged } from "./staged"
+
+/* The Gash set, the only photographs here that are really of the band. They
+   are served from the media bucket rather than bundled -- see MEDIA_URL. The
+   hash in each key is the file's own, so these URLs change only when the
+   picture does. */
+const GASH = `${MEDIA_URL}/portfolio/gash`
 
 /* One id per band/project. It is the join between a portfolio section and the
    items it sells, so a typo is a type error rather than an empty shelf at
@@ -138,31 +139,31 @@ export const PORTFOLIO: PortfolioEntry[] = [
     ],
     photos: [
       {
-        src: gashPromo,
+        src: `${GASH}/promo.d4c42f53.jpg`,
         alt: "Gash promo shot — the band's vocalist on a red-lit stage beneath the logo",
         width: 960,
         height: 960,
       },
       {
-        src: gashLive,
+        src: `${GASH}/live.6bb7cf5e.jpg`,
         alt: "Black-and-white live shot of Gash mid-set, guitarist behind the vocalist",
         width: 905,
         height: 905,
       },
       {
-        src: gashFlyer,
+        src: `${GASH}/flyer.aa21984f.jpg`,
         alt: "Show flyer: Gash with Ballroom Zombies, Danse de Sade and Thorazine at North Star Bar",
         width: 685,
         height: 960,
       },
       {
-        src: gashArt,
+        src: `${GASH}/artwork.832a46f8.jpg`,
         alt: "Gash artwork — a screamed face in red and black beside the band logo",
         width: 960,
         height: 540,
       },
       {
-        src: gashLogo,
+        src: `${GASH}/logo.d4b59f02.jpg`,
         alt: "The Gash logo in white brushstrokes on black",
         width: 777,
         height: 777,
