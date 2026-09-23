@@ -57,7 +57,7 @@ export default function Lightbox({
 
       <Separator />
 
-      <div className="flex items-center gap-3 p-4">
+      <div className="flex items-center gap-part p-card">
         {photos.length > 1 && (
           <Button
             tone="secondary"

@@ -25,13 +25,13 @@ export default function BuyTab({
           of Product.manufacturer -> #studio in the index.html graph,
           so keep the two in step -- and note it is a claim about
           making, so it must not sit over anything label-pressed. */}
-      <p className="mono-label pb-1 text-muted-foreground">
+      <p className="mono-label text-muted-foreground">
         Made in-house at <span className="text-accent">Tibbie X Studio</span>
       </p>
 
       {/* Filter strip -- also the way back out of a band the portfolio
           dropped the visitor into. */}
-      <div className="surface hide-scrollbar flex gap-2 overflow-x-auto rounded-lg bg-card/50 p-1.5">
+      <div className="surface hide-scrollbar flex gap-cluster overflow-x-auto rounded-lg bg-card/50 p-strip">
         <FilterPill
           label="All"
           active={shopBand === "all"}
@@ -56,8 +56,8 @@ export default function BuyTab({
         const band = group.id === "general" ? null : group.id
 
         return (
-          <section key={group.id} className="space-y-4">
-            <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 pt-2">
+          <section key={group.id} className="space-y-stack">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-part gap-y-1 pt-2">
               <h2 className="text-xl uppercase leading-none tracking-tight">
                 {group.title}
               </h2>
@@ -78,7 +78,7 @@ export default function BuyTab({
               )}
             </div>
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-stack sm:grid-cols-2">
               {group.items.map((item) => (
                 <ShopCard
                   key={item.id}

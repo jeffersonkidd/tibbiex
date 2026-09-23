@@ -54,7 +54,7 @@ export default function FundPanel() {
   }
 
   return (
-    <section className="surface rounded-lg p-5">
+    <section className="surface rounded-lg p-panel">
       <PanelHeader
         icon={Mic}
         title={FUND.title}
@@ -62,7 +62,7 @@ export default function FundPanel() {
         badge={FUND.badge}
       />
 
-      <div className="mt-4 flex items-baseline justify-between gap-3">
+      <div className="mt-4 flex items-baseline justify-between gap-part">
         <span className="text-lg font-bold">{dollars(FUND.raised)}</span>
         <span className="text-xs text-muted-foreground">
           of {dollars(FUND.goal)} · {FUND.backers} backers
@@ -75,11 +75,11 @@ export default function FundPanel() {
         />
       </div>
 
-      <form onSubmit={handleSubmit} noValidate className="mt-4 space-y-3">
+      <form onSubmit={handleSubmit} noValidate className="mt-4 space-y-part">
         <div
           role="group"
           aria-label="Amount"
-          className="grid grid-cols-2 gap-2 sm:grid-cols-4"
+          className="grid grid-cols-2 gap-cluster sm:grid-cols-4"
         >
           {FUND.presets.map((preset) => (
             <Chip

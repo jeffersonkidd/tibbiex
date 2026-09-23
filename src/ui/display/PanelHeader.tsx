@@ -24,8 +24,8 @@ export default function PanelHeader({
   return (
     /* The title claims the row and the badge wraps under it on a narrow
        phone, rather than squeezing the title into three lines. */
-    <div className="flex flex-wrap items-start justify-between gap-3">
-      <div className="flex min-w-0 flex-[1_1_14rem] items-center gap-3">
+    <div className="flex flex-wrap items-start justify-between gap-part">
+      <div className="flex min-w-0 flex-[1_1_14rem] items-center gap-part">
         <div
           className={`rounded-md border border-accent-soft bg-accent-tint p-2 text-accent ${
             lit ? "featured-sigil" : ""

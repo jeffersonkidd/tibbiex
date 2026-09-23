@@ -11,8 +11,8 @@ const TONES = {
 
 const SHAPES = {
   block: "w-full gap-2 rounded-lg px-4 py-3 text-sm",
-  inline: "gap-1.5 rounded-md px-3 py-2 text-xs",
-  icon: "gap-1.5 rounded-md p-2.5 text-xs",
+  inline: "gap-glyph rounded-md px-3 py-2 text-xs",
+  icon: "gap-glyph rounded-md p-2.5 text-xs",
 }
 
 /* Every button on the page that is a button rather than a card or a row.

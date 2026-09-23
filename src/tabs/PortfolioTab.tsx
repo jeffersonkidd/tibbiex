@@ -26,7 +26,7 @@ export default function PortfolioTab({
     <>
       {/* Band strip -- the same filter treatment the Buy tab uses, and
           where a shop group's "View credits" link lands. */}
-      <div className="surface hide-scrollbar flex gap-2 overflow-x-auto rounded-lg bg-card/50 p-1.5">
+      <div className="surface hide-scrollbar flex gap-cluster overflow-x-auto rounded-lg bg-card/50 p-strip">
         {PORTFOLIO.map((entry) => (
           <FilterPill
             key={entry.id}
@@ -41,9 +41,9 @@ export default function PortfolioTab({
         <section
           key={entry.id}
           id={`portfolio-${entry.id}`}
-          className="surface scroll-mt-4 rounded-lg p-5"
+          className="surface scroll-mt-4 rounded-lg p-panel"
         >
-          <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-part gap-y-1">
             <h2 className="text-2xl uppercase leading-none tracking-tight">
               {entry.band}
             </h2>

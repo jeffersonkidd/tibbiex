@@ -10,10 +10,10 @@ export default function RehearsalPanel({ onOpen }: { onOpen: () => void }) {
     <button
       type="button"
       onClick={onOpen}
-      className="surface group block w-full rounded-lg p-5 text-left transition-colors hover:border-accent"
+      className="surface group block w-full rounded-lg p-panel text-left transition-colors hover:border-accent"
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3">
+      <div className="flex items-start justify-between gap-part">
+        <div className="flex items-center gap-part">
           <ReaganYouthMark />
           <div>
             <div className="text-base font-bold">
@@ -33,7 +33,7 @@ export default function RehearsalPanel({ onOpen }: { onOpen: () => void }) {
       <div className="mt-3">
         <Meter value={80} label="Set rehearsed" />
       </div>
-      <span className="mono-label mt-3 flex items-center gap-1.5 text-accent">
+      <span className="mono-label mt-3 flex items-center gap-glyph text-accent">
         <Disc size={12} /> Hear “{REAGAN_YOUTH_LP.track}”
         <ChevronRight
           size={12}

@@ -4,7 +4,7 @@ import type { LinkEntry } from "../../content/links"
 import { castMagicFrom } from "../../lib/magic-dust"
 
 const ROW =
-  "surface group block w-full transform rounded-lg p-4 text-left transition-all duration-300 hover:scale-[1.01] hover:border-accent"
+  "surface group block w-full transform rounded-lg p-panel text-left transition-all duration-300 hover:scale-[1.01] hover:border-accent"
 
 /* One Home-tab row. Mirrors the Figma "Link Row" set, whose Type variant is
    derived here from the entry: `external` is External, anything else Default.

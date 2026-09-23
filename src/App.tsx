@@ -98,14 +98,14 @@ export default function App() {
     <div className="flex min-h-screen justify-center pb-20 font-sans text-foreground selection:bg-accent-soft">
       <Toaster position="top-center" richColors />
 
-      <div className="w-full min-w-0 max-w-2xl space-y-6 px-4 pt-6 sm:px-6">
+      <div className="w-full min-w-0 max-w-2xl space-y-stack px-4 pt-6 sm:px-6">
         <Header onShare={() => setModal({ kind: "share" })} />
 
         <ProfileCard onContact={() => setModal({ kind: "booking" })} />
 
         <nav
           ref={tabsRef}
-          className="surface hide-scrollbar flex scroll-mt-4 gap-2 overflow-x-auto rounded-lg bg-card/50 p-1.5"
+          className="surface hide-scrollbar flex scroll-mt-4 gap-cluster overflow-x-auto rounded-lg bg-card/50 p-strip"
         >
           {VISIBLE_TABS.map(({ label }) => (
             <TabItem
@@ -117,7 +117,7 @@ export default function App() {
           ))}
         </nav>
 
-        <main className="space-y-4">
+        <main className="space-y-stack">
           {activeTab === "Home" && (
             <HomeTab
               onOpenReadings={() => setModal({ kind: "readings" })}

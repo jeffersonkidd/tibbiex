@@ -16,7 +16,7 @@ export default function MusicTab({
     <>
       <RehearsalPanel onOpen={onOpenRehearsal} />
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-stack sm:grid-cols-2">
         {DISCOGRAPHY.map((rec) => (
           <AlbumTile key={rec.id} album={rec} onOpen={() => onOpenAlbum(rec)} />
         ))}

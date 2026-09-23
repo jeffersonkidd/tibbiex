@@ -16,7 +16,7 @@ export default function ShareModal({ onClose }: { onClose: () => void }) {
         <div className="mx-auto mt-5 w-fit rounded-md border border-border bg-muted p-4">
           <SiteQrCode size={148} />
         </div>
-        <div className="mt-5 space-y-2">
+        <div className="mt-5 space-y-cluster">
           {canShareNatively() && (
             <Button icon={Share2} onClick={shareLink}>
               Share

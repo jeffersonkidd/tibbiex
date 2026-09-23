@@ -7,7 +7,7 @@ export default function DetailList({
   items: { label: string; detail: string }[]
 }) {
   return (
-    <dl className="space-y-2">
+    <dl className="space-y-cluster">
       {items.map(({ label, detail }) => (
         <div key={label} className="flex items-baseline justify-between gap-4">
           <dt className="mono-label shrink-0 text-muted-foreground">{label}</dt>

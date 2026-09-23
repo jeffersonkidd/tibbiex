@@ -99,7 +99,11 @@ export default function ProductModal({
         className="h-64 w-full bg-muted object-cover"
       />
       {photos.length > 1 && (
-        <div className="flex gap-2 px-6 pt-3" role="group" aria-label="Photos">
+        <div
+          className="flex gap-cluster px-modal pt-3"
+          role="group"
+          aria-label="Photos"
+        >
           {photos.map((src, i) => (
             <button
               key={src}
@@ -120,7 +124,7 @@ export default function ProductModal({
       )}
 
       <OverlayBody title={item.item}>
-        <div className="mt-2 flex items-baseline gap-3">
+        <div className="mt-2 flex items-baseline gap-part">
           <span className="text-2xl font-bold text-accent">
             {formatPrice(item.price)}
           </span>
@@ -140,7 +144,7 @@ export default function ProductModal({
                 <legend className="mono-label mb-2 text-muted-foreground">
                   Tee size
                 </legend>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-4 gap-cluster">
                   {sizes.map(({ label, soldOut: gone }) => (
                     <Chip
                       key={label}
@@ -269,7 +273,7 @@ function RestockAlert({
             Asked for. You’ll hear when it’s back.
           </p>
         ) : (
-          <div className="mt-3 flex items-start gap-2">
+          <div className="mt-3 flex items-start gap-cluster">
             <div className="min-w-0 flex-1">
               <EmailField
                 value={email}

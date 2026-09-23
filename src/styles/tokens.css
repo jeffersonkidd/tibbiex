@@ -1,6 +1,6 @@
 /* ===========================================================================
-   Tokens — the one place colours, type and radii are declared, and the only
-   block in this file.
+   Tokens — the one place colours, type, radii and spacing roles are
+   declared, and the only block in this file.
 
    Every name is at once the custom property the stylesheets read and the
    Tailwind utility the markup writes: --color-card is var(--color-card) in a
@@ -92,14 +92,55 @@
   --tracking-mono: 0.14em;
 
   /* --- Radius ------------------------------------------------------------
-     Kept tight for a squarer, printed-flyer feel: every step is smaller than
-     Tailwind ships. Declared in Tailwind's own names so a stylesheet writes
-     var(--radius-lg) and the markup writes rounded-lg for the same 10px. xl
-     is declared at its Tailwind default rather than left implicit, so the
-     whole ramp is ours and nothing silently falls back to a second scale. */
+     Tailwind's whole ramp, written out so every step is visible here and
+     overridable in place rather than half of it living in Tailwind's own
+     theme.css. The values are Tailwind 4.3's defaults (which it ships in rem;
+     px here, the same at a 16px root) except where marked. Only two are ours:
+     lg is 10px against Tailwind's 8, and full is a token Tailwind does not
+     declare at all -- its rounded-full is a static utility -- so stylesheets
+     can read var(--radius-full). A stylesheet writes var(--radius-lg) and the
+     markup writes rounded-lg for the same value. xs, 2xl, 3xl and 4xl are
+     unused, and Tailwind emits only the variables something reads. */
+  --radius-xs: 2px;
   --radius-sm: 4px;
   --radius-md: 6px;
-  --radius-lg: 10px;
+  --radius-lg: 10px; /* ours; Tailwind ships 8px */
   --radius-xl: 12px;
-  --radius-full: 9999px;
+  --radius-2xl: 16px;
+  --radius-3xl: 24px;
+  --radius-4xl: 32px;
+  --radius-full: 9999px; /* ours; not a Tailwind theme variable */
+
+  /* --- Spacing -----------------------------------------------------------
+     The one number the whole numbered scale multiplies: p-4 is
+     calc(var(--spacing) * 4). This is Tailwind's default, restated so it can
+     be seen and changed here -- changing it re-spaces every p-*, gap-* and
+     m-* on the site, and every role below with them. */
+  --spacing: 0.25rem;
+
+  /* Roles, not a second ramp: each is a named step on that scale, so p-panel
+     and p-5 are the same 20px. Only the two jobs
+     the page repeats get a name -- how far a container insets its content,
+     and how far apart its children sit. Control padding, one-off offsets and
+     the page gutter stay on the numbered scale.
+
+     Insets, smallest container to largest: the sheer tab strips, a card in
+     a grid (its text under a full-bleed photo), every block in the column
+     -- panels and rows alike, so their content shares one left edge -- and
+     the inside of a modal. */
+  --spacing-strip: calc(var(--spacing) * 1.5);
+  --spacing-card: calc(var(--spacing) * 4);
+  --spacing-panel: calc(var(--spacing) * 5);
+  --spacing-modal: calc(var(--spacing) * 6);
+
+  /* Gaps, closest to farthest: a glyph beside its label; siblings of one
+     kind in a set (chips, tabs, a grid of choices, a field and its button);
+     the parts of one block (a sigil and its title, a name and its price,
+     the fields of a form); and blocks in the column -- the page shell's
+     regions, the panels and rows in a tab and a grid of cards all sit one
+     stack apart, so the page reads as a single run of blocks. */
+  --spacing-glyph: calc(var(--spacing) * 1.5);
+  --spacing-cluster: calc(var(--spacing) * 2);
+  --spacing-part: calc(var(--spacing) * 3);
+  --spacing-stack: calc(var(--spacing) * 4);
 }

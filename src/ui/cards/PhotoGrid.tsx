@@ -20,7 +20,7 @@ export default function PhotoGrid({
       <Separator space="md" />
       <span className="mono-label text-muted-foreground">Photos</span>
 
-      <div className="mt-3 columns-2 gap-2 sm:columns-3">
+      <div className="mt-3 columns-2 gap-cluster sm:columns-3">
         {photos.map((photo, index) => (
           <button
             key={photo.src}

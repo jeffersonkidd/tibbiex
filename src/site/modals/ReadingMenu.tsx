@@ -75,7 +75,7 @@ export default function ReadingMenu({ onClose }: { onClose: () => void }) {
         }
         className="arcana-veil"
       >
-        <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
+        <div className="mt-6 grid grid-cols-1 gap-part sm:grid-cols-3 sm:gap-stack">
           {READINGS.map((reading, i) => (
             <PriceCard
               key={reading.id}

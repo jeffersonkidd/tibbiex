@@ -27,9 +27,9 @@ export default function ShopCard({
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
       </div>
-      <div className="flex items-center justify-between gap-3 p-4">
+      <div className="flex items-center justify-between gap-part p-card">
         <div className="text-sm font-bold leading-tight">{item.item}</div>
-        <span className="flex shrink-0 items-center gap-1.5 text-base font-bold text-accent">
+        <span className="flex shrink-0 items-center gap-glyph text-base font-bold text-accent">
           {formatPrice(item.price)}{" "}
           <ShoppingBag className="h-4 w-4 text-muted-foreground" />
         </span>

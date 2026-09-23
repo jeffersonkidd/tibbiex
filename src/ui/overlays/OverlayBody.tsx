@@ -19,7 +19,7 @@ export default function OverlayBody({
   className?: string
 }) {
   return (
-    <div className={`p-6 ${className}`}>
+    <div className={`p-modal ${className}`}>
       {eyebrow && <span className="mono-label text-accent">{eyebrow}</span>}
       {/* pr-6 keeps a long title from running under Overlay's close button,
           which covers the corner's last 48px; a centred title is padded on

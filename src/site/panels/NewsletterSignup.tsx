@@ -61,7 +61,7 @@ export default function NewsletterSignup() {
 
   if (step === "sent") {
     return (
-      <section className="surface rounded-lg p-5" aria-live="polite">
+      <section className="surface rounded-lg p-panel" aria-live="polite">
         <PanelHeader
           icon={Check}
           title="You’re on the list"
@@ -73,7 +73,10 @@ export default function NewsletterSignup() {
 
   if (step === "topics") {
     return (
-      <section className="surface featured rounded-lg p-5" aria-live="polite">
+      <section
+        className="surface featured rounded-lg p-panel"
+        aria-live="polite"
+      >
         <PanelHeader
           lit
           icon={Mail}
@@ -83,7 +86,7 @@ export default function NewsletterSignup() {
         <div
           role="group"
           aria-label="Topics"
-          className="mt-4 grid grid-cols-2 gap-2"
+          className="mt-4 grid grid-cols-2 gap-cluster"
         >
           {NEWSLETTER.topics.map((topic) => (
             <Chip
@@ -110,14 +113,18 @@ export default function NewsletterSignup() {
   }
 
   return (
-    <section className="surface featured rounded-lg p-5">
+    <section className="surface featured rounded-lg p-panel">
       <PanelHeader
         lit
         icon={Mail}
         title={NEWSLETTER.title}
         sub={NEWSLETTER.blurb}
       />
-      <form onSubmit={join} noValidate className="mt-4 flex items-start gap-2">
+      <form
+        onSubmit={join}
+        noValidate
+        className="mt-4 flex items-start gap-cluster"
+      >
         <div className="min-w-0 flex-1">
           <EmailField
             value={email}

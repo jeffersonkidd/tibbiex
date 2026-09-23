@@ -31,7 +31,7 @@ export default function ProfileCard({ onContact }: { onContact: () => void }) {
         />
       </div>
 
-      <div className="relative flex flex-col items-start gap-4 p-5">
+      <div className="relative flex flex-col items-start gap-stack p-panel">
         {/* Reserves the badge's height when she is not live, so the avatar
             does not jump when the badge comes and goes. */}
         <div className="min-h-[26px]">
@@ -40,7 +40,7 @@ export default function ProfileCard({ onContact }: { onContact: () => void }) {
               href={live.href}
               target="_blank"
               rel="noreferrer noopener"
-              className="mono-label inline-flex items-center gap-1.5 rounded-full border border-foreground/80 bg-live px-2.5 py-1 text-on-live transition-[filter] hover:brightness-110"
+              className="mono-label inline-flex items-center gap-glyph rounded-full border border-foreground/80 bg-live px-2.5 py-1 text-on-live transition-[filter] hover:brightness-110"
             >
               <Radio size={12} aria-hidden /> {live.label}
             </a>
@@ -60,7 +60,7 @@ export default function ProfileCard({ onContact }: { onContact: () => void }) {
           <span className="wordmark-x">X</span>
         </h1>
 
-        <ul className="flex flex-wrap gap-2" aria-label="Plays">
+        <ul className="flex flex-wrap gap-cluster" aria-label="Plays">
           {PROFILE.roles.map(({ icon, label }) => (
             <li key={label}>
               <Pill icon={icon}>{label}</Pill>
@@ -74,7 +74,7 @@ export default function ProfileCard({ onContact }: { onContact: () => void }) {
 
         <ul
           aria-label="Bands"
-          className="flex flex-wrap gap-x-3 gap-y-0.5 text-base font-bold leading-snug text-muted-foreground"
+          className="flex flex-wrap gap-x-part gap-y-0.5 text-base font-bold leading-snug text-muted-foreground"
         >
           {PROFILE.bands.map((band) => (
             <li key={band} className="list-inside list-disc">
@@ -85,8 +85,8 @@ export default function ProfileCard({ onContact }: { onContact: () => void }) {
 
         <Separator space="none" />
 
-        <div className="flex w-full flex-wrap items-center justify-between gap-3">
-          <ul className="flex flex-wrap gap-2" aria-label="Elsewhere">
+        <div className="flex w-full flex-wrap items-center justify-between gap-part">
+          <ul className="flex flex-wrap gap-cluster" aria-label="Elsewhere">
             {SOCIALS.map(({ icon, label, href }) => (
               <li key={href}>
                 <SocialButton icon={icon} label={label} href={href} />

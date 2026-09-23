@@ -51,7 +51,7 @@ export default function BookingModal({ onClose }: { onClose: () => void }) {
           title="Book / Contact"
           sub="For booking, press, or hate mail."
         >
-          <div className="mt-5 flex flex-col gap-3">
+          <div className="mt-5 flex flex-col gap-part">
             <Field placeholder="Name" type="text" name="name" label="Name" />
             <Field
               placeholder="Email"
