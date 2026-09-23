@@ -1,11 +1,14 @@
-import { Copy } from "lucide-react"
+import { Copy, Share2 } from "lucide-react"
 
-import { copyLink } from "../../lib/share"
+import { canShareNatively, copyLink, shareLink } from "../../lib/share"
+import Button from "../../ui/controls/Button"
 import Overlay from "../../ui/overlays/Overlay"
 import OverlayBody from "../../ui/overlays/OverlayBody"
 import SiteQrCode from "../../ui/display/SiteQrCode"
 
-/* Scan & Share: the pre-computed QR for SITE_URL, plus copy-the-link. */
+/* Scan & Share, the one place the site hands out its own address: the
+   pre-computed QR for SITE_URL for someone standing beside you, the phone's
+   share sheet where there is one, and copy-the-link everywhere. */
 export default function ShareModal({ onClose }: { onClose: () => void }) {
   return (
     <Overlay onClose={onClose} size="xs">
@@ -13,13 +16,16 @@ export default function ShareModal({ onClose }: { onClose: () => void }) {
         <div className="mx-auto mt-5 w-fit rounded-md border border-border bg-muted p-4">
           <SiteQrCode size={148} />
         </div>
-        <button
-          type="button"
-          onClick={copyLink}
-          className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg border border-border py-3 text-sm font-bold text-foreground transition-colors hover:bg-muted"
-        >
-          <Copy size={16} /> Copy Link
-        </button>
+        <div className="mt-5 space-y-2">
+          {canShareNatively() && (
+            <Button icon={Share2} onClick={shareLink}>
+              Share
+            </Button>
+          )}
+          <Button tone="secondary" icon={Copy} onClick={copyLink}>
+            Copy Link
+          </Button>
+        </div>
       </OverlayBody>
     </Overlay>
   )

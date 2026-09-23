@@ -1,7 +1,7 @@
 import { Disc } from "lucide-react"
 
 import type { Album } from "../../content/music"
-import BrandButton from "../../ui/controls/BrandButton"
+import Button from "../../ui/controls/Button"
 import Overlay from "../../ui/overlays/Overlay"
 import OverlayBody from "../../ui/overlays/OverlayBody"
 
@@ -29,9 +29,9 @@ export default function AlbumModal({
             Featured track — “{album.track}”
           </p>
         )}
-        <BrandButton className="mt-6">
-          <Disc size={18} /> Stream Now
-        </BrandButton>
+        <Button className="mt-6" icon={Disc}>
+          Stream Now
+        </Button>
       </OverlayBody>
     </Overlay>
   )

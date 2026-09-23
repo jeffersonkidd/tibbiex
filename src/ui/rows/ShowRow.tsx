@@ -1,7 +1,7 @@
 import { Calendar, MapPin, Ticket } from "lucide-react"
 
 import type { Show } from "../../content/shows"
-import BrandButton from "../controls/BrandButton"
+import Button from "../controls/Button"
 
 /* One entry in the Tour tab. Only "Tickets" gets the CTA; every other status
    ("Sold Out", "Festival"…) is printed in the amber badge, which is why the
@@ -21,9 +21,9 @@ export default function ShowRow({ show }: { show: Show }) {
           </div>
         </div>
         {show.status === "Tickets" ? (
-          <BrandButton variant="pill">
-            <Ticket className="h-4 w-4" /> Tickets
-          </BrandButton>
+          <Button shape="inline" icon={Ticket}>
+            Tickets
+          </Button>
         ) : (
           <span className="rounded-full bg-accent-tint px-3 py-1 text-xs font-bold text-accent">
             {show.status}

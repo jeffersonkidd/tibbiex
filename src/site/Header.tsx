@@ -1,26 +1,19 @@
-import { QrCode, Share2 } from "lucide-react"
+import { Share2 } from "lucide-react"
 
-import { copyLink } from "../lib/share"
-import IconButton from "../ui/controls/IconButton"
+import Button from "../ui/controls/Button"
 
-/* The control bar above the profile: the address, the QR code and the share
-   button. Both controls are the same IconButton -- the share one carries a
-   label, which appears from the sm breakpoint up. */
-export default function Header({ onShowQr }: { onShowQr: () => void }) {
+/* The control bar above the profile: the address and the one Share button,
+   which opens the Scan & Share modal. The label shows at every width -- with a
+   single control there is room, and a bare glyph would leave phones guessing. */
+export default function Header({ onShare }: { onShare: () => void }) {
   return (
     <header className="surface flex items-center justify-between rounded-lg p-3">
       <span className="mono-label px-2 text-muted-foreground">
         Tibbie X Studio
       </span>
-      <div className="flex gap-2">
-        <IconButton icon={QrCode} name="Show QR code" onClick={onShowQr} />
-        <IconButton
-          icon={Share2}
-          name="Share bio link"
-          label="Share"
-          onClick={copyLink}
-        />
-      </div>
+      <Button tone="secondary" shape="inline" icon={Share2} onClick={onShare}>
+        Share
+      </Button>
     </header>
   )
 }

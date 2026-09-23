@@ -8,7 +8,7 @@ import { VENMO_HANDLE } from "../../content/site"
 import { castMagicFrom } from "../../lib/magic-dust"
 import { payVia } from "../../lib/payments"
 import PriceCard from "../../ui/cards/PriceCard"
-import BrandButton from "../../ui/controls/BrandButton"
+import Button from "../../ui/controls/Button"
 import VenmoLink from "../../ui/controls/VenmoLink"
 import Overlay from "../../ui/overlays/Overlay"
 import OverlayBody from "../../ui/overlays/OverlayBody"
@@ -100,12 +100,16 @@ export default function ReadingMenu({ onClose }: { onClose: () => void }) {
           gatekeeping — the deck has no authority over you.
         </p>
 
-        <BrandButton className="mt-4" onClick={hold} disabled={sending}>
-          <Sparkles size={18} />
+        <Button
+          className="mt-4"
+          icon={Sparkles}
+          onClick={hold}
+          disabled={sending}
+        >
           {sending
             ? "Opening Stripe…"
             : `Hold ${picked.minutes} minutes — $${picked.price}`}
-        </BrandButton>
+        </Button>
 
         <p className="mt-2 text-center text-[11px] text-muted-foreground">
           {CARD_HINT}

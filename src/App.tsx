@@ -99,7 +99,7 @@ export default function App() {
       <Toaster position="top-center" richColors />
 
       <div className="w-full min-w-0 max-w-2xl space-y-6 px-4 pt-6 sm:px-6">
-        <Header onShowQr={() => setModal({ kind: "share" })} />
+        <Header onShare={() => setModal({ kind: "share" })} />
 
         <ProfileCard onContact={() => setModal({ kind: "booking" })} />
 

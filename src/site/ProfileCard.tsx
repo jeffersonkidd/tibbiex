@@ -3,6 +3,7 @@ import { MessageSquare, Radio } from "lucide-react"
 import profilePic from "../assets/imagery/tibbie-portrait.jpg"
 import bannerPic from "../assets/imagery/tibbie-onstage.jpg"
 import { PROFILE, SOCIALS } from "../content/profile"
+import Button from "../ui/controls/Button"
 import Avatar from "../ui/display/Avatar"
 import SocialButton from "../ui/controls/SocialButton"
 import Pill from "../ui/display/Pill"
@@ -93,13 +94,13 @@ export default function ProfileCard({ onContact }: { onContact: () => void }) {
             ))}
           </ul>
 
-          <button
-            type="button"
-            onClick={onContact}
-            className="brand-surface brand-lift flex items-center gap-2 rounded-sm border border-border-strong bg-primary p-2 font-mono text-sm uppercase leading-none tracking-[0.07em] text-primary-foreground"
-          >
-            <MessageSquare size={20} aria-hidden /> Contact
-          </button>
+          {/* Block size, like every other brand button; the wrapper sizes it
+              to its label instead of the card's width. */}
+          <div className="shrink-0">
+            <Button icon={MessageSquare} onClick={onContact}>
+              Contact
+            </Button>
+          </div>
         </div>
       </div>
     </section>

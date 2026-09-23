@@ -6,7 +6,7 @@ import { FUND, TOP_CONTRIBUTORS } from "../../content/fund"
 import { CARD_HINT } from "../../content/payments"
 import { VENMO_HANDLE } from "../../content/site"
 import { payVia } from "../../lib/payments"
-import BrandButton from "../../ui/controls/BrandButton"
+import Button from "../../ui/controls/Button"
 import Chip from "../../ui/controls/Chip"
 import Field from "../../ui/controls/Field"
 import VenmoLink from "../../ui/controls/VenmoLink"
@@ -102,10 +102,9 @@ export default function FundPanel() {
           size="sm"
         />
 
-        <BrandButton type="submit" disabled={sending}>
-          <Send className="h-4 w-4" />
+        <Button type="submit" icon={Send} disabled={sending}>
           {sending ? "Opening Stripe…" : `Contribute ${dollars(amount)}`}
-        </BrandButton>
+        </Button>
 
         <p className="text-center text-[11px] text-muted-foreground">
           {CARD_HINT}

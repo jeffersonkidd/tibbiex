@@ -2,6 +2,8 @@ import { useEffect } from "react"
 import type { ReactNode } from "react"
 import { X } from "lucide-react"
 
+import Button from "../controls/Button"
+
 const OVERLAY_WIDTHS = {
   xs: "max-w-xs",
   md: "max-w-md",
@@ -67,14 +69,14 @@ export default function Overlay({
             OVERLAY_WIDTHS[size]
           }
         >
-          <button
-            type="button"
-            aria-label="Close"
+          <Button
+            tone="secondary"
+            shape="icon"
+            icon={X}
+            name="Close"
             onClick={onClose}
-            className="absolute right-3 top-3 z-10 grid h-9 w-9 place-items-center rounded-full border border-border bg-card/80 text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <X size={18} />
-          </button>
+            className="absolute right-3 top-3 z-10"
+          />
           {children}
         </div>
       </div>

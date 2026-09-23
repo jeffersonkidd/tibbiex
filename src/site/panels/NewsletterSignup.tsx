@@ -5,7 +5,7 @@ import { toast } from "sonner"
 import { NEWSLETTER } from "../../content/newsletter"
 import { isEmail } from "../../lib/email"
 import { subscribe } from "../../lib/messages"
-import BrandButton from "../../ui/controls/BrandButton"
+import Button from "../../ui/controls/Button"
 import Chip from "../../ui/controls/Chip"
 import EmailField from "../../ui/controls/EmailField"
 import Honeypot from "../../ui/controls/Honeypot"
@@ -95,14 +95,13 @@ export default function NewsletterSignup() {
             </Chip>
           ))}
         </div>
-        <BrandButton className="mt-4" onClick={send} disabled={joining}>
-          <Mail className="h-4 w-4" />
+        <Button className="mt-4" icon={Mail} onClick={send} disabled={joining}>
           {joining
             ? "Adding you…"
             : topics.length
               ? "Join the list"
               : "Join the list — everything"}
-        </BrandButton>
+        </Button>
         <p className="mt-2 text-center text-[11px] text-muted-foreground">
           One confirmation email, then about one a month.
         </p>
@@ -131,10 +130,10 @@ export default function NewsletterSignup() {
           />
         </div>
         <Honeypot onChange={setTrap} />
-        {/* BrandButton is a full-width block, so it gets a sized wrapper
-            rather than a competing width utility. */}
+        {/* A block button is full width, so it gets a sized wrapper rather
+            than a competing width utility. */}
         <div className="w-20 shrink-0">
-          <BrandButton type="submit">Join</BrandButton>
+          <Button type="submit">Join</Button>
         </div>
       </form>
       <p className="mt-2 text-xs text-muted-foreground">{NEWSLETTER.cadence}</p>

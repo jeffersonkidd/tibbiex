@@ -9,7 +9,7 @@ import type { ShopItem } from "../../content/shop"
 import { isEmail } from "../../lib/email"
 import { sendMessage } from "../../lib/messages"
 import { payVia } from "../../lib/payments"
-import BrandButton from "../../ui/controls/BrandButton"
+import Button from "../../ui/controls/Button"
 import Chip from "../../ui/controls/Chip"
 import EmailField from "../../ui/controls/EmailField"
 import Honeypot from "../../ui/controls/Honeypot"
@@ -164,12 +164,16 @@ export default function ProductModal({
               </fieldset>
             )}
 
-            <BrandButton className="mt-5" onClick={buy} disabled={sending}>
-              <ShoppingBag className="h-4 w-4" />
+            <Button
+              className="mt-5"
+              icon={ShoppingBag}
+              onClick={buy}
+              disabled={sending}
+            >
               {sending
                 ? "Opening Stripe…"
                 : `Buy${size ? ` ${size}` : ""} — ${formatPrice(item.price)}`}
-            </BrandButton>
+            </Button>
             <p className="mt-2 text-center text-[11px] text-muted-foreground">
               {CARD_HINT} Stripe asks where to ship.
               {item.ships && (
@@ -277,14 +281,16 @@ function RestockAlert({
                 size="sm"
               />
             </div>
-            <button
-              type="submit"
-              disabled={sending}
-              className="flex shrink-0 items-center gap-1.5 rounded-md border border-border px-3 py-2.5 text-sm font-bold text-foreground transition-colors hover:bg-muted disabled:opacity-60"
-            >
-              <BellRing className="h-4 w-4" />{" "}
-              {sending ? "Sending…" : "Notify me"}
-            </button>
+            <div className="shrink-0">
+              <Button
+                tone="secondary"
+                type="submit"
+                icon={BellRing}
+                disabled={sending}
+              >
+                {sending ? "Sending…" : "Notify me"}
+              </Button>
+            </div>
             <Honeypot onChange={setTrap} />
           </div>
         )}

@@ -2,6 +2,7 @@ import { useEffect } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
 import type { Photo } from "../../content/portfolio"
+import Button from "../controls/Button"
 import Separator from "../display/Separator"
 import Overlay from "./Overlay"
 
@@ -58,14 +59,14 @@ export default function Lightbox({
 
       <div className="flex items-center gap-3 p-4">
         {photos.length > 1 && (
-          <button
-            type="button"
-            aria-label="Previous photo"
+          <Button
+            tone="secondary"
+            shape="icon"
+            icon={ChevronLeft}
+            name="Previous photo"
             onClick={() => step(-1)}
-            className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          >
-            <ChevronLeft size={18} />
-          </button>
+            className="shrink-0"
+          />
         )}
 
         <div className="min-w-0 flex-1 text-center">
@@ -78,14 +79,14 @@ export default function Lightbox({
         </div>
 
         {photos.length > 1 && (
-          <button
-            type="button"
-            aria-label="Next photo"
+          <Button
+            tone="secondary"
+            shape="icon"
+            icon={ChevronRight}
+            name="Next photo"
             onClick={() => step(1)}
-            className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          >
-            <ChevronRight size={18} />
-          </button>
+            className="shrink-0"
+          />
         )}
       </div>
     </Overlay>

@@ -3,7 +3,7 @@ import { toast } from "sonner"
 
 import { CONTACT_EMAIL } from "../../content/site"
 import { sendMessage } from "../../lib/messages"
-import BrandButton from "../../ui/controls/BrandButton"
+import Button from "../../ui/controls/Button"
 import Field from "../../ui/controls/Field"
 import Honeypot from "../../ui/controls/Honeypot"
 import TextArea from "../../ui/controls/TextArea"
@@ -61,9 +61,9 @@ export default function BookingModal({ onClose }: { onClose: () => void }) {
             />
             <TextArea name="message" placeholder="Message" label="Message" />
             <Honeypot />
-            <BrandButton type="submit" className="mt-1" disabled={sending}>
+            <Button type="submit" className="mt-1" disabled={sending}>
               {sending ? "Sending…" : "Send Message"}
-            </BrandButton>
+            </Button>
           </div>
           {/* The address is shown, not linked. A mailto: directly under the
               submit button is a trap on a phone: a tap landing slightly low
