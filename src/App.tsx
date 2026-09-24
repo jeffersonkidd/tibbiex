@@ -16,12 +16,12 @@ import { analyticsOptedOut } from "./lib/analytics"
 import { useCheckoutReturn } from "./lib/payments"
 
 import Lightbox from "./ui/overlays/Lightbox"
-import TabItem from "./ui/controls/TabItem"
 import MagicDust from "./ui/MagicDust"
 
 import Footer from "./site/Footer"
 import Header from "./site/Header"
 import ProfileCard from "./site/ProfileCard"
+import TabStrip from "./site/TabStrip"
 import AlbumModal from "./site/modals/AlbumModal"
 import BookingModal from "./site/modals/BookingModal"
 import ProductModal from "./site/modals/ProductModal"
@@ -103,19 +103,7 @@ export default function App() {
 
         <ProfileCard onContact={() => setModal({ kind: "booking" })} />
 
-        <nav
-          ref={tabsRef}
-          className="surface hide-scrollbar flex scroll-mt-4 gap-cluster overflow-x-auto rounded-lg bg-card/50 p-strip"
-        >
-          {VISIBLE_TABS.map(({ label }) => (
-            <TabItem
-              key={label}
-              label={label}
-              active={activeTab === label}
-              onSelect={() => setActiveTab(label)}
-            />
-          ))}
-        </nav>
+        <TabStrip ref={tabsRef} active={activeTab} onSelect={setActiveTab} />
 
         <main className="space-y-stack">
           {activeTab === "Home" && (
