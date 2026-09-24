@@ -1,10 +1,11 @@
 /* The round portrait with its lit halo, from the Figma "Avatar" component
-   (Tibbie X - DSP, 4307:25131). Content-blind: the photo, its alt text and
+   in Tibbie X - UI. Content-blind: the photo, its alt text and
    whether she is live all arrive as props.
 
-   The halo is four coloured shadows and a dark inset, in styles/treatments/
-   avatar.css. The live dot is positioned here rather than there because it is
-   markup, not treatment -- it needs a title for the hover tooltip.
+   The white ring and the amber glow are in styles/treatments/avatar.css. The
+   live dot is positioned here rather than there because it is markup, not
+   treatment -- it needs a title for the hover tooltip. It sits 8px up and
+   28px in from the photo's corner, inside the 8px ring, as Figma draws it.
 
    It is one component there, not a variant set: `live` is an optional prop
    rather than a kind of avatar, so Figma carries it as the boolean property
@@ -30,7 +31,7 @@ export default function Avatar({
       />
       {live && (
         <span
-          className="absolute bottom-2 right-6 h-4 w-4 rounded-full border border-foreground/80 bg-live sm:right-7"
+          className="absolute bottom-4 right-8 h-4 w-4 rounded-full border border-foreground bg-live sm:right-9"
           title={live}
         />
       )}

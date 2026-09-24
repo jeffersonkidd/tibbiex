@@ -1,7 +1,7 @@
 import type { ComponentType, ReactNode } from "react"
 
 /* The amber credit on the profile card and on a portfolio section -- what
-   someone plays. The one label that is not a control: a span with nothing to
+   someone plays -- and, without an icon, the badge on a panel header. The one label that is not a control: a span with nothing to
    press, which is why this sits at the ui root rather than in ui/controls.
 
    It carried a second `tag` variant, muted context rather than a credit, worn

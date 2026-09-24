@@ -1,21 +1,18 @@
 /* ===========================================================================
-   Avatar — the round portrait and its halo, mirroring the Figma "Avatar"
-   component (4307:25131). Four coloured shadows around the rim and one dark inset:
-   white above, brand red below, amber to either side.
+   Avatar — the round portrait in a white ring with an amber glow, mirroring
+   the Figma "Avatar" component in Tibbie X - UI. Figma is the source: the
+   glow is the Foundations effect style Avatar/Halo.
 
-   This is the source of truth and the Figma set was matched to it: the red
-   glow below spreads freely rather than being pulled in, the amber is
-   var(--color-accent) rather than a literal, and the rim is a flat hairline rather
-   than a radial gradient.
+   The ring is the image's own padding over a white background -- object-fit
+   paints the photo in the content box and the background shows in the
+   padding, so one element draws both and the rounded corners clip them
+   together. The white is a literal: it is not a colour anything else on the
+   site uses, so it has no token.
 =========================================================================== */
 
 .avatar {
-  border: 1px solid var(--color-foreground);
+  padding: calc(var(--spacing) * 2);
+  background: rgb(255 255 255 / 0.8);
   border-radius: var(--radius-full);
-  box-shadow:
-    0 -4.5px 10px var(--color-foreground),
-    -4px 0 4px var(--color-accent),
-    4px 0 8px var(--color-accent),
-    0 4px 12px var(--color-primary),
-    inset 0 0 6px #000;
+  box-shadow: 0 0 25.6px 5px var(--color-accent);
 }

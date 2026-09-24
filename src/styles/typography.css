@@ -16,6 +16,15 @@
 
 /* --- Display and headings ----------------------------------------------- */
 
+/* Cutive sits higher in the browser than in Figma. Both centre the line on the
+   font's ascent and descent, but they read different metrics from the file:
+   at any line height the browser's baseline lands 0.172em above Figma's, so
+   a heading-l title prints 5.5px high against its 50px sigil. The headings
+   below move their glyphs down by that much with a relative offset, which
+   shifts the ink and leaves the box -- and everything laid out around it --
+   where it was. The wordmark is left alone: marks.css trims its box by hand
+   against the browser's placement. */
+
 @utility display-wordmark {
   font-family: var(--font-display);
   font-size: var(--text-5xl);
@@ -39,6 +48,8 @@
   text-decoration-thickness: 0.08em;
   text-underline-offset: 0.1em;
   text-decoration-skip-ink: auto;
+  position: relative;
+  top: 0.172em;
 }
 
 /* Panel and modal titles. */
@@ -47,6 +58,8 @@
   font-size: var(--text-3xl);
   font-weight: var(--font-weight-normal);
   line-height: 1;
+  position: relative;
+  top: 0.172em;
 }
 
 @utility heading-m {
@@ -63,6 +76,8 @@
   font-size: var(--text-base);
   font-weight: var(--font-weight-normal);
   line-height: 1.15;
+  position: relative;
+  top: 0.172em;
 }
 
 /* --- Body --------------------------------------------------------------- */
