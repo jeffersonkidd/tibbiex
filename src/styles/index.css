@@ -21,7 +21,7 @@
        magic-dust.css  the spark canvas, above everything
 
    The type rules reference three faces -- Inter for body, Roboto Mono for the
-   mono labels, Cutive for the display stack -- but the faces are NOT loaded
+   mono labels, Permanent Marker for the display stack -- but the faces are NOT loaded
    here. They are <link>ed from index.html, so the preload scanner finds
    them in the initial HTML parse; an @import of the font CSS cannot be
    discovered until this stylesheet has itself downloaded and parsed, which
