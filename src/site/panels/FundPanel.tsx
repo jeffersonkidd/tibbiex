@@ -63,8 +63,8 @@ export default function FundPanel() {
       />
 
       <div className="mt-4 flex items-baseline justify-between gap-part">
-        <span className="text-lg font-bold">{dollars(FUND.raised)}</span>
-        <span className="text-xs text-muted-foreground">
+        <span className="body-large-bold">{dollars(FUND.raised)}</span>
+        <span className="body-xs text-muted-foreground">
           of {dollars(FUND.goal)} · {FUND.backers} backers
         </span>
       </div>
@@ -106,9 +106,7 @@ export default function FundPanel() {
           {sending ? "Opening Stripe…" : `Contribute ${dollars(amount)}`}
         </Button>
 
-        <p className="text-center text-[11px] text-muted-foreground">
-          {CARD_HINT}
-        </p>
+        <p className="body-xs text-center text-muted-foreground">{CARD_HINT}</p>
 
         <VenmoLink handle={VENMO_HANDLE} onClick={payWithVenmo} />
       </form>
@@ -116,7 +114,7 @@ export default function FundPanel() {
       {TOP_CONTRIBUTORS.length > 0 && (
         <>
           <Separator space="sm" />
-          <span className="mono-label block text-muted-foreground">
+          <span className="label-mono block text-muted-foreground">
             Top Contributors
           </span>
           <div className="mt-2 space-y-1.5">

@@ -10,9 +10,9 @@ const TONES = {
 }
 
 const SHAPES = {
-  block: "w-full gap-2 rounded-lg px-4 py-3 text-sm",
-  inline: "gap-glyph rounded-md px-3 py-2 text-xs",
-  icon: "gap-glyph rounded-md p-2.5 text-xs",
+  block: "w-full gap-2 rounded-lg px-4 py-3 body-small-bold",
+  inline: "gap-glyph rounded-md px-3 py-2 body-xs-bold",
+  icon: "gap-glyph rounded-md p-2.5 body-xs-bold",
 }
 
 /* Every button on the page that is a button rather than a card or a row.
@@ -52,7 +52,7 @@ export default function Button({
       aria-label={name}
       onClick={onClick}
       disabled={disabled}
-      className={`flex items-center justify-center font-bold disabled:pointer-events-none disabled:opacity-60 ${TONES[tone]} ${SHAPES[shape]} ${className}`}
+      className={`flex items-center justify-center disabled:pointer-events-none disabled:opacity-60 ${TONES[tone]} ${SHAPES[shape]} ${className}`}
     >
       {Icon && <Icon className="h-4 w-4 shrink-0" />}
       {shape === "icon" && children ? (

@@ -12,11 +12,11 @@ export default function ShowRow({ show }: { show: Show }) {
     <div className="surface rounded-lg p-panel">
       <div className="flex items-start justify-between">
         <div>
-          <div className="text-lg font-bold">{show.venue}</div>
-          <div className="mt-1 flex items-center gap-glyph text-sm text-muted-foreground">
+          <div className="body-large-bold">{show.venue}</div>
+          <div className="body-small mt-1 flex items-center gap-glyph text-muted-foreground">
             <Calendar className="h-4 w-4" /> {show.date}
           </div>
-          <div className="mt-1 flex items-center gap-glyph text-sm text-muted-foreground">
+          <div className="body-small mt-1 flex items-center gap-glyph text-muted-foreground">
             <MapPin className="h-4 w-4" /> {show.city}
           </div>
         </div>
@@ -25,7 +25,7 @@ export default function ShowRow({ show }: { show: Show }) {
             Tickets
           </Button>
         ) : (
-          <span className="rounded-full bg-accent-tint px-3 py-1 text-xs font-bold text-accent">
+          <span className="rounded-full bg-accent-tint px-3 py-1 body-xs-bold text-accent">
             {show.status}
           </span>
         )}

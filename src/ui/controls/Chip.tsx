@@ -24,9 +24,9 @@ export default function Chip({
       aria-label={label}
       disabled={disabled}
       onClick={onClick}
-      className={`w-full rounded-md border py-2 text-sm font-bold transition-all disabled:cursor-default disabled:border-border/50 disabled:bg-transparent disabled:text-muted-foreground/50 disabled:line-through ${
+      className={`w-full rounded-md border py-2 body-small-bold transition-all disabled:cursor-default disabled:border-border/50 disabled:bg-transparent disabled:text-muted-foreground/50 disabled:line-through ${
         pressed
-          ? "brand-pop border-foreground/40 bg-muted text-foreground"
+          ? "brand-pop border-foreground bg-muted text-foreground"
           : "border-border bg-input-background text-muted-foreground hover:border-foreground/30 hover:text-foreground"
       }`}
     >

@@ -44,10 +44,8 @@ export default function PortfolioTab({
           className="surface scroll-mt-4 rounded-lg p-panel"
         >
           <div className="flex flex-wrap items-baseline justify-between gap-x-part gap-y-1">
-            <h2 className="text-2xl uppercase leading-none tracking-tight">
-              {entry.band}
-            </h2>
-            <span className="mono-label text-muted-foreground">
+            <h2 className="heading-xl">{entry.band}</h2>
+            <span className="label-mono text-muted-foreground">
               {entry.years}
             </span>
           </div>
@@ -56,7 +54,7 @@ export default function PortfolioTab({
             <Pill icon={Guitar}>{entry.role}</Pill>
           </div>
 
-          <p className="mt-3 text-sm text-muted-foreground">{entry.blurb}</p>
+          <p className="body-small mt-3 text-muted-foreground">{entry.blurb}</p>
 
           <Separator space="sm" />
           <DetailList items={entry.highlights} />

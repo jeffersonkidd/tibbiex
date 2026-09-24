@@ -13,7 +13,7 @@ export const FIELD_SIZES = {
    border, one fill, one focus colour across every form on the site. Size and
    validity are applied on top, per element. */
 export const FIELD_TREATMENT =
-  "w-full rounded-md border bg-input-background text-base text-foreground outline-none sm:text-sm transition-colors placeholder:text-muted-foreground focus:border-accent"
+  "w-full rounded-md border bg-input-background body-base text-foreground outline-none sm:body-small transition-colors placeholder:text-muted-foreground focus:border-accent"
 
 export default function Field({
   placeholder,

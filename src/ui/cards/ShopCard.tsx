@@ -28,8 +28,8 @@ export default function ShopCard({
         />
       </div>
       <div className="flex items-center justify-between gap-part p-card">
-        <div className="text-sm font-bold leading-tight">{item.item}</div>
-        <span className="flex shrink-0 items-center gap-glyph text-base font-bold text-accent">
+        <div className="body-small-bold">{item.item}</div>
+        <span className="flex shrink-0 items-center gap-glyph body-base-bold text-accent">
           {formatPrice(item.price)}{" "}
           <ShoppingBag className="h-4 w-4 text-muted-foreground" />
         </span>

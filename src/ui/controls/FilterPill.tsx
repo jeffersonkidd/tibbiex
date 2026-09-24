@@ -12,7 +12,7 @@ export default function FilterPill({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`shrink-0 whitespace-nowrap rounded-md px-3 py-2 text-sm font-bold transition-all ${
+      className={`shrink-0 whitespace-nowrap rounded-md px-3 py-2 body-small-bold transition-all ${
         active
           ? "brand-surface brand-pop bg-primary text-primary-foreground"
           : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"

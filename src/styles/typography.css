@@ -1,35 +1,152 @@
 /* ===========================================================================
-   Typography — the display face and the mono label. The X in the wordmark is
-   in marks.css.
+   Typography — the text styles, one utility per style in Tibbie X -
+   Foundations (RjhP5XJqNtBhAHTqdcq4T4), named for it: Body/Small Bold is
+   body-small-bold here. Figma is the source; a new style, or a new value on
+   one, lands there first and is copied here.
+
+   Each utility sets the whole style -- face, size, weight, line height,
+   tracking, case -- so text wears exactly one of them and no loose text-*,
+   font-* or leading-* beside it. Colour is not part of a style; it comes
+   from a text-* colour utility as before. Being @utility rather than a plain
+   class, a style takes variants: sm:body-small, hover:... .
+
+   Cutive ships one weight, so nothing display is ever bolded. The X in the
+   wordmark is in marks.css.
 =========================================================================== */
 
-/* The typewriter display face for the wordmark and the big headings --
-   --font-display in tokens.css, which is Cutive from Google Fonts.
+/* --- Display and headings ----------------------------------------------- */
 
-   h2 is deliberately absent: it is the section heading inside panels and
-   modals, and it reads in the body face, matching Heading/M in Figma. The
-   display face is for the things that are meant to shout. */
-.wordmark,
-.heading,
-h1,
-h3,
-h4,
-h5,
-h6 {
+@utility display-wordmark {
   font-family: var(--font-display);
+  font-size: var(--text-5xl);
+  font-weight: var(--font-weight-normal);
+  line-height: 1.05;
+}
+
+/* Band titles: the Portfolio sections and the Buy groups. */
+@utility heading-xl {
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  font-weight: var(--font-weight-normal);
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  /* Figma gives the offset and thickness as a percentage of the font size,
+     which is what em is here. */
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-color: var(--color-primary);
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.1em;
+  text-decoration-skip-ink: auto;
+}
+
+/* Panel and modal titles. */
+@utility heading-l {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: var(--font-weight-normal);
+  line-height: 1;
+}
+
+@utility heading-m {
+  font-family: var(--font-sans);
+  font-size: var(--text-xl);
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
   letter-spacing: 0.02em;
 }
 
-h2 {
-  font-family: var(--font-sans);
+/* The display face at body size: the name on a price card. */
+@utility heading-s {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-normal);
+  line-height: 1.15;
 }
 
-/* Small uppercase metadata label in the mono face. */
-.mono-label {
+/* --- Body --------------------------------------------------------------- */
+
+@utility body-large {
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-normal);
+  line-height: 1.3;
+}
+
+@utility body-large-bold {
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.4;
+}
+
+@utility body-base {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-normal);
+  line-height: 1.5;
+}
+
+@utility body-base-bold {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.4;
+}
+
+@utility body-small {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-normal);
+  line-height: 1.4;
+}
+
+@utility body-small-bold {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.4;
+}
+
+@utility body-xs {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-normal);
+  line-height: 1.35;
+}
+
+@utility body-xs-bold {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.35;
+}
+
+/* --- Labels and figures ------------------------------------------------- */
+
+/* Small uppercase metadata in the mono face. */
+@utility label-mono {
   font-family: var(--font-mono);
   font-size: var(--text-label);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   line-height: 1.2;
   letter-spacing: var(--tracking-mono);
   text-transform: uppercase;
+}
+
+@utility label-mono-xs {
+  font-family: var(--font-mono);
+  font-size: var(--text-unit);
+  font-weight: var(--font-weight-normal);
+  line-height: 1;
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+}
+
+@utility numeric-amount {
+  font-family: var(--font-sans);
+  font-size: var(--text-amount);
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
 }

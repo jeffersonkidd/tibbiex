@@ -105,7 +105,7 @@ export default function NewsletterSignup() {
               ? "Join the list"
               : "Join the list — everything"}
         </Button>
-        <p className="mt-2 text-center text-[11px] text-muted-foreground">
+        <p className="body-xs mt-2 text-center text-muted-foreground">
           One confirmation email, then about one a month.
         </p>
       </section>
@@ -143,7 +143,7 @@ export default function NewsletterSignup() {
           <Button type="submit">Join</Button>
         </div>
       </form>
-      <p className="mt-2 text-xs text-muted-foreground">{NEWSLETTER.cadence}</p>
+      <p className="body-xs mt-2 text-muted-foreground">{NEWSLETTER.cadence}</p>
     </section>
   )
 }

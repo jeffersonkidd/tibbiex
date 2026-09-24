@@ -70,9 +70,9 @@ export default function Lightbox({
         )}
 
         <div className="min-w-0 flex-1 text-center">
-          <p className="truncate text-xs text-muted-foreground">{photo.alt}</p>
+          <p className="body-xs truncate text-muted-foreground">{photo.alt}</p>
           {photos.length > 1 && (
-            <span className="mono-label mt-0.5 block text-accent">
+            <span className="label-mono mt-0.5 block text-accent">
               {index + 1} / {photos.length}
             </span>
           )}

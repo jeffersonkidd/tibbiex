@@ -125,11 +125,11 @@ export default function ProductModal({
 
       <OverlayBody title={item.item}>
         <div className="mt-2 flex items-baseline gap-part">
-          <span className="text-2xl font-bold text-accent">
+          <span className="numeric-amount text-accent">
             {formatPrice(item.price)}
           </span>
           {item.stock && (
-            <span className="mono-label text-muted-foreground">
+            <span className="label-mono text-muted-foreground">
               {soldOut
                 ? `All ${item.stock.of} gone`
                 : `${item.stock.left} of ${item.stock.of} left`}
@@ -141,7 +141,7 @@ export default function ProductModal({
           <>
             {sizes.length > 0 && (
               <fieldset className="mt-5">
-                <legend className="mono-label mb-2 text-muted-foreground">
+                <legend className="label-mono mb-2 text-muted-foreground">
                   Tee size
                 </legend>
                 <div className="grid grid-cols-4 gap-cluster">
@@ -161,7 +161,7 @@ export default function ProductModal({
                   ))}
                 </div>
                 {sizeError && (
-                  <p role="alert" className="mt-1.5 text-xs text-primary">
+                  <p role="alert" className="body-xs mt-1.5 text-primary">
                     Pick a size first.
                   </p>
                 )}
@@ -178,7 +178,7 @@ export default function ProductModal({
                 ? "Opening Stripe…"
                 : `Buy${size ? ` ${size}` : ""} — ${formatPrice(item.price)}`}
             </Button>
-            <p className="mt-2 text-center text-[11px] text-muted-foreground">
+            <p className="body-xs mt-2 text-center text-muted-foreground">
               {CARD_HINT} Stripe asks where to ship.
               {item.ships && (
                 <>
@@ -190,7 +190,7 @@ export default function ProductModal({
 
             <div className="mt-2">
               <VenmoLink handle={VENMO_HANDLE} onClick={payWithVenmo} />
-              <p className="mt-1 text-center text-[11px] text-muted-foreground">
+              <p className="body-xs mt-1 text-center text-muted-foreground">
                 Venmo takes no address — DM yours after.
               </p>
             </div>
@@ -200,7 +200,7 @@ export default function ProductModal({
         {item.includes && (
           <>
             <Separator space="md" />
-            <span className="mono-label mb-2 block text-muted-foreground">
+            <span className="label-mono mb-2 block text-muted-foreground">
               What you get
             </span>
             <DetailList items={item.includes} />
@@ -263,13 +263,13 @@ function RestockAlert({
       <Separator space="md" />
 
       <form onSubmit={notify} noValidate>
-        <p className="text-sm text-muted-foreground">
+        <p className="body-small text-muted-foreground">
           {soldOut
             ? "This run is gone. Get told if there’s another."
             : "Sold out, or your size is gone? Get told when it’s back."}
         </p>
         {sent ? (
-          <p className="mono-label mt-3 text-accent" aria-live="polite">
+          <p className="label-mono mt-3 text-accent" aria-live="polite">
             Asked for. You’ll hear when it’s back.
           </p>
         ) : (

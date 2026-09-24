@@ -34,12 +34,12 @@ export default function PanelHeader({
           <Icon className="h-5 w-5" />
         </div>
         <div>
-          <h2 className="text-base">{title}</h2>
-          <p className="mt-0.5 text-xs text-muted-foreground">{sub}</p>
+          <h2 className="heading-l">{title}</h2>
+          <p className="body-xs mt-0.5 text-muted-foreground">{sub}</p>
         </div>
       </div>
       {badge ? (
-        <span className="mono-label shrink-0 rounded-full border border-border bg-muted/50 px-2.5 py-1 text-accent">
+        <span className="label-mono shrink-0 rounded-full border border-border bg-muted/50 px-2.5 py-1 text-accent">
           {badge}
         </span>
       ) : (

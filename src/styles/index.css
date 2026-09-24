@@ -6,7 +6,7 @@
 
      tokens.css        the one @theme block: colours, type and radii
      background.css    document sizing and the record-photo background
-     typography.css    display face and .mono-label
+     typography.css    the text styles, one utility per Figma style
      surfaces.css      .surface, .brand-surface / .brand-lift / .brand-pop
      utilities.css     .hide-scrollbar
      marks.css         the Tibbie X wordmark and the Reagan Youth mark

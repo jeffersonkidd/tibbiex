@@ -79,8 +79,11 @@
   /* --- Type --------------------------------------------------------------
      Cutive is proportional, not monospaced -- the wordmark's tracking is set
      against that -- and ships one weight, so nothing display is ever bolded.
-     The three sizes below are the values Tailwind's own scale has no name
-     for: the mono label, the price unit and the price amount. Tailwind's
+     These are the Typography variables in Figma; the text styles built on
+     them are utilities in typography.css. The first three sizes are values
+     Tailwind's scale has no name for: the mono label, the price unit and the
+     price amount. 3xl and 4xl are the two display heading steps, which
+     Figma sets at 32 and 40 against Tailwind's 30 and 36. Tailwind's
      --text-*, --font-weight-* and --tracking-* namespaces cover the rest. */
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Roboto Mono", ui-monospace, monospace;
@@ -89,6 +92,8 @@
   --text-label: 11px;
   --text-unit: 8px;
   --text-amount: 26px;
+  --text-3xl: 32px; /* ours; Tailwind ships 30px */
+  --text-4xl: 40px; /* ours; Tailwind ships 36px */
   --tracking-mono: 0.14em;
 
   /* --- Radius ------------------------------------------------------------

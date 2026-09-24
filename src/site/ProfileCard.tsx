@@ -40,7 +40,7 @@ export default function ProfileCard({ onContact }: { onContact: () => void }) {
               href={live.href}
               target="_blank"
               rel="noreferrer noopener"
-              className="mono-label inline-flex items-center gap-glyph rounded-full border border-foreground/80 bg-live px-2.5 py-1 text-on-live transition-[filter] hover:brightness-110"
+              className="label-mono inline-flex items-center gap-glyph rounded-full border border-foreground/80 bg-live px-2.5 py-1 text-on-live transition-[filter] hover:brightness-110"
             >
               <Radio size={12} aria-hidden /> {live.label}
             </a>
@@ -55,7 +55,7 @@ export default function ProfileCard({ onContact }: { onContact: () => void }) {
           />
         </div>
 
-        <h1 className="wordmark flex items-center gap-2 text-5xl leading-none">
+        <h1 className="wordmark display-wordmark flex items-center gap-2">
           <span className="wordmark-chrome">{PROFILE.name}</span>
           <span className="wordmark-x">X</span>
         </h1>
@@ -68,13 +68,11 @@ export default function ProfileCard({ onContact }: { onContact: () => void }) {
           ))}
         </ul>
 
-        <p className="profile-quote text-base leading-snug">
-          “{PROFILE.quote}”
-        </p>
+        <p className="profile-quote body-base">“{PROFILE.quote}”</p>
 
         <ul
           aria-label="Bands"
-          className="flex flex-wrap gap-x-part gap-y-0.5 text-base font-bold leading-snug text-muted-foreground"
+          className="flex flex-wrap gap-x-part gap-y-0.5 body-base-bold text-muted-foreground"
         >
           {PROFILE.bands.map((band) => (
             <li key={band} className="list-inside list-disc">

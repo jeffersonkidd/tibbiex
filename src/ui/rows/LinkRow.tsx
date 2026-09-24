@@ -28,8 +28,8 @@ export default function LinkRow({
           <Icon className="h-6 w-6" />
         </div>
         <div>
-          <div className="text-base font-bold">{title}</div>
-          <p className="mono-label mt-1 text-muted-foreground">{meta}</p>
+          <div className="body-base-bold">{title}</div>
+          <p className="label-mono mt-1 text-muted-foreground">{meta}</p>
         </div>
       </div>
       {external ? (

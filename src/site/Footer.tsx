@@ -6,8 +6,8 @@
 export default function Footer() {
   return (
     <footer className="text-center">
-      <p className="mono-label text-foreground/80">Tibbie X Studio</p>
-      <p className="mono-label mt-1 text-muted-foreground">
+      <p className="label-mono text-foreground/80">Tibbie X Studio</p>
+      <p className="label-mono mt-1 text-muted-foreground">
         © 2026 Tibbie X · Built in the squat
       </p>
     </footer>

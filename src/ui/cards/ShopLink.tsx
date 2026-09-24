@@ -31,8 +31,8 @@ export default function ShopLink({
           <ShoppingBag className="h-4 w-4" />
         </span>
         <span>
-          <span className="block text-sm font-bold">Shop {entry.band}</span>
-          <span className="mono-label mt-0.5 block text-muted-foreground">
+          <span className="body-small-bold block">Shop {entry.band}</span>
+          <span className="label-mono mt-0.5 block text-muted-foreground">
             {items.length} {items.length === 1 ? "item" : "items"} · from{" "}
             {formatPrice(cheapest.price)}
           </span>

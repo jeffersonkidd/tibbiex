@@ -8,7 +8,7 @@ import Button from "../ui/controls/Button"
 export default function Header({ onShare }: { onShare: () => void }) {
   return (
     <header className="surface flex items-center justify-between rounded-lg p-3">
-      <span className="mono-label px-2 text-muted-foreground">
+      <span className="label-mono px-2 text-muted-foreground">
         Tibbie X Studio
       </span>
       <Button tone="secondary" shape="inline" icon={Share2} onClick={onShare}>

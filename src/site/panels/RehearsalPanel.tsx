@@ -16,24 +16,22 @@ export default function RehearsalPanel({ onOpen }: { onOpen: () => void }) {
         <div className="flex items-center gap-part">
           <ReaganYouthMark />
           <div>
-            <div className="text-base font-bold">
-              Practicing with Reagan Youth
-            </div>
-            <p className="mono-label mt-1 text-muted-foreground">
+            <div className="body-base-bold">Practicing with Reagan Youth</div>
+            <p className="label-mono mt-1 text-muted-foreground">
               The next generation — L.E.S.
             </p>
           </div>
         </div>
-        <span className="mono-label shrink-0 text-muted-foreground">80%</span>
+        <span className="label-mono shrink-0 text-muted-foreground">80%</span>
       </div>
-      <p className="mt-3 text-xs text-muted-foreground">
+      <p className="body-xs mt-3 text-muted-foreground">
         Three nights a week in a Lower East Side basement, running the set end
         to end. Carrying the songs forward, not covering them.
       </p>
       <div className="mt-3">
         <Meter value={80} label="Set rehearsed" />
       </div>
-      <span className="mono-label mt-3 flex items-center gap-glyph text-accent">
+      <span className="label-mono mt-3 flex items-center gap-glyph text-accent">
         <Disc size={12} /> Hear “{REAGAN_YOUTH_LP.track}”
         <ChevronRight
           size={12}

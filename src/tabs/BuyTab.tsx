@@ -25,7 +25,7 @@ export default function BuyTab({
           of Product.manufacturer -> #studio in the index.html graph,
           so keep the two in step -- and note it is a claim about
           making, so it must not sit over anything label-pressed. */}
-      <p className="mono-label text-muted-foreground">
+      <p className="label-mono text-muted-foreground">
         Made in-house at <span className="text-accent">Tibbie X Studio</span>
       </p>
 
@@ -58,20 +58,18 @@ export default function BuyTab({
         return (
           <section key={group.id} className="space-y-stack">
             <div className="flex flex-wrap items-baseline justify-between gap-x-part gap-y-1 pt-2">
-              <h2 className="text-xl uppercase leading-none tracking-tight">
-                {group.title}
-              </h2>
+              <h2 className="heading-xl">{group.title}</h2>
               {/* The return leg of the portfolio link. "general" has no
                   section to go back to, so it gets a count instead. */}
               {band === null ? (
-                <span className="mono-label text-muted-foreground">
+                <span className="label-mono text-muted-foreground">
                   {group.items.length} items
                 </span>
               ) : (
                 <button
                   type="button"
                   onClick={() => onOpenPortfolio(band)}
-                  className="mono-label flex items-center gap-1 text-muted-foreground transition-colors hover:text-accent"
+                  className="label-mono flex items-center gap-1 text-muted-foreground transition-colors hover:text-accent"
                 >
                   View credits <ChevronRight className="h-3.5 w-3.5" />
                 </button>

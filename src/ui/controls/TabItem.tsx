@@ -20,7 +20,7 @@ export default function TabItem({
       type="button"
       aria-current={active ? "page" : undefined}
       onClick={onSelect}
-      className={`min-w-[80px] flex-1 rounded-md py-2.5 text-sm font-bold transition-all ${
+      className={`min-w-[80px] flex-1 rounded-md py-2.5 body-small-bold transition-all ${
         active
           ? "brand-surface brand-pop bg-primary text-primary-foreground"
           : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"

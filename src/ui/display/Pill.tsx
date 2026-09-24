@@ -15,7 +15,7 @@ export default function Pill({
   children: ReactNode
 }) {
   return (
-    <span className="mono-label inline-flex items-center gap-glyph whitespace-nowrap rounded-full border border-border bg-accent-tint px-2.5 py-1 text-accent">
+    <span className="label-mono inline-flex items-center gap-glyph whitespace-nowrap rounded-full border border-border bg-accent-tint px-2.5 py-1 text-accent">
       {Icon && <Icon size={12} aria-hidden />}
       {children}
     </span>

@@ -47,7 +47,7 @@ export default function PriceCard({
     >
       <div className="price-frame" />
       {flag && <span className="price-flag">{flag}</span>}
-      {eyebrow && <span className="mono-label price-eyebrow">{eyebrow}</span>}
+      {eyebrow && <span className="label-mono price-eyebrow">{eyebrow}</span>}
       <span className="price-name">{name}</span>
       <span className="price-amount">
         {amount}
