@@ -29,8 +29,10 @@ CHANGELOG.md
 
 # Full-res image masters: the shipped assets are downscaled cuts of these.
 src/assets/imagery/**/*.png
+!src/assets/imagery/tibbie-portrait.png
 # ...except small textures CSS paints with, which ship as-is.
 !src/assets/imagery/silver-texture.png
 
 .files
 .vercel
+
