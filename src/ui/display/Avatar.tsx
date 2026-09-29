@@ -4,8 +4,8 @@
 
    The white ring and the amber glow are in styles/treatments/avatar.css. The
    live dot is positioned here rather than there because it is markup, not
-   treatment -- it needs a title for the hover tooltip. It sits 8px up and
-   28px in from the photo's corner, inside the 8px ring, as Figma draws it.
+   treatment -- it needs a title for the hover tooltip. It sits 14px up and
+   14px in from the avatar's box corner, on the ring, as Figma draws it.
 
    It is one component there, not a variant set: `live` is an optional prop
    rather than a kind of avatar, so Figma carries it as the boolean property
@@ -31,7 +31,7 @@ export default function Avatar({
       />
       {live && (
         <span
-          className="absolute bottom-4 right-8 h-4 w-4 rounded-full border border-foreground bg-live sm:right-9"
+          className="absolute bottom-3.5 right-3.5 h-4 w-4 rounded-full border border-foreground bg-live"
           title={live}
         />
       )}

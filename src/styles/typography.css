@@ -10,18 +10,10 @@
    from a text-* colour utility as before. Being @utility rather than a plain
    class, a style takes variants: sm:body-small, hover:... .
 
-   Permanent Marker ships one weight, so nothing display is ever bolded. The X in the
-   wordmark is in marks.css.
+   Permanent Marker ships one weight, so nothing display is ever bolded.
 =========================================================================== */
 
-/* --- Display and headings ----------------------------------------------- */
-
-@utility display-wordmark {
-  font-family: var(--font-display);
-  font-size: var(--text-5xl);
-  font-weight: var(--font-weight-normal);
-  line-height: 1.05;
-}
+/* --- Headings ----------------------------------------------------------- */
 
 /* Band titles: the Portfolio sections and the Buy groups. */
 @utility heading-xl {

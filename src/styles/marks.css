@@ -1,93 +1,15 @@
 /* ===========================================================================
-   Marks — styling for the typographic marks: the Tibbie X wordmark
-   (display-wordmark sets the face in typography.css) and the Reagan Youth stand-in
+   Marks — styling for the identity marks: the painted Tibbie X tag on the
+   profile card (assets/marks/tibbiex-tag.png) and the Reagan Youth stand-in
    in assets/marks/ReaganYouthMark.tsx.
 =========================================================================== */
 
-/* --- The Tibbie X wordmark ------------------------------------------------
-   Matches the Figma "Profile Card" (Tibbie X - DSP, 4545:73): "Tibbie" in
-   brushed chrome, the X a size up in hot red with a glow burning off its top
-   edge. The face is --font-display, Permanent Marker. The letter-spacing below
-   was tuned for Cutive, the face before it, and has not been re-measured.
-   Never bold it -- Permanent Marker has one weight, so a bold would be a
-   synthesised smear.
-
-   Both parts paint a gradient through the glyph. background-clip: text only
-   paints inside the padding box, so each part carries padding for headroom
-   and matching negative margins so the lockup's spacing is unchanged. Glows
-   are filter drop-shadows, not text-shadow: with a transparent fill a
-   text-shadow shows through the letters and muddies the gradient. */
-/* The X is 1.333em with line-height 1, so it -- not the chrome -- sets the
-   lockup's box: 64px tall where the h1 is 48. An uppercase X has no
-   descender, so the bottom fifth of that box is empty, and the card's gap-6
-   lands under empty space rather than under the letters. This trims the
-   slack so the gap the eye sees is the gap the layout declares. Adjust it
-   with the X's size, not on its own. */
-.wordmark {
-  margin-bottom: -0.3em;
-}
-
-.wordmark-chrome,
-.wordmark-x {
-  display: inline-block;
-  line-height: 1;
-  padding: 0.14em 0.04em 0.1em;
-  margin: -0.14em -0.04em -0.1em;
-  color: var(--color-foreground);
-}
-
-.wordmark-chrome {
-  letter-spacing: -0.03em;
-  background-image: linear-gradient(
-    180deg,
-    #6e7278 0%,
-    #b8bcbf 12%,
-    #d8dadb 22%,
-    #f2f3f4 35%,
-    #ffffff 45%,
-    #e4e6e7 52%,
-    #9ea3a8 62%,
-    #6e7278 72%,
-    #b0b4b8 82%,
-    #dadcde 91%,
-    #8c9196 100%
-  );
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6))
-    drop-shadow(
-      0 1px 2px color-mix(in srgb, var(--color-foreground) 15%, transparent)
-    );
-}
-
-.wordmark-x {
-  font-size: 1.333em;
-  letter-spacing: 0.02em;
-  color: var(--color-primary);
-  background-image: linear-gradient(
-    90deg,
-    #5a0a0a 7%,
-    #8a1a1a 15%,
-    color-mix(in srgb, var(--color-primary) 95%, transparent) 45%,
-    #c53e3e 77%,
-    #ff5a5a 108%
-  );
-  filter: drop-shadow(0 -4px 18px rgba(255, 77, 77, 0.6))
-    drop-shadow(0 -2px 10px rgba(255, 138, 138, 0.5))
-    drop-shadow(
-      0 -10px 18px color-mix(in srgb, var(--color-foreground) 50%, transparent)
-    )
-    drop-shadow(0 6px 14px rgba(0, 0, 0, 0.1));
-}
-
-/* Only paint the gradients through the glyphs where the browser can clip to
-   text -- otherwise the flat colours above stand. */
-@supports (background-clip: text) or (-webkit-background-clip: text) {
-  .wordmark-chrome,
-  .wordmark-x {
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
-  }
+/* --- The Tibbie X tag ----------------------------------------------------
+   A hand-painted PNG, so the only thing CSS adds is a soft shadow that lifts
+   the white strokes off the banner photo where the two overlap. It is a
+   drop-shadow filter, which follows the paint's alpha, not a box-shadow. */
+.tag-mark {
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.55));
 }
 
 /* --- The Reagan Youth mark ------------------------------------------------

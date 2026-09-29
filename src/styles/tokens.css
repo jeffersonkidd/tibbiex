@@ -77,8 +77,8 @@
   --color-on-live: var(--color-green-50);
 
   /* --- Type --------------------------------------------------------------
-     Permanent Marker is proportional -- the wordmark's tracking is set
-     against that -- and ships one weight, so nothing display is ever bolded.
+     Permanent Marker is proportional and ships one weight, so nothing
+     display is ever bolded.
      These are the Typography variables in Figma; the text styles built on
      them are utilities in typography.css. The first three sizes are values
      Tailwind's scale has no name for: the mono label, the price unit and the

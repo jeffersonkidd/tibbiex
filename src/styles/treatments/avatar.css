@@ -6,13 +6,18 @@
    The ring is the image's own padding over a white background -- object-fit
    paints the photo in the content box and the background shows in the
    padding, so one element draws both and the rounded corners clip them
-   together. The white is a literal: it is not a colour anything else on the
-   site uses, so it has no token.
-=========================================================================== */
+   together. The white is a literal at 90%: it is not a colour anything else
+   on the site uses, so it has no token.
+
+   Figma draws a 1px accent-foreground stroke *outside* the ring. A border
+   would sit inside the box and eat into the ring, so it is the first
+   box-shadow instead -- a zero-blur spread of 1px -- under the glow. */
 
 .avatar {
   padding: calc(var(--spacing) * 2);
-  background: rgb(255 255 255 / 0.8);
+  background: rgb(255 255 255 / 0.9);
   border-radius: var(--radius-full);
-  box-shadow: 0 0 25.6px 5px var(--color-accent);
+  box-shadow:
+    0 0 0 1px var(--color-accent-foreground),
+    0 0 25.6px 5px var(--color-accent);
 }

@@ -35,30 +35,41 @@ export const PROFILE = {
   ],
   /* The green badge on the banner and the dot on the avatar. There is no feed
      telling the site she is live, so this is a claim someone has to keep true:
-     set it to null when she is not, and the badge and dot both go. */
-  live: { label: "Live on TikTok", href: TIKTOK_URL, staged: true } as {
+     set it to null when she is not, and the badge and dot both go. To bring
+     them back: { label: "Live on TikTok", href: TIKTOK_URL }. */
+  live: null as {
     label: string
     href: string
     staged?: true
   } | null,
 }
 
-/* The square buttons in the card's quick bar. Every handle here is also in the
-   Person's `sameAs` in index.html -- structured data has to be backed by links
-   a visitor can see, so add or remove them in both places. Email is not a
-   button: the Contact button beside them opens the booking form, which carries
-   the address. */
+/* The square buttons in the card's quick bar. Every visible handle here is
+   also in the Person's `sameAs` in index.html -- structured data has to be
+   backed by links a visitor can see, so switching one on or off means adding
+   or removing it there too. Email is not a button: the Contact button beside
+   them opens the booking form, which carries the address.
+
+   `enabled: false` takes a button off the card while leaving its data here to
+   switch back on. Like LINKS, the flag is opt-out -- a button without it
+   shows. */
 export const SOCIALS = [
   {
     icon: Instagram,
     label: "Instagram — @tibbie_x",
     href: "https://www.instagram.com/tibbie_x",
   },
-  { icon: TikTokIcon, label: "TikTok — @tibbieskyex", href: TIKTOK_URL },
+  {
+    icon: TikTokIcon,
+    label: "TikTok — @tibbieskyex",
+    href: TIKTOK_URL,
+    enabled: false,
+  },
   {
     icon: Youtube,
     label: "YouTube — @tibbieskyex",
     href: "https://www.youtube.com/@tibbieskyex",
+    enabled: false,
   },
   {
     icon: PatreonIcon,
@@ -76,3 +87,7 @@ export const SOCIALS = [
     href: `https://venmo.com/u/${VENMO_HANDLE}`,
   },
 ]
+
+export const VISIBLE_SOCIALS = SOCIALS.filter(
+  (social) => social.enabled !== false,
+)

@@ -2,7 +2,8 @@ import { MessageSquare, Radio } from "lucide-react"
 
 import profilePic from "../assets/imagery/tibbie-portrait.png"
 import bannerPic from "../assets/imagery/tibbie-onstage.jpg"
-import { PROFILE, SOCIALS } from "../content/profile"
+import tagPic from "../assets/marks/tibbiex-tag.png"
+import { PROFILE, VISIBLE_SOCIALS } from "../content/profile"
 import Button from "../ui/controls/Button"
 import Avatar from "../ui/display/Avatar"
 import SocialButton from "../ui/controls/SocialButton"
@@ -11,8 +12,8 @@ import Separator from "../ui/display/Separator"
 
 /* The card at the top of the page, built from the Figma "Profile Card"
    (Tibbie X - DSP, 4545:73). The live photo runs behind the top of the
-   card and everything else sits over it: the live badge, the avatar, the
-   wordmark, what she plays and who with, then the social keys and the
+   card and everything else sits over it: the live badge while she is live,
+   the avatar, the painted tag, what she plays and who with, then the social keys and the
    contact button. Every word of it comes from content/profile.ts. */
 export default function ProfileCard({ onContact }: { onContact: () => void }) {
   const { live } = PROFILE
@@ -32,32 +33,27 @@ export default function ProfileCard({ onContact }: { onContact: () => void }) {
       </div>
 
       <div className="relative flex flex-col items-start gap-stack p-panel">
-        {/* Reserves the badge's height when she is not live, so the avatar
-            does not jump when the badge comes and goes. */}
-        <div className="min-h-[26px]">
-          {live && (
-            <a
-              href={live.href}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="label-mono inline-flex items-center gap-glyph rounded-full border border-foreground/80 bg-live px-2.5 py-1 text-on-live transition-[filter] hover:brightness-110"
-            >
-              <Radio size={12} aria-hidden /> {live.label}
-            </a>
-          )}
-        </div>
+        {live && (
+          <a
+            href={live.href}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="label-mono inline-flex items-center gap-glyph rounded-full border border-foreground/80 bg-live px-2.5 py-1 text-on-live transition-[filter] hover:brightness-110"
+          >
+            <Radio size={12} aria-hidden /> {live.label}
+          </a>
+        )}
 
-        <div className="my-4">
-          <Avatar
-            src={profilePic}
-            alt={PROFILE.name}
-            live={live && live.label}
+        <Avatar src={profilePic} alt={PROFILE.name} live={live && live.label} />
+
+        <h1 className="w-full max-w-80">
+          <img
+            src={tagPic}
+            alt={`${PROFILE.name} X`}
+            width={640}
+            height={369}
+            className="tag-mark h-auto w-full"
           />
-        </div>
-
-        <h1 className="wordmark display-wordmark flex items-center gap-2">
-          <span className="wordmark-chrome">{PROFILE.name}</span>
-          <span className="wordmark-x">X</span>
         </h1>
 
         <ul className="flex flex-wrap gap-cluster" aria-label="Plays">
@@ -85,7 +81,7 @@ export default function ProfileCard({ onContact }: { onContact: () => void }) {
 
         <div className="flex w-full flex-wrap items-center justify-between gap-part">
           <ul className="flex flex-wrap gap-cluster" aria-label="Elsewhere">
-            {SOCIALS.map(({ icon, label, href }) => (
+            {VISIBLE_SOCIALS.map(({ icon, label, href }) => (
               <li key={href}>
                 <SocialButton icon={icon} label={label} href={href} />
               </li>
