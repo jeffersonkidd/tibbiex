@@ -9,7 +9,7 @@ import { PORTFOLIO } from "./content/portfolio"
 import type { BandId, Photo } from "./content/portfolio"
 import { YOUTH_ANTHEMS_BUNDLE } from "./content/shop"
 import type { ShopGroupId, ShopItem } from "./content/shop"
-import { VISIBLE_TABS } from "./content/tabs"
+import { VISIBLE_TABS, isTabEnabled } from "./content/tabs"
 import type { Tab } from "./content/tabs"
 
 import { analyticsOptedOut } from "./lib/analytics"
@@ -142,7 +142,9 @@ export default function App() {
             <BuyTab
               band={shopBand}
               onBandChange={setShopBand}
-              onOpenPortfolio={openPortfolio}
+              onOpenPortfolio={
+                isTabEnabled("Portfolio") ? openPortfolio : undefined
+              }
               onOpenProduct={(item) => setModal({ kind: "product", item })}
             />
           )}

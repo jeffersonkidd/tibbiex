@@ -14,7 +14,7 @@ export default function BuyTab({
 }: {
   band: ShopGroupId | "all"
   onBandChange: (band: ShopGroupId | "all") => void
-  onOpenPortfolio: (band: BandId) => void
+  onOpenPortfolio?: (band: BandId) => void
   onOpenProduct: (item: ShopItem) => void
 }) {
   return (
@@ -57,11 +57,12 @@ export default function BuyTab({
 
         return (
           <section key={group.id} className="space-y-stack">
-            <div className="flex flex-wrap items-baseline justify-between gap-x-part gap-y-1 pt-2">
+            <div className="flex flex-col items-start gap-1 pt-2">
               <h2 className="heading-xl">{group.title}</h2>
               {/* The return leg of the portfolio link. "general" has no
-                  section to go back to, so it gets a count instead. */}
-              {band === null ? (
+                  section to go back to, and nothing does while the Portfolio
+                  tab is off, so those get a count instead. */}
+              {band === null || !onOpenPortfolio ? (
                 <span className="label-mono text-muted-foreground">
                   {group.items.length} items
                 </span>

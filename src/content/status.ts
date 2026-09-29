@@ -14,6 +14,7 @@ import { LINKS } from "./links"
 import { DISCOGRAPHY } from "./music"
 import { PORTFOLIO } from "./portfolio"
 import { PROFILE } from "./profile"
+import { isTabEnabled } from "./tabs"
 
 export type StagedEntry = {
   /* Where it lives, so the checklist reads as a place to go fix it. */
@@ -34,7 +35,8 @@ export function collectStaged(): StagedEntry[] {
     }
   }
 
-  for (const section of PORTFOLIO) {
+  /* A hidden tab is not going live, so its stand-ins are not blocking. */
+  for (const section of isTabEnabled("Portfolio") ? PORTFOLIO : []) {
     for (const photo of section.photos) {
       if (photo.staged) {
         entries.push({ area: `Portfolio · ${section.band}`, label: photo.alt })

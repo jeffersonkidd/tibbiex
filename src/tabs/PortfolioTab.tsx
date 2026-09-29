@@ -43,15 +43,15 @@ export default function PortfolioTab({
           id={`portfolio-${entry.id}`}
           className="surface scroll-mt-4 rounded-lg p-panel"
         >
-          <div className="flex flex-wrap items-baseline justify-between gap-x-part gap-y-1">
-            <h2 className="heading-xl">{entry.band}</h2>
+          <h2 className="heading-xl">{entry.band}</h2>
+
+          {/* The years ride with the role rather than beside the title, so a
+              band name that wraps on a phone leaves this row where it was. */}
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-x-part gap-y-2">
+            <Pill icon={Guitar}>{entry.role}</Pill>
             <span className="label-mono text-muted-foreground">
               {entry.years}
             </span>
-          </div>
-
-          <div className="mt-3">
-            <Pill icon={Guitar}>{entry.role}</Pill>
           </div>
 
           <p className="body-small mt-3 text-muted-foreground">{entry.blurb}</p>

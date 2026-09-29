@@ -16,15 +16,6 @@
 
 /* --- Display and headings ----------------------------------------------- */
 
-/* Cutive sits higher in the browser than in Figma. Both centre the line on the
-   font's ascent and descent, but they read different metrics from the file:
-   at any line height the browser's baseline lands 0.172em above Figma's, so
-   a heading-l title prints 5.5px high against its 50px sigil. The headings
-   below move their glyphs down by that much with a relative offset, which
-   shifts the ink and leaves the box -- and everything laid out around it --
-   where it was. The wordmark is left alone: marks.css trims its box by hand
-   against the browser's placement. */
-
 @utility display-wordmark {
   font-family: var(--font-display);
   font-size: var(--text-5xl);
@@ -35,11 +26,14 @@
 /* Band titles: the Portfolio sections and the Buy groups. */
 @utility heading-xl {
   font-family: var(--font-display);
-  font-size: var(--text-4xl);
+  font-size: var(--text-3xl);
   font-weight: var(--font-weight-normal);
-  line-height: 1.05;
+  /* Loose enough that the underline, which hangs 0.18em under the baseline,
+     stays inside the box instead of printing over the line below. */
+  line-height: 1.25;
   letter-spacing: 0.02em;
   text-transform: uppercase;
+  text-wrap: balance;
   /* Figma gives the offset and thickness as a percentage of the font size,
      which is what em is here. */
   text-decoration-line: underline;
@@ -48,18 +42,15 @@
   text-decoration-thickness: 0.08em;
   text-underline-offset: 0.1em;
   text-decoration-skip-ink: auto;
-  position: relative;
-  top: 0.172em;
 }
 
 /* Panel and modal titles. */
 @utility heading-l {
   font-family: var(--font-display);
-  font-size: var(--text-3xl);
+  font-size: var(--text-2xl);
   font-weight: var(--font-weight-normal);
-  line-height: 1;
-  position: relative;
-  top: 0.172em;
+  line-height: 1.15;
+  text-wrap: balance;
 }
 
 @utility heading-m {
@@ -76,8 +67,6 @@
   font-size: var(--text-base);
   font-weight: var(--font-weight-normal);
   line-height: 1.15;
-  position: relative;
-  top: 0.172em;
 }
 
 /* --- Body --------------------------------------------------------------- */

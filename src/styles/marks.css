@@ -7,10 +7,10 @@
 /* --- The Tibbie X wordmark ------------------------------------------------
    Matches the Figma "Profile Card" (Tibbie X - DSP, 4545:73): "Tibbie" in
    brushed chrome, the X a size up in hot red with a glow burning off its top
-   edge. Figma sets it in American Typewriter, an Apple system face that cannot
-   be downloaded; Cutive is the site's typewriter face and renders the same
-   everywhere. The letter-spacing below is tuned to it. Never bold it -- Cutive
-   has one weight, so a bold would be a synthesised smear.
+   edge. The face is --font-display, Permanent Marker. The letter-spacing below
+   was tuned for Cutive, the face before it, and has not been re-measured.
+   Never bold it -- Permanent Marker has one weight, so a bold would be a
+   synthesised smear.
 
    Both parts paint a gradient through the glyph. background-clip: text only
    paints inside the padding box, so each part carries padding for headroom
