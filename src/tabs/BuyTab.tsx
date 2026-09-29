@@ -1,22 +1,31 @@
 import { ChevronRight } from "lucide-react"
 
-import { SHOP_GROUPS } from "../content/shop"
-import type { ShopGroupId, ShopItem } from "../content/shop"
+import { ART, SHOP_GROUPS, SHOP_SHELVES } from "../content/shop"
+import type { ShopItem, ShopShelf } from "../content/shop"
 import type { BandId } from "../content/portfolio"
 import FilterPill from "../ui/controls/FilterPill"
 import ShopCard from "../ui/cards/ShopCard"
 
 export default function BuyTab({
+  shelf,
+  onShelfChange,
   band: shopBand,
   onBandChange,
   onOpenPortfolio,
   onOpenProduct,
 }: {
-  band: ShopGroupId | "all"
-  onBandChange: (band: ShopGroupId | "all") => void
+  shelf: ShopShelf
+  onShelfChange: (shelf: ShopShelf) => void
+  band: BandId
+  onBandChange: (band: BandId) => void
   onOpenPortfolio?: (band: BandId) => void
   onOpenProduct: (item: ShopItem) => void
 }) {
+  /* A band with nothing for sale has no pill, so a hand-off to one falls back
+     to the first band rather than an empty shelf. */
+  const shown =
+    SHOP_GROUPS.find((group) => group.id === shopBand) ?? SHOP_GROUPS[0]
+
   return (
     <>
       {/* Says who made the goods, which is the studio's whole claim:
@@ -29,66 +38,75 @@ export default function BuyTab({
         Made in-house at <span className="text-accent">Tibbie X Studio</span>
       </p>
 
-      {/* Filter strip -- also the way back out of a band the portfolio
-          dropped the visitor into. */}
+      {/* First filter: which shelf. */}
       <div className="surface hide-scrollbar flex gap-cluster overflow-x-auto rounded-lg bg-card/50 p-strip">
-        <FilterPill
-          label="All"
-          active={shopBand === "all"}
-          onClick={() => onBandChange("all")}
-        />
-        {SHOP_GROUPS.map((group) => (
+        {SHOP_SHELVES.map((entry) => (
           <FilterPill
-            key={group.id}
-            label={group.title}
-            active={shopBand === group.id}
-            onClick={() => onBandChange(group.id)}
+            key={entry.id}
+            label={entry.title}
+            active={shelf === entry.id}
+            onClick={() => onShelfChange(entry.id)}
           />
         ))}
       </div>
 
-      {SHOP_GROUPS.filter(
-        (group) => shopBand === "all" || shopBand === group.id,
-      ).map((group) => {
-        /* Pulled out of the JSX so the "general" check narrows for the
-           click handler too -- TS drops narrowing on a callback param
-           once it is captured in a closure. */
-        const band = group.id === "general" ? null : group.id
+      {shelf === "art" && <ShopGrid items={ART} onOpen={onOpenProduct} />}
 
-        return (
-          <section key={group.id} className="space-y-stack">
+      {/* Second filter, Bands only -- also the way back out of a band the
+          portfolio dropped the visitor into. */}
+      {shelf === "bands" && (
+        <>
+          <div className="surface hide-scrollbar flex gap-cluster overflow-x-auto rounded-lg bg-card/50 p-strip">
+            {SHOP_GROUPS.map((group) => (
+              <FilterPill
+                key={group.id}
+                label={group.title}
+                active={shown.id === group.id}
+                onClick={() => onBandChange(group.id)}
+              />
+            ))}
+          </div>
+
+          <section className="space-y-stack">
             <div className="flex flex-col items-start gap-1 pt-2">
-              <h2 className="heading-xl">{group.title}</h2>
-              {/* The return leg of the portfolio link. "general" has no
-                  section to go back to, and nothing does while the Portfolio
-                  tab is off, so those get a count instead. */}
-              {band === null || !onOpenPortfolio ? (
-                <span className="label-mono text-muted-foreground">
-                  {group.items.length} items
-                </span>
-              ) : (
+              <h2 className="heading-xl">{shown.title}</h2>
+              {/* The return leg of the portfolio link. Nothing to go back to
+                  while the Portfolio tab is off, so it gets a count instead. */}
+              {onOpenPortfolio ? (
                 <button
                   type="button"
-                  onClick={() => onOpenPortfolio(band)}
+                  onClick={() => onOpenPortfolio(shown.id)}
                   className="label-mono flex items-center gap-1 text-muted-foreground transition-colors hover:text-accent"
                 >
                   View credits <ChevronRight className="h-3.5 w-3.5" />
                 </button>
+              ) : (
+                <span className="label-mono text-muted-foreground">
+                  {shown.items.length} items
+                </span>
               )}
             </div>
 
-            <div className="grid grid-cols-1 gap-stack sm:grid-cols-2">
-              {group.items.map((item) => (
-                <ShopCard
-                  key={item.id}
-                  item={item}
-                  onOpen={() => onOpenProduct(item)}
-                />
-              ))}
-            </div>
+            <ShopGrid items={shown.items} onOpen={onOpenProduct} />
           </section>
-        )
-      })}
+        </>
+      )}
     </>
+  )
+}
+
+function ShopGrid({
+  items,
+  onOpen,
+}: {
+  items: ShopItem[]
+  onOpen: (item: ShopItem) => void
+}) {
+  return (
+    <div className="grid grid-cols-1 gap-stack sm:grid-cols-2">
+      {items.map((item) => (
+        <ShopCard key={item.id} item={item} onOpen={() => onOpen(item)} />
+      ))}
+    </div>
   )
 }

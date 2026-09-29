@@ -9,7 +9,7 @@ const GASH = `${MEDIA_URL}/portfolio/gash`
 
 /* One id per band/project. It is the join between a portfolio section and the
    items it sells, so a typo is a type error rather than an empty shelf at
-   runtime. Anything not tied to one band is tagged "general". */
+   runtime. Anything not tied to one band goes on the Buy tab's Art shelf. */
 export type BandId = "leftover-crack" | "reagan-youth" | "gash"
 
 // Portfolio entries: one section per band/project. Dates and credits below are

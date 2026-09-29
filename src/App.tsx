@@ -7,8 +7,8 @@ import { REAGAN_YOUTH_LP } from "./content/music"
 import type { Album } from "./content/music"
 import { PORTFOLIO } from "./content/portfolio"
 import type { BandId, Photo } from "./content/portfolio"
-import { YOUTH_ANTHEMS_BUNDLE } from "./content/shop"
-import type { ShopGroupId, ShopItem } from "./content/shop"
+import { SHOP_GROUPS, YOUTH_ANTHEMS_BUNDLE } from "./content/shop"
+import type { ShopItem, ShopShelf } from "./content/shop"
 import { VISIBLE_TABS, isTabEnabled } from "./content/tabs"
 import type { Tab } from "./content/tabs"
 
@@ -55,9 +55,11 @@ type Modal =
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>(VISIBLE_TABS[0].label)
   const [modal, setModal] = useState<Modal | null>(null)
-  /* Which band the Buy tab is narrowed to. Set from a portfolio section's
-     shop link, and resettable from the filter strip. */
-  const [shopBand, setShopBand] = useState<ShopGroupId | "all">("all")
+  /* Which shelf the Buy tab shows, and which band the Bands shelf is
+     narrowed to. Both are set from a portfolio section's shop link, and
+     resettable from the filter strips. */
+  const [shopShelf, setShopShelf] = useState<ShopShelf>("bands")
+  const [shopBand, setShopBand] = useState<BandId>(SHOP_GROUPS[0].id)
   /* The same idea one tab over, except the Portfolio strip always has exactly
      one band selected -- there is no "all" view of the credits. */
   const [portfolioBand, setPortfolioBand] = useState<BandId>(PORTFOLIO[0].id)
@@ -71,6 +73,7 @@ export default function App() {
      band, and put the tab strip back under the user's eye -- the Buy panel
      can start well below the fold after a long portfolio scroll. */
   function openShop(band: BandId) {
+    setShopShelf("bands")
     setShopBand(band)
     setActiveTab("Buy")
     tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
@@ -140,6 +143,8 @@ export default function App() {
 
           {activeTab === "Buy" && (
             <BuyTab
+              shelf={shopShelf}
+              onShelfChange={setShopShelf}
               band={shopBand}
               onBandChange={setShopBand}
               onOpenPortfolio={

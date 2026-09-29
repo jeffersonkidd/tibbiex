@@ -8,7 +8,9 @@ export type ShopItem = {
   /* Whole dollars. Formatted where it is shown, and sent as-is to checkout. */
   price: number
   image: string
-  band: BandId | "general"
+  /* Whose shelf it sits on under Bands. An art piece may name a band whose
+     mark is on it, or none. */
+  band?: BandId
   /* Everything below is optional detail for the product modal. An item
      without it still opens, and shows what it has. */
   /* Extra angles, shown as thumbnails under the main image. */
@@ -62,28 +64,12 @@ export const YOUTH_ANTHEMS_BUNDLE: ShopItem = {
 export const BUY: ShopItem[] = markStaged([
   YOUTH_ANTHEMS_BUNDLE,
   {
-    id: "m1",
-    item: "Logo Patch",
-    price: 5,
-    image:
-      "https://images.unsplash.com/photo-1614082242765-7c98ca0f3df3?q=80&w=400&auto=format&fit=crop",
-    band: "general",
-  },
-  {
     id: "m2",
     item: "Constructs of the State — Vinyl",
     price: 25,
     image:
       "https://images.unsplash.com/photo-1538356111053-748a48e1acb8?q=80&w=400&auto=format&fit=crop",
     band: "leftover-crack",
-  },
-  {
-    id: "m3",
-    item: "Signature Bass Pick (3-pack)",
-    price: 10,
-    image:
-      "https://images.unsplash.com/photo-1519508234239-44619d854291?q=80&w=400&auto=format&fit=crop",
-    band: "general",
   },
   {
     id: "m4",
@@ -127,39 +113,67 @@ export const BUY: ShopItem[] = markStaged([
   },
 ])
 
+/* The Art shelf: the studio's own work, and anything not tied to one band. It
+   is not spread into BUY, so nothing here reaches SHOP_BY_BAND or a portfolio
+   section's shop link -- `band`, where set, only says whose mark is on it.
+   Placeholder until the first real piece is photographed. */
+export const ART: ShopItem[] = markStaged([
+  {
+    id: "a1",
+    item: "Reagan Youth Patch — Hand Painted",
+    price: 12,
+    image:
+      "https://images.unsplash.com/photo-1614082242765-7c98ca0f3df3?q=80&w=400&auto=format&fit=crop",
+    band: "reagan-youth",
+  },
+  {
+    id: "a2",
+    item: "Logo Patch",
+    price: 5,
+    image:
+      "https://images.unsplash.com/photo-1614082242765-7c98ca0f3df3?q=80&w=400&auto=format&fit=crop",
+  },
+  {
+    id: "a3",
+    item: "Signature Bass Pick (3-pack)",
+    price: 10,
+    image:
+      "https://images.unsplash.com/photo-1519508234239-44619d854291?q=80&w=400&auto=format&fit=crop",
+  },
+])
+
+/* The Buy tab's first filter. Bands narrows again by band (SHOP_GROUPS);
+   Art is one flat shelf with no second strip. */
+export type ShopShelf = "bands" | "art"
+
+export const SHOP_SHELVES: { id: ShopShelf; title: string }[] = [
+  { id: "bands", title: "Bands" },
+  { id: "art", title: "Art" },
+]
+
 /* Portfolio -> Buy wiring. The groups are derived from the two arrays above
    rather than maintained by hand, so adding a band or a product needs no edit
-   here. `SHOP_BY_BAND` keeps the catalogue order within each group, and
-   "general" is rendered last as the everything-else shelf. */
+   here. `SHOP_BY_BAND` keeps the catalogue order within each group. */
 export const SHOP_BY_BAND = BUY.reduce(
   (groups, item) => {
-    ;(groups[item.band] ??= []).push(item)
+    if (item.band) (groups[item.band] ??= []).push(item)
     return groups
   },
-  {} as Record<ShopGroupId, ShopItem[] | undefined>,
+  {} as Record<BandId, ShopItem[] | undefined>,
 )
 
 export function shopFor(band: BandId) {
   return SHOP_BY_BAND[band] ?? []
 }
 
-/* Group order for the Buy tab: the bands in portfolio order, then the
-   unaffiliated items. Groups with nothing in them drop out. */
-export type ShopGroupId = BandId | "general"
-
+/* The band strip under Bands, in portfolio order. Bands with nothing for sale
+   drop out. */
 export const SHOP_GROUPS: {
-  id: ShopGroupId
+  id: BandId
   title: string
   items: ShopItem[]
-}[] = [
-  ...PORTFOLIO.map((entry) => ({
-    id: entry.id,
-    title: entry.band,
-    items: shopFor(entry.id),
-  })),
-  {
-    id: "general" as const,
-    title: "Everything Else",
-    items: SHOP_BY_BAND.general ?? [],
-  },
-].filter((group) => group.items.length > 0)
+}[] = PORTFOLIO.map((entry) => ({
+  id: entry.id,
+  title: entry.band,
+  items: shopFor(entry.id),
+})).filter((group) => group.items.length > 0)
