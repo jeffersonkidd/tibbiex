@@ -1,6 +1,6 @@
 import { ChevronRight, ShoppingBag } from "lucide-react"
 
-import { formatPrice, shopFor } from "../../content/shop"
+import { formatPrice, lowestPrice, shopFor } from "../../content/shop"
 import type { BandId, PortfolioEntry } from "../../content/portfolio"
 
 /* The portfolio -> Buy hand-off, rendered inside a portfolio section. It is a
@@ -16,9 +16,7 @@ export default function ShopLink({
   const items = shopFor(entry.id)
   if (items.length === 0) return null
 
-  const cheapest = items.reduce((low, item) =>
-    item.price < low.price ? item : low,
-  )
+  const cheapest = Math.min(...items.map(lowestPrice))
 
   return (
     <button
@@ -34,7 +32,7 @@ export default function ShopLink({
           <span className="body-small-bold block">Shop {entry.band}</span>
           <span className="label-mono mt-0.5 block text-muted-foreground">
             {items.length} {items.length === 1 ? "item" : "items"} · from{" "}
-            {formatPrice(cheapest.price)}
+            {formatPrice(cheapest)}
           </span>
         </span>
       </span>

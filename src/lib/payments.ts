@@ -2,7 +2,7 @@ import { useEffect } from "react"
 import { toast } from "sonner"
 
 import { venmoPayUrl } from "../content/payments"
-import type { Rail } from "../content/payments"
+import type { Mail, Rail } from "../content/payments"
 
 /* What a payment is for. The server maps each one to the name, receipt
    wording and metadata Stripe shows, so a client can pick a purpose but never
@@ -13,6 +13,8 @@ export type Order = {
   amount: number
   note: string
   purpose: CheckoutPurpose
+  /* Shop orders only: which shipping rate Stripe adds on top. */
+  mail?: Mail
 }
 
 /* Client half of the card rail. Asks the serverless function (api/checkout.ts)

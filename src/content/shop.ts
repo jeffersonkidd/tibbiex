@@ -1,13 +1,36 @@
 import { markStaged } from "./staged"
 import { PORTFOLIO } from "./portfolio"
 import type { BandId } from "./portfolio"
+import type { Mail } from "./payments"
+import { MEDIA_URL } from "./site"
 
-export type ShopItem = {
+export type Size = { label: string; soldOut?: true }
+
+/* One thing a buyer picks and pays for. A plain item is its own single
+   format; a piece of art sold several ways (sticker, patch, tee) lists one
+   per way, each with its own price, sizes and spec. */
+export type ShopFormat = {
+  id: string
+  label: string
+  /* Whole dollars, before shipping. Formatted where it is shown, and sent
+     as-is to checkout. */
+  price: number
+  /* Offered sizes, in order. A sold-out size stays listed, struck through. */
+  sizes?: Size[]
+  /* What is in the box, label then detail. */
+  includes?: { label: string; detail: string }[]
+  /* Which shipping rate it takes -- see SHIPPING. A parcel unless it says. */
+  mail?: Mail
+}
+
+type ShopItemBase = {
   id: string
   item: string
-  /* Whole dollars. Formatted where it is shown, and sent as-is to checkout. */
-  price: number
   image: string
+  /* What the picture shows, when that is more than the item's name. */
+  alt?: string
+  /* A line or two under the price in the product modal. */
+  blurb?: string
   /* Whose shelf it sits on under Bands. An art piece may name a band whose
      mark is on it, or none. */
   band?: BandId
@@ -17,13 +40,30 @@ export type ShopItem = {
   gallery?: string[]
   /* A numbered or limited run. */
   stock?: { left: number; of: number }
-  /* Offered sizes, in order. A sold-out size stays listed, struck through. */
-  sizes?: { label: string; soldOut?: true }[]
-  /* What is in the box, label then detail. */
-  includes?: { label: string; detail: string }[]
   ships?: string
   /* Stock art or a provisional price -- see the content-status note. */
   staged?: true
+}
+
+/* An item is either one thing, priced on itself, or a list of formats --
+   never both, so a price only ever lives in one place. Read either shape
+   through formatsOf() and lowestPrice() rather than branching on it. */
+export type ShopItem = ShopItemBase &
+  (
+    | (Omit<ShopFormat, "id" | "label"> & { formats?: never })
+    | { formats: ShopFormat[]; price?: never; sizes?: never }
+  )
+
+/* Every item as a list of formats: its own, or one standing in for the item
+   itself. */
+export function formatsOf(item: ShopItem): ShopFormat[] {
+  if (item.formats) return item.formats
+  const { id, item: label, price, sizes, includes, mail } = item
+  return [{ id, label, price, sizes, includes, mail }]
+}
+
+export function lowestPrice(item: ShopItem) {
+  return Math.min(...formatsOf(item).map((format) => format.price))
 }
 
 export const formatPrice = (price: number) => `$${price}`
@@ -113,34 +153,106 @@ export const BUY: ShopItem[] = markStaged([
   },
 ])
 
+const MENS_SIZES: Size[] = ["S", "M", "L", "XL", "2XL", "3XL"].map((label) => ({
+  label,
+}))
+const WOMENS_SIZES: Size[] = ["S", "M", "L", "XL", "2XL"].map((label) => ({
+  label,
+}))
+
+/* The first real piece on the shelf: the client's own art, formats and
+   prices, all plus shipping. Too detailed to shrink to a pin, so there
+   deliberately is no pin. The men's tee is on a Gildan blank; the women's is
+   the soft one with cap sleeves. Both tees are $35 -- the brief only priced
+   the women's outright, so confirm the men's matches -- and the patch size
+   came with a question mark ("5x7?"), so confirm that too.
+
+   index.html restates the four offers in its JSON-LD for crawlers, so a price
+   or format change is a hand-edit there as well. The photo is on the media
+   bucket under its own hash (see MEDIA_URL). */
+export const VAMPIRE_CATS: ShopItem = {
+  id: "a-vampire-cats",
+  item: "Vampire Cats",
+  image: `${MEDIA_URL}/shop/art/vampire-cats/artwork.76622c0e.jpg`,
+  alt: "Two red cats in spiked collars, fangs out, batting balls of yarn through teal waves and falling shards of red glass. Signed Tibbie X.",
+  blurb:
+    "Two vampire cats in spiked collars, loose in a sea of red glass. Original art by Tibbie X, in three formats.",
+  formats: [
+    {
+      id: "sticker",
+      label: "Sticker",
+      price: 5,
+      mail: "letter",
+      includes: [
+        { label: "Size", detail: "4 × 6 in" },
+        { label: "Art", detail: "Full color" },
+      ],
+    },
+    {
+      id: "patch",
+      label: "Patch",
+      price: 10,
+      mail: "letter",
+      includes: [
+        { label: "Size", detail: "5 × 7 in" },
+        { label: "Art", detail: "Full color" },
+      ],
+    },
+    {
+      id: "tee",
+      label: "Men’s tee",
+      price: 35,
+      sizes: MENS_SIZES,
+      includes: [
+        { label: "Blank", detail: "Gildan" },
+        { label: "Cut", detail: "Men’s, classic fit" },
+      ],
+    },
+    {
+      id: "tee-womens",
+      label: "Women’s tee",
+      price: 35,
+      sizes: WOMENS_SIZES,
+      includes: [
+        { label: "Blank", detail: "The soft one" },
+        { label: "Cut", detail: "Women’s, cap sleeves" },
+      ],
+    },
+  ],
+  ships: "Ships US and international",
+}
+
 /* The Art shelf: the studio's own work, and anything not tied to one band. It
    is not spread into BUY, so nothing here reaches SHOP_BY_BAND or a portfolio
    section's shop link -- `band`, where set, only says whose mark is on it.
-   Placeholder until the first real piece is photographed. */
-export const ART: ShopItem[] = markStaged([
-  {
-    id: "a1",
-    item: "Reagan Youth Patch — Hand Painted",
-    price: 12,
-    image:
-      "https://images.unsplash.com/photo-1614082242765-7c98ca0f3df3?q=80&w=400&auto=format&fit=crop",
-    band: "reagan-youth",
-  },
-  {
-    id: "a2",
-    item: "Logo Patch",
-    price: 5,
-    image:
-      "https://images.unsplash.com/photo-1614082242765-7c98ca0f3df3?q=80&w=400&auto=format&fit=crop",
-  },
-  {
-    id: "a3",
-    item: "Signature Bass Pick (3-pack)",
-    price: 10,
-    image:
-      "https://images.unsplash.com/photo-1519508234239-44619d854291?q=80&w=400&auto=format&fit=crop",
-  },
-])
+   Everything after Vampire Cats is placeholder. */
+export const ART: ShopItem[] = [
+  VAMPIRE_CATS,
+  ...markStaged<ShopItem>([
+    {
+      id: "a1",
+      item: "Reagan Youth Patch — Hand Painted",
+      price: 12,
+      image:
+        "https://images.unsplash.com/photo-1614082242765-7c98ca0f3df3?q=80&w=400&auto=format&fit=crop",
+      band: "reagan-youth",
+    },
+    {
+      id: "a2",
+      item: "Logo Patch",
+      price: 5,
+      image:
+        "https://images.unsplash.com/photo-1614082242765-7c98ca0f3df3?q=80&w=400&auto=format&fit=crop",
+    },
+    {
+      id: "a3",
+      item: "Signature Bass Pick (3-pack)",
+      price: 10,
+      image:
+        "https://images.unsplash.com/photo-1519508234239-44619d854291?q=80&w=400&auto=format&fit=crop",
+    },
+  ]),
+]
 
 /* The Buy tab's first filter. Bands narrows again by band (SHOP_GROUPS);
    Art is one flat shelf with no second strip. */

@@ -1,10 +1,11 @@
 import { ShoppingBag } from "lucide-react"
 
-import { formatPrice } from "../../content/shop"
+import { formatPrice, formatsOf, lowestPrice } from "../../content/shop"
 import type { ShopItem } from "../../content/shop"
 
 /* One merch item in the Buy tab: image over a name-and-price bar. The whole
-   card is the button that opens the item in the product modal. */
+   card is the button that opens the item in the product modal. An item sold
+   in several formats shows its lowest price, marked "from". */
 export default function ShopCard({
   item,
   onOpen,
@@ -12,6 +13,8 @@ export default function ShopCard({
   item: ShopItem
   onOpen: () => void
 }) {
+  const ranged = formatsOf(item).length > 1
+
   return (
     <button
       type="button"
@@ -21,7 +24,7 @@ export default function ShopCard({
       <div className="h-48 overflow-hidden">
         <img
           src={item.image}
-          alt={item.item}
+          alt={item.alt ?? item.item}
           loading="lazy"
           decoding="async"
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
@@ -30,7 +33,10 @@ export default function ShopCard({
       <div className="flex items-center justify-between gap-part p-card">
         <div className="body-small-bold">{item.item}</div>
         <span className="flex shrink-0 items-center gap-glyph body-base-bold text-accent">
-          {formatPrice(item.price)}{" "}
+          {ranged && (
+            <span className="label-mono text-muted-foreground">from</span>
+          )}
+          {formatPrice(lowestPrice(item))}{" "}
           <ShoppingBag className="h-4 w-4 text-muted-foreground" />
         </span>
       </div>

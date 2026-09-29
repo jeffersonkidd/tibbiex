@@ -74,8 +74,9 @@
          renders client-side, so anything React injects is invisible to
          crawlers that do not run JS. The URLs are absolute and must stay in
          step with SITE_URL and CONTACT_EMAIL (src/content/site.ts) and
-         SOCIALS (src/content/profile.ts), and the reading tiers with
-         READINGS.
+         SOCIALS (src/content/profile.ts), the reading tiers with
+         READINGS, and the #shop offers with VAMPIRE_CATS
+         (src/content/shop.ts).
 
          Person.image is a square portrait served unhashed from public/, not
          the wide og.jpg share card: it is the image that stands for the
@@ -90,16 +91,15 @@
          entity they identify, which is the opposite of what they are for.
 
          Prices come from READINGS, which carries no `staged` flag -- those are
-         confirmed. BUY is markStaged end to end, so the merch catalogue is
-         deliberately absent: structured data has to match confirmed, visible
-         content, and fabricated SKUs are a manual-action risk. SHOWS
+         confirmed. The placeholder merch (everything markStaged in BUY and
+         ART) is deliberately absent: structured data has to match confirmed,
+         visible content, and fabricated SKUs are a manual-action risk. SHOWS
          (MusicEvent) is out for the same reason.
 
-         When the real catalogue lands -- prints, artwork, apparel, stickers,
-         patches, pins -- it wants a second OfferCatalog on #studio, and those
-         are all made in-house, so each Product takes both
-         `manufacturer` and `brand` pointing at #studio, not just
-         `Offer.seller`. That is the whole difference between a maker and a
+         The real catalogue is #shop, the second OfferCatalog on #studio, and
+         Vampire Cats is its first piece. Studio work is made in-house, so
+         each Product takes both `manufacturer` and `brand` pointing at
+         #studio, not just `Offer.seller`. That is the whole difference between a maker and a
          storefront, and it is what earns the studio the entity rather than
          leaving it a reseller of other people's goods.
 
@@ -137,7 +137,10 @@
             "email": "mailto:contact@tibbiex.studio",
             "founder": { "@id": "https://tibbiex.studio/#tibbie-x" },
             "employee": { "@id": "https://tibbiex.studio/#tibbie-x" },
-            "hasOfferCatalog": { "@id": "https://tibbiex.studio/#readings" }
+            "hasOfferCatalog": [
+              { "@id": "https://tibbiex.studio/#readings" },
+              { "@id": "https://tibbiex.studio/#shop" }
+            ]
           },
           {
             "@type": "Person",
@@ -210,6 +213,103 @@
                   "serviceType": "Tarot reading",
                   "description": "Ninety minutes over FaceTime. A deep read with nobody watching the clock: two spreads of your choosing, a voice note recap and a written summary.",
                   "provider": { "@id": "https://tibbiex.studio/#tibbie-x" }
+                }
+              }
+            ]
+          },
+          {
+            "@type": "OfferCatalog",
+            "@id": "https://tibbiex.studio/#shop",
+            "name": "Tibbie X Studio shop",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "price": "5.00",
+                "priceCurrency": "USD",
+                "availability": "https://schema.org/InStock",
+                "url": "https://tibbiex.studio/",
+                "seller": {
+                  "@id": "https://tibbiex.studio/#studio"
+                },
+                "itemOffered": {
+                  "@type": "Product",
+                  "name": "Vampire Cats Sticker",
+                  "description": "A 4 × 6 in full-color sticker of Vampire Cats, original art by Tibbie X.",
+                  "image": "https://media.tibbiex.studio/shop/art/vampire-cats/artwork.76622c0e.jpg",
+                  "size": "4 × 6 in",
+                  "brand": {
+                    "@id": "https://tibbiex.studio/#studio"
+                  },
+                  "manufacturer": {
+                    "@id": "https://tibbiex.studio/#studio"
+                  }
+                }
+              },
+              {
+                "@type": "Offer",
+                "price": "10.00",
+                "priceCurrency": "USD",
+                "availability": "https://schema.org/InStock",
+                "url": "https://tibbiex.studio/",
+                "seller": {
+                  "@id": "https://tibbiex.studio/#studio"
+                },
+                "itemOffered": {
+                  "@type": "Product",
+                  "name": "Vampire Cats Patch",
+                  "description": "A 5 × 7 in full-color patch of Vampire Cats, original art by Tibbie X.",
+                  "image": "https://media.tibbiex.studio/shop/art/vampire-cats/artwork.76622c0e.jpg",
+                  "size": "5 × 7 in",
+                  "brand": {
+                    "@id": "https://tibbiex.studio/#studio"
+                  },
+                  "manufacturer": {
+                    "@id": "https://tibbiex.studio/#studio"
+                  }
+                }
+              },
+              {
+                "@type": "Offer",
+                "price": "35.00",
+                "priceCurrency": "USD",
+                "availability": "https://schema.org/InStock",
+                "url": "https://tibbiex.studio/",
+                "seller": {
+                  "@id": "https://tibbiex.studio/#studio"
+                },
+                "itemOffered": {
+                  "@type": "Product",
+                  "name": "Vampire Cats Men’s Tee",
+                  "description": "Vampire Cats on a men’s Gildan tee, S to 3XL. Original art by Tibbie X.",
+                  "image": "https://media.tibbiex.studio/shop/art/vampire-cats/artwork.76622c0e.jpg",
+                  "brand": {
+                    "@id": "https://tibbiex.studio/#studio"
+                  },
+                  "manufacturer": {
+                    "@id": "https://tibbiex.studio/#studio"
+                  }
+                }
+              },
+              {
+                "@type": "Offer",
+                "price": "35.00",
+                "priceCurrency": "USD",
+                "availability": "https://schema.org/InStock",
+                "url": "https://tibbiex.studio/",
+                "seller": {
+                  "@id": "https://tibbiex.studio/#studio"
+                },
+                "itemOffered": {
+                  "@type": "Product",
+                  "name": "Vampire Cats Women’s Tee",
+                  "description": "Vampire Cats on a soft women’s cap-sleeve tee, S to 2XL. Original art by Tibbie X.",
+                  "image": "https://media.tibbiex.studio/shop/art/vampire-cats/artwork.76622c0e.jpg",
+                  "brand": {
+                    "@id": "https://tibbiex.studio/#studio"
+                  },
+                  "manufacturer": {
+                    "@id": "https://tibbiex.studio/#studio"
+                  }
                 }
               }
             ]

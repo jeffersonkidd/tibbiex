@@ -29,3 +29,26 @@ export function venmoPayUrl(amount: number, note: string) {
 /* The fine print under a paying panel's button. The Venmo half of it is on
    the link itself, which names the handle. */
 export const CARD_HINT = "Card payments are processed by Stripe."
+
+/* How a shop order travels: flat in an envelope (a sticker, a patch) or
+   bagged as a parcel (a tee, a record). Each shop format names one. */
+export type Mail = "letter" | "parcel"
+
+/* Every shop price is plus shipping, a flat rate per kind of mail, in whole
+   dollars. Stripe offers both columns and the payer picks theirs -- Checkout
+   cannot filter fixed rates by the address it collects. Venmo takes no address,
+   so it is charged the US rate and anything further is settled by DM.
+
+   The rates are provisional (USPS letter and Ground Advantage, roughly).
+   api/checkout.ts cannot import this file and keeps its own copy in
+   SHIPPING_RATES, which is the one Stripe actually charges: change both. */
+export const SHIPPING: {
+  rates: Record<Mail, { us: number; world: number }>
+  staged?: true
+} = {
+  rates: {
+    letter: { us: 3, world: 6 },
+    parcel: { us: 6, world: 18 },
+  },
+  staged: true,
+}

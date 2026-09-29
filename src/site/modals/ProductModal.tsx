@@ -2,13 +2,14 @@ import { useEffect, useState } from "react"
 import { BellRing, ShoppingBag } from "lucide-react"
 import { toast } from "sonner"
 
-import { CARD_HINT } from "../../content/payments"
+import { CARD_HINT, SHIPPING } from "../../content/payments"
 import { VENMO_HANDLE } from "../../content/site"
-import { formatPrice } from "../../content/shop"
-import type { ShopItem } from "../../content/shop"
+import { formatPrice, formatsOf } from "../../content/shop"
+import type { ShopFormat, ShopItem } from "../../content/shop"
 import { isEmail } from "../../lib/email"
 import { sendMessage } from "../../lib/messages"
 import { payVia } from "../../lib/payments"
+import type { Order } from "../../lib/payments"
 import Button from "../../ui/controls/Button"
 import Chip from "../../ui/controls/Chip"
 import EmailField from "../../ui/controls/EmailField"
@@ -21,14 +22,20 @@ import OverlayBody from "../../ui/overlays/OverlayBody"
 
 /* One item from the shop, opened from its card or from the Home tab's offer
    row -- from the component reference in .files/tibbiex-components.html.
-   Gallery, run count, sizes, what's in the box, then the buy button. Every
-   section is optional and drops out when the item has no data for it, so a
-   plain patch and the numbered bundle share this one modal.
+   Gallery, run count, format, sizes, what's in the box, then the buy button.
+   Every section is optional and drops out when the item has no data for it,
+   so a plain patch, the numbered bundle and a piece of art sold as sticker,
+   patch or tee share this one modal.
 
-   The button goes to Stripe, which collects the shipping address -- which is
-   why it is the button and Venmo is only the link under it: a Venmo order
-   arrives with no address, so that line says to send one by DM. Under it all,
-   a restock alert for a run that is gone or a size that sold out. */
+   An item with several formats opens on the first, so there is always a
+   price, a spec and a button that says what it buys; picking another format
+   clears the size, since the two tees do not share a size run.
+
+   The button goes to Stripe, which collects the shipping address and adds
+   the shipping rate -- which is why it is the button and Venmo is only the
+   link under it: a Venmo order arrives with no address, so it is charged the
+   US rate and that line says to send one by DM. Under it all, a restock alert
+   for a run that is gone or a size that sold out. */
 export default function ProductModal({
   item,
   onClose,
@@ -37,13 +44,18 @@ export default function ProductModal({
   onClose: () => void
 }) {
   const photos = item.gallery?.length ? item.gallery : [item.image]
-  const sizes = item.sizes ?? []
+  const formats = formatsOf(item)
+  const choosing = formats.length > 1
   const soldOut = item.stock?.left === 0
 
   const [photo, setPhoto] = useState(0)
+  const [format, setFormat] = useState<ShopFormat>(formats[0])
   const [size, setSize] = useState<string | null>(null)
   const [sizeError, setSizeError] = useState(false)
   const [sending, setSending] = useState(false)
+
+  const sizes = format.sizes ?? []
+  const shipping = SHIPPING.rates[format.mail ?? "parcel"]
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -53,7 +65,7 @@ export default function ProductModal({
     return () => window.removeEventListener("keydown", onKey)
   }, [onClose])
 
-  /* Both ways out need a size on an item that has them. */
+  /* Both ways out need a size on a format that has them. */
   function sizeMissing() {
     if (sizes.length > 0 && !size) {
       setSizeError(true)
@@ -62,11 +74,17 @@ export default function ProductModal({
     return false
   }
 
-  const order = {
-    amount: item.price,
-    note: size ? `${item.item} — ${size}` : item.item,
+  /* What was picked, in words: "Men's tee, L", or just "L" on an item that
+     is its own only format. It names the order in Stripe and on Venmo, and
+     the restock request. */
+  const picked = [choosing && format.label, size].filter(Boolean).join(", ")
+
+  const order: Order = {
+    amount: format.price,
+    note: picked ? `${item.item} — ${picked}` : item.item,
     purpose: "shop",
-  } as const
+    mail: format.mail ?? "parcel",
+  }
 
   async function buy() {
     if (sizeMissing()) return
@@ -84,19 +102,26 @@ export default function ProductModal({
   }
 
   /* No await ahead of payVia here: the Venmo tab has to open inside the click
-     or the browser blocks it. */
+     or the browser blocks it. Stripe adds shipping on its own page; Venmo has
+     no page, so the US rate rides on the amount and says so in the note. */
   function payWithVenmo() {
     if (sizeMissing()) return
-    payVia("venmo", order)
+    payVia("venmo", {
+      ...order,
+      amount: order.amount + shipping.us,
+      note: `${order.note} + US shipping`,
+    })
     toast.success("Venmo is open — DM your shipping address to finish.")
   }
 
   return (
     <Overlay onClose={onClose}>
+      {/* Square, because shop photos are, and art must not lose its edges:
+          the old 256px strip cut the lower Vampire Cat's head off. */}
       <img
         src={photos[photo]}
-        alt={item.item}
-        className="h-64 w-full bg-muted object-cover"
+        alt={item.alt ?? item.item}
+        className="aspect-square w-full bg-muted object-cover"
       />
       {photos.length > 1 && (
         <div
@@ -124,10 +149,11 @@ export default function ProductModal({
       )}
 
       <OverlayBody title={item.item}>
-        <div className="mt-2 flex items-baseline gap-part">
+        <div className="mt-2 flex flex-wrap items-baseline gap-x-part gap-y-1">
           <span className="numeric-amount text-accent">
-            {formatPrice(item.price)}
+            {formatPrice(format.price)}
           </span>
+          <span className="label-mono text-muted-foreground">+ shipping</span>
           {item.stock && (
             <span className="label-mono text-muted-foreground">
               {soldOut
@@ -136,15 +162,46 @@ export default function ProductModal({
             </span>
           )}
         </div>
+        {item.blurb && (
+          <p className="body-small mt-3 text-muted-foreground">{item.blurb}</p>
+        )}
 
         {!soldOut && (
           <>
+            {choosing && (
+              <fieldset className="mt-5">
+                <legend className="label-mono mb-2 text-muted-foreground">
+                  Format
+                </legend>
+                <div className="grid grid-cols-2 gap-cluster">
+                  {formats.map((entry) => (
+                    <Chip
+                      key={entry.id}
+                      pressed={format.id === entry.id}
+                      onClick={() => {
+                        setFormat(entry)
+                        setSize(null)
+                        setSizeError(false)
+                      }}
+                    >
+                      {entry.label}{" "}
+                      <span className="text-accent">
+                        {formatPrice(entry.price)}
+                      </span>
+                    </Chip>
+                  ))}
+                </div>
+              </fieldset>
+            )}
+
             {sizes.length > 0 && (
               <fieldset className="mt-5">
                 <legend className="label-mono mb-2 text-muted-foreground">
-                  Tee size
+                  Size
                 </legend>
-                <div className="grid grid-cols-4 gap-cluster">
+                {/* As many columns as fit at chip width: four sizes read as
+                    one row, a six-size run still does on a phone. */}
+                <div className="grid grid-cols-[repeat(auto-fit,minmax(3rem,1fr))] gap-cluster">
                   {sizes.map(({ label, soldOut: gone }) => (
                     <Chip
                       key={label}
@@ -176,10 +233,12 @@ export default function ProductModal({
             >
               {sending
                 ? "Opening Stripe…"
-                : `Buy${size ? ` ${size}` : ""} — ${formatPrice(item.price)}`}
+                : `Buy${picked ? ` ${picked}` : ""} — ${formatPrice(format.price)}`}
             </Button>
             <p className="body-xs mt-2 text-center text-muted-foreground">
-              {CARD_HINT} Stripe asks where to ship.
+              {CARD_HINT} Stripe asks where to ship and adds{" "}
+              {formatPrice(shipping.us)} US / {formatPrice(shipping.world)}{" "}
+              international.
               {item.ships && (
                 <>
                   <br />
@@ -191,39 +250,40 @@ export default function ProductModal({
             <div className="mt-2">
               <VenmoLink handle={VENMO_HANDLE} onClick={payWithVenmo} />
               <p className="body-xs mt-1 text-center text-muted-foreground">
-                Venmo takes no address — DM yours after.
+                Includes {formatPrice(shipping.us)} US shipping. Venmo takes no
+                address — DM yours after.
               </p>
             </div>
           </>
         )}
 
-        {item.includes && (
+        {format.includes && (
           <>
             <Separator space="md" />
             <span className="label-mono mb-2 block text-muted-foreground">
               What you get
             </span>
-            <DetailList items={item.includes} />
+            <DetailList items={format.includes} />
           </>
         )}
 
-        <RestockAlert item={item} size={size} soldOut={soldOut} />
+        <RestockAlert item={item} picked={picked} soldOut={soldOut} />
       </OverlayBody>
     </Overlay>
   )
 }
 
 /* "Tell me when it's back." Posts to api/contact.ts as a restock request --
-   the item and size ride along as the subject -- so it arrives in the inbox
+   the item and what was picked ride along as the subject -- so it arrives in the inbox
    whether or not the visitor has a mail app. It is a one-off note, not a list
    subscription, which is why it does not touch the audience. */
 function RestockAlert({
   item,
-  size,
+  picked,
   soldOut,
 }: {
   item: ShopItem
-  size: string | null
+  picked: string
   soldOut: boolean
 }) {
   const [email, setEmail] = useState("")
@@ -231,7 +291,9 @@ function RestockAlert({
   const [sent, setSent] = useState(false)
   const [sending, setSending] = useState(false)
   const [trap, setTrap] = useState("")
-  const anySizeGone = item.sizes?.some((s) => s.soldOut)
+  const anySizeGone = formatsOf(item).some((format) =>
+    format.sizes?.some((s) => s.soldOut),
+  )
 
   /* Only worth offering when something is, or could be, gone. */
   if (!soldOut && !item.stock && !anySizeGone) return null
@@ -248,7 +310,7 @@ function RestockAlert({
       await sendMessage({
         purpose: "restock",
         email,
-        subject: size ? `${item.item} (${size})` : item.item,
+        subject: picked ? `${item.item} (${picked})` : item.item,
         website: trap,
       })
       setSent(true)

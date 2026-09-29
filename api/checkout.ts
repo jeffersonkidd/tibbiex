@@ -63,6 +63,19 @@ const SHIPPING_COUNTRIES = [
   "JP",
 ]
 
+/* Flat shipping on every shop order, in cents, by how it travels: a sticker
+   or patch goes as a letter, a tee as a parcel. Checkout cannot filter fixed
+   rates by the address it collects, so both are offered and the payer picks
+   theirs -- the address on the order is there to check it against. A copy of
+   SHIPPING in src/content/payments.ts, which shows these to the visitor and
+   cannot be imported here: change both. */
+const SHIPPING_RATES = {
+  letter: { us: 300, world: 600 },
+  parcel: { us: 600, world: 1800 },
+} as const
+
+type Mail = keyof typeof SHIPPING_RATES
+
 function badRequest(message: string) {
   return Response.json({ error: message }, { status: 400 })
 }
@@ -80,6 +93,7 @@ export async function POST(request: Request) {
     amount?: unknown
     note?: unknown
     purpose?: unknown
+    mail?: unknown
   }
   try {
     payload = await request.json()
@@ -148,6 +162,27 @@ export async function POST(request: Request) {
         country,
       ),
     )
+
+    /* A missing or unknown kind of mail is charged as a parcel, the dearer
+       of the two, so a doctored request cannot ship a tee at letter rate by
+       omission. */
+    const mail: Mail =
+      typeof payload.mail === "string" && payload.mail in SHIPPING_RATES
+        ? (payload.mail as Mail)
+        : "parcel"
+    const rates = SHIPPING_RATES[mail]
+    const options = [
+      { name: "US shipping", cents: rates.us },
+      { name: "International shipping", cents: rates.world },
+    ]
+    options.forEach(({ name, cents }, i) => {
+      const key = `shipping_options[${i}][shipping_rate_data]`
+      params.set(`${key}[type]`, "fixed_amount")
+      params.set(`${key}[display_name]`, name)
+      params.set(`${key}[fixed_amount][amount]`, String(cents))
+      params.set(`${key}[fixed_amount][currency]`, "usd")
+    })
+    params.set("metadata[mail]", mail)
   }
 
   const stripeResponse = await fetch(STRIPE_API, {
