@@ -98,7 +98,7 @@ export const YOUTH_ANTHEMS_BUNDLE: ShopItem = {
     { label: "Logo tee", detail: "Screen printed" },
     { label: "Numbered", detail: "Hand marked, 1–20" },
   ],
-  ships: "Ships in 5 days · US and international",
+  ships: "Ships in 5 days",
 }
 
 export const BUY: ShopItem[] = markStaged([
@@ -219,7 +219,6 @@ export const VAMPIRE_CATS: ShopItem = {
       ],
     },
   ],
-  ships: "Ships US and international",
 }
 
 /* The Art shelf: the studio's own work, and anything not tied to one band. It

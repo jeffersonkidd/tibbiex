@@ -31,10 +31,10 @@ import OverlayBody from "../../ui/overlays/OverlayBody"
    price, a spec and a button that says what it buys; picking another format
    clears the size, since the two tees do not share a size run.
 
-   The button goes to Stripe, which collects the shipping address and adds
-   the shipping rate -- which is why it is the button and Venmo is only the
-   link under it: a Venmo order arrives with no address, so it is charged the
-   US rate and that line says to send one by DM. Under it all, a restock alert
+   The button goes to Stripe, which collects the address and adds shipping --
+   which is why it is the button and Venmo is only the link under it: a Venmo
+   order arrives with no address, so shipping rides on the amount and the
+   buyer DMs one. Under it all, a restock alert
    for a run that is gone or a size that sold out. */
 export default function ProductModal({
   item,
@@ -103,13 +103,13 @@ export default function ProductModal({
 
   /* No await ahead of payVia here: the Venmo tab has to open inside the click
      or the browser blocks it. Stripe adds shipping on its own page; Venmo has
-     no page, so the US rate rides on the amount and says so in the note. */
+     none, so it rides on the amount. */
   function payWithVenmo() {
     if (sizeMissing()) return
     payVia("venmo", {
       ...order,
-      amount: order.amount + shipping.us,
-      note: `${order.note} + US shipping`,
+      amount: order.amount + shipping,
+      note: `${order.note} + shipping`,
     })
     toast.success("Venmo is open — DM your shipping address to finish.")
   }
@@ -153,7 +153,9 @@ export default function ProductModal({
           <span className="numeric-amount text-accent">
             {formatPrice(format.price)}
           </span>
-          <span className="label-mono text-muted-foreground">+ shipping</span>
+          <span className="label-mono text-muted-foreground">
+            + {formatPrice(shipping)} shipping
+          </span>
           {item.stock && (
             <span className="label-mono text-muted-foreground">
               {soldOut
@@ -236,9 +238,7 @@ export default function ProductModal({
                 : `Buy${picked ? ` ${picked}` : ""} — ${formatPrice(format.price)}`}
             </Button>
             <p className="body-xs mt-2 text-center text-muted-foreground">
-              {CARD_HINT} Stripe asks where to ship and adds{" "}
-              {formatPrice(shipping.us)} US / {formatPrice(shipping.world)}{" "}
-              international.
+              {CARD_HINT} US shipping only.
               {item.ships && (
                 <>
                   <br />
@@ -250,8 +250,7 @@ export default function ProductModal({
             <div className="mt-2">
               <VenmoLink handle={VENMO_HANDLE} onClick={payWithVenmo} />
               <p className="body-xs mt-1 text-center text-muted-foreground">
-                Includes {formatPrice(shipping.us)} US shipping. Venmo takes no
-                address — DM yours after.
+                Includes shipping. DM your address after.
               </p>
             </div>
           </>

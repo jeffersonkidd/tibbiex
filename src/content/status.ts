@@ -75,7 +75,7 @@ export function collectStaged(): StagedEntry[] {
     const { letter, parcel } = SHIPPING.rates
     entries.push({
       area: "Shipping",
-      label: `Flat rates: letter $${letter.us} US / $${letter.world} intl, parcel $${parcel.us} US / $${parcel.world} intl (mirrored in api/checkout.ts)`,
+      label: `Flat rates: letter $${letter}, parcel $${parcel} (mirrored in api/checkout.ts)`,
     })
   }
 

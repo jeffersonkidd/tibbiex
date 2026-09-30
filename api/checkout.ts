@@ -35,44 +35,10 @@ const PURPOSES = {
 
 type Purpose = keyof typeof PURPOSES
 
-/* Shop orders ship "US and international"; Stripe needs the list spelled out. */
-const SHIPPING_COUNTRIES = [
-  "US",
-  "CA",
-  "MX",
-  "GB",
-  "IE",
-  "FR",
-  "DE",
-  "NL",
-  "BE",
-  "LU",
-  "ES",
-  "PT",
-  "IT",
-  "AT",
-  "CH",
-  "DK",
-  "SE",
-  "NO",
-  "FI",
-  "PL",
-  "CZ",
-  "AU",
-  "NZ",
-  "JP",
-]
-
-/* Flat shipping on every shop order, in cents, by how it travels: a sticker
-   or patch goes as a letter, a tee as a parcel. Checkout cannot filter fixed
-   rates by the address it collects, so both are offered and the payer picks
-   theirs -- the address on the order is there to check it against. A copy of
-   SHIPPING in src/content/payments.ts, which shows these to the visitor and
-   cannot be imported here: change both. */
-const SHIPPING_RATES = {
-  letter: { us: 300, world: 600 },
-  parcel: { us: 600, world: 1800 },
-} as const
+/* Flat US shipping on every shop order, in cents: a sticker or patch goes as
+   a letter, a tee as a parcel. A copy of SHIPPING in src/content/payments.ts,
+   which cannot be imported here: change both. */
+const SHIPPING_RATES = { letter: 300, parcel: 600 } as const
 
 type Mail = keyof typeof SHIPPING_RATES
 
@@ -156,32 +122,19 @@ export async function POST(request: Request) {
      it from the client would render that field read-only, so a typo could not
      be corrected there. */
   if (purpose === "shop") {
-    SHIPPING_COUNTRIES.forEach((country, i) =>
-      params.set(
-        `shipping_address_collection[allowed_countries][${i}]`,
-        country,
-      ),
-    )
+    /* US only. */
+    params.set("shipping_address_collection[allowed_countries][0]", "US")
 
-    /* A missing or unknown kind of mail is charged as a parcel, the dearer
-       of the two, so a doctored request cannot ship a tee at letter rate by
-       omission. */
+    /* Unknown or missing mail is charged as a parcel, the dearer rate. */
     const mail: Mail =
       typeof payload.mail === "string" && payload.mail in SHIPPING_RATES
         ? (payload.mail as Mail)
         : "parcel"
-    const rates = SHIPPING_RATES[mail]
-    const options = [
-      { name: "US shipping", cents: rates.us },
-      { name: "International shipping", cents: rates.world },
-    ]
-    options.forEach(({ name, cents }, i) => {
-      const key = `shipping_options[${i}][shipping_rate_data]`
-      params.set(`${key}[type]`, "fixed_amount")
-      params.set(`${key}[display_name]`, name)
-      params.set(`${key}[fixed_amount][amount]`, String(cents))
-      params.set(`${key}[fixed_amount][currency]`, "usd")
-    })
+    const rate = "shipping_options[0][shipping_rate_data]"
+    params.set(`${rate}[type]`, "fixed_amount")
+    params.set(`${rate}[display_name]`, "Shipping")
+    params.set(`${rate}[fixed_amount][amount]`, String(SHIPPING_RATES[mail]))
+    params.set(`${rate}[fixed_amount][currency]`, "usd")
     params.set("metadata[mail]", mail)
   }
 
