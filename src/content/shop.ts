@@ -131,10 +131,10 @@ const STANDARD_FORMATS: ShopFormat[] = [
 export const THE_NEXT_GENERATION: ShopItem = {
   id: "ry-the-next-generation",
   item: "The Next Generation",
-  image: `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/artwork.8ea75cda.jpg`,
-  alt: "“Reagan Youth” in white blackletter over a guinea pig peeking over a ledge, above “The Next Generation” in gold, on dark brown.",
+  image: `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/artwork.a873ae5c.jpg`,
+  alt: "“Reagan Youth” in white blackletter over a guinea pig with an earring, a stitched scar and one fang, peeking over a ledge, above “The Next Generation” in gold, on dark brown.",
   blurb:
-    "A guinea pig peeks in under the Reagan Youth blackletter: the next generation. In four formats.",
+    "A pierced, scarred, fanged guinea pig peeks in under the Reagan Youth blackletter: the next generation. In four formats.",
   band: "reagan-youth",
   formats: STANDARD_FORMATS,
 }
