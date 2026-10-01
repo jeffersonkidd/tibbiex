@@ -72,10 +72,10 @@ export function collectStaged(): StagedEntry[] {
   }
 
   if (SHIPPING.staged) {
-    const { letter, parcel } = SHIPPING.rates
+    const { letter, flat, parcel } = SHIPPING.rates
     entries.push({
       area: "Shipping",
-      label: `Flat rates: letter $${letter}, parcel $${parcel} (mirrored in api/checkout.ts)`,
+      label: `Flat rates: letter $${letter}, flat $${flat}, parcel $${parcel} (mirrored in api/checkout.ts)`,
     })
   }
 
@@ -83,7 +83,7 @@ export function collectStaged(): StagedEntry[] {
 }
 
 /* Shop items are placeholder too, but the catalogue is stand-in bar Vampire
-   Cats and already announced as such at its definition, so it is summarised as
+   Cats and The Next Generation, and already announced as such at its definition, so it is summarised as
    one line rather than ten. Imported lazily inside the warning to keep this module's
    top-level imports to the sets it walks item by item. */
 export function warnStagedContent() {
@@ -107,7 +107,7 @@ export function warnStagedContent() {
     for (const label of labels) console.info(`  • ${label}`)
   }
   console.info(
-    "The Buy catalogue is placeholder apart from Vampire Cats (stock art, provisional prices).",
+    "The Buy catalogue is placeholder apart from Vampire Cats and The Next Generation (stock art, provisional prices).",
   )
   console.groupEnd()
 }

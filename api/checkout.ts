@@ -35,10 +35,10 @@ const PURPOSES = {
 
 type Purpose = keyof typeof PURPOSES
 
-/* Flat US shipping on every shop order, in cents: a sticker or patch goes as
-   a letter, a tee as a parcel. A copy of SHIPPING in src/content/payments.ts,
-   which cannot be imported here: change both. */
-const SHIPPING_RATES = { letter: 300, parcel: 600 } as const
+/* Flat US shipping on every shop order, in cents: a sticker goes as a
+   letter, a patch as a flat, a tee as a parcel. A copy of SHIPPING in
+   src/content/payments.ts, which cannot be imported here: change both. */
+const SHIPPING_RATES = { letter: 200, flat: 300, parcel: 800 } as const
 
 type Mail = keyof typeof SHIPPING_RATES
 

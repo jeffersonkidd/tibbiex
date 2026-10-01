@@ -68,9 +68,80 @@ export function lowestPrice(item: ShopItem) {
 
 export const formatPrice = (price: number) => `$${price}`
 
+const MENS_SIZES: Size[] = ["S", "M", "L", "XL", "2XL", "3XL"].map((label) => ({
+  label,
+}))
+const WOMENS_SIZES: Size[] = ["XS", "S", "M", "L", "XL", "2XL"].map(
+  (label) => ({ label }),
+)
+
+/* The four ways the studio prints a design, from the client's brief, all plus
+   shipping. The men's tee is on a Gildan blank; the women's is the soft one
+   with cap sleeves (not ribbed). Both tees are $35 -- the brief only priced
+   the women's outright, so confirm the men's matches -- and the patch size
+   came with a question mark ("5x7?"), so confirm that too.
+
+   index.html restates every design's offers in its JSON-LD for crawlers, so
+   a price or format change here is a hand-edit there as well. */
+const STANDARD_FORMATS: ShopFormat[] = [
+  {
+    id: "sticker",
+    label: "Sticker",
+    price: 5,
+    mail: "letter",
+    includes: [
+      { label: "Size", detail: "4 × 6 in" },
+      { label: "Art", detail: "Full color" },
+    ],
+  },
+  {
+    id: "patch",
+    label: "Patch",
+    price: 10,
+    mail: "flat",
+    includes: [
+      { label: "Size", detail: "5 × 7 in" },
+      { label: "Art", detail: "Full color" },
+    ],
+  },
+  {
+    id: "tee",
+    label: "Men’s tee",
+    price: 35,
+    sizes: MENS_SIZES,
+    includes: [
+      { label: "Blank", detail: "Gildan" },
+      { label: "Cut", detail: "Men’s, classic fit" },
+    ],
+  },
+  {
+    id: "tee-womens",
+    label: "Women’s tee",
+    price: 35,
+    sizes: WOMENS_SIZES,
+    includes: [
+      { label: "Blank", detail: "The soft one" },
+      { label: "Cut", detail: "Women’s, cap sleeves" },
+    ],
+  },
+]
+
+/* Reagan Youth's first real piece, in the standard formats. Named so it can
+   lead the band's shelf ahead of the placeholders. */
+export const THE_NEXT_GENERATION: ShopItem = {
+  id: "ry-the-next-generation",
+  item: "The Next Generation",
+  image: `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/artwork.8ea75cda.jpg`,
+  alt: "“Reagan Youth” in white blackletter over a guinea pig peeking over a ledge, above “The Next Generation” in gold, on dark brown.",
+  blurb:
+    "A guinea pig peeks in under the Reagan Youth blackletter: the next generation. In four formats.",
+  band: "reagan-youth",
+  formats: STANDARD_FORMATS,
+}
+
 // Placeholder catalogue — stock photography and provisional prices. Confirm
-// the items, prices and artwork before this goes live. The whole set is
-// stand-in, so markStaged flags every item at once.
+// the items, prices and artwork before this goes live. Everything below the
+// real piece above is stand-in, so markStaged flags it all at once.
 /* The Home tab's featured offer. Named so the link row can open it without
    re-finding it in the list. The pairing, price, run size and stock count are
    improvised -- confirm all of it before this goes live. */
@@ -101,75 +172,65 @@ export const YOUTH_ANTHEMS_BUNDLE: ShopItem = {
   ships: "Ships in 5 days",
 }
 
-export const BUY: ShopItem[] = markStaged([
-  YOUTH_ANTHEMS_BUNDLE,
-  {
-    id: "m2",
-    item: "Constructs of the State — Vinyl",
-    price: 25,
-    image:
-      "https://images.unsplash.com/photo-1538356111053-748a48e1acb8?q=80&w=400&auto=format&fit=crop",
-    band: "leftover-crack",
-  },
-  {
-    id: "m4",
-    item: "Tour Tee — No Gods",
-    price: 28,
-    image:
-      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=400&auto=format&fit=crop",
-    band: "leftover-crack",
-  },
-  {
-    id: "m5",
-    item: "Youth Anthems — Reissue LP",
-    price: 30,
-    image:
-      "https://images.unsplash.com/photo-1526394931762-90052e97b376?q=80&w=400&auto=format&fit=crop",
-    band: "reagan-youth",
-  },
-  {
-    id: "m6",
-    item: "Reagan Youth Logo Tee",
-    price: 26,
-    image:
-      "https://images.unsplash.com/photo-1503341504253-dff4815485f1?q=80&w=400&auto=format&fit=crop",
-    band: "reagan-youth",
-  },
-  {
-    id: "m7",
-    item: "Gash Demo — Cassette",
-    price: 8,
-    image:
-      "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?q=80&w=400&auto=format&fit=crop",
-    band: "gash",
-  },
-  {
-    id: "m8",
-    item: 'Gash / Sputter — Split 7"',
-    price: 12,
-    image:
-      "https://images.unsplash.com/photo-1461360370896-922624d12aa1?q=80&w=400&auto=format&fit=crop",
-    band: "gash",
-  },
-])
+/* Everything after The Next Generation is placeholder. */
+export const BUY: ShopItem[] = [
+  THE_NEXT_GENERATION,
+  ...markStaged<ShopItem>([
+    YOUTH_ANTHEMS_BUNDLE,
+    {
+      id: "m2",
+      item: "Constructs of the State — Vinyl",
+      price: 25,
+      image:
+        "https://images.unsplash.com/photo-1538356111053-748a48e1acb8?q=80&w=400&auto=format&fit=crop",
+      band: "leftover-crack",
+    },
+    {
+      id: "m4",
+      item: "Tour Tee — No Gods",
+      price: 28,
+      image:
+        "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=400&auto=format&fit=crop",
+      band: "leftover-crack",
+    },
+    {
+      id: "m5",
+      item: "Youth Anthems — Reissue LP",
+      price: 30,
+      image:
+        "https://images.unsplash.com/photo-1526394931762-90052e97b376?q=80&w=400&auto=format&fit=crop",
+      band: "reagan-youth",
+    },
+    {
+      id: "m6",
+      item: "Reagan Youth Logo Tee",
+      price: 26,
+      image:
+        "https://images.unsplash.com/photo-1503341504253-dff4815485f1?q=80&w=400&auto=format&fit=crop",
+      band: "reagan-youth",
+    },
+    {
+      id: "m7",
+      item: "Gash Demo — Cassette",
+      price: 8,
+      image:
+        "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?q=80&w=400&auto=format&fit=crop",
+      band: "gash",
+    },
+    {
+      id: "m8",
+      item: 'Gash / Sputter — Split 7"',
+      price: 12,
+      image:
+        "https://images.unsplash.com/photo-1461360370896-922624d12aa1?q=80&w=400&auto=format&fit=crop",
+      band: "gash",
+    },
+  ]),
+]
 
-const MENS_SIZES: Size[] = ["S", "M", "L", "XL", "2XL", "3XL"].map((label) => ({
-  label,
-}))
-const WOMENS_SIZES: Size[] = ["S", "M", "L", "XL", "2XL"].map((label) => ({
-  label,
-}))
-
-/* The first real piece on the shelf: the client's own art, formats and
-   prices, all plus shipping. Too detailed to shrink to a pin, so there
-   deliberately is no pin. The men's tee is on a Gildan blank; the women's is
-   the soft one with cap sleeves. Both tees are $35 -- the brief only priced
-   the women's outright, so confirm the men's matches -- and the patch size
-   came with a question mark ("5x7?"), so confirm that too.
-
-   index.html restates the four offers in its JSON-LD for crawlers, so a price
-   or format change is a hand-edit there as well. The photo is on the media
-   bucket under its own hash (see MEDIA_URL). */
+/* The first real piece on the shelf: the client's own art, in the standard
+   formats. Too detailed to shrink to a pin, so there deliberately is no pin.
+   The photo is on the media bucket under its own hash (see MEDIA_URL). */
 export const VAMPIRE_CATS: ShopItem = {
   id: "a-vampire-cats",
   item: "Vampire Cats",
@@ -177,48 +238,7 @@ export const VAMPIRE_CATS: ShopItem = {
   alt: "Two red cats in spiked collars, fangs out, batting balls of yarn through teal waves and falling shards of red glass. Signed Tibbie X.",
   blurb:
     "Two vampire cats in spiked collars, loose in a sea of red glass. Original art by Tibbie X, in three formats.",
-  formats: [
-    {
-      id: "sticker",
-      label: "Sticker",
-      price: 5,
-      mail: "letter",
-      includes: [
-        { label: "Size", detail: "4 × 6 in" },
-        { label: "Art", detail: "Full color" },
-      ],
-    },
-    {
-      id: "patch",
-      label: "Patch",
-      price: 10,
-      mail: "letter",
-      includes: [
-        { label: "Size", detail: "5 × 7 in" },
-        { label: "Art", detail: "Full color" },
-      ],
-    },
-    {
-      id: "tee",
-      label: "Men’s tee",
-      price: 35,
-      sizes: MENS_SIZES,
-      includes: [
-        { label: "Blank", detail: "Gildan" },
-        { label: "Cut", detail: "Men’s, classic fit" },
-      ],
-    },
-    {
-      id: "tee-womens",
-      label: "Women’s tee",
-      price: 35,
-      sizes: WOMENS_SIZES,
-      includes: [
-        { label: "Blank", detail: "The soft one" },
-        { label: "Cut", detail: "Women’s, cap sleeves" },
-      ],
-    },
-  ],
+  formats: STANDARD_FORMATS,
 }
 
 /* The Art shelf: the studio's own work, and anything not tied to one band. It
