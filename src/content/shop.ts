@@ -225,28 +225,12 @@ export const YOUTH_ANTHEMS_BUNDLE: ShopItem = {
   ships: "Ships in 5 days",
 }
 
-/* Everything after Leftover Frank is placeholder. Reagan Youth's stand-ins
-   are gone; the other bands' remain until their real pieces land. */
+/* Everything after Leftover Frank is placeholder. Reagan Youth's and Leftover
+   Crack's stand-ins are gone; Gash's remain until its real pieces land. */
 export const BUY: ShopItem[] = [
   THE_NEXT_GENERATION,
   LEFTOVER_FRANK,
   ...markStaged<ShopItem>([
-    {
-      id: "m2",
-      item: "Constructs of the State — Vinyl",
-      price: 25,
-      image:
-        "https://images.unsplash.com/photo-1538356111053-748a48e1acb8?q=80&w=400&auto=format&fit=crop",
-      band: "leftover-crack",
-    },
-    {
-      id: "m4",
-      item: "Tour Tee — No Gods",
-      price: 28,
-      image:
-        "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=400&auto=format&fit=crop",
-      band: "leftover-crack",
-    },
     {
       id: "m7",
       item: "Gash Demo — Cassette",
