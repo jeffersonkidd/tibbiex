@@ -1,4 +1,3 @@
-import { markStaged } from "./staged"
 import { PORTFOLIO } from "./portfolio"
 import type { BandId } from "./portfolio"
 import type { Mail } from "./payments"
@@ -138,8 +137,7 @@ const TNG_PHOTOS = {
   "tee-womens": `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/womens-tee.d1c5399c.jpg`,
 }
 
-/* Reagan Youth's first real piece, in the standard formats. Named so it can
-   lead the band's shelf ahead of the placeholders. */
+/* Reagan Youth's first real piece, in the standard formats. */
 export const THE_NEXT_GENERATION: ShopItem = {
   id: "ry-the-next-generation",
   item: "The Next Generation",
@@ -161,18 +159,16 @@ export const THE_NEXT_GENERATION: ShopItem = {
 
 const FRANK_ARTWORK = `${MEDIA_URL}/shop/bands/leftover-crack/leftover-frank/artwork.294ced90.jpg`
 
-/* Leftover Frank's mockup for each of the standard formats, by id. There is
-   no sticker mockup yet, so picking Sticker shows the artwork itself. */
+/* Leftover Frank's mockup for each of the standard formats, by id. */
 const FRANK_PHOTOS = {
-  sticker: FRANK_ARTWORK,
+  sticker: `${MEDIA_URL}/shop/bands/leftover-crack/leftover-frank/sticker-flat.6356155a.jpg`,
   patch: `${MEDIA_URL}/shop/bands/leftover-crack/leftover-frank/patch-angled.dd656839.jpg`,
   tee: `${MEDIA_URL}/shop/bands/leftover-crack/leftover-frank/mens-tee.1b32d64d.jpg`,
   "tee-womens": `${MEDIA_URL}/shop/bands/leftover-crack/leftover-frank/womens-tee.4d0c3a32.jpg`,
 }
 
 /* Leftover Crack's first real piece, in the standard formats: Frank is
-   Tibbie X's cat, who lives at C-Squat and kills pigeons. Named so it leads
-   the band's shelf ahead of the placeholders. */
+   Tibbie X's cat, who lives at C-Squat and kills pigeons. */
 export const LEFTOVER_FRANK: ShopItem = {
   id: "lc-leftover-frank",
   item: "Leftover Frank",
@@ -186,14 +182,12 @@ export const LEFTOVER_FRANK: ShopItem = {
     FRANK_PHOTOS["tee-womens"],
     FRANK_PHOTOS.tee,
     FRANK_PHOTOS.patch,
+    FRANK_PHOTOS.sticker,
   ],
   formatPhotos: FRANK_PHOTOS,
   formats: STANDARD_FORMATS,
 }
 
-// Placeholder catalogue — stock photography and provisional prices. Confirm
-// the items, prices and artwork before this goes live. Everything below the
-// real piece above is stand-in, so markStaged flags it all at once.
 /* The Home tab's featured offer. Named so the link row can open it without
    re-finding it in the list. The pairing, price, run size and stock count are
    improvised, so it is off the Reagan Youth shelf and its link row is
@@ -225,75 +219,45 @@ export const YOUTH_ANTHEMS_BUNDLE: ShopItem = {
   ships: "Ships in 5 days",
 }
 
-/* Everything after Leftover Frank is placeholder. Reagan Youth's and Leftover
-   Crack's stand-ins are gone; Gash's remain until its real pieces land. */
-export const BUY: ShopItem[] = [
-  THE_NEXT_GENERATION,
-  LEFTOVER_FRANK,
-  ...markStaged<ShopItem>([
-    {
-      id: "m7",
-      item: "Gash Demo — Cassette",
-      price: 8,
-      image:
-        "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?q=80&w=400&auto=format&fit=crop",
-      band: "gash",
-    },
-    {
-      id: "m8",
-      item: 'Gash / Sputter — Split 7"',
-      price: 12,
-      image:
-        "https://images.unsplash.com/photo-1461360370896-922624d12aa1?q=80&w=400&auto=format&fit=crop",
-      band: "gash",
-    },
-  ]),
-]
+/* The Bands shelf. The placeholders are gone, so a band with no real piece
+   yet drops out of the strip. */
+export const BUY: ShopItem[] = [THE_NEXT_GENERATION, LEFTOVER_FRANK]
+
+const VAMPIRE_CATS_ARTWORK = `${MEDIA_URL}/shop/art/vampire-cats/artwork.76622c0e.jpg`
+
+/* Vampire Cats' mockup for each of the standard formats, by id. */
+const VAMPIRE_CATS_PHOTOS = {
+  sticker: `${MEDIA_URL}/shop/art/vampire-cats/sticker-flat.0fd3d3aa.jpg`,
+  patch: `${MEDIA_URL}/shop/art/vampire-cats/patch-angled.6c7a1a14.jpg`,
+  tee: `${MEDIA_URL}/shop/art/vampire-cats/mens-tee.895e322c.jpg`,
+  "tee-womens": `${MEDIA_URL}/shop/art/vampire-cats/womens-tee.08516bec.jpg`,
+}
 
 /* The first real piece on the shelf: the client's own art, in the standard
    formats. Too detailed to shrink to a pin, so there deliberately is no pin.
-   The photo is on the media bucket under its own hash (see MEDIA_URL). */
+   The photos are on the media bucket under their own hashes (see MEDIA_URL). */
 export const VAMPIRE_CATS: ShopItem = {
   id: "a-vampire-cats",
   item: "Vampire Cats",
-  image: `${MEDIA_URL}/shop/art/vampire-cats/artwork.76622c0e.jpg`,
+  image: VAMPIRE_CATS_ARTWORK,
   alt: "Two red cats in spiked collars, fangs out, batting balls of yarn through teal waves and falling shards of red glass. Signed Tibbie X.",
   blurb:
-    "Two vampire cats in spiked collars, loose in a sea of red glass. Original art by Tibbie X, in three formats.",
+    "Two vampire cats in spiked collars, loose in a sea of red glass. Original art by Tibbie X, in four formats.",
+  gallery: [
+    VAMPIRE_CATS_ARTWORK,
+    VAMPIRE_CATS_PHOTOS["tee-womens"],
+    VAMPIRE_CATS_PHOTOS.tee,
+    VAMPIRE_CATS_PHOTOS.patch,
+    VAMPIRE_CATS_PHOTOS.sticker,
+  ],
+  formatPhotos: VAMPIRE_CATS_PHOTOS,
   formats: STANDARD_FORMATS,
 }
 
 /* The Art shelf: the studio's own work, and anything not tied to one band. It
    is not spread into BUY, so nothing here reaches SHOP_BY_BAND or a portfolio
-   section's shop link -- `band`, where set, only says whose mark is on it.
-   Everything after Vampire Cats is placeholder. */
-export const ART: ShopItem[] = [
-  VAMPIRE_CATS,
-  ...markStaged<ShopItem>([
-    {
-      id: "a1",
-      item: "Reagan Youth Patch — Hand Painted",
-      price: 12,
-      image:
-        "https://images.unsplash.com/photo-1614082242765-7c98ca0f3df3?q=80&w=400&auto=format&fit=crop",
-      band: "reagan-youth",
-    },
-    {
-      id: "a2",
-      item: "Logo Patch",
-      price: 5,
-      image:
-        "https://images.unsplash.com/photo-1614082242765-7c98ca0f3df3?q=80&w=400&auto=format&fit=crop",
-    },
-    {
-      id: "a3",
-      item: "Signature Bass Pick (3-pack)",
-      price: 10,
-      image:
-        "https://images.unsplash.com/photo-1519508234239-44619d854291?q=80&w=400&auto=format&fit=crop",
-    },
-  ]),
-]
+   section's shop link -- `band`, where set, only says whose mark is on it. */
+export const ART: ShopItem[] = [VAMPIRE_CATS]
 
 /* The Buy tab's first filter. Bands narrows again by band (SHOP_GROUPS);
    Art is one flat shelf with no second strip. */
