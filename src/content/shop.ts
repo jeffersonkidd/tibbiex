@@ -131,23 +131,23 @@ const STANDARD_FORMATS: ShopFormat[] = [
 
 /* The Next Generation's mockup for each of the standard formats, by id. */
 const TNG_PHOTOS = {
-  sticker: `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/sticker-peel.cc9654f7.jpg`,
-  patch: `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/patch-angled.d131eae9.jpg`,
-  tee: `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/mens-tee.40c66256.jpg`,
-  "tee-womens": `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/womens-tee.d1c5399c.jpg`,
+  sticker: `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/sticker-flat.0e12b0a6.jpg`,
+  patch: `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/patch-canvas.5ac6dfe3.jpg`,
+  tee: `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/mens-tee.1734781d.jpg`,
+  "tee-womens": `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/womens-tee.fe53a5a5.jpg`,
 }
 
 /* Reagan Youth's first real piece, in the standard formats. */
 export const THE_NEXT_GENERATION: ShopItem = {
   id: "ry-the-next-generation",
   item: "The Next Generation",
-  image: `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/artwork.a873ae5c.jpg`,
-  alt: "“Reagan Youth” in white blackletter over a guinea pig with an earring, a stitched scar and one fang, peeking over a ledge, above “The Next Generation” in gold, on dark brown.",
+  image: `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/artwork.5a3e32a7.jpg`,
+  alt: "“Reagan Youth” in white blackletter over a guinea pig with an earring, a stitched scar and one fang, peeking over a ledge, above “The Next Generation” in gold, on black.",
   blurb:
     "A pierced, scarred, fanged guinea pig peeks in under the Reagan Youth blackletter: the next generation. In four formats.",
   band: "reagan-youth",
   gallery: [
-    `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/artwork.a873ae5c.jpg`,
+    `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/artwork.5a3e32a7.jpg`,
     TNG_PHOTOS["tee-womens"],
     TNG_PHOTOS.tee,
     TNG_PHOTOS.patch,
@@ -162,7 +162,7 @@ const FRANK_ARTWORK = `${MEDIA_URL}/shop/bands/leftover-crack/leftover-frank/art
 /* Leftover Frank's mockup for each of the standard formats, by id. */
 const FRANK_PHOTOS = {
   sticker: `${MEDIA_URL}/shop/bands/leftover-crack/leftover-frank/sticker-flat.6356155a.jpg`,
-  patch: `${MEDIA_URL}/shop/bands/leftover-crack/leftover-frank/patch-angled.dd656839.jpg`,
+  patch: `${MEDIA_URL}/shop/bands/leftover-crack/leftover-frank/patch-canvas.3b040f94.jpg`,
   tee: `${MEDIA_URL}/shop/bands/leftover-crack/leftover-frank/mens-tee.1b32d64d.jpg`,
   "tee-womens": `${MEDIA_URL}/shop/bands/leftover-crack/leftover-frank/womens-tee.4d0c3a32.jpg`,
 }
@@ -228,7 +228,7 @@ const VAMPIRE_CATS_ARTWORK = `${MEDIA_URL}/shop/art/vampire-cats/artwork.76622c0
 /* Vampire Cats' mockup for each of the standard formats, by id. */
 const VAMPIRE_CATS_PHOTOS = {
   sticker: `${MEDIA_URL}/shop/art/vampire-cats/sticker-flat.0fd3d3aa.jpg`,
-  patch: `${MEDIA_URL}/shop/art/vampire-cats/patch-angled.6c7a1a14.jpg`,
+  patch: `${MEDIA_URL}/shop/art/vampire-cats/patch-canvas.c52931ca.jpg`,
   tee: `${MEDIA_URL}/shop/art/vampire-cats/mens-tee.895e322c.jpg`,
   "tee-womens": `${MEDIA_URL}/shop/art/vampire-cats/womens-tee.08516bec.jpg`,
 }
