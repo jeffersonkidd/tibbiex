@@ -136,6 +136,11 @@ export const THE_NEXT_GENERATION: ShopItem = {
   blurb:
     "A pierced, scarred, fanged guinea pig peeks in under the Reagan Youth blackletter: the next generation. In four formats.",
   band: "reagan-youth",
+  gallery: [
+    `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/artwork.a873ae5c.jpg`,
+    `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/womens-tee.d1c5399c.jpg`,
+    `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/mens-tee.40c66256.jpg`,
+  ],
   formats: STANDARD_FORMATS,
 }
 
