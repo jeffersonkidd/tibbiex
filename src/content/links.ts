@@ -52,8 +52,10 @@ export const LINKS = [
     meta: "Reissue LP + logo tee, $50 — 20 numbered",
     href: "#",
     action: "offer",
-    /* Improvised bundle -- see YOUTH_ANTHEMS_BUNDLE in shop.ts. */
+    /* Improvised bundle -- see YOUTH_ANTHEMS_BUNDLE in shop.ts. Off until a
+       real bundle replaces it. */
     staged: true,
+    enabled: false,
   },
   {
     icon: MessageSquare,

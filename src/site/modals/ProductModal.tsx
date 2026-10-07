@@ -29,7 +29,9 @@ import OverlayBody from "../../ui/overlays/OverlayBody"
 
    An item with several formats opens on the first, so there is always a
    price, a spec and a button that says what it buys; picking another format
-   clears the size, since the two tees do not share a size run.
+   clears the size, since the two tees do not share a size run, and turns the
+   gallery to that format's photo when the item names one. It opens on the
+   artwork, not the first format's photo.
 
    The button goes to Stripe, which collects the address and adds shipping --
    which is why it is the button and Venmo is only the link under it: a Venmo
@@ -182,6 +184,9 @@ export default function ProductModal({
                       pressed={format.id === entry.id}
                       onClick={() => {
                         setFormat(entry)
+                        const shown = item.formatPhotos?.[entry.id]
+                        if (shown && photos.includes(shown))
+                          setPhoto(photos.indexOf(shown))
                         setSize(null)
                         setSizeError(false)
                       }}

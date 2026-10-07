@@ -38,6 +38,10 @@ type ShopItemBase = {
      without it still opens, and shows what it has. */
   /* Extra angles, shown as thumbnails under the main image. */
   gallery?: string[]
+  /* The gallery photo to show when a format is picked, by format id. The
+     formats are shared between designs, so the pairing lives on the item.
+     Each photo must also be in the gallery. */
+  formatPhotos?: Record<string, string>
   /* A numbered or limited run. */
   stock?: { left: number; of: number }
   ships?: string
@@ -126,6 +130,14 @@ const STANDARD_FORMATS: ShopFormat[] = [
   },
 ]
 
+/* The Next Generation's mockup for each of the standard formats, by id. */
+const TNG_PHOTOS = {
+  sticker: `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/sticker-peel.cc9654f7.jpg`,
+  patch: `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/patch-angled.d131eae9.jpg`,
+  tee: `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/mens-tee.40c66256.jpg`,
+  "tee-womens": `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/womens-tee.d1c5399c.jpg`,
+}
+
 /* Reagan Youth's first real piece, in the standard formats. Named so it can
    lead the band's shelf ahead of the placeholders. */
 export const THE_NEXT_GENERATION: ShopItem = {
@@ -138,9 +150,12 @@ export const THE_NEXT_GENERATION: ShopItem = {
   band: "reagan-youth",
   gallery: [
     `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/artwork.a873ae5c.jpg`,
-    `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/womens-tee.d1c5399c.jpg`,
-    `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/mens-tee.40c66256.jpg`,
+    TNG_PHOTOS["tee-womens"],
+    TNG_PHOTOS.tee,
+    TNG_PHOTOS.patch,
+    TNG_PHOTOS.sticker,
   ],
+  formatPhotos: TNG_PHOTOS,
   formats: STANDARD_FORMATS,
 }
 
@@ -149,7 +164,8 @@ export const THE_NEXT_GENERATION: ShopItem = {
 // real piece above is stand-in, so markStaged flags it all at once.
 /* The Home tab's featured offer. Named so the link row can open it without
    re-finding it in the list. The pairing, price, run size and stock count are
-   improvised -- confirm all of it before this goes live. */
+   improvised, so it is off the Reagan Youth shelf and its link row is
+   disabled; it stays defined for the row to come back to. */
 export const YOUTH_ANTHEMS_BUNDLE: ShopItem = {
   id: "m0",
   item: "Youth Anthems bundle",
@@ -177,11 +193,11 @@ export const YOUTH_ANTHEMS_BUNDLE: ShopItem = {
   ships: "Ships in 5 days",
 }
 
-/* Everything after The Next Generation is placeholder. */
+/* Everything after The Next Generation is placeholder. Reagan Youth's stand-ins
+   are gone; the other bands' remain until their real pieces land. */
 export const BUY: ShopItem[] = [
   THE_NEXT_GENERATION,
   ...markStaged<ShopItem>([
-    YOUTH_ANTHEMS_BUNDLE,
     {
       id: "m2",
       item: "Constructs of the State — Vinyl",
@@ -197,22 +213,6 @@ export const BUY: ShopItem[] = [
       image:
         "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=400&auto=format&fit=crop",
       band: "leftover-crack",
-    },
-    {
-      id: "m5",
-      item: "Youth Anthems — Reissue LP",
-      price: 30,
-      image:
-        "https://images.unsplash.com/photo-1526394931762-90052e97b376?q=80&w=400&auto=format&fit=crop",
-      band: "reagan-youth",
-    },
-    {
-      id: "m6",
-      item: "Reagan Youth Logo Tee",
-      price: 26,
-      image:
-        "https://images.unsplash.com/photo-1503341504253-dff4815485f1?q=80&w=400&auto=format&fit=crop",
-      band: "reagan-youth",
     },
     {
       id: "m7",
