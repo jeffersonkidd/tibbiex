@@ -159,6 +159,38 @@ export const THE_NEXT_GENERATION: ShopItem = {
   formats: STANDARD_FORMATS,
 }
 
+const FRANK_ARTWORK = `${MEDIA_URL}/shop/bands/leftover-crack/leftover-frank/artwork.294ced90.jpg`
+
+/* Leftover Frank's mockup for each of the standard formats, by id. There is
+   no sticker mockup yet, so picking Sticker shows the artwork itself. */
+const FRANK_PHOTOS = {
+  sticker: FRANK_ARTWORK,
+  patch: `${MEDIA_URL}/shop/bands/leftover-crack/leftover-frank/patch-angled.dd656839.jpg`,
+  tee: `${MEDIA_URL}/shop/bands/leftover-crack/leftover-frank/mens-tee.1b32d64d.jpg`,
+  "tee-womens": `${MEDIA_URL}/shop/bands/leftover-crack/leftover-frank/womens-tee.4d0c3a32.jpg`,
+}
+
+/* Leftover Crack's first real piece, in the standard formats: Frank is
+   Tibbie X's cat, who lives at C-Squat and kills pigeons. Named so it leads
+   the band's shelf ahead of the placeholders. */
+export const LEFTOVER_FRANK: ShopItem = {
+  id: "lc-leftover-frank",
+  item: "Leftover Frank",
+  image: FRANK_ARTWORK,
+  alt: "“Leftover Frank” in white blackletter over a tabby in a spiked collar and a bone-shaped “Frank” tag, pinning a pigeon in a police cap on a rooftop with a water tower and the Empire State Building behind, above “Bird Laws Get Claws” between two pentagrams, in black-and-white woodcut.",
+  blurb:
+    "Frank lives at C-Squat and runs the roof. The pigeons made the mistake of deputizing. Bird laws get claws. In four formats.",
+  band: "leftover-crack",
+  gallery: [
+    FRANK_ARTWORK,
+    FRANK_PHOTOS["tee-womens"],
+    FRANK_PHOTOS.tee,
+    FRANK_PHOTOS.patch,
+  ],
+  formatPhotos: FRANK_PHOTOS,
+  formats: STANDARD_FORMATS,
+}
+
 // Placeholder catalogue — stock photography and provisional prices. Confirm
 // the items, prices and artwork before this goes live. Everything below the
 // real piece above is stand-in, so markStaged flags it all at once.
@@ -193,10 +225,11 @@ export const YOUTH_ANTHEMS_BUNDLE: ShopItem = {
   ships: "Ships in 5 days",
 }
 
-/* Everything after The Next Generation is placeholder. Reagan Youth's stand-ins
+/* Everything after Leftover Frank is placeholder. Reagan Youth's stand-ins
    are gone; the other bands' remain until their real pieces land. */
 export const BUY: ShopItem[] = [
   THE_NEXT_GENERATION,
+  LEFTOVER_FRANK,
   ...markStaged<ShopItem>([
     {
       id: "m2",
