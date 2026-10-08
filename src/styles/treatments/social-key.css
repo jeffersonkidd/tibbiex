@@ -7,10 +7,13 @@
    spreads the rim rather than filling anything. Active presses the key in.
 =========================================================================== */
 
+/* 44px square, the height of the block Button beside it (py-3 around a
+   Body/Small Bold line), so the keys and Contact sit as one row. */
 .social-key {
   display: grid;
   place-items: center;
-  padding: 12px;
+  inline-size: calc(var(--spacing) * 11);
+  block-size: calc(var(--spacing) * 11);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   background-color: var(--color-page);
