@@ -111,7 +111,10 @@ export default function App() {
       <div className="w-full min-w-0 max-w-2xl space-y-stack px-4 pt-6 sm:px-6">
         <Header onShare={() => setModal({ kind: "share" })} />
 
-        <ProfileCard onContact={() => setModal({ kind: "booking" })} />
+        <ProfileCard
+          onContact={() => setModal({ kind: "booking" })}
+          onOpenShop={isTabEnabled("Buy") ? openShop : undefined}
+        />
 
         <TabStrip ref={tabsRef} active={activeTab} onSelect={setActiveTab} />
 

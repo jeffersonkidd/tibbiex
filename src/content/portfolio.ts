@@ -1,7 +1,7 @@
 import { MEDIA_URL } from "./site"
 import { markStaged } from "./staged"
 
-/* The Gash set, the only photographs here that are really of the band. They
+/* The GASH set, the only photographs here that are really of the band. They
    are served from the media bucket rather than bundled -- see MEDIA_URL. The
    hash in each key is the file's own, so these URLs change only when the
    picture does. */
@@ -127,7 +127,7 @@ export const PORTFOLIO: PortfolioEntry[] = [
   },
   {
     id: "gash",
-    band: "Gash",
+    band: "GASH",
     role: "Bass · Vocals",
     years: "2019 — present",
     blurb:
@@ -140,31 +140,31 @@ export const PORTFOLIO: PortfolioEntry[] = [
     photos: [
       {
         src: `${GASH}/promo.d4c42f53.jpg`,
-        alt: "Gash promo shot — the band's vocalist on a red-lit stage beneath the logo",
+        alt: "GASH promo shot — the band's vocalist on a red-lit stage beneath the logo",
         width: 960,
         height: 960,
       },
       {
         src: `${GASH}/live.6bb7cf5e.jpg`,
-        alt: "Black-and-white live shot of Gash mid-set, guitarist behind the vocalist",
+        alt: "Black-and-white live shot of GASH mid-set, guitarist behind the vocalist",
         width: 905,
         height: 905,
       },
       {
         src: `${GASH}/flyer.aa21984f.jpg`,
-        alt: "Show flyer: Gash with Ballroom Zombies, Danse de Sade and Thorazine at North Star Bar",
+        alt: "Show flyer: GASH with Ballroom Zombies, Danse de Sade and Thorazine at North Star Bar",
         width: 685,
         height: 960,
       },
       {
         src: `${GASH}/artwork.832a46f8.jpg`,
-        alt: "Gash artwork — a screamed face in red and black beside the band logo",
+        alt: "GASH artwork — a screamed face in red and black beside the band logo",
         width: 960,
         height: 540,
       },
       {
         src: `${GASH}/logo.d4b59f02.jpg`,
-        alt: "The Gash logo in white brushstrokes on black",
+        alt: "The GASH logo in white brushstrokes on black",
         width: 777,
         height: 777,
       },

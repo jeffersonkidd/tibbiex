@@ -4,6 +4,8 @@ import profilePic from "../assets/imagery/tibbie-portrait.png"
 import bannerPic from "../assets/imagery/tibbie-onstage.jpg"
 import tagPic from "../assets/marks/tibbiex-tag.png"
 import { PROFILE, VISIBLE_SOCIALS } from "../content/profile"
+import type { BandId } from "../content/portfolio"
+import { SHOP_GROUPS } from "../content/shop"
 import Button from "../ui/controls/Button"
 import Avatar from "../ui/display/Avatar"
 import SocialButton from "../ui/controls/SocialButton"
@@ -14,9 +16,20 @@ import Separator from "../ui/display/Separator"
    (Tibbie X - DSP, 4545:73). The live photo runs behind the top of the
    card and everything else sits over it: the live badge while she is live,
    the avatar, the painted tag, what she plays and who with, then the social keys and the
-   contact button. Every word of it comes from content/profile.ts. */
-export default function ProfileCard({ onContact }: { onContact: () => void }) {
+   contact button. Every word of it comes from content/profile.ts.
+
+   A band with a shelf in the Buy tab is a button that opens it; `onOpenShop`
+   is left out while the Buy tab is off, and every band reads as text. */
+export default function ProfileCard({
+  onContact,
+  onOpenShop,
+}: {
+  onContact: () => void
+  onOpenShop?: (band: BandId) => void
+}) {
   const { live } = PROFILE
+  const shelved = (band?: BandId) =>
+    band && SHOP_GROUPS.some((group) => group.id === band) ? band : undefined
 
   return (
     <section className="surface relative overflow-hidden rounded-lg">
@@ -70,11 +83,24 @@ export default function ProfileCard({ onContact }: { onContact: () => void }) {
           aria-label="Bands"
           className="flex flex-wrap gap-x-part gap-y-0.5 body-base-bold text-muted-foreground"
         >
-          {PROFILE.bands.map((band) => (
-            <li key={band} className="list-inside list-disc">
-              {band}
-            </li>
-          ))}
+          {PROFILE.bands.map(({ name, shop }) => {
+            const band = onOpenShop && shelved(shop)
+            return (
+              <li key={name} className="list-inside list-disc">
+                {band ? (
+                  <button
+                    type="button"
+                    onClick={() => onOpenShop(band)}
+                    className="underline decoration-muted-foreground/40 underline-offset-4 transition-colors hover:text-foreground hover:decoration-foreground"
+                  >
+                    {name}
+                  </button>
+                ) : (
+                  name
+                )}
+              </li>
+            )
+          })}
         </ul>
 
         <Separator space="none" />

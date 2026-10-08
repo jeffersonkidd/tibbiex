@@ -10,6 +10,7 @@ import {
 import PatreonIcon from "../assets/icons/PatreonIcon"
 import TikTokIcon from "../assets/icons/TikTokIcon"
 import VenmoIcon from "../assets/icons/VenmoIcon"
+import type { BandId } from "./portfolio"
 import { VENMO_HANDLE } from "./site"
 
 /* Everything the profile card says. The card is the Figma "Profile Card"
@@ -26,13 +27,16 @@ export const PROFILE = {
     { icon: Volume2, label: "Vocals" },
     { icon: UserPlus, label: "Crowds" },
   ],
+  /* Who she plays with, in the card's dotted line. A band with a `shop` id
+     links to its shelf in the Buy tab -- while that shelf has something on
+     it; one that empties goes back to plain text. */
   bands: [
-    "Reagan Youth",
-    "Leftover Crack",
-    "Kissy Kamikaze",
-    "GASH",
-    "X-Possibles",
-  ],
+    { name: "Reagan Youth", shop: "reagan-youth" },
+    { name: "Leftover Crack", shop: "leftover-crack" },
+    { name: "GASH", shop: "gash" },
+    { name: "Kissy Kamikaze" },
+    { name: "X-Possibles" },
+  ] as { name: string; shop?: BandId }[],
   /* The green badge on the banner and the dot on the avatar. There is no feed
      telling the site she is live, so this is a claim someone has to keep true:
      set it to null when she is not, and the badge and dot both go. To bring

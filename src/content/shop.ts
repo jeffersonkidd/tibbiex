@@ -232,7 +232,7 @@ const ON_A_LEASH_PHOTOS = {
   "tee-womens": `${MEDIA_URL}/shop/bands/gash/on-a-leash/womens-tee.0bc76e76.jpg`,
 }
 
-/* Gash's first real piece, and tees only: the client prints this one as no
+/* GASH's first real piece, and tees only: the client prints this one as no
    sticker and no patch. The portrait art is padded to a square on black so the
    square shop photo keeps the logo and the floor in frame. */
 export const ON_A_LEASH: ShopItem = {
@@ -241,7 +241,7 @@ export const ON_A_LEASH: ShopItem = {
   image: ON_A_LEASH_ARTWORK,
   alt: "The angular GASH logo over a masked woman in boots holding a chain, leading a masked singer who crawls across the stage with a microphone, the band in silhouette behind them, in white ink on black.",
   blurb:
-    "Gash, with the singer on a short leash and the mic still live. Tees only, men’s and women’s.",
+    "GASH, with the singer on a short leash and the mic still live. Tees only, men’s and women’s.",
   band: "gash",
   gallery: [
     ON_A_LEASH_ARTWORK,

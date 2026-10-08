@@ -44,4 +44,4 @@ export const SUPPORTERS: Supporter[] = markStaged([
    the source every other reading of the list would come from. */
 export const TOP_CONTRIBUTORS = [...SUPPORTERS]
   .sort((a, b) => b.amount - a.amount)
-  .slice(0, 5)
+  .slice(0, 3)
