@@ -129,6 +129,11 @@ const STANDARD_FORMATS: ShopFormat[] = [
   },
 ]
 
+/* The two tees alone, for a design that is not printed as a sticker or patch. */
+const TEE_FORMATS = STANDARD_FORMATS.filter((format) =>
+  format.id.startsWith("tee"),
+)
+
 /* The Next Generation's mockup for each of the standard formats, by id. */
 const TNG_PHOTOS = {
   sticker: `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/sticker-flat.0e12b0a6.jpg`,
@@ -219,9 +224,37 @@ export const YOUTH_ANTHEMS_BUNDLE: ShopItem = {
   ships: "Ships in 5 days",
 }
 
+const ON_A_LEASH_ARTWORK = `${MEDIA_URL}/shop/bands/gash/on-a-leash/artwork.18aa4224.jpg`
+
+/* On a Leash's mockup for each of its two formats, by id. */
+const ON_A_LEASH_PHOTOS = {
+  tee: `${MEDIA_URL}/shop/bands/gash/on-a-leash/mens-tee.21064ad1.jpg`,
+  "tee-womens": `${MEDIA_URL}/shop/bands/gash/on-a-leash/womens-tee.0bc76e76.jpg`,
+}
+
+/* Gash's first real piece, and tees only: the client prints this one as no
+   sticker and no patch. The portrait art is padded to a square on black so the
+   square shop photo keeps the logo and the floor in frame. */
+export const ON_A_LEASH: ShopItem = {
+  id: "gash-on-a-leash",
+  item: "On a Leash",
+  image: ON_A_LEASH_ARTWORK,
+  alt: "The angular GASH logo over a masked woman in boots holding a chain, leading a masked singer who crawls across the stage with a microphone, the band in silhouette behind them, in white ink on black.",
+  blurb:
+    "Gash, with the singer on a short leash and the mic still live. Tees only, men’s and women’s.",
+  band: "gash",
+  gallery: [
+    ON_A_LEASH_ARTWORK,
+    ON_A_LEASH_PHOTOS["tee-womens"],
+    ON_A_LEASH_PHOTOS.tee,
+  ],
+  formatPhotos: ON_A_LEASH_PHOTOS,
+  formats: TEE_FORMATS,
+}
+
 /* The Bands shelf. The placeholders are gone, so a band with no real piece
    yet drops out of the strip. */
-export const BUY: ShopItem[] = [THE_NEXT_GENERATION, LEFTOVER_FRANK]
+export const BUY: ShopItem[] = [THE_NEXT_GENERATION, LEFTOVER_FRANK, ON_A_LEASH]
 
 const VAMPIRE_CATS_ARTWORK = `${MEDIA_URL}/shop/art/vampire-cats/artwork.76622c0e.jpg`
 
