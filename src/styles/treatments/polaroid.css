@@ -5,6 +5,11 @@
    prints stay on the palette: the off-white the body text is set in reads as
    photo stock once it is a filled shape. Each print sets --tilt in the markup;
    the stack fans them a little further apart on hover, as if picked up.
+
+   Each print is taped to the page at two corners with duct tape:
+   ::before and ::after, a grey strip with a woven grain and ends torn by
+   hand rather than cut. The grey is --color-border-strong, so the tape stays
+   as colourless as the page under it.
 =========================================================================== */
 
 .polaroid {
@@ -24,6 +29,81 @@
     0 14px 28px -10px color-mix(in srgb, var(--color-page) 85%, transparent);
   transform: translateY(var(--lift)) rotate(calc(var(--tilt) + var(--fan)));
   transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+}
+
+.polaroid::before,
+.polaroid::after {
+  content: "";
+  position: absolute;
+  width: 44%;
+  aspect-ratio: 3.4 / 1;
+  pointer-events: none;
+  background-color: color-mix(
+    in srgb,
+    var(--color-border-strong) 94%,
+    transparent
+  );
+  /* The cloth weave under the coating, and the sheen along one edge. */
+  background-image:
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-foreground) 22%, transparent),
+      transparent 35%,
+      color-mix(in srgb, var(--color-page) 18%, transparent)
+    ),
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-page) 14%, transparent) 0 1px,
+      transparent 1px 3px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      color-mix(in srgb, var(--color-foreground) 8%, transparent) 0 1px,
+      transparent 1px 4px
+    );
+  /* Torn, not cut: both short ends are a ragged zigzag. */
+  clip-path: polygon(
+    4% 0%,
+    96% 0%,
+    100% 12%,
+    95% 26%,
+    99% 41%,
+    94% 57%,
+    100% 72%,
+    96% 86%,
+    98% 100%,
+    3% 100%,
+    0% 88%,
+    5% 73%,
+    1% 58%,
+    6% 43%,
+    0% 29%,
+    4% 14%
+  );
+}
+
+/* Taped at its outer corners, so the strips never pile up where the two
+   prints overlap: the first down its left edge, the second down its right. */
+.polaroid:nth-child(odd)::before {
+  top: 0;
+  left: 0;
+  transform: translate(-30%, -25%) rotate(-38deg);
+}
+.polaroid:nth-child(odd)::after {
+  bottom: 0;
+  left: 0;
+  transform: translate(-28%, 20%) rotate(34deg);
+}
+.polaroid:nth-child(even)::before {
+  top: 0;
+  right: 0;
+  transform: translate(30%, -25%) rotate(41deg);
+}
+.polaroid:nth-child(even)::after {
+  bottom: 0;
+  right: 0;
+  transform: translate(26%, 20%) rotate(-32deg);
 }
 
 /* The window the print shows through: a 4:5 crop, not the square of a real

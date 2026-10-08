@@ -19,13 +19,13 @@ export default function PolaroidStack({
     <button
       type="button"
       onClick={onOpen}
-      className="polaroid-stack group flex w-full flex-col items-center gap-part py-2"
+      className="polaroid-stack group flex w-full flex-col items-center gap-part py-2 sm:pt-6"
     >
       <span className="flex justify-center">
         {photos.map((photo, i) => (
           <span
             key={photo.src}
-            className="polaroid w-36 sm:w-44"
+            className="polaroid w-36 sm:w-56"
             style={
               {
                 "--tilt": `${i % 2 ? 5 : -6}deg`,
