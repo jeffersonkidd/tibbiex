@@ -292,6 +292,23 @@ export const VAMPIRE_CATS: ShopItem = {
    section's shop link -- `band`, where set, only says whose mark is on it. */
 export const ART: ShopItem[] = [VAMPIRE_CATS]
 
+/* The two prints under "Get told first" on Home that lead into the Art shelf:
+   the studio at work, and a piece that came out of it. The studio photo is a
+   phone selfie, de-fogged and sharpened by hand; it is on the media bucket
+   like the shop photos. */
+export const SHOP_PRINTS = [
+  {
+    src: `${MEDIA_URL}/studio/tibbie-painting.8d0be710.jpg`,
+    alt: "Tibbie X at her desk with a brush, painting red lettering onto a pencil sketch.",
+    caption: "in the studio",
+  },
+  {
+    src: VAMPIRE_CATS_ARTWORK,
+    alt: VAMPIRE_CATS.alt ?? VAMPIRE_CATS.item,
+    caption: VAMPIRE_CATS.item,
+  },
+]
+
 /* The Buy tab's first filter. Bands narrows again by band (SHOP_GROUPS);
    Art is one flat shelf with no second strip. */
 export type ShopShelf = "bands" | "art"

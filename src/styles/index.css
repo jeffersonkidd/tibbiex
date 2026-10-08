@@ -18,6 +18,7 @@
        price-card.css  one priced tier in a row of them (.price-*)
        featured.css    the amber lighting worn by the featured block
        meter.css       the rehearsal meter
+       polaroid.css    the instant prints that lead into the shop
        magic-dust.css  the spark canvas, above everything
 
    The type rules reference three faces -- Inter for body, Roboto Mono for the
@@ -42,4 +43,5 @@
 @import "./treatments/price-card.css";
 @import "./treatments/featured.css";
 @import "./treatments/meter.css";
+@import "./treatments/polaroid.css";
 @import "./treatments/magic-dust.css";

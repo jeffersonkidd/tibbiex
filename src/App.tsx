@@ -79,6 +79,13 @@ export default function App() {
     tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
   }
 
+  /* Home's polaroids lead to the Art shelf, where the piece they show hangs. */
+  function openArt() {
+    setShopShelf("art")
+    setActiveTab("Buy")
+    tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+  }
+
   /* The return leg. The Portfolio panel is unmounted while Buy is showing, so
      the target section cannot be scrolled to until after the switch renders --
      hence the ref handed to the effect below rather than a scroll right here. */
@@ -116,6 +123,7 @@ export default function App() {
                 setModal({ kind: "product", item: YOUTH_ANTHEMS_BUNDLE })
               }
               onOpenBooking={() => setModal({ kind: "booking" })}
+              onOpenShop={isTabEnabled("Buy") ? openArt : undefined}
             />
           )}
 
