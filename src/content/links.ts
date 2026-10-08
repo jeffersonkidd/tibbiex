@@ -3,7 +3,7 @@ import {
   MessageSquare,
   Music,
   ShoppingBag,
-  Sparkles,
+  Spade,
   Youtube,
 } from "lucide-react"
 
@@ -18,7 +18,7 @@ import {
    so a new link cannot go missing by forgetting to add one. */
 export const LINKS = [
   {
-    icon: Sparkles,
+    icon: Spade,
     title: "1-on-1 Tarot Readings",
     meta: "Over FaceTime — 30, 60 or 90 minutes",
     href: "#",

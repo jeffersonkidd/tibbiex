@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Sparkles } from "lucide-react"
+import { Spade } from "lucide-react"
 import { toast } from "sonner"
 
 import { READINGS } from "../../content/readings"
@@ -100,12 +100,7 @@ export default function ReadingMenu({ onClose }: { onClose: () => void }) {
           gatekeeping — the deck has no authority over you.
         </p>
 
-        <Button
-          className="mt-4"
-          icon={Sparkles}
-          onClick={hold}
-          disabled={sending}
-        >
+        <Button className="mt-4" icon={Spade} onClick={hold} disabled={sending}>
           {sending
             ? "Opening Stripe…"
             : `Hold ${picked.minutes} minutes — $${picked.price}`}

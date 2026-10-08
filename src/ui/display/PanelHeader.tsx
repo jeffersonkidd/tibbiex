@@ -1,5 +1,4 @@
 import type { ComponentType, ReactNode } from "react"
-import { Sparkles } from "lucide-react"
 
 import Pill from "./Pill"
 
@@ -9,7 +8,8 @@ import Pill from "./Pill"
 
    `lit` is the header's half of the featured highlight (featured.css): the
    sigil box pulses and, where a plain panel carries a badge, a turning spark
-   sits instead. The panel itself wears `.featured`. */
+   sits instead -- a "!" in the marker face, since lucide has no bare
+   exclamation mark. The panel itself wears `.featured`. */
 export default function PanelHeader({
   icon: Icon,
   title,
@@ -49,7 +49,12 @@ export default function PanelHeader({
         </div>
       ) : (
         lit && (
-          <Sparkles className="featured-spark h-5 w-5 shrink-0 text-accent" />
+          <span
+            aria-hidden
+            className="featured-spark heading-l shrink-0 px-1 text-accent"
+          >
+            !
+          </span>
         )
       )}
     </div>
