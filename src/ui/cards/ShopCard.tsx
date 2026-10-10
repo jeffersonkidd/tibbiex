@@ -3,6 +3,13 @@ import { ShoppingBag } from "lucide-react"
 import { formatPrice, formatsOf, lowestPrice } from "../../content/shop"
 import type { ShopItem } from "../../content/shop"
 
+/* The image box for each `aspect`: 1:1, 4:5, or the default strip. */
+const IMAGE_BOX = {
+  square: "aspect-square",
+  portrait: "aspect-[4/5]",
+  strip: "h-48",
+}
+
 /* One merch item in the Buy tab: image over a name-and-price bar. The whole
    card is the button that opens the item in the product modal. An item sold
    in several formats shows its lowest price, marked "from". */
@@ -21,7 +28,7 @@ export default function ShopCard({
       onClick={onOpen}
       className="surface group block w-full overflow-hidden rounded-lg text-left transition-colors hover:border-accent"
     >
-      <div className="h-48 overflow-hidden">
+      <div className={`${IMAGE_BOX[item.aspect ?? "strip"]} overflow-hidden`}>
         <img
           src={item.image}
           alt={item.alt ?? item.item}

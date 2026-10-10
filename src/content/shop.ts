@@ -28,6 +28,9 @@ type ShopItemBase = {
   image: string
   /* What the picture shows, when that is more than the item's name. */
   alt?: string
+  /* The shape of the photo on its shop card. Without it the card crops the
+     photo to a fixed-height strip. */
+  aspect?: "square" | "portrait"
   /* A line or two under the price in the product modal. */
   blurb?: string
   /* Whose shelf it sits on under Bands. An art piece may name a band whose
@@ -178,6 +181,7 @@ export const LEFTOVER_FRANK: ShopItem = {
   id: "lc-leftover-frank",
   item: "Leftover Frank",
   image: FRANK_ARTWORK,
+  aspect: "square",
   alt: "“Leftover Frank” in white blackletter over a tabby in a spiked collar and a bone-shaped “Frank” tag, pinning a pigeon in a police cap on a rooftop with a water tower and the Empire State Building behind, above “Bird Laws Get Claws” between two pentagrams, in black-and-white woodcut.",
   blurb:
     "Frank lives at C-Squat and runs the roof. The pigeons made the mistake of deputizing. Bird laws get claws. In four formats.",
@@ -239,6 +243,7 @@ export const ON_A_LEASH: ShopItem = {
   id: "gash-on-a-leash",
   item: "On a Leash",
   image: ON_A_LEASH_ARTWORK,
+  aspect: "portrait",
   alt: "The angular GASH logo over a masked woman in boots holding a chain, leading a masked singer who crawls across the stage with a microphone, the band in silhouette behind them, in white ink on black.",
   blurb:
     "GASH, with the singer on a short leash and the mic still live. Tees only, men’s and women’s.",
