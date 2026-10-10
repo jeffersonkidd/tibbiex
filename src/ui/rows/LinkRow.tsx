@@ -24,7 +24,9 @@ export default function LinkRow({
   const face = (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
-        <div className="rounded-md bg-muted p-3 text-muted-foreground transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+        {/* At rest the sigil is PanelHeader's amber one, border and all, which
+            also makes it the same 50px box; on hover it still turns red. */}
+        <div className="rounded-md border border-accent-soft bg-accent-tint p-3 text-accent transition-colors group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground">
           <Icon className="h-6 w-6" />
         </div>
         <div>

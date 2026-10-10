@@ -29,7 +29,6 @@ export default function HomeTab({
       {onOpenShop && (
         <PolaroidStack
           rows={SHOP_PRINTS}
-          label="Buy cool shit"
           onOpen={(id) => (id === "art" ? onOpenArt() : onOpenShop(id))}
         />
       )}

@@ -5,7 +5,7 @@ import { markStaged } from "./staged"
    -- so they are only as true as the last edit. The numbers below are
    invented to see the meter laid out; replace them before this goes live. */
 export const FUND = {
-  title: "Fund “Still Alive”",
+  title: "“Still Alive” Podcast",
   blurb: "Interviews with the East Coast punks who kept it going.",
   badge: "Podcast fund",
   goal: 2000,
@@ -15,6 +15,9 @@ export const FUND = {
   /* The preset selected when the panel opens. */
   suggested: 25,
   perk: "Receipt, and first listen when episodes drop.",
+  /* Whether CARD_HINT shows under the button. Off here only; the reading
+     menu and the product modal still carry it. */
+  cardHint: false,
   staged: true as const,
 }
 

@@ -7,19 +7,19 @@ export type Polaroid<Id extends string = string> = {
 
 /* Instant prints tossed on the page, in rows of two: each row's pair
    overlaps and tilts, and each print is its own button, handing back its
-   `id`. The label under them all names what they lead into. The paper, the
-   tape and the tilt are in treatments/polaroid.css. */
+   `id`. The bottom padding holds the room a label line used to take (the
+   row gap, a label-mono line, and the old py-2), so the link rows below did
+   not move up when the label went. The paper, the tape and the tilt are in
+   treatments/polaroid.css. */
 export default function PolaroidStack<Id extends string>({
   rows,
-  label,
   onOpen,
 }: {
   rows: Polaroid<Id>[][]
-  label: string
   onOpen: (id: Id) => void
 }) {
   return (
-    <div className="flex flex-col items-center gap-12 py-2 sm:pt-6">
+    <div className="flex flex-col items-center gap-12 pt-2 pb-[calc(3.5rem+var(--text-label)*1.2)] sm:pt-6">
       {rows.map((row) => (
         <div key={row[0].id} className="flex justify-center">
           {row.map((photo, i) => (
@@ -48,7 +48,6 @@ export default function PolaroidStack<Id extends string>({
           ))}
         </div>
       ))}
-      <span className="label-mono text-muted-foreground">{label}</span>
     </div>
   )
 }
