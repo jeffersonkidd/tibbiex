@@ -30,7 +30,7 @@ type ShopItemBase = {
   alt?: string
   /* The shape of the photo on its shop card. Without it the card crops the
      photo to a fixed-height strip. */
-  aspect?: "square" | "portrait"
+  aspect?: "square" | "portrait" | "landscape"
   /* A line or two under the price in the product modal. */
   blurb?: string
   /* Whose shelf it sits on under Bands. An art piece may name a band whose
@@ -150,6 +150,7 @@ export const THE_NEXT_GENERATION: ShopItem = {
   id: "ry-the-next-generation",
   item: "The Next Generation",
   image: `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/artwork.5a3e32a7.jpg`,
+  aspect: "landscape",
   alt: "“Reagan Youth” in white blackletter over a guinea pig with an earring, a stitched scar and one fang, peeking over a ledge, above “The Next Generation” in gold, on black.",
   blurb:
     "A pierced, scarred, fanged guinea pig peeks in under the Reagan Youth blackletter: the next generation. In four formats.",
@@ -278,6 +279,7 @@ export const VAMPIRE_CATS: ShopItem = {
   id: "a-vampire-cats",
   item: "Vampire Cats",
   image: VAMPIRE_CATS_ARTWORK,
+  aspect: "square",
   alt: "Two red cats in spiked collars, fangs out, batting balls of yarn through teal waves and falling shards of red glass. Signed Tibbie X.",
   blurb:
     "Two vampire cats in spiked collars, loose in a sea of red glass. Original art by Tibbie X, in four formats.",
@@ -297,21 +299,35 @@ export const VAMPIRE_CATS: ShopItem = {
    section's shop link -- `band`, where set, only says whose mark is on it. */
 export const ART: ShopItem[] = [VAMPIRE_CATS]
 
-/* The two prints under "Get told first" on Home that lead into the Art shelf:
-   the studio at work, and a piece that came out of it. The studio photo is a
-   phone selfie, de-fogged and sharpened by hand; it is on the media bucket
-   like the shop photos. */
+/* The polaroids on Home that lead into the shop: two pairs, one print per
+   format the shop sells, each from a different design so the four read as a
+   range rather than one piece four times. Stickers and patches in one pair,
+   the tees in the other. */
 export const SHOP_PRINTS = [
-  {
-    src: `${MEDIA_URL}/studio/tibbie-painting.8d0be710.jpg`,
-    alt: "Tibbie X at her desk with a brush, painting red lettering onto a pencil sketch.",
-    caption: "in the studio",
-  },
-  {
-    src: VAMPIRE_CATS_ARTWORK,
-    alt: VAMPIRE_CATS.alt ?? VAMPIRE_CATS.item,
-    caption: VAMPIRE_CATS.item,
-  },
+  [
+    {
+      src: VAMPIRE_CATS_PHOTOS.sticker,
+      alt: "A Vampire Cats sticker: two red cats in spiked collars in teal waves.",
+      caption: "stickers",
+    },
+    {
+      src: FRANK_PHOTOS.patch,
+      alt: "A Leftover Frank patch: the tabby on the rooftop in black-and-white woodcut.",
+      caption: "patches",
+    },
+  ],
+  [
+    {
+      src: TNG_PHOTOS.tee,
+      alt: "A man in a black Reagan Youth “The Next Generation” tee.",
+      caption: "men’s tees",
+    },
+    {
+      src: ON_A_LEASH_PHOTOS["tee-womens"],
+      alt: "A woman in a black GASH “On a Leash” tee.",
+      caption: "women’s tees",
+    },
+  ],
 ]
 
 /* The Buy tab's first filter. Bands narrows again by band (SHOP_GROUPS);

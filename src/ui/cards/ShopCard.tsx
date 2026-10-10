@@ -3,10 +3,11 @@ import { ShoppingBag } from "lucide-react"
 import { formatPrice, formatsOf, lowestPrice } from "../../content/shop"
 import type { ShopItem } from "../../content/shop"
 
-/* The image box for each `aspect`: 1:1, 4:5, or the default strip. */
+/* The image box for each `aspect`: 1:1, 4:5, 3:2, or the default strip. */
 const IMAGE_BOX = {
   square: "aspect-square",
   portrait: "aspect-[4/5]",
+  landscape: "aspect-[3/2]",
   strip: "h-48",
 }
 

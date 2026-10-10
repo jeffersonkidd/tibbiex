@@ -127,12 +127,14 @@
 .polaroid-stack:focus-visible .polaroid {
   --lift: -4px;
 }
-.polaroid-stack:hover .polaroid:first-child,
-.polaroid-stack:focus-visible .polaroid:first-child {
+/* Each pair fans on its own, so its first and last are the pair's, not the
+   stack's. */
+.polaroid-stack:hover .polaroid-pair .polaroid:first-child,
+.polaroid-stack:focus-visible .polaroid-pair .polaroid:first-child {
   --fan: -3deg;
 }
-.polaroid-stack:hover .polaroid:last-child,
-.polaroid-stack:focus-visible .polaroid:last-child {
+.polaroid-stack:hover .polaroid-pair .polaroid:last-child,
+.polaroid-stack:focus-visible .polaroid-pair .polaroid:last-child {
   --fan: 3deg;
 }
 

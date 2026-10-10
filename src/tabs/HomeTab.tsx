@@ -25,7 +25,7 @@ export default function HomeTab({
 
       {onOpenShop && (
         <PolaroidStack
-          photos={SHOP_PRINTS}
+          pairs={SHOP_PRINTS}
           label="Buy cool shit"
           onOpen={onOpenShop}
         />
