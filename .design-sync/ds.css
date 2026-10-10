@@ -1,0 +1,48 @@
+/* The stylesheet Claude Design ships: the site's own foundations, compiled by
+   the site's own Tailwind, plus a safelist so the design agent can write the
+   token utilities even where the app itself never has. Built by
+   .design-sync/build.mjs; the Google Fonts @import is prepended there. */
+@import "../src/styles/index.css";
+
+@source "../src";
+
+/* Token utilities: every colour token on every colour property, the spacing
+   roles on the properties they belong to, and the radius ramp. */
+@source inline("{hover:,}{bg,text,border,ring,outline,from,to,via,fill,stroke}-{foreground,muted-foreground,page,background,card,muted,popover,input-background,border,border-strong,primary,primary-bright,primary-deep,primary-foreground,accent,accent-deep,accent-foreground,accent-soft,accent-tint,live,on-live}");
+@source inline("{bg,text,border}-{foreground,card,muted,primary,accent,background,page}/{10,20,30,40,50,60,70,80,90}");
+@source inline("{p,px,py,pt,pb,pl,pr}-{strip,card,panel,modal}");
+@source inline("{gap,gap-x,gap-y,space-y,space-x}-{glyph,cluster,part,stack}");
+@source inline("rounded{,-t,-b,-l,-r}-{xs,sm,md,lg,xl,2xl,3xl,4xl,full}");
+
+/* What App's root div sets for the whole site (font-sans text-foreground). A
+   design has no App around it, so the body carries the same two defaults --
+   without them, text with no colour utility of its own (LinkRow's title, any
+   heading) inherits the browser's black and vanishes on the dark page. */
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    color: var(--color-foreground);
+  }
+}
+
+/* The previews are compositions too; their glue classes must exist. */
+@source "./previews";
+
+/* Layout vocabulary for designs built with the library. Tailwind compiles only
+   the classes it finds, and a design is written after the build, so the common
+   layout utilities are compiled ahead of time. */
+@source inline("{sm:,md:,lg:,}{block,inline-block,inline,flex,inline-flex,grid,hidden,contents}");
+@source inline("{sm:,md:,lg:,}{flex-row,flex-col,flex-wrap,flex-1,flex-none,grow,shrink-0,items-start,items-center,items-end,items-baseline,items-stretch,justify-start,justify-center,justify-end,justify-between,self-start,self-center,self-end,text-left,text-center,text-right}");
+@source inline("{sm:,md:,lg:,}grid-cols-{1..6}");
+@source inline("{sm:,md:,lg:,}col-span-{1..6}");
+@source inline("{sm:,md:,}{w,h,min-w,min-h,size}-{0..24}");
+@source inline("{sm:,md:,}{w,h}-{28,32,36,40,44,48,52,56,60,64,72,80,96}");
+@source inline("{sm:,md:,}{w,h,min-h,min-w,max-w}-{full,screen,fit,auto,min,max}");
+@source inline("{sm:,md:,}max-w-{xs,sm,md,lg,xl,2xl,3xl,4xl,5xl,6xl,7xl,prose}");
+@source inline("{sm:,md:,}{p,px,py,pt,pb,pl,pr,m,mx,my,mt,mb,ml,mr,gap,gap-x,gap-y,space-y,space-x}-{0,0.5,1,1.5,2,2.5,3,4,5,6,8,10,12,16,20,24}");
+@source inline("{mx,my,m,ml,mr,mt,mb}-auto");
+@source inline("{relative,absolute,fixed,sticky,inset-0,top-0,right-0,bottom-0,left-0,z-10,z-20,z-50,isolate,overflow-hidden,overflow-x-auto,overflow-y-auto,truncate,line-clamp-2,line-clamp-3,whitespace-nowrap,break-words,uppercase,lowercase,italic,underline,no-underline,object-cover,object-contain,aspect-square,aspect-video,pointer-events-none,cursor-pointer,select-none,sr-only,shadow,shadow-lg,shadow-xl,backdrop-blur,backdrop-blur-xl,transition,transition-colors,transition-all,duration-200,duration-300,border,border-0,border-t,border-b,border-l,border-r,border-2,divide-y,divide-border}");
+@source inline("{hover:,}opacity-{0,40,50,60,70,80,90,100}");
+
+/* Every text style in typography.css, used by the site yet or not. */
+@source inline("{sm:,}{heading-xl,heading-l,heading-m,heading-s,body-large,body-large-bold,body-base,body-base-bold,body-small,body-small-bold,body-xs,body-xs-bold,label-mono,label-mono-xs,numeric-amount}");

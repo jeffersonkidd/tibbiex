@@ -1,0 +1,89 @@
+{
+  "projectId": "84ad8af6-5915-48d9-bd98-c3dc4e2c7306",
+  "shape": "package",
+  "pkg": "tibbiex-ui",
+  "globalName": "TibbieX",
+  "buildCmd": "node .design-sync/build.mjs",
+  "entry": ".ds-sync/pkg/index.ts",
+  "srcDir": "../../src/ui",
+  "cssEntry": "ds.css",
+  "extraEntries": [
+    "lucide-react"
+  ],
+  "docsDir": "docs",
+  "dtsPropsFor": {
+    "Button": "/** \"brand\" = the red CTA (one per panel); \"secondary\" = bordered, card-filled chrome. */\n  tone?: \"brand\" | \"secondary\";\n  /** \"block\" = full width (wrap it in a sized element to size it); \"inline\" = content width; \"icon\" = glyph only, needs `name`. */\n  shape?: \"block\" | \"inline\" | \"icon\";\n  /** A lucide-react icon (or any component taking className), drawn at 16px before the label. */\n  icon?: React.ComponentType<{ className?: string }>;\n  /** Screen-reader name; required when shape is \"icon\", never set otherwise. */\n  name?: string;\n  /** The label. Required for block/inline; for icon it shows from the sm breakpoint up. */\n  children?: React.ReactNode;\n  type?: \"button\" | \"submit\";\n  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;\n  disabled?: boolean;\n  className?: string;",
+    "SocialButton": "/** A lucide-react icon or VenmoIcon/TikTokIcon/PatreonIcon; drawn with size={20}. */\n  icon: React.ComponentType<{ size?: number }>;\n  /** Accessible name and tooltip. */\n  label: string;\n  href: string;",
+    "PanelHeader": "/** Glyph in the sigil box, e.g. a lucide-react icon. */\n  icon: React.ComponentType<{ className?: string }>;\n  title: string;\n  /** The quieter line under the title. */\n  sub: React.ReactNode;\n  /** Optional Pill on the right. */\n  badge?: string;\n  /** Amber \"featured\" lighting; only one block on a page wears it. */\n  lit?: boolean;",
+    "Pill": "/** Optional lucide-react glyph, drawn with size={12}. */\n  icon?: React.ComponentType<{ size?: number; \"aria-hidden\"?: boolean }>;\n  children: React.ReactNode;",
+    "LinkRow": "link: {\n    /** lucide-react icon shown in the row's icon box. */\n    icon: React.ComponentType<{ className?: string }>;\n    title: string;\n    /** Mono caption under the title, e.g. \"TIKTOK · @TIBBIEX\". */\n    meta: string;\n    href: string;\n    /** true -> trailing ExternalLink glyph; otherwise a ChevronRight. */\n    external?: boolean;\n  };\n  /** Given -> the row is a <button> calling this; omitted -> an <a href>. */\n  onOpen?: () => void;",
+    "ShopCard": "item: {\n    id: string;\n    /** Product name. */\n    item: string;\n    /** Photo URL. */\n    image: string;\n    alt?: string;\n    blurb?: string;\n    /** USD, before shipping. Either price or formats. */\n    price?: number;\n    sizes?: { label: string; soldOut?: true }[];\n    /** Several formats, e.g. sticker / patch / tee; the card shows the lowest price as \"from\". */\n    formats?: { id: string; label: string; price: number }[];\n    stock?: { left: number; of: number };\n  };\n  onOpen: () => void;",
+    "ReaganYouthMark": "",
+    "SupporterRow": "supporter: { name: string; msg: string; amount: number };\n  /** 1-based position in the ranking. */\n  rank: number;",
+    "AlbumTile": "album: {\n    id: string;\n    album: string;\n    band: string;\n    year: string;\n    /** Her role on the record, e.g. \"Bass, vocals\". */\n    role: string;\n    /** Cover image URL. */\n    image: string;\n    track?: string;\n  };\n  onOpen: () => void;",
+    "PhotoGrid": "/** width/height reserve the masonry space before the image loads. */\n  photos: { src: string; alt: string; width: number; height: number }[];\n  onOpen: (index: number) => void;",
+    "Lightbox": "state: {\n    photos: { src: string; alt: string; width: number; height: number }[];\n    index: number;\n  };\n  /** Called with the next state when the arrows step through photos. */\n  onChange: (next: { photos: { src: string; alt: string; width: number; height: number }[]; index: number }) => void;\n  onClose: () => void;",
+    "PolaroidStack": "/** Two or three prints; captions are hand-lettered. */\n  photos: { src: string; alt: string; caption: string }[];\n  /** The link text under the stack. */\n  label: string;\n  onOpen: () => void;",
+    "ShopLink": "entry: {\n    id: \"leftover-crack\" | \"reagan-youth\" | \"gash\";\n    band: string;\n    role: string;\n    years: string;\n    blurb: string;\n    highlights: { label: string; detail: string }[];\n    photos: { src: string; alt: string; width: number; height: number }[];\n  };\n  onOpen: (band: \"leftover-crack\" | \"reagan-youth\" | \"gash\") => void;",
+    "VenmoIcon": "size?: number;\n  className?: string;",
+    "TikTokIcon": "size?: number;\n  className?: string;",
+    "PatreonIcon": "size?: number;\n  className?: string;"
+  },
+  "guidelinesGlob": [],
+  "overrides": {
+    "Overlay": {
+      "cardMode": "single",
+      "viewport": "720x620"
+    },
+    "Lightbox": {
+      "cardMode": "single",
+      "viewport": "900x900"
+    },
+    "AlbumTile": {
+      "cardMode": "column"
+    },
+    "Chip": {
+      "cardMode": "column"
+    },
+    "DetailList": {
+      "cardMode": "column"
+    },
+    "Field": {
+      "cardMode": "column"
+    },
+    "FilterPill": {
+      "cardMode": "column"
+    },
+    "LinkRow": {
+      "cardMode": "column"
+    },
+    "Meter": {
+      "cardMode": "column"
+    },
+    "OverlayBody": {
+      "cardMode": "column"
+    },
+    "PanelHeader": {
+      "cardMode": "column"
+    },
+    "PriceCard": {
+      "cardMode": "column"
+    },
+    "Separator": {
+      "cardMode": "column"
+    },
+    "ShopCard": {
+      "cardMode": "column"
+    },
+    "ShowRow": {
+      "cardMode": "column"
+    },
+    "TabItem": {
+      "cardMode": "column"
+    },
+    "TextArea": {
+      "cardMode": "column"
+    }
+  },
+  "readmeHeader": ".design-sync/conventions.md"
+}
