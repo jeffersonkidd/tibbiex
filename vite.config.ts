@@ -14,6 +14,16 @@ export default defineConfig({
       "@": path.resolve(import.meta.dirname, "./src"),
     },
   },
+  build: {
+    // Two pages: the site, and the unlisted profile picture preview at
+    // /preview, which gets its own bundle so none of it ships to visitors.
+    rolldownOptions: {
+      input: {
+        main: path.resolve(import.meta.dirname, "index.html"),
+        preview: path.resolve(import.meta.dirname, "preview/index.html"),
+      },
+    },
+  },
   optimizeDeps: {
     include: ["react", "react-dom", "react/jsx-runtime", "sonner"],
   },

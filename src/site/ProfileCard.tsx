@@ -19,13 +19,18 @@ import Separator from "../ui/display/Separator"
    contact button. Every word of it comes from content/profile.ts.
 
    A band with a shelf in the Buy tab is a button that opens it; `onOpenShop`
-   is left out while the Buy tab is off, and every band reads as text. */
+   is left out while the Buy tab is off, and every band reads as text.
+
+   `portrait` stands a different picture in the avatar, for the preview page
+   alone; the site never passes it. */
 export default function ProfileCard({
   onContact,
   onOpenShop,
+  portrait = profilePic,
 }: {
   onContact: () => void
   onOpenShop?: (band: BandId) => void
+  portrait?: string
 }) {
   const { live } = PROFILE
   const shelved = (band?: BandId) =>
@@ -57,7 +62,7 @@ export default function ProfileCard({
           </a>
         )}
 
-        <Avatar src={profilePic} alt={PROFILE.name} live={live && live.label} />
+        <Avatar src={portrait} alt={PROFILE.name} live={live && live.label} />
 
         <h1 className="w-full max-w-80">
           <img
