@@ -18,6 +18,10 @@ export const FUND = {
   /* Whether CARD_HINT shows under the button. Off here only; the reading
      menu and the product modal still carry it. */
   cardHint: false,
+  /* Whether the "Say something" message field shows. Off: the panel ran too
+     tall. With it off the note stays empty and payments fall back to the
+     default note in content/payments.ts. */
+  noteField: false,
   staged: true as const,
 }
 

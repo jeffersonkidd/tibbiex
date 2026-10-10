@@ -92,15 +92,17 @@ export default function FundPanel() {
           ))}
         </div>
 
-        <Field
-          type="text"
-          placeholder="Say something… (shows in the feed)"
-          label="Message"
-          value={note}
-          onChange={setNote}
-          required={false}
-          size="sm"
-        />
+        {FUND.noteField && (
+          <Field
+            type="text"
+            placeholder="Say something… (shows in the feed)"
+            label="Message"
+            value={note}
+            onChange={setNote}
+            required={false}
+            size="sm"
+          />
+        )}
 
         <Button type="submit" icon={CreditCard} disabled={sending}>
           {sending ? "Opening Stripe…" : `Contribute ${dollars(amount)}`}
