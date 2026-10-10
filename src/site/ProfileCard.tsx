@@ -57,7 +57,11 @@ export default function ProfileCard({
           </a>
         )}
 
-        <Avatar src={profilePic} alt={PROFILE.name} live={live && live.label} />
+        <Avatar
+          src={PROFILE.portrait ? profilePic : undefined}
+          alt={PROFILE.name}
+          live={live && live.label}
+        />
 
         <h1 className="w-full max-w-80">
           <img
@@ -77,7 +81,9 @@ export default function ProfileCard({
           ))}
         </ul>
 
-        <p className="profile-quote body-base">“{PROFILE.quote}”</p>
+        {PROFILE.quote.enabled && (
+          <p className="profile-quote body-base">“{PROFILE.quote.text}”</p>
+        )}
 
         <ul
           aria-label="Bands"

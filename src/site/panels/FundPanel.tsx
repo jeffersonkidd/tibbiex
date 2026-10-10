@@ -55,12 +55,11 @@ export default function FundPanel() {
 
   return (
     <section className="surface rounded-lg p-panel">
-      <PanelHeader
-        icon={Mic}
-        title={FUND.title}
-        sub={FUND.blurb}
-        badge={FUND.badge}
-      />
+      <PanelHeader icon={Mic} title={FUND.title} eyebrow={FUND.eyebrow} />
+
+      {/* The blurb is its own block, full width under the header, rather than
+          a sub line squeezed beside the sigil. */}
+      <p className="mt-3 body-small text-muted-foreground">{FUND.blurb}</p>
 
       <div className="mt-4 flex items-baseline justify-between gap-part">
         <span className="body-large-bold">{dollars(FUND.raised)}</span>

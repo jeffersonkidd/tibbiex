@@ -1,3 +1,5 @@
+import { UserRound } from "lucide-react"
+
 /* The round portrait with its lit halo, from the Figma "Avatar" component
    in Tibbie X - UI. Content-blind: the photo, its alt text and
    whether she is live all arrive as props.
@@ -11,24 +13,41 @@
    rather than a kind of avatar, so Figma carries it as the boolean property
    `Live` on the same dot this renders. The set used to hold a second variant,
    a placeholder with an AVATAR wordmark, which nothing in the app ever needed
-   -- PROFILE always carries a portrait. */
+   -- PROFILE always carries a portrait.
+
+   Without a `src` it draws a placeholder instead: a person glyph on the muted
+   fill, inside the same ring and glow, so the card keeps its shape while
+   there is no photo to show. */
 export default function Avatar({
   src,
   alt,
   live,
 }: {
-  src: string
+  /* The portrait, or nothing for the placeholder. */
+  src?: string
   alt: string
   /* The label for the live dot, or null when she is not live. */
   live?: string | null
 }) {
   return (
     <div className="relative">
-      <img
-        src={src}
-        alt={alt}
-        className="avatar h-36 w-36 object-cover sm:h-40 sm:w-40"
-      />
+      {src ? (
+        <img
+          src={src}
+          alt={alt}
+          className="avatar h-36 w-36 object-cover sm:h-40 sm:w-40"
+        />
+      ) : (
+        <div
+          role="img"
+          aria-label={alt}
+          className="avatar flex h-36 w-36 sm:h-40 sm:w-40"
+        >
+          <span className="flex flex-1 items-center justify-center rounded-full bg-muted text-muted-foreground">
+            <UserRound className="size-16 sm:size-18" aria-hidden />
+          </span>
+        </div>
+      )}
       {live && (
         <span
           className="absolute bottom-3.5 right-3.5 h-4 w-4 rounded-full border border-foreground bg-live"

@@ -258,6 +258,10 @@ export const ON_A_LEASH: ShopItem = {
   formats: TEE_FORMATS,
 }
 
+/* Whether the product modal's Buy button carries CARD_HINT and "US shipping
+   only." under it. Off; an item's own `ships` line still shows. */
+export const SHOP_CARD_HINT = false
+
 /* The Bands shelf. The placeholders are gone, so a band with no real piece
    yet drops out of the strip. */
 export const BUY: ShopItem[] = [THE_NEXT_GENERATION, LEFTOVER_FRANK, ON_A_LEASH]

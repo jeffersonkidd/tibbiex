@@ -7,7 +7,7 @@ import { markStaged } from "./staged"
 export const FUND = {
   title: "“Still Alive” Podcast",
   blurb: "Interviews with the East Coast punks who kept it going.",
-  badge: "Podcast fund",
+  eyebrow: "Podcast fund",
   goal: 2000,
   raised: 1240,
   backers: 38,

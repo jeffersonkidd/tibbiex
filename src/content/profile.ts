@@ -20,7 +20,9 @@ const TIKTOK_URL = "https://www.tiktok.com/@tibbieskyex"
 
 export const PROFILE = {
   name: "Tibbie",
-  quote: "Give me chaos or give me death.",
+  /* The line under the role pills. Off for now; the copy is kept so
+     switching `enabled` back on is all it takes. */
+  quote: { text: "Give me chaos or give me death.", enabled: false },
   /* What she does on stage -- the amber pills under the wordmark. */
   roles: [
     { icon: Music, label: "Bass" },
@@ -37,6 +39,9 @@ export const PROFILE = {
     { name: "Kissy Kamikaze" },
     { name: "X-Possibles" },
   ] as { name: string; shop?: BandId }[],
+  /* Whether the avatar shows her portrait (assets/imagery/tibbie-portrait-2)
+     or a placeholder glyph in the same ring. Off for now. */
+  portrait: false,
   /* The green badge on the banner and the dot on the avatar. There is no feed
      telling the site she is live, so this is a claim someone has to keep true:
      set it to null when she is not, and the badge and dot both go. To bring

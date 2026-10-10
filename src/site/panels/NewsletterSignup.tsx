@@ -79,6 +79,7 @@ export default function NewsletterSignup() {
       >
         <PanelHeader
           lit
+          spark={NEWSLETTER.spark}
           icon={Mail}
           title="What do you want to hear about?"
           sub={`Signing up ${email.trim()}. Optional — change it any time.`}
@@ -116,6 +117,7 @@ export default function NewsletterSignup() {
     <section className="surface featured rounded-lg p-panel">
       <PanelHeader
         lit
+        spark={NEWSLETTER.spark}
         icon={Mail}
         title={NEWSLETTER.title}
         sub={NEWSLETTER.blurb}

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react"
-import { BellRing, ShoppingBag } from "lucide-react"
+import { BellRing, CreditCard } from "lucide-react"
 import { toast } from "sonner"
 
 import { CARD_HINT, SHIPPING } from "../../content/payments"
 import { VENMO_HANDLE } from "../../content/site"
-import { formatPrice, formatsOf } from "../../content/shop"
+import { formatPrice, formatsOf, SHOP_CARD_HINT } from "../../content/shop"
 import type { ShopFormat, ShopItem } from "../../content/shop"
 import { isEmail } from "../../lib/email"
 import { sendMessage } from "../../lib/messages"
@@ -234,7 +234,7 @@ export default function ProductModal({
 
             <Button
               className="mt-5"
-              icon={ShoppingBag}
+              icon={CreditCard}
               onClick={buy}
               disabled={sending}
             >
@@ -242,15 +242,13 @@ export default function ProductModal({
                 ? "Opening Stripe…"
                 : `Buy${picked ? ` ${picked}` : ""} — ${formatPrice(format.price)}`}
             </Button>
-            <p className="body-xs mt-2 text-center text-muted-foreground">
-              {CARD_HINT} US shipping only.
-              {item.ships && (
-                <>
-                  <br />
-                  {item.ships}
-                </>
-              )}
-            </p>
+            {(SHOP_CARD_HINT || item.ships) && (
+              <p className="body-xs mt-2 text-center text-muted-foreground">
+                {SHOP_CARD_HINT && <>{CARD_HINT} US shipping only.</>}
+                {SHOP_CARD_HINT && item.ships && <br />}
+                {item.ships}
+              </p>
+            )}
 
             <div className="mt-2">
               <VenmoLink handle={VENMO_HANDLE} onClick={payWithVenmo} />
