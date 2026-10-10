@@ -79,10 +79,10 @@ export default function App() {
     tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
   }
 
-  /* Home's polaroids lead to the Bands shelf: three of the four prints are
-     band pieces, and it is the shelf the Buy tab opens on anyway. */
-  function openBands() {
-    setShopShelf("bands")
+  /* The Art shelf has no band to narrow to, so it is its own hand-off: Home's
+     fourth polaroid. */
+  function openArt() {
+    setShopShelf("art")
     setActiveTab("Buy")
     tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
   }
@@ -127,7 +127,8 @@ export default function App() {
                 setModal({ kind: "product", item: YOUTH_ANTHEMS_BUNDLE })
               }
               onOpenBooking={() => setModal({ kind: "booking" })}
-              onOpenShop={isTabEnabled("Buy") ? openBands : undefined}
+              onOpenShop={isTabEnabled("Buy") ? openShop : undefined}
+              onOpenArt={openArt}
             />
           )}
 

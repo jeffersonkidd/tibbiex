@@ -4,7 +4,7 @@
    The paper is --color-foreground and the caption ink is --color-page, so the
    prints stay on the palette: the off-white the body text is set in reads as
    photo stock once it is a filled shape. Each print sets --tilt in the markup;
-   the stack fans them a little further apart on hover, as if picked up.
+   a print lifts and fans away from its neighbour on hover, as if picked up.
 
    Each print is taped to the page at two corners with duct tape:
    ::before and ::after, a grey strip with a woven grain and ends torn by
@@ -106,10 +106,10 @@
   transform: translate(26%, 20%) rotate(-32deg);
 }
 
-/* The window the print shows through: a 4:5 crop, not the square of a real
-   600 film, so a portrait keeps both a face and the work in front of it. */
+/* The window the print shows through: square, like real 600 film, because
+   every print is a square piece of shop art and a crop would cut its edges. */
 .polaroid-photo {
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 1;
   width: 100%;
   object-fit: cover;
   background-color: var(--color-muted);
@@ -123,18 +123,19 @@
   text-align: center;
 }
 
-.polaroid-stack:hover .polaroid,
-.polaroid-stack:focus-visible .polaroid {
+/* Each print is its own button, so it is picked up on its own: lifted over
+   its neighbour and fanned away from it. */
+.polaroid:hover,
+.polaroid:focus-visible {
   --lift: -4px;
+  z-index: 1;
 }
-/* Each pair fans on its own, so its first and last are the pair's, not the
-   stack's. */
-.polaroid-stack:hover .polaroid-pair .polaroid:first-child,
-.polaroid-stack:focus-visible .polaroid-pair .polaroid:first-child {
+.polaroid:first-child:hover,
+.polaroid:first-child:focus-visible {
   --fan: -3deg;
 }
-.polaroid-stack:hover .polaroid-pair .polaroid:last-child,
-.polaroid-stack:focus-visible .polaroid-pair .polaroid:last-child {
+.polaroid:last-child:hover,
+.polaroid:last-child:focus-visible {
   --fan: 3deg;
 }
 

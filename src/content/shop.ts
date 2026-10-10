@@ -299,33 +299,40 @@ export const VAMPIRE_CATS: ShopItem = {
    section's shop link -- `band`, where set, only says whose mark is on it. */
 export const ART: ShopItem[] = [VAMPIRE_CATS]
 
-/* The polaroids on Home that lead into the shop: two pairs, one print per
-   format the shop sells, each from a different design so the four read as a
-   range rather than one piece four times. Stickers and patches in one pair,
-   the tees in the other. */
-export const SHOP_PRINTS = [
+/* The polaroids on Home, one per shelf, each opening its own: the three
+   bands, then Art. Two rows of two, in the order the Buy tab lists them. */
+export const SHOP_PRINTS: {
+  id: BandId | "art"
+  src: string
+  alt: string
+  caption: string
+}[][] = [
   [
     {
-      src: VAMPIRE_CATS_PHOTOS.sticker,
-      alt: "A Vampire Cats sticker: two red cats in spiked collars in teal waves.",
-      caption: "stickers",
+      id: "leftover-crack",
+      src: FRANK_ARTWORK,
+      alt: LEFTOVER_FRANK.alt ?? LEFTOVER_FRANK.item,
+      caption: "Leftover Crack",
     },
     {
-      src: FRANK_PHOTOS.patch,
-      alt: "A Leftover Frank patch: the tabby on the rooftop in black-and-white woodcut.",
-      caption: "patches",
+      id: "reagan-youth",
+      src: THE_NEXT_GENERATION.image,
+      alt: THE_NEXT_GENERATION.alt ?? THE_NEXT_GENERATION.item,
+      caption: "Reagan Youth",
     },
   ],
   [
     {
-      src: TNG_PHOTOS.tee,
-      alt: "A man in a black Reagan Youth “The Next Generation” tee.",
-      caption: "men’s tees",
+      id: "gash",
+      src: ON_A_LEASH_ARTWORK,
+      alt: ON_A_LEASH.alt ?? ON_A_LEASH.item,
+      caption: "GASH",
     },
     {
-      src: ON_A_LEASH_PHOTOS["tee-womens"],
-      alt: "A woman in a black GASH “On a Leash” tee.",
-      caption: "women’s tees",
+      id: "art",
+      src: VAMPIRE_CATS_ARTWORK,
+      alt: VAMPIRE_CATS.alt ?? VAMPIRE_CATS.item,
+      caption: "Art",
     },
   ],
 ]

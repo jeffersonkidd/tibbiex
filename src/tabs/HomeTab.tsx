@@ -1,4 +1,5 @@
 import { VISIBLE_LINKS } from "../content/links"
+import type { BandId } from "../content/portfolio"
 import { SHOP_PRINTS } from "../content/shop"
 import PolaroidStack from "../ui/cards/PolaroidStack"
 import LinkRow from "../ui/rows/LinkRow"
@@ -13,11 +14,13 @@ export default function HomeTab({
   onOpenOffer,
   onOpenBooking,
   onOpenShop,
+  onOpenArt,
 }: {
   onOpenReadings: () => void
   onOpenOffer: () => void
   onOpenBooking: () => void
-  onOpenShop?: () => void
+  onOpenShop?: (band: BandId) => void
+  onOpenArt: () => void
 }) {
   return (
     <>
@@ -25,9 +28,9 @@ export default function HomeTab({
 
       {onOpenShop && (
         <PolaroidStack
-          pairs={SHOP_PRINTS}
+          rows={SHOP_PRINTS}
           label="Buy cool shit"
-          onOpen={onOpenShop}
+          onOpen={(id) => (id === "art" ? onOpenArt() : onOpenShop(id))}
         />
       )}
 
