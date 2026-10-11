@@ -50,6 +50,8 @@ export default function BuyTab({
         ))}
       </div>
 
+      {shelf === "all" && <AllShelf onOpen={onOpenProduct} />}
+
       {shelf === "art" && <ShopGrid items={ART} onOpen={onOpenProduct} />}
 
       {/* Second filter, Bands only -- also the way back out of a band the
@@ -67,31 +69,81 @@ export default function BuyTab({
             ))}
           </div>
 
-          <section className="space-y-stack">
-            <div className="flex flex-col items-start gap-1 pt-2">
-              <h2 className="heading-xl">{shown.title}</h2>
-              {/* The return leg of the portfolio link. Nothing to go back to
-                  while the Portfolio tab is off, so it gets a count instead. */}
-              {onOpenPortfolio ? (
-                <button
-                  type="button"
-                  onClick={() => onOpenPortfolio(shown.id)}
-                  className="label-mono flex items-center gap-1 text-muted-foreground transition-colors hover:text-accent"
-                >
-                  View credits <ChevronRight className="h-3.5 w-3.5" />
-                </button>
-              ) : (
-                <span className="label-mono text-muted-foreground">
-                  {shown.items.length} items
-                </span>
-              )}
-            </div>
-
-            <ShopGrid items={shown.items} onOpen={onOpenProduct} />
-          </section>
+          <ShopSection
+            title={shown.title}
+            items={shown.items}
+            onOpen={onOpenProduct}
+            onOpenCredits={onOpenPortfolio && (() => onOpenPortfolio(shown.id))}
+          />
         </>
       )}
     </>
+  )
+}
+
+/* All: every band's items in portfolio order, then Art, as one unheaded
+   two-column masonry with every card at its own aspect. Cards are dealt
+   left, right, left so the catalogue still reads across; on a phone the
+   columns dissolve (`contents`) and `order` puts them back in sequence. */
+function AllShelf({ onOpen }: { onOpen: (item: ShopItem) => void }) {
+  const items = [...SHOP_GROUPS.flatMap((group) => group.items), ...ART]
+
+  return (
+    <div className="flex flex-col gap-stack sm:flex-row sm:items-start">
+      {[0, 1].map((column) => (
+        <div
+          key={column}
+          className="contents sm:flex sm:min-w-0 sm:flex-1 sm:flex-col sm:gap-stack"
+        >
+          {items.map(
+            (item, index) =>
+              index % 2 === column && (
+                <div key={item.id} style={{ order: index }}>
+                  <ShopCard item={item} onOpen={() => onOpen(item)} />
+                </div>
+              ),
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+/* One titled band on the Bands shelf. */
+function ShopSection({
+  title,
+  items,
+  onOpen,
+  onOpenCredits,
+}: {
+  title: string
+  items: ShopItem[]
+  onOpen: (item: ShopItem) => void
+  onOpenCredits?: () => void
+}) {
+  return (
+    <section className="space-y-stack">
+      <div className="flex flex-col items-start gap-1 pt-2">
+        <h2 className="heading-xl">{title}</h2>
+        {/* The return leg of the portfolio link. Nothing to go back to
+            while the Portfolio tab is off, so it gets a count instead. */}
+        {onOpenCredits ? (
+          <button
+            type="button"
+            onClick={onOpenCredits}
+            className="label-mono flex items-center gap-1 text-muted-foreground transition-colors hover:text-accent"
+          >
+            View credits <ChevronRight className="h-3.5 w-3.5" />
+          </button>
+        ) : (
+          <span className="label-mono text-muted-foreground">
+            {items.length} {items.length === 1 ? "item" : "items"}
+          </span>
+        )}
+      </div>
+
+      <ShopGrid items={items} onOpen={onOpen} />
+    </section>
   )
 }
 

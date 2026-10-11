@@ -78,14 +78,17 @@
 
   /* --- Type --------------------------------------------------------------
      Permanent Marker is proportional and ships one weight, so nothing
-     display is ever bolded.
+     display is ever bolded. Shantell Sans, the handwritten body face, is
+     upright and ships 300-800, so the body styles' 700 is a real bold; its
+     natural line is 1.34em against Inter's 1.21, inside the 1.35-1.5 the
+     body styles set.
      These are the Typography variables in Figma; the text styles built on
      them are utilities in typography.css. The first three sizes are values
      Tailwind's scale has no name for: the mono label, the price unit and the
      price amount. 3xl and 4xl are the two display heading steps, which
      Figma sets at 32 and 40 against Tailwind's 30 and 36. Tailwind's
      --text-*, --font-weight-* and --tracking-* namespaces cover the rest. */
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Shantell Sans", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Roboto Mono", ui-monospace, monospace;
   --font-display: "Permanent Marker", cursive;
 

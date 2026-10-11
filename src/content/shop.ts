@@ -341,11 +341,14 @@ export const SHOP_PRINTS: {
   ],
 ]
 
-/* The Buy tab's first filter. Bands narrows again by band (SHOP_GROUPS);
-   Art is one flat shelf with no second strip. */
-export type ShopShelf = "bands" | "art"
+/* The Buy tab's first filter. All is the default: every band group in
+   SHOP_GROUPS, then ART, each under its own heading, so a visitor sees the
+   whole catalogue without tapping through. Bands narrows to one band at a
+   time; Art is one flat shelf with no second strip. */
+export type ShopShelf = "all" | "bands" | "art"
 
 export const SHOP_SHELVES: { id: ShopShelf; title: string }[] = [
+  { id: "all", title: "All" },
   { id: "bands", title: "Bands" },
   { id: "art", title: "Art" },
 ]

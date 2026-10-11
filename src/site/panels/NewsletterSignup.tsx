@@ -11,7 +11,7 @@ import EmailField from "../../ui/controls/EmailField"
 import Honeypot from "../../ui/controls/Honeypot"
 import PanelHeader from "../../ui/display/PanelHeader"
 
-/* "Get my Newsletter" -- the sign-up at the head of the Home tab, from the
+/* "Join my Newsletter" -- the sign-up at the head of the Home tab, from the
    component reference in .files/tibbiex-components.html. Two steps: the
    address, then (optionally) what to hear about.
 

@@ -58,7 +58,7 @@ export default function App() {
   /* Which shelf the Buy tab shows, and which band the Bands shelf is
      narrowed to. Both are set from a portfolio section's shop link, and
      resettable from the filter strips. */
-  const [shopShelf, setShopShelf] = useState<ShopShelf>("bands")
+  const [shopShelf, setShopShelf] = useState<ShopShelf>("all")
   const [shopBand, setShopBand] = useState<BandId>(SHOP_GROUPS[0].id)
   /* The same idea one tab over, except the Portfolio strip always has exactly
      one band selected -- there is no "all" view of the credits. */
@@ -109,7 +109,7 @@ export default function App() {
     <div className="flex min-h-screen justify-center pb-20 font-sans text-foreground selection:bg-accent-soft">
       <Toaster position="top-center" richColors />
 
-      <div className="w-full min-w-0 max-w-2xl space-y-stack px-4 pt-6 sm:px-6">
+      <div className="w-full min-w-0 max-w-[600px] space-y-stack px-4 pt-6 sm:px-6">
         <Header onShare={() => setModal({ kind: "share" })} />
 
         <ProfileCard
