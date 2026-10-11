@@ -12,7 +12,7 @@ import type { ShopItem, ShopShelf } from "./content/shop"
 import { VISIBLE_TABS, isTabEnabled } from "./content/tabs"
 import type { Tab } from "./content/tabs"
 
-import { analyticsOptedOut } from "./lib/analytics"
+import { analyticsOptedOut, trackTab } from "./lib/analytics"
 import { useCheckoutReturn } from "./lib/payments"
 
 import Lightbox from "./ui/overlays/Lightbox"
@@ -104,6 +104,8 @@ export default function App() {
       .getElementById(`portfolio-${band}`)
       ?.scrollIntoView({ behavior: "smooth", block: "start" })
   }, [activeTab])
+
+  useEffect(() => trackTab(activeTab), [activeTab])
 
   return (
     <div className="flex min-h-screen justify-center pb-20 font-sans text-foreground selection:bg-accent-soft">
