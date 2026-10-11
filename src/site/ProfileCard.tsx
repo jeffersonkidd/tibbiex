@@ -1,6 +1,6 @@
 import { MessageSquare, Radio } from "lucide-react"
 
-import profilePic from "../assets/imagery/tibbie-portrait-2.png"
+import profilePic from "../assets/imagery/tibbie-portrait-3.jpg"
 import bannerPic from "../assets/imagery/tibbie-onstage.jpg"
 import tagPic from "../assets/marks/tibbiex-tag.png"
 import { PROFILE, VISIBLE_SOCIALS } from "../content/profile"
