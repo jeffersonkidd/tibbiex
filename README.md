@@ -89,6 +89,7 @@ api/
   checkout.ts        Vercel serverless: opens a Stripe Checkout Session
   contact.ts         sends the booking and restock messages via Resend
   subscribe.ts       adds a newsletter contact to the Resend audience
+  avatar.ts          the studio's avatar: serves it, swaps it in Vercel Blob
 public/              files needing a stable, unhashed URL: og.jpg, the portrait
                      the structured data points at, icons, robots, sitemap
 ```
@@ -102,10 +103,14 @@ its own folder only once it has a second file.
 
 The owner's back office lives at `/studio` (`studio.html`, a second Vite entry,
 so the public page ships none of it; `vercel.json` rewrites `/studio` to it and
-`robots.txt` keeps crawlers out). It wears the site's tokens and type, holds no
-secrets and has no backend: everything it does runs in the browser. Opening it
-also sets the `?no-analytics` flag in that browser, since its only visitor is
-the owner.
+`robots.txt` keeps crawlers out). It wears the site's tokens and type, and a
+strip at the top switches modules (`/studio#avatar` opens straight onto one).
+Opening it also sets the `?no-analytics` flag in that browser, since its only
+visitor is the owner.
+
+There is no login to open it. A module that changes the live site checks the
+studio passcode (`STUDIO_PASSCODE`) on its write instead, asked for once per
+device.
 
 ```
 src/studio/
@@ -114,6 +119,9 @@ src/studio/
     LinkMaker.tsx          pick a profile and a spot on it, copy, paste
     LinkTicket.tsx         the link, each UTM tag inked and explained
     ledger.ts              which profiles are wired, in localStorage
+  avatar/                Module 02, Avatar
+    AvatarMaker.tsx        drop, paste or pick a photo; frame it in the ring
+    avatar.ts              the crop maths, the image it renders, the API calls
 src/content/channels.ts  the profiles, their UTM source and where to paste
 src/lib/utm.ts           buildLink() and slug()
 src/styles/studio.css    loaded by the studio only
@@ -124,16 +132,23 @@ for each profile, so Google Analytics can tell an Instagram bio visit from a
 TikTok one. Adding a platform, or fixing a menu path that moved, is an edit to
 `channels.ts`. `C` copies and `1`–`0` pick a profile.
 
+**Avatar** swaps the face on the profile card without a deploy. The ring is the
+card's own avatar treatment, and it becomes the crop window in place: drag to
+frame, slide or scroll to zoom. **Make it live** squares the frame into a 720px
+WebP in the browser and posts it to `api/avatar.ts`, which stores it in Vercel
+Blob. The profile card asks `/api/avatar` for its image and falls back to the
+bundled portrait while none is uploaded (and under `pnpm dev`). A new face
+reaches visitors within a minute; **Back to the original** deletes the upload.
+
 Modules still to come, roughly in order:
 
 1. **Link Maker** — done.
-2. **Where they came from** — a read-only view of visits by UTM source, from the
-   GA Data API through one serverless function. The first module with a secret,
-   so it brings the gate: a passcode checked by `api/studio-auth.ts` against an
-   environment variable, setting a signed HTTP-only cookie.
-3. **Links, live** — switch the Home rows and profile socials on and off without a
+2. **Avatar** — done.
+3. **Where they came from** — a read-only view of visits by UTM source, from the
+   GA Data API through one serverless function, behind the same passcode.
+4. **Links, live** — switch the Home rows and profile socials on and off without a
    deploy, via Vercel Edge Config instead of `enabled` flags in `content/`.
-4. **Go-live checklist** — the `staged` entries from `content/status.ts`, shown
+5. **Go-live checklist** — the `staged` entries from `content/status.ts`, shown
    here rather than in the dev console.
 
 ## Paying
@@ -219,6 +234,13 @@ Environment variables in the Vercel project:
 - `MAIL_FROM` — what mail is sent as, e.g. `Tibbie X Studio
 <hello@tibbiex.studio>`. An address that only sends: `contact@` receives
   through Cloudflare Email Routing, and sending as it invites a loop.
+- `STUDIO_PASSCODE` — what the studio asks for before it changes the live
+  site. Set by hand, and make it long: it is the only gate on the avatar
+  upload. Without it every studio write is refused.
+- `BLOB_READ_WRITE_TOKEN` — set by Vercel when a Blob store is connected to the
+  project (Storage → Create → Blob). Without it the profile card keeps the
+  bundled portrait and an avatar upload returns "Avatar storage isn't
+  configured yet".
 - `RESEND_AUDIENCE_ID` — the newsletter audience, set by hand. Without it the
   sign-up returns "The list isn't configured yet".
 

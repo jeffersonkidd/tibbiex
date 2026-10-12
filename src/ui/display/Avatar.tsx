@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { UserRound } from "lucide-react"
 
 /* The round portrait with its lit halo, from the Figma "Avatar" component
@@ -17,24 +18,35 @@ import { UserRound } from "lucide-react"
 
    Without a `src` it draws a placeholder instead: a person glyph on the muted
    fill, inside the same ring and glow, so the card keeps its shape while
-   there is no photo to show. */
+   there is no photo to show.
+
+   With a `fallbackSrc`, a `src` that fails to load -- a 404, or anything that
+   is not an image -- quietly becomes the fallback. The profile card uses it to
+   ask for the studio's uploaded avatar first and keep the bundled portrait
+   behind it. */
 export default function Avatar({
   src,
+  fallbackSrc,
   alt,
   live,
 }: {
   /* The portrait, or nothing for the placeholder. */
   src?: string
+  fallbackSrc?: string
   alt: string
   /* The label for the live dot, or null when she is not live. */
   live?: string | null
 }) {
+  const [failed, setFailed] = useState(false)
+  const shown = failed ? fallbackSrc : src
+
   return (
     <div className="relative">
-      {src ? (
+      {shown ? (
         <img
-          src={src}
+          src={shown}
           alt={alt}
+          onError={() => setFailed(true)}
           className="avatar h-36 w-36 object-cover sm:h-40 sm:w-40"
         />
       ) : (

@@ -184,3 +184,87 @@
     opacity: 0;
   }
 }
+
+/* --- The avatar ring ------------------------------------------------------
+   The ring is the site's own .avatar treatment; the studio only adds what
+   the tool needs: a brighter, breathing glow while a photo is dragged over
+   it, and a soft fade as a new face settles in. */
+.studio-drop {
+  animation: studio-drop 1.2s ease-in-out infinite;
+}
+
+@keyframes studio-drop {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 1px var(--color-accent-foreground),
+      0 0 25.6px 5px var(--color-accent);
+  }
+  50% {
+    box-shadow:
+      0 0 0 2px var(--color-accent),
+      0 0 48px 14px var(--color-accent);
+  }
+}
+
+.studio-face {
+  animation: studio-face 420ms ease-out;
+}
+
+@keyframes studio-face {
+  from {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+}
+
+.studio-crop:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* The zoom slider: a hairline track and an amber thumb. */
+.studio-range {
+  appearance: none;
+  height: 20px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.studio-range::-webkit-slider-runnable-track {
+  height: 2px;
+  background: var(--color-border-strong);
+  border-radius: var(--radius-full);
+}
+
+.studio-range::-moz-range-track {
+  height: 2px;
+  background: var(--color-border-strong);
+  border-radius: var(--radius-full);
+}
+
+.studio-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  margin-top: -8px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
+  box-shadow: 0 0 12px -2px var(--color-accent);
+}
+
+.studio-range::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
+  box-shadow: 0 0 12px -2px var(--color-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .studio-drop,
+  .studio-face {
+    animation: none;
+  }
+}
