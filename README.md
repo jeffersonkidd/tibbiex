@@ -98,6 +98,44 @@ Imports run one way: `App` → `tabs` → `site` → `ui` → `lib` and
 import other tabs, and `assets` imports nothing from the app. A site block gets
 its own folder only once it has a second file.
 
+## Studio
+
+The owner's back office lives at `/studio` (`studio.html`, a second Vite entry,
+so the public page ships none of it; `vercel.json` rewrites `/studio` to it and
+`robots.txt` keeps crawlers out). It wears the site's tokens and type, holds no
+secrets and has no backend: everything it does runs in the browser. Opening it
+also sets the `?no-analytics` flag in that browser, since its only visitor is
+the owner.
+
+```
+src/studio/
+  main.tsx, Studio.tsx   the entry and the shell
+  links/                 Module 01, Link Maker
+    LinkMaker.tsx          pick a profile and a spot on it, copy, paste
+    LinkTicket.tsx         the link, each UTM tag inked and explained
+    ledger.ts              which profiles are wired, in localStorage
+src/content/channels.ts  the profiles, their UTM source and where to paste
+src/lib/utm.ts           buildLink() and slug()
+src/styles/studio.css    loaded by the studio only
+```
+
+**Link Maker** builds `https://tibbiex.studio/?utm_source=…&utm_medium=…&utm_campaign=…`
+for each profile, so Google Analytics can tell an Instagram bio visit from a
+TikTok one. Adding a platform, or fixing a menu path that moved, is an edit to
+`channels.ts`. `C` copies and `1`–`0` pick a profile.
+
+Modules still to come, roughly in order:
+
+1. **Link Maker** — done.
+2. **Where they came from** — a read-only view of visits by UTM source, from the
+   GA Data API through one serverless function. The first module with a secret,
+   so it brings the gate: a passcode checked by `api/studio-auth.ts` against an
+   environment variable, setting a signed HTTP-only cookie.
+3. **Links, live** — switch the Home rows and profile socials on and off without a
+   deploy, via Vercel Edge Config instead of `enabled` flags in `content/`.
+4. **Go-live checklist** — the `staged` entries from `content/status.ts`, shown
+   here rather than in the dev console.
+
 ## Paying
 
 `FundPanel`, `ReadingMenu` and `ProductModal` each build one order (amount,

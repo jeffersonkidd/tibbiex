@@ -1,0 +1,186 @@
+/* ===========================================================================
+   Studio — the back office's own treatments. Loaded by src/studio/main.tsx
+   after index.css, never by the public page, so nothing here ships to
+   visitors.
+
+   The three tag inks are the one place the studio adds colour: each part of
+   a tagged link gets its own, so the address and its legend can be matched
+   by eye. Amber for the source, since it is the answer that matters most;
+   the other two are pale and cool so they never read as a CTA or "live".
+=========================================================================== */
+
+:root {
+  --studio-ink-source: var(--color-accent);
+  --studio-ink-medium: rgb(164 196 255);
+  --studio-ink-campaign: rgb(214 170 255);
+}
+
+[data-part="source"] {
+  --ink: var(--studio-ink-source);
+}
+[data-part="medium"] {
+  --ink: var(--studio-ink-medium);
+}
+[data-part="campaign"] {
+  --ink: var(--studio-ink-campaign);
+}
+
+/* --- The address --------------------------------------------------------- */
+
+.studio-url {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* The ?, & and utm_x= scaffolding: present, but quiet. */
+.studio-url-joint {
+  color: color-mix(in srgb, var(--color-muted-foreground) 55%, transparent);
+}
+
+.studio-url-value {
+  color: var(--ink);
+  font-weight: 500;
+  border-radius: 3px;
+  padding: 1px 2px;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--ink) 45%, transparent);
+  text-underline-offset: 3px;
+  transition: background-color 160ms ease;
+  animation: studio-ink 520ms ease-out;
+}
+
+.studio-url-value[data-lit] {
+  background-color: color-mix(in srgb, var(--ink) 18%, transparent);
+}
+
+/* A changed value lands like fresh ink: a flash of its colour that soaks in. */
+@keyframes studio-ink {
+  from {
+    background-color: color-mix(in srgb, var(--ink) 45%, transparent);
+  }
+  to {
+    background-color: transparent;
+  }
+}
+
+/* --- The legend ---------------------------------------------------------- */
+
+.studio-legend {
+  color: var(--ink);
+  transition: background-color 160ms ease;
+}
+
+.studio-legend[data-lit] {
+  background-color: color-mix(in srgb, var(--ink) 12%, transparent);
+}
+
+.studio-legend-dot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  align-self: center;
+  border-radius: var(--radius-full);
+  background: var(--ink);
+}
+
+/* --- The stamp ----------------------------------------------------------
+   Lands across the address's right end like a rubber stamp -- overshoot,
+   settle, hold, lift -- in the marker face and the brand red. It is a
+   moment, not a state: the button underneath keeps saying "Copied". */
+.studio-ticket {
+  overflow: hidden;
+}
+
+.studio-stamp {
+  position: absolute;
+  /* Over the address, clear of the header row's character count. */
+  top: 64px;
+  right: 24px;
+  padding: 2px 12px;
+  border: 3px solid var(--color-primary-bright);
+  border-radius: var(--radius-md);
+  color: var(--color-primary-bright);
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0;
+  transform: rotate(-9deg);
+  animation: studio-stamp 1.9s cubic-bezier(0.2, 0.9, 0.3, 1.2) forwards;
+}
+
+@keyframes studio-stamp {
+  0% {
+    opacity: 0;
+    transform: rotate(-16deg) scale(1.9);
+  }
+  14% {
+    opacity: 0.95;
+    transform: rotate(-9deg) scale(0.94);
+  }
+  22% {
+    transform: rotate(-9deg) scale(1);
+  }
+  78% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(-9deg) scale(1);
+  }
+}
+
+/* --- Tiles and keys ------------------------------------------------------ */
+
+/* Copied: an amber ring. Wired: filled. */
+.studio-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--color-accent);
+}
+
+.studio-dot-wired {
+  background: var(--color-accent);
+  box-shadow: 0 0 8px -1px var(--color-accent);
+}
+
+.studio-kbd {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: var(--radius-xs);
+  border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+  opacity: 0.6;
+}
+
+/* Keys only mean something with a keyboard. */
+@media (hover: none) {
+  .studio-kbd {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .studio-url-value {
+    animation: none;
+  }
+  .studio-stamp {
+    animation: studio-stamp-still 1.9s linear forwards;
+    transform: rotate(-9deg);
+  }
+}
+
+@keyframes studio-stamp-still {
+  0%,
+  80% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+  }
+}
