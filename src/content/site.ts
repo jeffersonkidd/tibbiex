@@ -24,3 +24,8 @@ export const VENMO_HANDLE = "TibbieSkyeX"
    Cutting a new file therefore means editing the URL here too; that is the
    trade for not running an image pipeline. */
 export const MEDIA_URL = "https://media.tibbiex.studio"
+
+/* The avatar the studio uploads, served by api/avatar.ts as a redirect to
+   wherever it is stored. Until one is uploaded it answers 404, and the
+   profile card falls back to the portrait bundled with the app. */
+export const AVATAR_URL = "/api/avatar"

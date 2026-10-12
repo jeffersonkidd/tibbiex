@@ -29,8 +29,10 @@ export default function MagicDust() {
     function step(now: number) {
       if (!canvas || !ctx) return
       /* Clamp the step so a backgrounded tab does not resume with one enormous
-         frame that teleports every spark off screen. */
-      const dt = Math.min((now - last) / 1000, 0.05)
+         frame that teleports every spark off screen -- and at zero, since the
+         first frame's timestamp can predate the performance.now() the wake
+         took, and a negative step would age a ring to a negative radius. */
+      const dt = Math.max(0, Math.min((now - last) / 1000, 0.05))
       last = now
 
       advanceMagic(ctx, dt, window.innerWidth, window.innerHeight)

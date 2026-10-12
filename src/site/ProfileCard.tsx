@@ -6,6 +6,7 @@ import tagPic from "../assets/marks/tibbiex-tag.png"
 import { PROFILE, VISIBLE_SOCIALS } from "../content/profile"
 import type { BandId } from "../content/portfolio"
 import { SHOP_GROUPS } from "../content/shop"
+import { AVATAR_URL } from "../content/site"
 import Button from "../ui/controls/Button"
 import Avatar from "../ui/display/Avatar"
 import SocialButton from "../ui/controls/SocialButton"
@@ -58,7 +59,8 @@ export default function ProfileCard({
         )}
 
         <Avatar
-          src={PROFILE.portrait ? profilePic : undefined}
+          src={PROFILE.portrait ? AVATAR_URL : undefined}
+          fallbackSrc={profilePic}
           alt={PROFILE.name}
           live={live && live.label}
         />
