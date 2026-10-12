@@ -22,6 +22,20 @@ export function analyticsOptedOut() {
   }
 }
 
+/* The same flag, set without the query string: the studio calls this on load,
+   since whoever opens the studio is the owner, and their visits -- including
+   the test taps on the links it makes -- should not count. Returns whether
+   this call is what set it, so the studio can say so once. */
+export function excludeThisBrowser() {
+  try {
+    if (localStorage.getItem(ANALYTICS_OPT_OUT_KEY) === "1") return false
+    localStorage.setItem(ANALYTICS_OPT_OUT_KEY, "1")
+    return true
+  } catch {
+    return false
+  }
+}
+
 /* Google Analytics 4, beside Vercel's: it reads the utm_source tags on the
    bio links on the free plan, which is what it is here for. The tag is
    injected rather than written into index.html so the opt-out above can keep

@@ -14,6 +14,16 @@ export default defineConfig({
       "@": path.resolve(import.meta.dirname, "./src"),
     },
   },
+  build: {
+    /* Two pages: the public site, and the owner's back office at /studio.
+       Separate entries, so the site's bundle carries none of the studio. */
+    rolldownOptions: {
+      input: {
+        main: path.resolve(import.meta.dirname, "index.html"),
+        studio: path.resolve(import.meta.dirname, "studio.html"),
+      },
+    },
+  },
   optimizeDeps: {
     include: ["react", "react-dom", "react/jsx-runtime", "sonner"],
   },
