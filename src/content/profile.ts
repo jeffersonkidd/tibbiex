@@ -39,9 +39,8 @@ export const PROFILE = {
     { name: "Kissy Kamikaze" },
     { name: "X-Possibles" },
   ] as { name: string; shop?: BandId }[],
-  /* Whether the avatar shows her portrait (assets/imagery/tibbie-portrait-3:
-     the Amityville platform selfie, squared, white-balanced and the flare haze
-     lifted) or a placeholder glyph in the same ring. */
+  /* Whether the avatar shows her portrait (assets/imagery/tibbie-portrait-4:
+     the cap-salute selfie, cut out so the ring's white shows behind her) or a placeholder glyph in the same ring. */
   portrait: true,
   /* The green badge on the banner and the dot on the avatar. There is no feed
      telling the site she is live, so this is a claim someone has to keep true:
