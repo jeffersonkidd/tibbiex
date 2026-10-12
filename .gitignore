@@ -31,6 +31,7 @@ CHANGELOG.md
 src/assets/imagery/**/*.png
 !src/assets/imagery/tibbie-portrait.png
 !src/assets/imagery/tibbie-portrait-2.png
+!src/assets/imagery/tibbie-portrait-4.png
 # ...except small textures CSS paints with, which ship as-is.
 !src/assets/imagery/silver-texture.png
 
