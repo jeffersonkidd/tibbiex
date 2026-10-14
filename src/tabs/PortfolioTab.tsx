@@ -1,6 +1,7 @@
 import { Guitar } from "lucide-react"
 
 import { PORTFOLIO } from "../content/portfolio"
+import { useShop } from "../lib/shop"
 import type { BandId, Photo } from "../content/portfolio"
 import DetailList from "../ui/display/DetailList"
 import Separator from "../ui/display/Separator"
@@ -22,6 +23,8 @@ export default function PortfolioTab({
   onOpenShop: (band: BandId) => void
   onOpenPhoto: (photos: Photo[], index: number) => void
 }) {
+  const shop = useShop()
+
   return (
     <>
       {/* Band strip -- the same filter treatment the Buy tab uses, and
@@ -59,7 +62,11 @@ export default function PortfolioTab({
           <Separator space="sm" />
           <DetailList items={entry.highlights} />
 
-          <ShopLink entry={entry} onOpen={onOpenShop} />
+          <ShopLink
+            entry={entry}
+            items={shop.forBand(entry.id)}
+            onOpen={onOpenShop}
+          />
 
           <PhotoGrid
             photos={entry.photos}

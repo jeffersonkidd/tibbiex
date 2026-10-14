@@ -6,7 +6,10 @@ import { FIELD_SIZES, FIELD_TREATMENT } from "./Field"
 
    resize-none: the booking overlay sizes itself around the form, and a field
    the visitor can drag would push the send button off a short screen. Height
-   is `rows`, not a class, for the same reason Field's padding is a `size`. */
+   is `rows`, not a class, for the same reason Field's padding is a `size`.
+
+   Uncontrolled by default, read back through FormData like the booking
+   form; pass value/onChange to hold it in state, as the studio does. */
 export default function TextArea({
   placeholder,
   name,
@@ -14,6 +17,9 @@ export default function TextArea({
   rows = 4,
   required = true,
   size = "md",
+  value,
+  onChange,
+  maxLength,
 }: {
   placeholder: string
   name?: string
@@ -22,6 +28,9 @@ export default function TextArea({
   rows?: number
   required?: boolean
   size?: keyof typeof FIELD_SIZES
+  value?: string
+  onChange?: (value: string) => void
+  maxLength?: number
 }) {
   return (
     <textarea
@@ -30,6 +39,9 @@ export default function TextArea({
       name={name}
       placeholder={placeholder}
       aria-label={label}
+      value={value}
+      onChange={onChange ? (e) => onChange(e.target.value) : undefined}
+      maxLength={maxLength}
       className={`${FIELD_TREATMENT} resize-none border-border ${FIELD_SIZES[size]}`}
     />
   )

@@ -49,6 +49,12 @@ type ShopItemBase = {
   ships?: string
   /* Stock art or a provisional price -- see the content-status note. */
   staged?: true
+  /* Which shelf of the Buy tab it sits on. Without it, an item that names a
+     band is on Bands and anything else is on Art. */
+  shelf?: "bands" | "art"
+  /* Kept in the catalogue but off the site: a draft, or a run that is over
+     and may come back. Set from the studio. */
+  hidden?: true
 }
 
 /* An item is either one thing, priced on itself, or a list of formats --
@@ -87,9 +93,11 @@ const WOMENS_SIZES: Size[] = ["XS", "S", "M", "L", "XL", "2XL"].map(
    the women's outright, so confirm the men's matches -- and the patch size
    came with a question mark ("5x7?"), so confirm that too.
 
+   The studio offers these four as the presets for a new product.
+
    index.html restates every design's offers in its JSON-LD for crawlers, so
    a price or format change here is a hand-edit there as well. */
-const STANDARD_FORMATS: ShopFormat[] = [
+export const STANDARD_FORMATS: ShopFormat[] = [
   {
     id: "sticker",
     label: "Sticker",
@@ -262,9 +270,8 @@ export const ON_A_LEASH: ShopItem = {
    only." under it. Off; an item's own `ships` line still shows. */
 export const SHOP_CARD_HINT = false
 
-/* The Bands shelf. The placeholders are gone, so a band with no real piece
-   yet drops out of the strip. */
-export const BUY: ShopItem[] = [THE_NEXT_GENERATION, LEFTOVER_FRANK, ON_A_LEASH]
+/* The Bands shelf as bundled with the app. The placeholders are gone. */
+const BUY: ShopItem[] = [THE_NEXT_GENERATION, LEFTOVER_FRANK, ON_A_LEASH]
 
 const VAMPIRE_CATS_ARTWORK = `${MEDIA_URL}/shop/art/vampire-cats/artwork.76622c0e.jpg`
 
@@ -282,6 +289,7 @@ const VAMPIRE_CATS_PHOTOS = {
 export const VAMPIRE_CATS: ShopItem = {
   id: "a-vampire-cats",
   item: "Vampire Cats",
+  shelf: "art",
   image: VAMPIRE_CATS_ARTWORK,
   aspect: "square",
   alt: "Two red cats in spiked collars, fangs out, batting balls of yarn through teal waves and falling shards of red glass. Signed Tibbie X.",
@@ -298,51 +306,24 @@ export const VAMPIRE_CATS: ShopItem = {
   formats: STANDARD_FORMATS,
 }
 
-/* The Art shelf: the studio's own work, and anything not tied to one band. It
-   is not spread into BUY, so nothing here reaches SHOP_BY_BAND or a portfolio
-   section's shop link -- `band`, where set, only says whose mark is on it. */
-export const ART: ShopItem[] = [VAMPIRE_CATS]
+/* The Art shelf as bundled: the studio's own work, and anything not tied to
+   one band. `band`, where an art piece sets it, only says whose mark is on
+   it -- `shelf: "art"` keeps it off that band's shelf. */
+const ART: ShopItem[] = [VAMPIRE_CATS]
 
-/* The polaroids on Home, one per shelf, each opening its own: the three
-   bands, then Art. Two rows of two, in the order the Buy tab lists them. */
-export const SHOP_PRINTS: {
-  id: BandId | "art"
-  src: string
-  alt: string
-  caption: string
-}[][] = [
-  [
-    {
-      id: "leftover-crack",
-      src: FRANK_ARTWORK,
-      alt: LEFTOVER_FRANK.alt ?? LEFTOVER_FRANK.item,
-      caption: "Leftover Crack",
-    },
-    {
-      id: "reagan-youth",
-      src: THE_NEXT_GENERATION.image,
-      alt: THE_NEXT_GENERATION.alt ?? THE_NEXT_GENERATION.item,
-      caption: "Reagan Youth",
-    },
-  ],
-  [
-    {
-      id: "gash",
-      src: ON_A_LEASH_ARTWORK,
-      alt: ON_A_LEASH.alt ?? ON_A_LEASH.item,
-      caption: "GASH",
-    },
-    {
-      id: "art",
-      src: VAMPIRE_CATS_ARTWORK,
-      alt: VAMPIRE_CATS.alt ?? VAMPIRE_CATS.item,
-      caption: "Art",
-    },
-  ],
-]
+/* The catalogue that ships with the app. The site shows it until the studio
+   publishes one (api/products.ts), and the studio starts from it the first
+   time, so the first publish carries every product over. After that the
+   published catalogue is the truth and this is only the fallback for when
+   the endpoint is unreachable -- `pnpm dev`, or storage not connected. */
+export const BUNDLED_SHOP: ShopItem[] = [...BUY, ...ART]
 
-/* The Buy tab's first filter. All is the default: every band group in
-   SHOP_GROUPS, then ART, each under its own heading, so a visitor sees the
+export function shelfOf(item: ShopItem): "bands" | "art" {
+  return item.shelf ?? (item.band ? "bands" : "art")
+}
+
+/* The Buy tab's first filter. All is the default: every band's group,
+   then Art (see arrangeShop below), so a visitor sees the
    whole catalogue without tapping through. Bands narrows to one band at a
    time; Art is one flat shelf with no second strip. */
 export type ShopShelf = "all" | "bands" | "art"
@@ -353,29 +334,61 @@ export const SHOP_SHELVES: { id: ShopShelf; title: string }[] = [
   { id: "art", title: "Art" },
 ]
 
-/* Portfolio -> Buy wiring. The groups are derived from the two arrays above
-   rather than maintained by hand, so adding a band or a product needs no edit
-   here. `SHOP_BY_BAND` keeps the catalogue order within each group. */
-export const SHOP_BY_BAND = BUY.reduce(
-  (groups, item) => {
-    if (item.band) (groups[item.band] ??= []).push(item)
-    return groups
-  },
-  {} as Record<BandId, ShopItem[] | undefined>,
-)
-
-export function shopFor(band: BandId) {
-  return SHOP_BY_BAND[band] ?? []
+/* Everything the site derives from a catalogue, worked out in one place
+   from whichever catalogue is live (lib/shop.ts): the band strip under Bands
+   in portfolio order, the Art shelf, the polaroids on Home, and the
+   portfolio -> Buy wiring. Hidden items are already gone by now; a band with
+   nothing for sale drops out of every one of them. */
+export type Shop = {
+  groups: { id: BandId; title: string; items: ShopItem[] }[]
+  art: ShopItem[]
+  /* Every band's items in portfolio order, then Art: the All shelf. */
+  all: ShopItem[]
+  prints: Polaroid<BandId | "art">[][]
+  forBand: (band: BandId) => ShopItem[]
 }
 
-/* The band strip under Bands, in portfolio order. Bands with nothing for sale
-   drop out. */
-export const SHOP_GROUPS: {
-  id: BandId
-  title: string
-  items: ShopItem[]
-}[] = PORTFOLIO.map((entry) => ({
-  id: entry.id,
-  title: entry.band,
-  items: shopFor(entry.id),
-})).filter((group) => group.items.length > 0)
+type Polaroid<Id> = { id: Id; src: string; alt: string; caption: string }
+
+export function arrangeShop(items: ShopItem[]): Shop {
+  const shown = items.filter((item) => !item.hidden)
+  const art = shown.filter((item) => shelfOf(item) === "art")
+  const groups = PORTFOLIO.map((entry) => ({
+    id: entry.id,
+    title: entry.band,
+    items: shown.filter(
+      (item) => shelfOf(item) === "bands" && item.band === entry.id,
+    ),
+  })).filter((group) => group.items.length > 0)
+
+  /* One polaroid per shelf, each the first item's photo: the bands, then
+     Art, two to a row. */
+  const prints: Polaroid<BandId | "art">[] = [
+    ...groups.map((group) => ({
+      id: group.id,
+      src: group.items[0].image,
+      alt: group.items[0].alt ?? group.items[0].item,
+      caption: group.title,
+    })),
+    ...(art.length
+      ? [
+          {
+            id: "art" as const,
+            src: art[0].image,
+            alt: art[0].alt ?? art[0].item,
+            caption: "Art",
+          },
+        ]
+      : []),
+  ]
+  const rows: Polaroid<BandId | "art">[][] = []
+  for (let i = 0; i < prints.length; i += 2) rows.push(prints.slice(i, i + 2))
+
+  return {
+    groups,
+    art,
+    all: [...groups.flatMap((group) => group.items), ...art],
+    prints: rows,
+    forBand: (band) => groups.find((group) => group.id === band)?.items ?? [],
+  }
+}

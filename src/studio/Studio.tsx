@@ -7,12 +7,14 @@ import FilterPill from "../ui/controls/FilterPill"
 import MagicDust from "../ui/MagicDust"
 import AvatarMaker from "./avatar/AvatarMaker"
 import LinkMaker from "./links/LinkMaker"
+import ProductsDesk from "./products/ProductsDesk"
 
 /* The modules, in the order they were built. The id is the URL hash, so
    /studio#avatar opens straight onto that module and a bookmark keeps it. */
 const MODULES = [
   { id: "links", label: "Link Maker", Module: LinkMaker },
   { id: "avatar", label: "Avatar", Module: AvatarMaker },
+  { id: "products", label: "Products", Module: ProductsDesk },
 ] as const
 
 type ModuleId = (typeof MODULES)[number]["id"]
@@ -28,9 +30,10 @@ function fromHash(): ModuleId {
 
    Light on purpose. It is a second Vite entry (studio.html), so the public
    page ships none of it, and there is no login to get in: Link Maker
-   only makes links that are public the moment they are pasted. Avatar is
-   the first module that writes to the live site, so the gate sits on its
-   write, not the door: a passcode its endpoint checks (api/avatar.ts). */
+   only makes links that are public the moment they are pasted. Avatar and
+   Products write to the live site, so the gate sits on their writes, not
+   the door: a passcode each endpoint checks (api/avatar.ts,
+   api/products.ts). */
 export default function Studio() {
   const [active, setActive] = useState<ModuleId>(fromHash)
 

@@ -15,6 +15,12 @@ export type Order = {
   purpose: CheckoutPurpose
   /* Shop orders only: which shipping rate Stripe adds on top. */
   mail?: Mail
+  /* Shop orders only: what is being bought, by id. Once a catalogue is
+     published from the studio, api/checkout.ts prices the order from these
+     and ignores amount, note and mail. */
+  item?: string
+  format?: string
+  size?: string
 }
 
 /* Client half of the card rail. Asks the serverless function (api/checkout.ts)
