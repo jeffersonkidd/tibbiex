@@ -20,32 +20,15 @@
    Requires a Blob store connected to the project (which sets
    BLOB_READ_WRITE_TOKEN) and STUDIO_PASSCODE. `pnpm dev` does not run this
    file -- use `vercel dev` to exercise it. */
-import { createHash, timingSafeEqual } from "node:crypto"
 import { del, list, put } from "@vercel/blob"
+
+import { authorised, readImage, refused } from "./_lib/studio.js"
 
 const PREFIX = "avatar/"
 
 /* The studio sends a 720px square, well under this; anything bigger did not
-   come from the studio. Under Vercel's 4.5 MB request-body cap. */
+   come from the studio. */
 const MAX_BYTES = 3 * 1024 * 1024
-
-/* Each accepted type, its file extension, and the bytes it starts with, so
-   the body has to be what the header says. */
-const FORMATS: Record<string, { ext: string; is: (b: Uint8Array) => boolean }> =
-  {
-    "image/webp": {
-      ext: "webp",
-      is: (b) => ascii(b, 0, 4) === "RIFF" && ascii(b, 8, 12) === "WEBP",
-    },
-    "image/png": {
-      ext: "png",
-      is: (b) => ascii(b, 1, 4) === "PNG",
-    },
-  }
-
-function ascii(bytes: Uint8Array, from: number, to: number) {
-  return String.fromCharCode(...bytes.subarray(from, to))
-}
 
 /* The redirect and the 404 are cached at Vercel's edge for a minute, so the
    profile card costs visitors one cached hop and a new avatar is live within
@@ -62,19 +45,6 @@ function unavailable() {
     { error: "Avatar storage isn't configured yet." },
     { status: 503 },
   )
-}
-
-/* Compared as digests so the check takes the same time whatever was sent. */
-function authorised(request: Request) {
-  const expected = process.env.STUDIO_PASSCODE
-  const given = request.headers.get("x-studio-passcode")
-  if (!expected || !given) return false
-  const digest = (text: string) => createHash("sha256").update(text).digest()
-  return timingSafeEqual(digest(given), digest(expected))
-}
-
-function refused() {
-  return Response.json({ error: "That passcode isn't right." }, { status: 401 })
 }
 
 export async function GET(request: Request) {
@@ -106,28 +76,15 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   if (!authorised(request)) return refused()
 
-  const type = request.headers.get("content-type") ?? ""
-  const format = FORMATS[type]
-  if (!format) {
-    return Response.json(
-      { error: "Expected a WebP or PNG image." },
-      { status: 415 },
-    )
-  }
-  const body = new Uint8Array(await request.arrayBuffer())
-  if (body.length < 12 || body.length > MAX_BYTES || !format.is(body)) {
-    return Response.json(
-      { error: "That image is too large or not what it says it is." },
-      { status: 400 },
-    )
-  }
+  const image = await readImage(request, MAX_BYTES)
+  if (image instanceof Response) return image
 
   try {
-    const blob = await put(`${PREFIX}face.${format.ext}`, Buffer.from(body), {
-      access: "public",
-      addRandomSuffix: true,
-      contentType: type,
-    })
+    const blob = await put(
+      `${PREFIX}face.${image.ext}`,
+      Buffer.from(image.body),
+      { access: "public", addRandomSuffix: true, contentType: image.type },
+    )
     const stale = (await current()).filter((b) => b.url !== blob.url)
     if (stale.length) await del(stale.map((b) => b.url))
     return Response.json({ url: blob.url })

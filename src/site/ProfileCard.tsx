@@ -5,8 +5,8 @@ import bannerPic from "../assets/imagery/tibbie-onstage.jpg"
 import tagPic from "../assets/marks/tibbiex-tag.png"
 import { PROFILE, VISIBLE_SOCIALS } from "../content/profile"
 import type { BandId } from "../content/portfolio"
-import { SHOP_GROUPS } from "../content/shop"
 import { AVATAR_URL } from "../content/site"
+import { useShop } from "../lib/catalog"
 import Button from "../ui/controls/Button"
 import Avatar from "../ui/display/Avatar"
 import SocialButton from "../ui/controls/SocialButton"
@@ -29,8 +29,9 @@ export default function ProfileCard({
   onOpenShop?: (band: BandId) => void
 }) {
   const { live } = PROFILE
+  const { groups } = useShop()
   const shelved = (band?: BandId) =>
-    band && SHOP_GROUPS.some((group) => group.id === band) ? band : undefined
+    band && groups.some((group) => group.id === band) ? band : undefined
 
   return (
     <section className="surface relative overflow-hidden rounded-lg">

@@ -7,12 +7,20 @@
  * browser, and the amount is re-validated here -- whatever the client sends is
  * a suggestion, not a fact.
  *
- * It calls Stripe's REST API with fetch rather than the `stripe` SDK, which
- * keeps the project at zero new dependencies for one endpoint.
+ * A shop order names what it is buying (product, format, size). Once the
+ * studio has saved a catalogue, the price, the shipping class and the line
+ * item come from that catalogue, and the amount the browser sent is ignored;
+ * an item that is hidden, sold out or gone is refused. Before the first save
+ * the shop shows the products bundled with the app, and the amount is
+ * checked against the floor and ceiling only, as it always was.
+ *
+ * It calls Stripe's REST API with fetch rather than the `stripe` SDK.
  *
  * Requires STRIPE_SECRET_KEY in the Vercel project's environment variables.
  * `pnpm dev` does not run this file -- use `vercel dev` to exercise it locally.
  */
+
+import { readCatalog } from "./_lib/store.js"
 
 const STRIPE_API = "https://api.stripe.com/v1/checkout/sessions"
 
@@ -46,6 +54,44 @@ function badRequest(message: string) {
   return Response.json({ error: message }, { status: 400 })
 }
 
+/* What a shop order costs according to the studio's catalogue: the format's
+   price and shipping class, and a line item naming exactly what was bought.
+   Null when there is no saved catalogue yet (the bundled shop is showing);
+   a sentence when the item cannot be bought. */
+async function priceFromCatalog(
+  picked: unknown,
+): Promise<{ amount: number; name: string; mail: Mail } | null | string> {
+  let catalog
+  try {
+    catalog = await readCatalog()
+  } catch {
+    return null
+  }
+  if (!catalog) return null
+
+  const { id, format, size } = (picked ?? {}) as Record<string, unknown>
+  const product = catalog.products.find((p) => p.id === id && p.live)
+  const chosen = product?.formats.find((f) => f.id === format)
+  if (!product || !chosen) return "That item isn't for sale any more."
+  if (product.stock && product.stock.left <= 0) {
+    return `${product.name} is sold out.`
+  }
+  if (chosen.sizes.length > 0) {
+    const fits = chosen.sizes.find((s) => s.label === size)
+    if (!fits) return "Pick a size first."
+    if (fits.soldOut) return `${size} is sold out.`
+  }
+
+  const parts = [product.formats.length > 1 && chosen.label, size]
+    .filter(Boolean)
+    .join(", ")
+  return {
+    amount: chosen.price,
+    name: parts ? `${product.name} — ${parts}` : product.name,
+    mail: chosen.mail,
+  }
+}
+
 export async function POST(request: Request) {
   const secretKey = process.env.STRIPE_SECRET_KEY
   if (!secretKey) {
@@ -60,6 +106,7 @@ export async function POST(request: Request) {
     note?: unknown
     purpose?: unknown
     mail?: unknown
+    product?: unknown
   }
   try {
     payload = await request.json()
@@ -71,9 +118,20 @@ export async function POST(request: Request) {
     typeof payload.purpose === "string" && payload.purpose in PURPOSES
       ? (payload.purpose as Purpose)
       : "fund"
-  const { name, submitType } = PURPOSES[purpose]
+  let name: string = PURPOSES[purpose].name
+  const { submitType } = PURPOSES[purpose]
 
-  const amount = Number(payload.amount)
+  let amount = Number(payload.amount)
+  let mailFromCatalog: Mail | undefined
+  if (purpose === "shop") {
+    const priced = await priceFromCatalog(payload.product)
+    if (typeof priced === "string") return badRequest(priced)
+    if (priced) {
+      amount = priced.amount
+      name = priced.name
+      mailFromCatalog = priced.mail
+    }
+  }
   if (!Number.isFinite(amount)) {
     return badRequest("Amount must be a number.")
   }
@@ -127,15 +185,28 @@ export async function POST(request: Request) {
 
     /* Unknown or missing mail is charged as a parcel, the dearer rate. */
     const mail: Mail =
-      typeof payload.mail === "string" && payload.mail in SHIPPING_RATES
+      mailFromCatalog ??
+      (typeof payload.mail === "string" && payload.mail in SHIPPING_RATES
         ? (payload.mail as Mail)
-        : "parcel"
+        : "parcel")
     const rate = "shipping_options[0][shipping_rate_data]"
     params.set(`${rate}[type]`, "fixed_amount")
     params.set(`${rate}[display_name]`, "Shipping")
     params.set(`${rate}[fixed_amount][amount]`, String(SHIPPING_RATES[mail]))
     params.set(`${rate}[fixed_amount][currency]`, "usd")
     params.set("metadata[mail]", mail)
+
+    /* What was bought, by id, so the orders the studio will list can be
+       matched back to products. */
+    const { id, format, size } = (payload.product ?? {}) as Record<
+      string,
+      unknown
+    >
+    for (const [key, value] of Object.entries({ id, format, size })) {
+      if (typeof value === "string" && value) {
+        params.set(`metadata[product_${key}]`, value.slice(0, 60))
+      }
+    }
   }
 
   const stripeResponse = await fetch(STRIPE_API, {

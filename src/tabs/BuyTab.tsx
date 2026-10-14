@@ -1,8 +1,9 @@
 import { ChevronRight } from "lucide-react"
 
-import { ART, SHOP_GROUPS, SHOP_SHELVES } from "../content/shop"
+import { SHOP_SHELVES } from "../content/shop"
 import type { ShopItem, ShopShelf } from "../content/shop"
 import type { BandId } from "../content/portfolio"
+import { useShop } from "../lib/catalog"
 import FilterPill from "../ui/controls/FilterPill"
 import ShopCard from "../ui/cards/ShopCard"
 
@@ -23,8 +24,8 @@ export default function BuyTab({
 }) {
   /* A band with nothing for sale has no pill, so a hand-off to one falls back
      to the first band rather than an empty shelf. */
-  const shown =
-    SHOP_GROUPS.find((group) => group.id === shopBand) ?? SHOP_GROUPS[0]
+  const { groups, art } = useShop()
+  const shown = groups.find((group) => group.id === shopBand) ?? groups[0]
 
   return (
     <>
@@ -52,14 +53,14 @@ export default function BuyTab({
 
       {shelf === "all" && <AllShelf onOpen={onOpenProduct} />}
 
-      {shelf === "art" && <ShopGrid items={ART} onOpen={onOpenProduct} />}
+      {shelf === "art" && <ShopGrid items={art} onOpen={onOpenProduct} />}
 
       {/* Second filter, Bands only -- also the way back out of a band the
           portfolio dropped the visitor into. */}
-      {shelf === "bands" && (
+      {shelf === "bands" && shown && (
         <>
           <div className="surface hide-scrollbar flex gap-cluster overflow-x-auto rounded-lg bg-card/50 p-strip">
-            {SHOP_GROUPS.map((group) => (
+            {groups.map((group) => (
               <FilterPill
                 key={group.id}
                 label={group.title}
@@ -86,7 +87,8 @@ export default function BuyTab({
    left, right, left so the catalogue still reads across; on a phone the
    columns dissolve (`contents`) and `order` puts them back in sequence. */
 function AllShelf({ onOpen }: { onOpen: (item: ShopItem) => void }) {
-  const items = [...SHOP_GROUPS.flatMap((group) => group.items), ...ART]
+  const { groups, art } = useShop()
+  const items = [...groups.flatMap((group) => group.items), ...art]
 
   return (
     <div className="flex flex-col gap-stack sm:flex-row sm:items-start">

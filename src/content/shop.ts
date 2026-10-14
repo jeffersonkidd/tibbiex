@@ -303,44 +303,6 @@ export const VAMPIRE_CATS: ShopItem = {
    section's shop link -- `band`, where set, only says whose mark is on it. */
 export const ART: ShopItem[] = [VAMPIRE_CATS]
 
-/* The polaroids on Home, one per shelf, each opening its own: the three
-   bands, then Art. Two rows of two, in the order the Buy tab lists them. */
-export const SHOP_PRINTS: {
-  id: BandId | "art"
-  src: string
-  alt: string
-  caption: string
-}[][] = [
-  [
-    {
-      id: "leftover-crack",
-      src: FRANK_ARTWORK,
-      alt: LEFTOVER_FRANK.alt ?? LEFTOVER_FRANK.item,
-      caption: "Leftover Crack",
-    },
-    {
-      id: "reagan-youth",
-      src: THE_NEXT_GENERATION.image,
-      alt: THE_NEXT_GENERATION.alt ?? THE_NEXT_GENERATION.item,
-      caption: "Reagan Youth",
-    },
-  ],
-  [
-    {
-      id: "gash",
-      src: ON_A_LEASH_ARTWORK,
-      alt: ON_A_LEASH.alt ?? ON_A_LEASH.item,
-      caption: "GASH",
-    },
-    {
-      id: "art",
-      src: VAMPIRE_CATS_ARTWORK,
-      alt: VAMPIRE_CATS.alt ?? VAMPIRE_CATS.item,
-      caption: "Art",
-    },
-  ],
-]
-
 /* The Buy tab's first filter. All is the default: every band group in
    SHOP_GROUPS, then ART, each under its own heading, so a visitor sees the
    whole catalogue without tapping through. Bands narrows to one band at a
@@ -353,29 +315,71 @@ export const SHOP_SHELVES: { id: ShopShelf; title: string }[] = [
   { id: "art", title: "Art" },
 ]
 
-/* Portfolio -> Buy wiring. The groups are derived from the two arrays above
-   rather than maintained by hand, so adding a band or a product needs no edit
-   here. `SHOP_BY_BAND` keeps the catalogue order within each group. */
-export const SHOP_BY_BAND = BUY.reduce(
-  (groups, item) => {
-    if (item.band) (groups[item.band] ??= []).push(item)
-    return groups
-  },
-  {} as Record<BandId, ShopItem[] | undefined>,
-)
+/* One band's shelf on the Bands strip. */
+export type ShopGroup = { id: BandId; title: string; items: ShopItem[] }
 
-export function shopFor(band: BandId) {
-  return SHOP_BY_BAND[band] ?? []
+/* A polaroid on Home: one per shelf, showing its first item. */
+export type ShopPrint = {
+  id: BandId | "art"
+  src: string
+  alt: string
+  caption: string
 }
 
-/* The band strip under Bands, in portfolio order. Bands with nothing for sale
-   drop out. */
-export const SHOP_GROUPS: {
-  id: BandId
-  title: string
-  items: ShopItem[]
-}[] = PORTFOLIO.map((entry) => ({
-  id: entry.id,
-  title: entry.band,
-  items: shopFor(entry.id),
-})).filter((group) => group.items.length > 0)
+/* Everything the shop shows, derived from two lists -- the band items and
+   the Art shelf -- so the bundled products below and a catalogue saved from
+   the studio (src/lib/catalog.ts) lay out the same way. */
+export type Shop = {
+  bands: ShopItem[]
+  art: ShopItem[]
+  /* The band strip, in portfolio order. Bands with nothing for sale drop
+     out. */
+  groups: ShopGroup[]
+  /* The Home polaroids, rows of two: the bands, then Art. */
+  prints: ShopPrint[][]
+  shopFor: (band: BandId) => ShopItem[]
+}
+
+export function buildShop(bands: ShopItem[], art: ShopItem[]): Shop {
+  const byBand = bands.reduce(
+    (groups, item) => {
+      if (item.band) (groups[item.band] ??= []).push(item)
+      return groups
+    },
+    {} as Partial<Record<BandId, ShopItem[]>>,
+  )
+  const groups = PORTFOLIO.map((entry) => ({
+    id: entry.id,
+    title: entry.band,
+    items: byBand[entry.id] ?? [],
+  })).filter((group) => group.items.length > 0)
+
+  const covers: ShopPrint[] = [
+    ...groups.map((group) => ({
+      ...cover(group.items[0]),
+      id: group.id,
+      caption: group.title,
+    })),
+    ...(art.length
+      ? [{ ...cover(art[0]), id: "art" as const, caption: "Art" }]
+      : []),
+  ]
+  const prints: ShopPrint[][] = []
+  for (let i = 0; i < covers.length; i += 2) prints.push(covers.slice(i, i + 2))
+
+  return {
+    bands,
+    art,
+    groups,
+    prints,
+    shopFor: (band) => byBand[band] ?? [],
+  }
+}
+
+function cover(item: ShopItem) {
+  return { src: item.image, alt: item.alt ?? item.item }
+}
+
+/* The products built into the app: what the shop shows until the studio
+   saves a catalogue, and what the studio starts from the first time. */
+export const BUNDLED_SHOP = buildShop(BUY, ART)

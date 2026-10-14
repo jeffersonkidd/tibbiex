@@ -268,3 +268,15 @@
     animation: none;
   }
 }
+
+/* --- The save bar ---------------------------------------------------------
+   Pinned to the bottom of the screen in the product editor, clear of the
+   phone's home indicator, over a fade so the form scrolls away under it. */
+.studio-savebar {
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(
+    to top,
+    var(--color-page) 60%,
+    color-mix(in srgb, var(--color-page) 0%, transparent)
+  );
+}

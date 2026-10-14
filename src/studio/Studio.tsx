@@ -7,12 +7,14 @@ import FilterPill from "../ui/controls/FilterPill"
 import MagicDust from "../ui/MagicDust"
 import AvatarMaker from "./avatar/AvatarMaker"
 import LinkMaker from "./links/LinkMaker"
+import ProductsModule from "./products/ProductsModule"
 
 /* The modules, in the order they were built. The id is the URL hash, so
    /studio#avatar opens straight onto that module and a bookmark keeps it. */
 const MODULES = [
   { id: "links", label: "Link Maker", Module: LinkMaker },
   { id: "avatar", label: "Avatar", Module: AvatarMaker },
+  { id: "products", label: "Products", Module: ProductsModule },
 ] as const
 
 type ModuleId = (typeof MODULES)[number]["id"]

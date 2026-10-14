@@ -7,12 +7,13 @@ import { REAGAN_YOUTH_LP } from "./content/music"
 import type { Album } from "./content/music"
 import { PORTFOLIO } from "./content/portfolio"
 import type { BandId, Photo } from "./content/portfolio"
-import { SHOP_GROUPS, YOUTH_ANTHEMS_BUNDLE } from "./content/shop"
+import { BUNDLED_SHOP, YOUTH_ANTHEMS_BUNDLE } from "./content/shop"
 import type { ShopItem, ShopShelf } from "./content/shop"
 import { VISIBLE_TABS, isTabEnabled } from "./content/tabs"
 import type { Tab } from "./content/tabs"
 
 import { analyticsOptedOut, trackTab } from "./lib/analytics"
+import { ShopContext, useLiveShop } from "./lib/catalog"
 import { useCheckoutReturn } from "./lib/payments"
 
 import Lightbox from "./ui/overlays/Lightbox"
@@ -59,13 +60,16 @@ export default function App() {
      narrowed to. Both are set from a portfolio section's shop link, and
      resettable from the filter strips. */
   const [shopShelf, setShopShelf] = useState<ShopShelf>("all")
-  const [shopBand, setShopBand] = useState<BandId>(SHOP_GROUPS[0].id)
+  const [shopBand, setShopBand] = useState<BandId>(
+    BUNDLED_SHOP.groups[0]?.id ?? PORTFOLIO[0].id,
+  )
   /* The same idea one tab over, except the Portfolio strip always has exactly
      one band selected -- there is no "all" view of the credits. */
   const [portfolioBand, setPortfolioBand] = useState<BandId>(PORTFOLIO[0].id)
   const tabsRef = useRef<HTMLElement>(null)
   const pendingScroll = useRef<BandId | null>(null)
   const close = () => setModal(null)
+  const shop = useLiveShop()
 
   useCheckoutReturn()
 
@@ -108,94 +112,98 @@ export default function App() {
   useEffect(() => trackTab(activeTab), [activeTab])
 
   return (
-    <div className="flex min-h-screen justify-center pb-20 font-sans text-foreground selection:bg-accent-soft">
-      <Toaster position="top-center" richColors />
+    <ShopContext.Provider value={shop}>
+      <div className="flex min-h-screen justify-center pb-20 font-sans text-foreground selection:bg-accent-soft">
+        <Toaster position="top-center" richColors />
 
-      <div className="w-full min-w-0 max-w-[600px] space-y-stack px-4 pt-6 sm:px-6">
-        <Header onShare={() => setModal({ kind: "share" })} />
+        <div className="w-full min-w-0 max-w-[600px] space-y-stack px-4 pt-6 sm:px-6">
+          <Header onShare={() => setModal({ kind: "share" })} />
 
-        <ProfileCard
-          onContact={() => setModal({ kind: "booking" })}
-          onOpenShop={isTabEnabled("Buy") ? openShop : undefined}
+          <ProfileCard
+            onContact={() => setModal({ kind: "booking" })}
+            onOpenShop={isTabEnabled("Buy") ? openShop : undefined}
+          />
+
+          <TabStrip ref={tabsRef} active={activeTab} onSelect={setActiveTab} />
+
+          <main className="space-y-stack">
+            {activeTab === "Home" && (
+              <HomeTab
+                onOpenReadings={() => setModal({ kind: "readings" })}
+                onOpenOffer={() =>
+                  setModal({ kind: "product", item: YOUTH_ANTHEMS_BUNDLE })
+                }
+                onOpenBooking={() => setModal({ kind: "booking" })}
+                onOpenShop={isTabEnabled("Buy") ? openShop : undefined}
+                onOpenArt={openArt}
+              />
+            )}
+
+            {activeTab === "Music" && (
+              <MusicTab
+                onOpenRehearsal={() =>
+                  setModal({ kind: "album", album: REAGAN_YOUTH_LP })
+                }
+                onOpenAlbum={(album) => setModal({ kind: "album", album })}
+              />
+            )}
+
+            {activeTab === "Portfolio" && (
+              <PortfolioTab
+                band={portfolioBand}
+                onBandChange={setPortfolioBand}
+                onOpenShop={openShop}
+                onOpenPhoto={(photos, index) =>
+                  setModal({ kind: "lightbox", photos, index })
+                }
+              />
+            )}
+
+            {activeTab === "Tour" && <TourTab />}
+
+            {activeTab === "Buy" && (
+              <BuyTab
+                shelf={shopShelf}
+                onShelfChange={setShopShelf}
+                band={shopBand}
+                onBandChange={setShopBand}
+                onOpenPortfolio={
+                  isTabEnabled("Portfolio") ? openPortfolio : undefined
+                }
+                onOpenProduct={(item) => setModal({ kind: "product", item })}
+              />
+            )}
+          </main>
+
+          <Footer />
+        </div>
+
+        {modal?.kind === "album" && (
+          <AlbumModal album={modal.album} onClose={close} />
+        )}
+        {modal?.kind === "booking" && <BookingModal onClose={close} />}
+        {modal?.kind === "share" && <ShareModal onClose={close} />}
+        {modal?.kind === "readings" && <ReadingMenu onClose={close} />}
+        {modal?.kind === "product" && (
+          <ProductModal item={modal.item} onClose={close} />
+        )}
+        {modal?.kind === "lightbox" && (
+          <Lightbox
+            state={modal}
+            onChange={(next) => setModal({ kind: "lightbox", ...next })}
+            onClose={close}
+          />
+        )}
+
+        <MagicDust />
+
+        <Analytics
+          beforeSend={(event) => (analyticsOptedOut() ? null : event)}
         />
-
-        <TabStrip ref={tabsRef} active={activeTab} onSelect={setActiveTab} />
-
-        <main className="space-y-stack">
-          {activeTab === "Home" && (
-            <HomeTab
-              onOpenReadings={() => setModal({ kind: "readings" })}
-              onOpenOffer={() =>
-                setModal({ kind: "product", item: YOUTH_ANTHEMS_BUNDLE })
-              }
-              onOpenBooking={() => setModal({ kind: "booking" })}
-              onOpenShop={isTabEnabled("Buy") ? openShop : undefined}
-              onOpenArt={openArt}
-            />
-          )}
-
-          {activeTab === "Music" && (
-            <MusicTab
-              onOpenRehearsal={() =>
-                setModal({ kind: "album", album: REAGAN_YOUTH_LP })
-              }
-              onOpenAlbum={(album) => setModal({ kind: "album", album })}
-            />
-          )}
-
-          {activeTab === "Portfolio" && (
-            <PortfolioTab
-              band={portfolioBand}
-              onBandChange={setPortfolioBand}
-              onOpenShop={openShop}
-              onOpenPhoto={(photos, index) =>
-                setModal({ kind: "lightbox", photos, index })
-              }
-            />
-          )}
-
-          {activeTab === "Tour" && <TourTab />}
-
-          {activeTab === "Buy" && (
-            <BuyTab
-              shelf={shopShelf}
-              onShelfChange={setShopShelf}
-              band={shopBand}
-              onBandChange={setShopBand}
-              onOpenPortfolio={
-                isTabEnabled("Portfolio") ? openPortfolio : undefined
-              }
-              onOpenProduct={(item) => setModal({ kind: "product", item })}
-            />
-          )}
-        </main>
-
-        <Footer />
+        <SpeedInsights
+          beforeSend={(event) => (analyticsOptedOut() ? null : event)}
+        />
       </div>
-
-      {modal?.kind === "album" && (
-        <AlbumModal album={modal.album} onClose={close} />
-      )}
-      {modal?.kind === "booking" && <BookingModal onClose={close} />}
-      {modal?.kind === "share" && <ShareModal onClose={close} />}
-      {modal?.kind === "readings" && <ReadingMenu onClose={close} />}
-      {modal?.kind === "product" && (
-        <ProductModal item={modal.item} onClose={close} />
-      )}
-      {modal?.kind === "lightbox" && (
-        <Lightbox
-          state={modal}
-          onChange={(next) => setModal({ kind: "lightbox", ...next })}
-          onClose={close}
-        />
-      )}
-
-      <MagicDust />
-
-      <Analytics beforeSend={(event) => (analyticsOptedOut() ? null : event)} />
-      <SpeedInsights
-        beforeSend={(event) => (analyticsOptedOut() ? null : event)}
-      />
-    </div>
+    </ShopContext.Provider>
   )
 }

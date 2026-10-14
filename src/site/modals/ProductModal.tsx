@@ -86,6 +86,7 @@ export default function ProductModal({
     note: picked ? `${item.item} — ${picked}` : item.item,
     purpose: "shop",
     mail: format.mail ?? "parcel",
+    product: { id: item.id, format: format.id, size: size ?? undefined },
   }
 
   async function buy() {

@@ -90,6 +90,9 @@ api/
   contact.ts         sends the booking and restock messages via Resend
   subscribe.ts       adds a newsletter contact to the Resend audience
   avatar.ts          the studio's avatar: serves it, swaps it in Vercel Blob
+  products.ts        the studio's catalogue: serves it, saves it, takes photos
+  _lib/              shared by the functions, not routes: the catalogue schema,
+                     Blob storage, the passcode and image checks
 public/              files needing a stable, unhashed URL: og.jpg, the portrait
                      the structured data points at, icons, robots, sitemap
 ```
@@ -122,6 +125,11 @@ src/studio/
   avatar/                Module 02, Avatar
     AvatarMaker.tsx        drop, paste or pick a photo; frame it in the ring
     avatar.ts              the crop maths, the image it renders, the API calls
+  products/              Module 03, Products
+    ProductsModule.tsx     the product list: status, order, the passcode
+    ProductEditor.tsx      one product: photos, shelf, formats, sizes, stock
+    products.ts            load, save, upload, the format presets
+  write.ts               every studio write: the passcode, the errors
 src/content/channels.ts  the profiles, their UTM source and where to paste
 src/lib/utm.ts           buildLink() and slug()
 src/styles/studio.css    loaded by the studio only
@@ -131,6 +139,25 @@ src/styles/studio.css    loaded by the studio only
 for each profile, so Google Analytics can tell an Instagram bio visit from a
 TikTok one. Adding a platform, or fixing a menu path that moved, is an edit to
 `channels.ts`. `C` copies and `1`–`0` pick a profile.
+
+**Products** runs the shop. The list shows every product with its shelf, its
+lowest price, and whether it is live, hidden or sold out; the arrows set the
+order the shop shows them in. The editor takes photos straight from the camera
+roll (shrunk to 1600px WebP in the browser, then uploaded), a shelf (Art or a
+band), a description, and the formats it sells as, each starting from a preset
+(sticker, patch, tees, print) with its usual price, shipping class, sizes and
+spec. Tapping a size marks it sold out; a limited run counts down to sold out.
+New products start hidden. Every save writes the whole catalogue to
+`api/products.ts`, which checks it (`api/_lib/catalog.ts`) and stores it in
+Vercel Blob, keeping the last ten saves.
+
+The shop reads that catalogue (`src/lib/catalog.ts`, through `useShop()`)
+and shows the products bundled in `content/shop.ts` until the first save,
+which moves them all into the back office. From then on `api/checkout.ts`
+prices every shop order from the catalogue, by product, format and size: what
+the browser says the amount is no longer counts, and a hidden, sold-out or
+deleted item is refused. The JSON-LD offers in `index.html` are still
+hand-written, so they no longer follow price changes.
 
 **Avatar** swaps the face on the profile card without a deploy. The ring is the
 card's own avatar treatment, and it becomes the crop window in place: drag to
@@ -144,11 +171,18 @@ Modules still to come, roughly in order:
 
 1. **Link Maker** — done.
 2. **Avatar** — done.
-3. **Where they came from** — a read-only view of visits by UTM source, from the
+3. **Products** — done.
+4. **Orders and customers** — every Stripe order in one list (who, what, size,
+   where it ships, paid or posted), marked shipped from the phone, with stock
+   counted down as it sells. A Stripe webhook records each paid session; the
+   product ids are already on it (`metadata[product_*]`).
+5. **Pulse** — the week at a glance: sales, top sellers, new subscribers, where
+   visitors came from (the Link Maker tags), and what is about to sell out.
+6. **Where they came from** — a read-only view of visits by UTM source, from the
    GA Data API through one serverless function, behind the same passcode.
-4. **Links, live** — switch the Home rows and profile socials on and off without a
+7. **Links, live** — switch the Home rows and profile socials on and off without a
    deploy, via Vercel Edge Config instead of `enabled` flags in `content/`.
-5. **Go-live checklist** — the `staged` entries from `content/status.ts`, shown
+8. **Go-live checklist** — the `staged` entries from `content/status.ts`, shown
    here rather than in the dev console.
 
 ## Paying

@@ -1,7 +1,8 @@
 import { ChevronRight, ShoppingBag } from "lucide-react"
 
-import { formatPrice, lowestPrice, shopFor } from "../../content/shop"
+import { formatPrice, lowestPrice } from "../../content/shop"
 import type { BandId, PortfolioEntry } from "../../content/portfolio"
+import { useShop } from "../../lib/catalog"
 
 /* The portfolio -> Buy hand-off, rendered inside a portfolio section. It is a
    button rather than an anchor because the destination is a tab in this same
@@ -13,7 +14,7 @@ export default function ShopLink({
   entry: PortfolioEntry
   onOpen: (band: BandId) => void
 }) {
-  const items = shopFor(entry.id)
+  const items = useShop().shopFor(entry.id)
   if (items.length === 0) return null
 
   const cheapest = Math.min(...items.map(lowestPrice))

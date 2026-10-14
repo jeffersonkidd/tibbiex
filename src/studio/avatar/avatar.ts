@@ -1,9 +1,12 @@
 import { AVATAR_URL } from "../../content/site"
+import { encodeCanvas, studioWrite } from "../write"
+
+export { StudioError, savedPasscode } from "../write"
 
 /* The studio's side of api/avatar.ts: read what is live, publish a crop, go
-   back to the original. Plus the two jobs around a publish that happen in
-   the browser -- squaring the crop into a small image, and remembering the
-   passcode. */
+   back to the original. Plus the job around a publish that happens in the
+   browser -- squaring the crop into a small image. The passcode is
+   handled in ../write.ts. */
 
 export type Live = { url: string | null; uploadedAt?: string }
 
@@ -15,35 +18,6 @@ const OUT = 720
    the window", and its centre's offset from the window's centre, in window
    pixels. */
 export type Crop = { zoom: number; x: number; y: number }
-
-const PASSCODE_KEY = "tibbiex:studio:passcode"
-
-export function savedPasscode() {
-  try {
-    return localStorage.getItem(PASSCODE_KEY) ?? ""
-  } catch {
-    return ""
-  }
-}
-
-function savePasscode(passcode: string | null) {
-  try {
-    if (passcode) localStorage.setItem(PASSCODE_KEY, passcode)
-    else localStorage.removeItem(PASSCODE_KEY)
-  } catch {
-    /* Private window: it just asks again next time. */
-  }
-}
-
-/* What a failed write says, and whether the passcode was the reason. */
-export class StudioError extends Error {
-  constructor(
-    message: string,
-    readonly badPasscode = false,
-  ) {
-    super(message)
-  }
-}
 
 export async function fetchLive(): Promise<Live> {
   try {
@@ -61,35 +35,12 @@ async function write(
   passcode: string,
   body?: Blob,
 ): Promise<Live> {
-  let response: Response
-  try {
-    response = await fetch(AVATAR_URL, {
-      method,
-      headers: {
-        "x-studio-passcode": passcode,
-        ...(body && { "Content-Type": body.type }),
-      },
-      body,
-    })
-  } catch {
-    throw new StudioError("Couldn't reach the site. Check the connection.")
-  }
-
-  const data = (await response.json().catch(() => ({}))) as {
-    url?: string | null
-    error?: string
-  }
-  if (response.status === 401) {
-    savePasscode(null)
-    throw new StudioError(data.error ?? "That passcode isn't right.", true)
-  }
-  if (!response.ok) {
-    throw new StudioError(
-      data.error ??
-        "The avatar only changes on the deployed site, not on this preview.",
-    )
-  }
-  savePasscode(passcode)
+  const data = await studioWrite<{ url?: string | null }>(
+    AVATAR_URL,
+    method,
+    passcode,
+    body,
+  )
   return { url: data.url ?? null, uploadedAt: new Date().toISOString() }
 }
 
@@ -122,13 +73,7 @@ export async function renderCrop(
     h * k,
   )
 
-  const encode = (type: string, quality?: number) =>
-    new Promise<Blob | null>((done) => canvas.toBlob(done, type, quality))
-  const webp = await encode("image/webp", 0.9)
-  if (webp?.type === "image/webp") return webp
-  const png = await encode("image/png")
-  if (!png) throw new StudioError("Couldn't prepare that image.")
-  return png
+  return encodeCanvas(canvas)
 }
 
 /* The image's size in the window at a zoom: at 1 its short side exactly
