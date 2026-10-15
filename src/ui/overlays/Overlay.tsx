@@ -56,7 +56,7 @@ export default function Overlay({
 
   return (
     <div
-      className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-[#08080a]/85 backdrop-blur-md"
+      className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-page/85 backdrop-blur-md"
       onClick={onClose}
     >
       <div className="flex min-h-full justify-center p-4">
