@@ -7,39 +7,30 @@
    The shared treatment for every panel in the stack (header, profile, studio
    status, tab strip, link rows, tour rows, media tiles). Lives in the
    components layer so Tailwind utilities still win: a site that wants a
-   sheerer fill or a coloured hover border just adds bg-card/60 or
-   hover:border-accent alongside it. Radius, padding and layout stay in the
+   sheerer fill or a coloured hover border just adds bg-surface-container-low/60 or
+   hover:border-tertiary alongside it. Radius, padding and layout stay in the
    markup, since those differ per panel. */
 @layer components {
   .surface {
-    background-color: var(--color-card);
-    border: 1px solid var(--color-border);
-    /* Matches backdrop-blur-xl. --card is opaque, so the blur only shows
-       where a utility sheers the fill (bg-card/50 on the tab strips). */
+    background-color: var(--color-surface-container-low);
+    border: 1px solid var(--color-outline-variant);
+    /* Matches backdrop-blur-xl. The surface is opaque, so the blur only shows
+       where a utility sheers the fill (bg-surface-container-low/50 on the tab strips). */
     backdrop-filter: blur(24px);
   }
 }
 
 /* --- Brand surface --------------------------------------------------------
-   Shared treatment for the red CTAs and the active tab. A three-stop
-   gradient across the reds -- the primary token lifted toward its bright end,
-   then down to its deep end -- plus inset edge highlights give the flat fill
-   some dimension; a sheen sweeps across on hover. The two ends exist for this
-   rule alone. Both the gradient and the glow read the same token as
-   bg-primary, so re-skinning the block still drives them. */
+   The red CTA's treatment, worn by the brand Button alone. A flat fill of
+   the primary token, with inset edge highlights for some dimension, a
+   glow in the same red, and a sheen that sweeps across on hover. */
 .brand-surface {
   position: relative;
   overflow: hidden;
-  background-image: linear-gradient(
-    145deg,
-    color-mix(in oklab, var(--color-primary), var(--color-primary-bright) 30%)
-      0%,
-    var(--color-primary) 48%,
-    var(--color-primary-deep) 100%
-  );
+  background-color: var(--color-primary);
   box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--color-foreground) 30%, transparent),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 color-mix(in srgb, var(--color-on-surface) 30%, transparent),
+    inset 0 -1px 0 color-mix(in srgb, var(--color-shadow) 22%, transparent),
     0 8px 20px -10px color-mix(in srgb, var(--color-primary) 80%, transparent);
   transition:
     box-shadow 220ms ease,
@@ -50,8 +41,8 @@
 .brand-surface:hover {
   filter: brightness(1.07);
   box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--color-foreground) 38%, transparent),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 color-mix(in srgb, var(--color-on-surface) 38%, transparent),
+    inset 0 -1px 0 color-mix(in srgb, var(--color-shadow) 22%, transparent),
     0 12px 26px -10px color-mix(in srgb, var(--color-primary) 95%, transparent);
 }
 
@@ -64,7 +55,7 @@
   background: linear-gradient(
     115deg,
     transparent 38%,
-    color-mix(in srgb, var(--color-foreground) 26%, transparent) 50%,
+    color-mix(in srgb, var(--color-on-surface) 26%, transparent) 50%,
     transparent 62%
   );
   transform: translateX(-130%);

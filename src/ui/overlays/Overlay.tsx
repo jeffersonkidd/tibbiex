@@ -56,7 +56,7 @@ export default function Overlay({
 
   return (
     <div
-      className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-page/85 backdrop-blur-md"
+      className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-scrim/85 backdrop-blur-md"
       onClick={onClose}
     >
       <div className="flex min-h-full justify-center p-4">
@@ -65,7 +65,7 @@ export default function Overlay({
           aria-modal="true"
           onClick={(e) => e.stopPropagation()}
           className={
-            "relative m-auto w-full overflow-hidden rounded-xl border border-border bg-popover shadow-[0_40px_90px_-30px_rgba(0,0,0,0.9)] backdrop-blur-2xl " +
+            "relative m-auto w-full overflow-hidden rounded-xl border border-outline-variant bg-surface-container-high/92 shadow-[0_40px_90px_-30px_color-mix(in_srgb,var(--color-shadow)_90%,transparent)] backdrop-blur-2xl " +
             OVERLAY_WIDTHS[size]
           }
         >

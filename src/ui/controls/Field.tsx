@@ -13,7 +13,7 @@ export const FIELD_SIZES = {
    border, one fill, one focus colour across every form on the site. Size and
    validity are applied on top, per element. */
 export const FIELD_TREATMENT =
-  "w-full rounded-md border bg-input-background body-base text-foreground outline-none sm:body-small transition-colors placeholder:text-muted-foreground focus:border-accent"
+  "w-full rounded-md border bg-surface-container-lowest/80 body-base text-on-surface outline-none sm:body-small transition-colors placeholder:text-on-surface-variant focus:border-primary"
 
 export default function Field({
   placeholder,
@@ -63,7 +63,7 @@ export default function Field({
       inputMode={inputMode}
       autoComplete={autoComplete}
       className={`${FIELD_TREATMENT} ${
-        invalid ? "border-primary" : "border-border"
+        invalid ? "border-error" : "border-outline-variant"
       } ${FIELD_SIZES[size]}`}
     />
   )

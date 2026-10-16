@@ -10,14 +10,15 @@
 .meter-track {
   position: relative;
   overflow: hidden;
-  border-radius: 999px;
-  background-color: color-mix(in srgb, var(--color-foreground) 5%, transparent);
+  border-radius: var(--radius-full);
+  background-color: color-mix(in srgb, var(--color-on-surface) 5%, transparent);
   background-image: repeating-linear-gradient(
     -45deg,
-    color-mix(in srgb, var(--color-foreground) 5%, transparent) 0 1px,
+    color-mix(in srgb, var(--color-on-surface) 5%, transparent) 0 1px,
     transparent 1px 5px
   );
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.7);
+  box-shadow: inset 0 1px 3px
+    color-mix(in srgb, var(--color-shadow) 70%, transparent);
 }
 
 /* Two layers: the hatching on top, the ramp underneath. Only the hatching
@@ -25,25 +26,24 @@
 .meter-fill {
   position: relative;
   height: 100%;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background-image:
     repeating-linear-gradient(
       -45deg,
-      color-mix(in srgb, var(--color-foreground) 24%, transparent) 0 2px,
+      color-mix(in srgb, var(--color-on-surface) 24%, transparent) 0 2px,
       transparent 2px 7px
     ),
     linear-gradient(
       90deg,
-      var(--color-accent-foreground) 0%,
-      var(--color-accent-deep) 45%,
-      var(--color-accent) 100%
+      var(--color-tertiary-container) 0%,
+      var(--color-tertiary) 100%
     );
   background-size:
     20px 20px,
     100% 100%;
   box-shadow:
-    0 0 20px -4px color-mix(in srgb, var(--color-accent) 85%, transparent),
-    inset 0 1px 0 color-mix(in srgb, var(--color-foreground) 40%, transparent);
+    0 0 20px -4px color-mix(in srgb, var(--color-tertiary) 85%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--color-on-surface) 40%, transparent);
   animation: meter-crawl 1.4s linear infinite;
 }
 
@@ -62,8 +62,12 @@
   position: absolute;
   inset: 0 0 0 auto;
   width: 12px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, transparent, rgba(255, 246, 214, 0.9));
+  border-radius: var(--radius-full);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--color-tertiary-fixed) 90%, transparent)
+  );
   animation: meter-head 2.4s ease-in-out infinite;
 }
 

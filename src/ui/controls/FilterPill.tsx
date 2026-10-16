@@ -14,8 +14,8 @@ export default function FilterPill({
       aria-pressed={active}
       className={`shrink-0 whitespace-nowrap rounded-md px-3 py-2 body-small-bold transition-all ${
         active
-          ? "brand-surface brand-pop bg-primary text-primary-foreground"
-          : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+          ? "brand-pop bg-secondary-container text-on-secondary-container"
+          : "text-on-surface-variant hover:bg-surface-container-highest/50 hover:text-on-surface"
       }`}
     >
       {label}

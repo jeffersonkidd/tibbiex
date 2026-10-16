@@ -13,10 +13,10 @@ export default function ShowRow({ show }: { show: Show }) {
       <div className="flex items-start justify-between">
         <div>
           <div className="body-large-bold">{show.venue}</div>
-          <div className="body-small mt-1 flex items-center gap-glyph text-muted-foreground">
+          <div className="body-small mt-1 flex items-center gap-glyph text-on-surface-variant">
             <Calendar className="h-4 w-4" /> {show.date}
           </div>
-          <div className="body-small mt-1 flex items-center gap-glyph text-muted-foreground">
+          <div className="body-small mt-1 flex items-center gap-glyph text-on-surface-variant">
             <MapPin className="h-4 w-4" /> {show.city}
           </div>
         </div>
@@ -25,7 +25,7 @@ export default function ShowRow({ show }: { show: Show }) {
             Tickets
           </Button>
         ) : (
-          <span className="rounded-full bg-accent-tint px-3 py-1 body-xs-bold text-accent">
+          <span className="rounded-full bg-tertiary/10 px-3 py-1 body-xs-bold text-tertiary">
             {show.status}
           </span>
         )}

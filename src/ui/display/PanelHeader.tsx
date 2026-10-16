@@ -37,22 +37,26 @@ export default function PanelHeader({
           title. */}
       <div className="flex min-w-0 flex-1 items-start gap-part">
         <div
-          className={`flex size-12.5 shrink-0 items-center justify-center rounded-md border border-accent-soft bg-accent-tint text-accent ${
+          className={`flex size-12.5 shrink-0 items-center justify-center rounded-md border border-transparent bg-tertiary-container text-on-tertiary-container ${
             lit ? "featured-sigil" : ""
           }`}
         >
           <Icon className="size-7" />
         </div>
         <div className="min-w-0 flex-1">
-          {eyebrow && <p className="label-mono mb-1 text-accent">{eyebrow}</p>}
+          {eyebrow && (
+            <p className="label-mono mb-1 text-tertiary">{eyebrow}</p>
+          )}
           <h2 className="heading-l">{title}</h2>
-          {sub && <p className="body-xs mt-0.5 text-muted-foreground">{sub}</p>}
+          {sub && (
+            <p className="body-xs mt-0.5 text-on-surface-variant">{sub}</p>
+          )}
         </div>
       </div>
       {spark && (
         <span
           aria-hidden
-          className="featured-spark heading-l shrink-0 px-1 text-accent"
+          className="featured-spark heading-l shrink-0 px-1 text-tertiary"
         >
           !
         </span>

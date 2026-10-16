@@ -94,7 +94,7 @@ export default function ReadingMenu({ onClose }: { onClose: () => void }) {
           ))}
         </div>
 
-        <p className="body-xs mt-5 text-muted-foreground">
+        <p className="body-xs mt-5 text-on-surface-variant">
           The deposit holds the slot; we settle the time by DM and I call you
           when it comes round. In person instead if you are local. No gods, no
           gatekeeping — the deck has no authority over you.
@@ -106,7 +106,7 @@ export default function ReadingMenu({ onClose }: { onClose: () => void }) {
             : `Hold ${picked.minutes} minutes — $${picked.price}`}
         </Button>
 
-        <p className="body-xs mt-2 text-center text-muted-foreground">
+        <p className="body-xs mt-2 text-center text-on-surface-variant">
           {CARD_HINT}
         </p>
 

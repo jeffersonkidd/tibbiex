@@ -1,12 +1,14 @@
 import type { ComponentType, MouseEvent, ReactNode } from "react"
 
 const TONES = {
-  // The red CTA; the gradient, sheen and lift live in .brand-surface.
-  brand: "brand-surface brand-lift bg-primary text-primary-foreground",
-  // Bordered and card-filled: chrome and lesser actions, never the one the
-  // panel exists for.
+  // The red CTA on the primary token; the fill, glow, sheen and lift
+  // live in .brand-surface.
+  brand: "brand-surface brand-lift text-on-primary",
+  // M3's tonal button: chrome and lesser actions, never the one the panel
+  // exists for. Hover lays the label colour over the fill at 8%, M3's state
+  // layer. The transparent border keeps it the same size it was when bordered.
   secondary:
-    "border border-border bg-card text-foreground transition-colors hover:bg-muted",
+    "border border-transparent bg-secondary-container text-on-secondary-container transition-colors hover:bg-[color-mix(in_srgb,var(--color-on-secondary-container)_8%,var(--color-secondary-container))]",
 }
 
 const SHAPES = {

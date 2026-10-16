@@ -20,7 +20,7 @@ export default function OverlayBody({
 }) {
   return (
     <div className={`p-modal ${className}`}>
-      {eyebrow && <span className="label-mono text-accent">{eyebrow}</span>}
+      {eyebrow && <span className="label-mono text-tertiary">{eyebrow}</span>}
       {/* pr-6 keeps a long title from running under Overlay's close button,
           which covers the corner's last 48px; a centred title is padded on
           both sides so it stays centred. */}
@@ -30,7 +30,7 @@ export default function OverlayBody({
         {title}
       </h2>
       {sub && (
-        <div className="body-small mt-1 text-muted-foreground">{sub}</div>
+        <div className="body-small mt-1 text-on-surface-variant">{sub}</div>
       )}
       {children}
     </div>

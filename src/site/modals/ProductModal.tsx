@@ -126,7 +126,7 @@ export default function ProductModal({
       <img
         src={photos[photo]}
         alt={item.alt ?? item.item}
-        className="aspect-square w-full bg-muted object-cover"
+        className="aspect-square w-full bg-surface-container-highest object-cover"
       />
       {photos.length > 1 && (
         <div
@@ -143,8 +143,8 @@ export default function ProductModal({
               onClick={() => setPhoto(i)}
               className={`h-12 w-12 overflow-hidden rounded-sm border transition-colors ${
                 photo === i
-                  ? "border-foreground/60"
-                  : "border-border opacity-60 hover:opacity-100"
+                  ? "border-primary"
+                  : "border-outline-variant opacity-60 hover:opacity-100"
               }`}
             >
               <img src={src} alt="" className="h-full w-full object-cover" />
@@ -155,14 +155,14 @@ export default function ProductModal({
 
       <OverlayBody title={item.item}>
         <div className="mt-2 flex flex-wrap items-baseline gap-x-part gap-y-1">
-          <span className="numeric-amount text-accent">
+          <span className="numeric-amount text-tertiary">
             {formatPrice(format.price)}
           </span>
-          <span className="label-mono text-muted-foreground">
+          <span className="label-mono text-on-surface-variant">
             + {formatPrice(shipping)} shipping
           </span>
           {item.stock && (
-            <span className="label-mono text-muted-foreground">
+            <span className="label-mono text-on-surface-variant">
               {soldOut
                 ? `All ${item.stock.of} gone`
                 : `${item.stock.left} of ${item.stock.of} left`}
@@ -170,14 +170,16 @@ export default function ProductModal({
           )}
         </div>
         {item.blurb && (
-          <p className="body-small mt-3 text-muted-foreground">{item.blurb}</p>
+          <p className="body-small mt-3 text-on-surface-variant">
+            {item.blurb}
+          </p>
         )}
 
         {!soldOut && (
           <>
             {choosing && (
               <fieldset className="mt-5">
-                <legend className="label-mono mb-2 text-muted-foreground">
+                <legend className="label-mono mb-2 text-on-surface-variant">
                   Format
                 </legend>
                 <div className="grid grid-cols-2 gap-cluster">
@@ -195,7 +197,7 @@ export default function ProductModal({
                       }}
                     >
                       {entry.label}{" "}
-                      <span className="text-accent">
+                      <span className="text-tertiary">
                         {formatPrice(entry.price)}
                       </span>
                     </Chip>
@@ -206,7 +208,7 @@ export default function ProductModal({
 
             {sizes.length > 0 && (
               <fieldset className="mt-5">
-                <legend className="label-mono mb-2 text-muted-foreground">
+                <legend className="label-mono mb-2 text-on-surface-variant">
                   Size
                 </legend>
                 {/* As many columns as fit at chip width: four sizes read as
@@ -228,7 +230,7 @@ export default function ProductModal({
                   ))}
                 </div>
                 {sizeError && (
-                  <p role="alert" className="body-xs mt-1.5 text-primary">
+                  <p role="alert" className="body-xs mt-1.5 text-error">
                     Pick a size first.
                   </p>
                 )}
@@ -246,7 +248,7 @@ export default function ProductModal({
                 : `Buy${picked ? ` ${picked}` : ""} — ${formatPrice(format.price)}`}
             </Button>
             {(SHOP_CARD_HINT || item.ships) && (
-              <p className="body-xs mt-2 text-center text-muted-foreground">
+              <p className="body-xs mt-2 text-center text-on-surface-variant">
                 {SHOP_CARD_HINT && <>{CARD_HINT} US shipping only.</>}
                 {SHOP_CARD_HINT && item.ships && <br />}
                 {item.ships}
@@ -255,7 +257,7 @@ export default function ProductModal({
 
             <div className="mt-2">
               <VenmoLink handle={VENMO_HANDLE} onClick={payWithVenmo} />
-              <p className="body-xs mt-1 text-center text-muted-foreground">
+              <p className="body-xs mt-1 text-center text-on-surface-variant">
                 Includes shipping. DM your address after.
               </p>
             </div>
@@ -265,7 +267,7 @@ export default function ProductModal({
         {format.includes && (
           <>
             <Separator space="md" />
-            <span className="label-mono mb-2 block text-muted-foreground">
+            <span className="label-mono mb-2 block text-on-surface-variant">
               What you get
             </span>
             <DetailList items={format.includes} />
@@ -330,13 +332,13 @@ function RestockAlert({
       <Separator space="md" />
 
       <form onSubmit={notify} noValidate>
-        <p className="body-small text-muted-foreground">
+        <p className="body-small text-on-surface-variant">
           {soldOut
             ? "This run is gone. Get told if there’s another."
             : "Sold out, or your size is gone? Get told when it’s back."}
         </p>
         {sent ? (
-          <p className="label-mono mt-3 text-accent" aria-live="polite">
+          <p className="label-mono mt-3 text-tertiary" aria-live="polite">
             Asked for. You’ll hear when it’s back.
           </p>
         ) : (

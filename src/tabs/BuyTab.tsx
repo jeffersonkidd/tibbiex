@@ -43,12 +43,12 @@ export default function BuyTab({
           of Product.manufacturer -> #studio in the index.html graph,
           so keep the two in step -- and note it is a claim about
           making, so it must not sit over anything label-pressed. */}
-      <p className="label-mono text-muted-foreground">
-        Made in-house at <span className="text-accent">Tibbie X Studio</span>
+      <p className="label-mono text-on-surface-variant">
+        Made in-house at <span className="text-tertiary">Tibbie X Studio</span>
       </p>
 
       {/* First filter: which shelf. */}
-      <div className="surface hide-scrollbar flex gap-cluster overflow-x-auto rounded-lg bg-card/50 p-strip">
+      <div className="surface hide-scrollbar flex gap-cluster overflow-x-auto rounded-lg bg-surface-container-low/50 p-strip">
         {shelves.map((entry) => (
           <FilterPill
             key={entry.id}
@@ -63,7 +63,7 @@ export default function BuyTab({
         (shop.all.length ? (
           <AllShelf shop={shop} onOpen={onOpenProduct} />
         ) : (
-          <p className="surface body-small rounded-lg p-panel text-center text-muted-foreground">
+          <p className="surface body-small rounded-lg p-panel text-center text-on-surface-variant">
             The shelves are empty right now. New pieces are on the way.
           </p>
         ))}
@@ -76,7 +76,7 @@ export default function BuyTab({
           portfolio dropped the visitor into. */}
       {current === "bands" && shown && (
         <>
-          <div className="surface hide-scrollbar flex gap-cluster overflow-x-auto rounded-lg bg-card/50 p-strip">
+          <div className="surface hide-scrollbar flex gap-cluster overflow-x-auto rounded-lg bg-surface-container-low/50 p-strip">
             {shop.groups.map((group) => (
               <FilterPill
                 key={group.id}
@@ -155,12 +155,12 @@ function ShopSection({
           <button
             type="button"
             onClick={onOpenCredits}
-            className="label-mono flex items-center gap-1 text-muted-foreground transition-colors hover:text-accent"
+            className="label-mono flex items-center gap-1 text-on-surface-variant transition-colors hover:text-tertiary"
           >
             View credits <ChevronRight className="h-3.5 w-3.5" />
           </button>
         ) : (
-          <span className="label-mono text-muted-foreground">
+          <span className="label-mono text-on-surface-variant">
             {items.length} {items.length === 1 ? "item" : "items"}
           </span>
         )}

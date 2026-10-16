@@ -35,7 +35,7 @@ export default function FormatCard({
   }
 
   return (
-    <div className="studio-format space-y-part rounded-md border border-border bg-card/60 p-card">
+    <div className="studio-format space-y-part rounded-md border border-outline-variant bg-surface-container-low/60 p-card">
       <div className="flex items-start gap-cluster">
         <div className="min-w-0 flex-1">
           <Field
@@ -49,8 +49,8 @@ export default function FormatCard({
             size="sm"
           />
         </div>
-        <label className="studio-price flex w-28 shrink-0 items-center rounded-md border border-border bg-input-background pl-3 focus-within:border-accent">
-          <span className="body-small-bold text-accent">$</span>
+        <label className="studio-price flex w-28 shrink-0 items-center rounded-md border border-outline-variant bg-surface-container-lowest/80 pl-3 focus-within:border-tertiary">
+          <span className="body-small-bold text-tertiary">$</span>
           <input
             type="number"
             inputMode="numeric"
@@ -60,7 +60,7 @@ export default function FormatCard({
             aria-label="Price in dollars"
             value={Number.isFinite(format.price) ? format.price : ""}
             onChange={(e) => set({ price: Math.round(Number(e.target.value)) })}
-            className="w-full min-w-0 bg-transparent px-2 py-2.5 body-small-bold text-foreground outline-none"
+            className="w-full min-w-0 bg-transparent px-2 py-2.5 body-small-bold text-on-surface outline-none"
           />
         </label>
         <button
@@ -68,14 +68,14 @@ export default function FormatCard({
           aria-label={`Remove ${format.label || "this format"}`}
           title="Remove this format"
           onClick={onRemove}
-          className="flex size-10 shrink-0 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary-bright"
+          className="flex size-10 shrink-0 items-center justify-center rounded-md border border-outline-variant text-on-surface-variant transition-colors hover:border-error hover:text-error"
         >
           <Trash2 className="size-4" />
         </button>
       </div>
 
       <fieldset>
-        <legend className="label-mono mb-1.5 text-muted-foreground">
+        <legend className="label-mono mb-1.5 text-on-surface-variant">
           Ships as
         </legend>
         <div className="grid grid-cols-3 gap-cluster">
@@ -91,7 +91,7 @@ export default function FormatCard({
               }`}
             >
               {mail.label}{" "}
-              <span className="text-accent">
+              <span className="text-tertiary">
                 +{formatPrice(shippingFor(mail.id))}
               </span>
             </button>
@@ -100,7 +100,7 @@ export default function FormatCard({
       </fieldset>
 
       <fieldset>
-        <legend className="label-mono mb-1.5 text-muted-foreground">
+        <legend className="label-mono mb-1.5 text-on-surface-variant">
           Sizes{" "}
           {sizes.length > 0 && (
             <span className="normal-case">· tap one to mark it sold out</span>
@@ -158,19 +158,19 @@ export default function FormatCard({
               placeholder="Add size"
               aria-label="Add a size"
               maxLength={12}
-              className="w-20 rounded-l-md border border-border bg-input-background px-2 py-1.5 body-xs text-foreground outline-none placeholder:text-muted-foreground focus:border-accent"
+              className="w-20 rounded-l-md border border-outline-variant bg-surface-container-lowest/80 px-2 py-1.5 body-xs text-on-surface outline-none placeholder:text-on-surface-variant focus:border-tertiary"
             />
             <button
               type="submit"
               aria-label="Add this size"
-              className="rounded-r-md border border-l-0 border-border bg-card px-2 text-muted-foreground hover:text-accent"
+              className="rounded-r-md border border-l-0 border-outline-variant bg-surface-container-low px-2 text-on-surface-variant hover:text-tertiary"
             >
               <Plus className="size-3.5" />
             </button>
           </form>
         </div>
         {sizes.length === 0 && (
-          <p className="body-xs mt-1.5 text-muted-foreground">
+          <p className="body-xs mt-1.5 text-on-surface-variant">
             No sizes: it's one-size. Or start from a run:{" "}
             {SIZE_RUNS.map((run, i) => (
               <span key={run.label}>
@@ -180,7 +180,7 @@ export default function FormatCard({
                   onClick={() =>
                     set({ sizes: run.sizes.map((label) => ({ label })) })
                   }
-                  className="text-accent underline underline-offset-2"
+                  className="text-tertiary underline underline-offset-2"
                 >
                   {run.label} ({run.sizes[0]}–{run.sizes.at(-1)})
                 </button>
@@ -192,7 +192,7 @@ export default function FormatCard({
 
       {gallery.length > 1 && (
         <fieldset>
-          <legend className="label-mono mb-1.5 text-muted-foreground">
+          <legend className="label-mono mb-1.5 text-on-surface-variant">
             Photo when picked
           </legend>
           <div className="flex flex-wrap gap-glyph">
@@ -207,8 +207,8 @@ export default function FormatCard({
                 }
                 className={`size-11 overflow-hidden rounded-sm border transition ${
                   format.photo === src
-                    ? "border-accent ring-1 ring-accent"
-                    : "border-border opacity-50 hover:opacity-100"
+                    ? "border-tertiary ring-1 ring-tertiary"
+                    : "border-outline-variant opacity-50 hover:opacity-100"
                 }`}
               >
                 <img src={src} alt="" className="size-full object-cover" />
@@ -219,7 +219,7 @@ export default function FormatCard({
       )}
 
       <fieldset>
-        <legend className="label-mono mb-1.5 text-muted-foreground">
+        <legend className="label-mono mb-1.5 text-on-surface-variant">
           What you get
         </legend>
         <div className="space-y-1.5">
@@ -237,7 +237,7 @@ export default function FormatCard({
                     ),
                   })
                 }
-                className="w-28 shrink-0 rounded-md border border-border bg-input-background px-2 py-1.5 body-xs text-foreground outline-none focus:border-accent"
+                className="w-28 shrink-0 rounded-md border border-outline-variant bg-surface-container-lowest/80 px-2 py-1.5 body-xs text-on-surface outline-none focus:border-tertiary"
               />
               <input
                 value={entry.detail}
@@ -251,7 +251,7 @@ export default function FormatCard({
                     ),
                   })
                 }
-                className="min-w-0 flex-1 rounded-md border border-border bg-input-background px-2 py-1.5 body-xs text-foreground outline-none focus:border-accent"
+                className="min-w-0 flex-1 rounded-md border border-outline-variant bg-surface-container-lowest/80 px-2 py-1.5 body-xs text-on-surface outline-none focus:border-tertiary"
               />
               <button
                 type="button"
@@ -259,7 +259,7 @@ export default function FormatCard({
                 onClick={() =>
                   set({ includes: includes.filter((_, i) => i !== index) })
                 }
-                className="px-1.5 text-muted-foreground hover:text-primary-bright"
+                className="px-1.5 text-on-surface-variant hover:text-error"
               >
                 <X className="size-3.5" />
               </button>
@@ -271,7 +271,7 @@ export default function FormatCard({
               onClick={() =>
                 set({ includes: [...includes, { label: "", detail: "" }] })
               }
-              className="label-mono flex items-center gap-1 text-muted-foreground hover:text-accent"
+              className="label-mono flex items-center gap-1 text-on-surface-variant hover:text-tertiary"
             >
               <Plus className="size-3" /> Add a detail
             </button>

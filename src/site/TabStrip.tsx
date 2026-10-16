@@ -19,7 +19,7 @@ export default function TabStrip({
   return (
     <nav
       ref={ref}
-      className="surface hide-scrollbar flex scroll-mt-4 gap-cluster overflow-x-auto rounded-lg bg-card/50 p-strip"
+      className="surface hide-scrollbar flex scroll-mt-4 gap-cluster overflow-x-auto rounded-lg bg-surface-container-low/50 p-strip"
     >
       {VISIBLE_TABS.map(({ label }) => (
         <TabItem

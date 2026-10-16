@@ -42,7 +42,7 @@ export default function TextArea({
       value={value}
       onChange={onChange ? (e) => onChange(e.target.value) : undefined}
       maxLength={maxLength}
-      className={`${FIELD_TREATMENT} resize-none border-border ${FIELD_SIZES[size]}`}
+      className={`${FIELD_TREATMENT} resize-none border-outline-variant ${FIELD_SIZES[size]}`}
     />
   )
 }

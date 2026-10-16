@@ -27,7 +27,7 @@ export default function ShopCard({
     <button
       type="button"
       onClick={onOpen}
-      className="surface group block w-full overflow-hidden rounded-lg text-left transition-colors hover:border-accent"
+      className="surface group block w-full overflow-hidden rounded-lg text-left transition-colors hover:border-tertiary"
     >
       <div className={`${IMAGE_BOX[item.aspect ?? "strip"]} overflow-hidden`}>
         <img
@@ -40,12 +40,12 @@ export default function ShopCard({
       </div>
       <div className="flex items-center justify-between gap-part p-card">
         <div className="body-small-bold">{item.item}</div>
-        <span className="flex shrink-0 items-center gap-glyph body-base-bold text-accent">
+        <span className="flex shrink-0 items-center gap-glyph body-base-bold text-tertiary">
           {ranged && (
-            <span className="label-mono text-muted-foreground">from</span>
+            <span className="label-mono text-on-surface-variant">from</span>
           )}
           {formatPrice(lowestPrice(item))}{" "}
-          <ShoppingBag className="h-4 w-4 text-muted-foreground" />
+          <ShoppingBag className="h-4 w-4 text-on-surface-variant" />
         </span>
       </div>
     </button>

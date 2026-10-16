@@ -59,17 +59,17 @@ export default function Studio() {
   }, [])
 
   return (
-    <div className="flex min-h-screen justify-center pb-20 font-sans text-foreground selection:bg-accent-soft">
+    <div className="flex min-h-screen justify-center pb-20 font-sans text-on-surface selection:bg-tertiary/20">
       <Toaster position="top-center" richColors />
 
       <div className="w-full min-w-0 max-w-[600px] space-y-stack px-4 pt-6 sm:px-6">
         <header className="surface flex items-center justify-between rounded-lg p-3">
-          <span className="label-mono px-2 text-muted-foreground">
-            Tibbie X <span className="text-accent">Studio</span>
+          <span className="label-mono px-2 text-on-surface-variant">
+            Tibbie X <span className="text-tertiary">Studio</span>
           </span>
           <a
             href="/"
-            className="flex items-center gap-glyph rounded-md border border-border bg-card px-3 py-2 body-xs-bold text-foreground transition-colors hover:bg-muted"
+            className="flex items-center gap-glyph rounded-md border border-outline-variant bg-surface-container-low px-3 py-2 body-xs-bold text-on-surface transition-colors hover:bg-surface-container-highest"
           >
             View site
             <ArrowUpRight className="h-4 w-4" />
@@ -78,14 +78,14 @@ export default function Studio() {
 
         <div className="px-1 pt-2">
           <h1 className="heading-xl">Back office</h1>
-          <p className="body-small mt-1 text-muted-foreground">
+          <p className="body-small mt-1 text-on-surface-variant">
             Tools for the site, built one at a time.
           </p>
         </div>
 
         <nav
           aria-label="Modules"
-          className="surface flex gap-1 rounded-lg bg-card/50 p-strip"
+          className="surface flex gap-1 rounded-lg bg-surface-container-low/50 p-strip"
         >
           {MODULES.map((m) => (
             <FilterPill

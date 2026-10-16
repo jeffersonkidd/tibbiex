@@ -102,7 +102,7 @@ export default function PhotoShelf({
       {gallery.map((src, index) => (
         <figure
           key={src}
-          className="studio-photo group relative aspect-square overflow-hidden rounded-md border border-border bg-muted"
+          className="studio-photo group relative aspect-square overflow-hidden rounded-md border border-outline-variant bg-surface-container-highest"
         >
           <img
             src={src}
@@ -111,11 +111,11 @@ export default function PhotoShelf({
             draggable={false}
           />
           {index === 0 && (
-            <figcaption className="label-mono absolute top-1.5 left-1.5 rounded-xs bg-page/80 px-1.5 py-0.5 text-accent">
+            <figcaption className="label-mono absolute top-1.5 left-1.5 rounded-xs bg-surface-container-lowest/80 px-1.5 py-0.5 text-tertiary">
               Cover
             </figcaption>
           )}
-          <div className="absolute inset-x-0 bottom-0 flex justify-end gap-1 bg-gradient-to-t from-page/90 to-transparent p-1.5 pt-6">
+          <div className="absolute inset-x-0 bottom-0 flex justify-end gap-1 bg-gradient-to-t from-scrim/90 to-transparent p-1.5 pt-6">
             {index > 0 && (
               <>
                 <PhotoKey
@@ -145,7 +145,7 @@ export default function PhotoShelf({
       {Array.from({ length: uploading }, (_, i) => (
         <div
           key={`up-${i}`}
-          className="studio-uploading label-mono flex aspect-square items-center justify-center rounded-md border border-dashed border-accent-soft text-accent"
+          className="studio-uploading label-mono flex aspect-square items-center justify-center rounded-md border border-dashed border-tertiary/20 text-tertiary"
         >
           Uploading
         </div>
@@ -155,7 +155,7 @@ export default function PhotoShelf({
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="flex aspect-square flex-col items-center justify-center gap-glyph rounded-md border border-dashed border-border text-muted-foreground transition-colors hover:border-accent hover:text-accent"
+          className="flex aspect-square flex-col items-center justify-center gap-glyph rounded-md border border-dashed border-outline-variant text-on-surface-variant transition-colors hover:border-tertiary hover:text-tertiary"
         >
           <ImagePlus className="size-5" />
           <span className="body-xs-bold">
@@ -194,7 +194,7 @@ function PhotoKey({
       aria-label={label}
       title={label}
       onClick={onClick}
-      className="flex size-7 items-center justify-center rounded-sm border border-border bg-card/90 text-foreground transition-colors hover:border-accent hover:text-accent"
+      className="flex size-7 items-center justify-center rounded-sm border border-outline-variant bg-surface-container-low/90 text-on-surface transition-colors hover:border-tertiary hover:text-tertiary"
     >
       {children}
     </button>

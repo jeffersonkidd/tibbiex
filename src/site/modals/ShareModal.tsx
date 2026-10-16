@@ -13,7 +13,7 @@ export default function ShareModal({ onClose }: { onClose: () => void }) {
   return (
     <Overlay onClose={onClose} size="xs">
       <OverlayBody title="Scan & Share" className="text-center">
-        <div className="mx-auto mt-5 w-fit rounded-md border border-border bg-muted p-4">
+        <div className="mx-auto mt-5 w-fit rounded-md border border-outline-variant bg-surface-container-highest p-4">
           <SiteQrCode size={148} />
         </div>
         <div className="mt-5 space-y-cluster">

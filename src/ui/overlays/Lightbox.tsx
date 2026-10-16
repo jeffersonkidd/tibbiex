@@ -52,7 +52,7 @@ export default function Lightbox({
       <img
         src={photo.src}
         alt={photo.alt}
-        className="w-full bg-muted object-contain"
+        className="w-full bg-surface-container-highest object-contain"
       />
 
       <Separator />
@@ -70,9 +70,11 @@ export default function Lightbox({
         )}
 
         <div className="min-w-0 flex-1 text-center">
-          <p className="body-xs truncate text-muted-foreground">{photo.alt}</p>
+          <p className="body-xs truncate text-on-surface-variant">
+            {photo.alt}
+          </p>
           {photos.length > 1 && (
-            <span className="label-mono mt-0.5 block text-accent">
+            <span className="label-mono mt-0.5 block text-tertiary">
               {index + 1} / {photos.length}
             </span>
           )}

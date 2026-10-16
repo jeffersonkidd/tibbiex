@@ -106,7 +106,7 @@ export default function NewsletterSignup() {
               ? "Join the list"
               : "Join the list — everything"}
         </Button>
-        <p className="body-xs mt-2 text-center text-muted-foreground">
+        <p className="body-xs mt-2 text-center text-on-surface-variant">
           One confirmation email, then about one a month.
         </p>
       </section>
@@ -147,7 +147,7 @@ export default function NewsletterSignup() {
       </form>
       {/* Quieter than the blurb above it: fine print, not a claim. */}
       {NEWSLETTER.cadence.enabled && (
-        <p className="body-xs mt-2 text-muted-foreground/60">
+        <p className="body-xs mt-2 text-on-surface-variant/60">
           {NEWSLETTER.cadence.text}
         </p>
       )}

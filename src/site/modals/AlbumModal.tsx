@@ -21,11 +21,11 @@ export default function AlbumModal({
         className="h-56 w-full object-cover"
       />
       <OverlayBody eyebrow={album.band} title={album.album}>
-        <p className="body-small mt-2 text-muted-foreground">
+        <p className="body-small mt-2 text-on-surface-variant">
           Released {album.year} · {album.role}
         </p>
         {album.track && (
-          <p className="label-mono mt-3 text-accent">
+          <p className="label-mono mt-3 text-tertiary">
             Featured track — “{album.track}”
           </p>
         )}
