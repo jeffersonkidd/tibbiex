@@ -3,7 +3,8 @@
 A link-in-bio site for the musician Tibbie X — profile, discography, band
 portfolio, a merch shop, tour dates, a podcast fund, a newsletter sign-up and a
 tarot-reading menu. A single-page React app built with Vite and Tailwind, deployed to Vercel
-with one serverless function for card payments.
+with a handful of serverless functions: card payments, mail, and the studio's
+avatar and shop catalogue.
 
 ## Run it
 
@@ -65,6 +66,8 @@ src/
     MagicDust          the spark canvas, mounted once in App
   content/           ALL site content, one file per subject (see below)
   lib/               pure logic, no JSX
+    shop.ts            the live shop: bundled, then cached, then /api/products
+    catalog.ts         the catalogue's wire shape, to and from ShopItem
     payments.ts        payVia() for either rail, the Stripe call, the return toast
     messages.ts        sendMessage() and subscribe(), the two mail endpoints
     email.ts           the address check
@@ -90,6 +93,7 @@ api/
   contact.ts         sends the booking and restock messages via Resend
   subscribe.ts       adds a newsletter contact to the Resend audience
   avatar.ts          the studio's avatar: serves it, swaps it in Vercel Blob
+  products.ts        the shop catalogue and its photos, in Vercel Blob
 public/              files needing a stable, unhashed URL: og.jpg, the portrait
                      the structured data points at, icons, robots, sitemap
 ```
@@ -119,9 +123,16 @@ src/studio/
     LinkMaker.tsx          pick a profile and a spot on it, copy, paste
     LinkTicket.tsx         the link, each UTM tag inked and explained
     ledger.ts              which profiles are wired, in localStorage
+  passcode.ts            the passcode every write asks for, once per device
   avatar/                Module 02, Avatar
     AvatarMaker.tsx        drop, paste or pick a photo; frame it in the ring
     avatar.ts              the crop maths, the image it renders, the API calls
+  products/              Module 03, Products
+    ProductsDesk.tsx       every product by shelf; reorder; the publish bar
+    ProductEditor.tsx      one product: photos, words, shelf, formats, run
+    FormatCard.tsx         one format: price, postage, sizes, photo, details
+    PhotoShelf.tsx         upload, order and choose the cover
+    products.ts            the API calls, presets, checks, draft, photo shrink
 src/content/channels.ts  the profiles, their UTM source and where to paste
 src/lib/utm.ts           buildLink() and slug()
 src/styles/studio.css    loaded by the studio only
@@ -140,15 +151,46 @@ Blob. The profile card asks `/api/avatar` for its image and falls back to the
 bundled portrait while none is uploaded (and under `pnpm dev`). A new face
 reaches visitors within a minute; **Back to the original** deletes the upload.
 
+**Products** is the shop, run without a deploy. Every product is listed on
+its shelf (each band, then Art) in the order the Buy tab shows it, with
+arrows to reorder. Opening one edits everything the product modal shows:
+photos (the first is the cover; drop, paste or pick, shrunk in the browser
+and uploaded straight away), name, description, photo description, shelf,
+card shape, formats (start from Sticker, Patch, Men's tee, Women's tee or
+something else; each with its price, postage class, sizes, the photo to turn
+to and what's in the box), a limited run, a shipping note, and whether it is
+showing or hidden. A tap on a size marks it sold out. The site's own shop
+card sits at the top, drawn from the edit.
+
+Edits pile up as a draft — kept in the browser, so a closed tab loses
+nothing — and **Publish to the shop** puts the whole catalogue live through
+`api/products.ts`, which validates it field by field and stores it in Vercel
+Blob. Visitors see it within a minute. A publish made on an older copy than
+what's live (two devices) is refused rather than undoing the other one. The
+last five publishes are kept: deleting the newest `shop/catalog/` file in the
+Blob dashboard rolls the shop back one.
+
+Until the first publish the site shows the catalogue bundled in
+`content/shop.ts`, and the studio starts from it, so that first publish
+carries every product over. From then on the published catalogue is the
+truth and `content/shop.ts` is only the fallback (under `pnpm dev`, or with no
+Blob store).
+
+Shop prices are set server-side once a catalogue is published:
+`api/checkout.ts` reads it and prices the order by item, format and size,
+refusing a hidden item, a sold-out run or a sold-out size. The amount the
+browser sends is ignored.
+
 Modules still to come, roughly in order:
 
 1. **Link Maker** — done.
 2. **Avatar** — done.
-3. **Where they came from** — a read-only view of visits by UTM source, from the
+3. **Products** — done.
+4. **Where they came from** — a read-only view of visits by UTM source, from the
    GA Data API through one serverless function, behind the same passcode.
-4. **Links, live** — switch the Home rows and profile socials on and off without a
+5. **Links, live** — switch the Home rows and profile socials on and off without a
    deploy, via Vercel Edge Config instead of `enabled` flags in `content/`.
-5. **Go-live checklist** — the `staged` entries from `content/status.ts`, shown
+6. **Go-live checklist** — the `staged` entries from `content/status.ts`, shown
    here rather than in the dev console.
 
 ## Paying
@@ -193,7 +235,8 @@ anything that becomes a mail header, and cap every field's length.
 
 Everything the site _says_ lives in `src/content/` as typed data, one file per
 subject: `profile.ts` (the card, socials, tags), `links.ts`, `music.ts`,
-`shows.ts`, `portfolio.ts`, `shop.ts`, `fund.ts`, `newsletter.ts`,
+`shows.ts`, `portfolio.ts`, `shop.ts` (the fallback catalogue — the live one
+is edited in the studio), `fund.ts`, `newsletter.ts`,
 `readings.ts`, `payments.ts` (the Venmo URL), `tabs.ts` and `site.ts` (address,
 inbox, Venmo handle). Changing what the site shows is an edit there, not to any
 JSX.
@@ -236,11 +279,11 @@ Environment variables in the Vercel project:
   through Cloudflare Email Routing, and sending as it invites a loop.
 - `STUDIO_PASSCODE` — what the studio asks for before it changes the live
   site. Set by hand, and make it long: it is the only gate on the avatar
-  upload. Without it every studio write is refused.
+  upload and the shop. Without it every studio write is refused.
 - `BLOB_READ_WRITE_TOKEN` — set by Vercel when a Blob store is connected to the
   project (Storage → Create → Blob). Without it the profile card keeps the
-  bundled portrait and an avatar upload returns "Avatar storage isn't
-  configured yet".
+  bundled portrait, the shop keeps the bundled catalogue, and studio uploads
+  and publishes say storage isn't configured yet.
 - `RESEND_AUDIENCE_ID` — the newsletter audience, set by hand. Without it the
   sign-up returns "The list isn't configured yet".
 

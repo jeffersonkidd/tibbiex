@@ -1,6 +1,6 @@
 import { VISIBLE_LINKS } from "../content/links"
 import type { BandId } from "../content/portfolio"
-import { SHOP_PRINTS } from "../content/shop"
+import { useShop } from "../lib/shop"
 import PolaroidStack from "../ui/cards/PolaroidStack"
 import LinkRow from "../ui/rows/LinkRow"
 import FundPanel from "../site/panels/FundPanel"
@@ -22,13 +22,15 @@ export default function HomeTab({
   onOpenShop?: (band: BandId) => void
   onOpenArt: () => void
 }) {
+  const { prints } = useShop()
+
   return (
     <>
       <NewsletterSignup />
 
-      {onOpenShop && (
+      {onOpenShop && prints.length > 0 && (
         <PolaroidStack
-          rows={SHOP_PRINTS}
+          rows={prints}
           onOpen={(id) => (id === "art" ? onOpenArt() : onOpenShop(id))}
         />
       )}

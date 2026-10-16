@@ -10,9 +10,17 @@
  * It calls Stripe's REST API with fetch rather than the `stripe` SDK, which
  * keeps the project at zero new dependencies for one endpoint.
  *
+ * A shop order names what it buys (item, format, size) and the price, shipping
+ * and wording are read from the catalogue the studio published
+ * (api/products.ts), so the amount on Stripe's page is the shop's, not the
+ * browser's. Until a catalogue is published the shop runs on the one bundled
+ * with the app, and an order falls back to the amount the client sends.
+ *
  * Requires STRIPE_SECRET_KEY in the Vercel project's environment variables.
  * `pnpm dev` does not run this file -- use `vercel dev` to exercise it locally.
  */
+
+import { list } from "@vercel/blob"
 
 const STRIPE_API = "https://api.stripe.com/v1/checkout/sessions"
 
@@ -46,6 +54,76 @@ function badRequest(message: string) {
   return Response.json({ error: message }, { status: 400 })
 }
 
+/* The slice of the published catalogue a price needs. The full shape and its
+   validation live in api/products.ts, which wrote the file. */
+type CatalogFormat = {
+  id: string
+  label: string
+  price: number
+  mail: Mail
+  sizes?: { label: string; soldOut?: true }[]
+}
+type CatalogItem = {
+  id: string
+  item: string
+  formats: CatalogFormat[]
+  stock?: { left: number; of: number }
+  hidden?: true
+}
+
+/* The newest published catalogue, or null when none is (or Blob is not
+   connected), which is the cue for the legacy client-priced path. */
+async function liveCatalog(): Promise<CatalogItem[] | null> {
+  try {
+    const { blobs } = await list({ prefix: "shop/catalog/" })
+    const newest = blobs.sort(
+      (a, b) => +new Date(b.uploadedAt) - +new Date(a.uploadedAt),
+    )[0]
+    if (!newest) return null
+    const response = await fetch(newest.url, { cache: "no-store" })
+    if (!response.ok) return null
+    return ((await response.json()) as { items: CatalogItem[] }).items
+  } catch {
+    return null
+  }
+}
+
+const field = (value: unknown, max = 64) =>
+  typeof value === "string" ? value.trim().slice(0, max) : ""
+
+/* What a shop order buys, priced from the catalogue. A string is a refusal
+   to show the buyer. */
+function priceOrder(
+  items: CatalogItem[],
+  payload: { item?: unknown; format?: unknown; size?: unknown },
+): { cents: number; mail: Mail; note: string } | string {
+  const item = items.find((entry) => entry.id === field(payload.item))
+  if (!item || item.hidden) return "That item isn't in the shop any more."
+  if (item.stock?.left === 0) return "That run is sold out."
+
+  const format =
+    item.formats.find((entry) => entry.id === field(payload.format)) ??
+    (item.formats.length === 1 ? item.formats[0] : undefined)
+  if (!format) return "Pick a format first."
+
+  let size = ""
+  if (format.sizes?.length) {
+    const picked = format.sizes.find((s) => s.label === field(payload.size, 12))
+    if (!picked) return "Pick a size first."
+    if (picked.soldOut) return "That size is sold out."
+    size = picked.label
+  }
+
+  const picked = [item.formats.length > 1 && format.label, size]
+    .filter(Boolean)
+    .join(", ")
+  return {
+    cents: Math.round(format.price * 100),
+    mail: format.mail in SHIPPING_RATES ? format.mail : "parcel",
+    note: picked ? `${item.item} — ${picked}` : item.item,
+  }
+}
+
 export async function POST(request: Request) {
   const secretKey = process.env.STRIPE_SECRET_KEY
   if (!secretKey) {
@@ -60,6 +138,9 @@ export async function POST(request: Request) {
     note?: unknown
     purpose?: unknown
     mail?: unknown
+    item?: unknown
+    format?: unknown
+    size?: unknown
   }
   try {
     payload = await request.json()
@@ -73,7 +154,13 @@ export async function POST(request: Request) {
       : "fund"
   const { name, submitType } = PURPOSES[purpose]
 
-  const amount = Number(payload.amount)
+  /* A shop order the published catalogue knows about is priced by it; the
+     amount, note and mail the client sent are ignored. */
+  const catalog = purpose === "shop" ? await liveCatalog() : null
+  const priced = catalog && priceOrder(catalog, payload)
+  if (typeof priced === "string") return badRequest(priced)
+
+  const amount = priced ? priced.cents / 100 : Number(payload.amount)
   if (!Number.isFinite(amount)) {
     return badRequest("Amount must be a number.")
   }
@@ -89,13 +176,12 @@ export async function POST(request: Request) {
 
   /* The note is shown back in the Stripe dashboard and is the seed of the
      supporter feed, so strip control characters and cap the length. */
-  const note =
-    typeof payload.note === "string"
-      ? payload.note
-          .replace(/[\u0000-\u001f\u007f]/g, " ")
-          .trim()
-          .slice(0, NOTE_MAX_LENGTH)
-      : ""
+  const note = (
+    priced ? priced.note : typeof payload.note === "string" ? payload.note : ""
+  )
+    .replace(/[\u0000-\u001f\u007f]/g, " ")
+    .trim()
+    .slice(0, NOTE_MAX_LENGTH)
 
   /* Return URLs come from this deployment's own origin, never from the request
      body: a client-supplied success_url would turn the endpoint into an open
@@ -126,8 +212,9 @@ export async function POST(request: Request) {
     params.set("shipping_address_collection[allowed_countries][0]", "US")
 
     /* Unknown or missing mail is charged as a parcel, the dearer rate. */
-    const mail: Mail =
-      typeof payload.mail === "string" && payload.mail in SHIPPING_RATES
+    const mail: Mail = priced
+      ? priced.mail
+      : typeof payload.mail === "string" && payload.mail in SHIPPING_RATES
         ? (payload.mail as Mail)
         : "parcel"
     const rate = "shipping_options[0][shipping_rate_data]"

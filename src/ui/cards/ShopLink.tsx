@@ -1,6 +1,7 @@
 import { ChevronRight, ShoppingBag } from "lucide-react"
 
-import { formatPrice, lowestPrice, shopFor } from "../../content/shop"
+import { formatPrice, lowestPrice } from "../../content/shop"
+import type { ShopItem } from "../../content/shop"
 import type { BandId, PortfolioEntry } from "../../content/portfolio"
 
 /* The portfolio -> Buy hand-off, rendered inside a portfolio section. It is a
@@ -8,12 +9,14 @@ import type { BandId, PortfolioEntry } from "../../content/portfolio"
    view, not a URL. Bands with nothing for sale render nothing at all. */
 export default function ShopLink({
   entry,
+  items,
   onOpen,
 }: {
   entry: PortfolioEntry
+  /* What the band has for sale now -- the live shop's, handed down. */
+  items: ShopItem[]
   onOpen: (band: BandId) => void
 }) {
-  const items = shopFor(entry.id)
   if (items.length === 0) return null
 
   const cheapest = Math.min(...items.map(lowestPrice))

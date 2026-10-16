@@ -1,4 +1,7 @@
 import { AVATAR_URL } from "../../content/site"
+import { StudioError, savePasscode } from "../passcode"
+
+export { StudioError, savedPasscode } from "../passcode"
 
 /* The studio's side of api/avatar.ts: read what is live, publish a crop, go
    back to the original. Plus the two jobs around a publish that happen in
@@ -15,35 +18,6 @@ const OUT = 720
    the window", and its centre's offset from the window's centre, in window
    pixels. */
 export type Crop = { zoom: number; x: number; y: number }
-
-const PASSCODE_KEY = "tibbiex:studio:passcode"
-
-export function savedPasscode() {
-  try {
-    return localStorage.getItem(PASSCODE_KEY) ?? ""
-  } catch {
-    return ""
-  }
-}
-
-function savePasscode(passcode: string | null) {
-  try {
-    if (passcode) localStorage.setItem(PASSCODE_KEY, passcode)
-    else localStorage.removeItem(PASSCODE_KEY)
-  } catch {
-    /* Private window: it just asks again next time. */
-  }
-}
-
-/* What a failed write says, and whether the passcode was the reason. */
-export class StudioError extends Error {
-  constructor(
-    message: string,
-    readonly badPasscode = false,
-  ) {
-    super(message)
-  }
-}
 
 export async function fetchLive(): Promise<Live> {
   try {

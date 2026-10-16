@@ -11,9 +11,10 @@ picture or put your link somewhere new.
 1. Go to **tibbiex.studio/studio**. Bookmark it, on your phone too.
 2. You'll see a small message at the top: *"This browser is now left out of
    the site's analytics."* That's on purpose (see **The habit** below).
-3. The strip under **Back office** switches tools. Right now there are two:
+3. The strip under **Back office** switches tools. Right now there are three:
    - **Link Maker** — makes the link you paste into each profile (lesson 2).
    - **Avatar** — changes the face on your profile card (lesson 3).
+   - **Products** — runs your shop (lesson 4).
 4. **View site** in the top corner opens the public page, so you can check a
    change.
 
@@ -22,16 +23,16 @@ straight onto Avatar.
 
 ## Check it worked
 
-The header says **Tibbie X Studio**, and the module strip shows Link Maker and
-Avatar.
+The header says **Tibbie X Studio**, and the module strip shows Link Maker,
+Avatar and Products.
 
 ## If something's off
 
 - **"Do I need a password to get in?"** No. Anyone who finds the address can
   open the Studio, but nothing in it can change your site without your
   **Studio passcode**. Link Maker only makes links, and those are public the
-  moment you paste them anyway. Avatar asks for the passcode before it changes
-  anything.
+  moment you paste them anyway. Avatar and Products ask for the passcode
+  before they change anything.
 - **Keep the passcode to yourself** and to whoever posts for you. Each device
   asks for it once.
 

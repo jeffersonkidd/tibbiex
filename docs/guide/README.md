@@ -21,11 +21,12 @@ sits in the same place as the tool it teaches.
 | 1 | [Your Studio](01-your-studio.md) | `/studio`, the module strip | Open it on every device you post from | Ready |
 | 2 | [Every post gets its own link](02-every-post-gets-its-own-link.md) | Link Maker | Never paste the bare address | Ready |
 | 3 | [Change your face](03-change-your-face.md) | Avatar | One face, everywhere, changed on purpose | Ready |
-| 4 | Read your numbers | *Where they came from* (Studio module 3) | Do more of what worked, where it worked | Waits on module 3 |
-| 5 | Post the work, not a pitch | Picture postcards and cards from the JKidd kit | Document real things; never invent | Waits on the kit |
-| 6 | A week of posting | All of the above | A routine you can keep | Written after 4 and 5 |
+| 4 | [Run your shop](04-run-your-shop.md) | Products | The shop tells the truth | Ready |
+| 5 | Read your numbers | *Where they came from* (Studio module 4) | Do more of what worked, where it worked | Waits on module 4 |
+| 6 | Post the work, not a pitch | Picture postcards and cards from the JKidd kit | Document real things; never invent | Waits on the kit |
+| 7 | A week of posting | All of the above | A routine you can keep | Written after 5 and 6 |
 
-Lesson 4 can't be written honestly until the Studio can show the numbers
+Lesson 5 can't be written honestly until the Studio can show the numbers
 (README, *Modules still to come*). Until then the links from lesson 2 are
 already collecting them, so nothing is lost by waiting.
 

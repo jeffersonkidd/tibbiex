@@ -1,8 +1,9 @@
 import { ChevronRight } from "lucide-react"
 
-import { ART, SHOP_GROUPS, SHOP_SHELVES } from "../content/shop"
-import type { ShopItem, ShopShelf } from "../content/shop"
+import { SHOP_SHELVES } from "../content/shop"
+import type { Shop, ShopItem, ShopShelf } from "../content/shop"
 import type { BandId } from "../content/portfolio"
+import { useShop } from "../lib/shop"
 import FilterPill from "../ui/controls/FilterPill"
 import ShopCard from "../ui/cards/ShopCard"
 
@@ -21,10 +22,18 @@ export default function BuyTab({
   onOpenPortfolio?: (band: BandId) => void
   onOpenProduct: (item: ShopItem) => void
 }) {
+  const shop = useShop()
   /* A band with nothing for sale has no pill, so a hand-off to one falls back
      to the first band rather than an empty shelf. */
   const shown =
-    SHOP_GROUPS.find((group) => group.id === shopBand) ?? SHOP_GROUPS[0]
+    shop.groups.find((group) => group.id === shopBand) ?? shop.groups[0]
+  /* A shelf with nothing on it has no pill either; All always shows. */
+  const shelves = SHOP_SHELVES.filter(
+    (entry) =>
+      entry.id === "all" ||
+      (entry.id === "bands" ? shop.groups.length > 0 : shop.art.length > 0),
+  )
+  const current = shelves.some((entry) => entry.id === shelf) ? shelf : "all"
 
   return (
     <>
@@ -40,26 +49,35 @@ export default function BuyTab({
 
       {/* First filter: which shelf. */}
       <div className="surface hide-scrollbar flex gap-cluster overflow-x-auto rounded-lg bg-card/50 p-strip">
-        {SHOP_SHELVES.map((entry) => (
+        {shelves.map((entry) => (
           <FilterPill
             key={entry.id}
             label={entry.title}
-            active={shelf === entry.id}
+            active={current === entry.id}
             onClick={() => onShelfChange(entry.id)}
           />
         ))}
       </div>
 
-      {shelf === "all" && <AllShelf onOpen={onOpenProduct} />}
+      {current === "all" &&
+        (shop.all.length ? (
+          <AllShelf shop={shop} onOpen={onOpenProduct} />
+        ) : (
+          <p className="surface body-small rounded-lg p-panel text-center text-muted-foreground">
+            The shelves are empty right now. New pieces are on the way.
+          </p>
+        ))}
 
-      {shelf === "art" && <ShopGrid items={ART} onOpen={onOpenProduct} />}
+      {current === "art" && (
+        <ShopGrid items={shop.art} onOpen={onOpenProduct} />
+      )}
 
       {/* Second filter, Bands only -- also the way back out of a band the
           portfolio dropped the visitor into. */}
-      {shelf === "bands" && (
+      {current === "bands" && shown && (
         <>
           <div className="surface hide-scrollbar flex gap-cluster overflow-x-auto rounded-lg bg-card/50 p-strip">
-            {SHOP_GROUPS.map((group) => (
+            {shop.groups.map((group) => (
               <FilterPill
                 key={group.id}
                 label={group.title}
@@ -85,8 +103,14 @@ export default function BuyTab({
    two-column masonry with every card at its own aspect. Cards are dealt
    left, right, left so the catalogue still reads across; on a phone the
    columns dissolve (`contents`) and `order` puts them back in sequence. */
-function AllShelf({ onOpen }: { onOpen: (item: ShopItem) => void }) {
-  const items = [...SHOP_GROUPS.flatMap((group) => group.items), ...ART]
+function AllShelf({
+  shop,
+  onOpen,
+}: {
+  shop: Shop
+  onOpen: (item: ShopItem) => void
+}) {
+  const items = shop.all
 
   return (
     <div className="flex flex-col gap-stack sm:flex-row sm:items-start">
