@@ -273,14 +273,14 @@ export default function AvatarMaker() {
               )
             )}
             {over && (
-              <span className="label-mono absolute inset-0 flex items-center justify-center bg-page/70 text-accent">
+              <span className="label-mono absolute inset-0 flex items-center justify-center bg-scrim/70 text-tertiary">
                 Drop it in
               </span>
             )}
           </div>
         </div>
 
-        <p className="label-mono mt-panel text-muted-foreground">
+        <p className="label-mono mt-panel text-on-surface-variant">
           {picked
             ? "Drag to frame it"
             : !live
@@ -292,7 +292,7 @@ export default function AvatarMaker() {
       </div>
 
       {picked && (
-        <label className="mt-part flex items-center gap-part text-muted-foreground">
+        <label className="mt-part flex items-center gap-part text-on-surface-variant">
           <ZoomOut className="size-4 shrink-0" aria-hidden />
           <input
             type="range"
@@ -326,7 +326,7 @@ export default function AvatarMaker() {
             required={false}
           />
           <p
-            className={`body-xs ${passcodeError ? "text-primary-bright" : "text-muted-foreground"}`}
+            className={`body-xs ${passcodeError ? "text-error" : "text-on-surface-variant"}`}
           >
             {passcodeError ||
               "Asked once on this device, so a stranger can't change your face."}
@@ -372,7 +372,7 @@ export default function AvatarMaker() {
             <Button icon={ImagePlus} onClick={() => inputRef.current?.click()}>
               Choose a photo
             </Button>
-            <p className="body-xs text-center text-muted-foreground">
+            <p className="body-xs text-center text-on-surface-variant">
               Or drop one on the ring, or paste it.
             </p>
             {live?.url && (

@@ -9,7 +9,9 @@
    the white strokes off the banner photo where the two overlap. It is a
    drop-shadow filter, which follows the paint's alpha, not a box-shadow. */
 .tag-mark {
-  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.55));
+  filter: drop-shadow(
+    0 2px 8px color-mix(in srgb, var(--color-shadow) 55%, transparent)
+  );
 }
 
 /* --- The Reagan Youth mark ------------------------------------------------
@@ -18,7 +20,7 @@
 .ry-mark {
   transform: rotate(-3deg);
   font-family: var(--font-display);
-  color: var(--color-foreground);
+  color: var(--color-on-surface);
 }
 
 .ry-mark-top {

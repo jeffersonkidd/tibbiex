@@ -30,7 +30,7 @@ body,
 }
 
 body {
-  background-color: var(--color-page);
+  background-color: var(--color-surface-container-lowest);
 }
 
 /* The record rides its own fixed layer rather than sitting on `body` under
@@ -48,7 +48,10 @@ body::before {
   pointer-events: none;
   background-image:
     /* The scrim, heavier at the top where the header and profile card sit. */
-    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)),
+    linear-gradient(
+      color-mix(in srgb, var(--color-scrim) 70%, transparent),
+      color-mix(in srgb, var(--color-scrim) 50%, transparent)
+    ),
     url("../assets/imagery/black-record.jpg");
   background-repeat: no-repeat;
   /* Top-aligned: the viewport crops the record from its top edge down, rather

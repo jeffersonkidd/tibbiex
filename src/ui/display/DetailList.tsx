@@ -10,7 +10,9 @@ export default function DetailList({
     <dl className="space-y-cluster">
       {items.map(({ label, detail }) => (
         <div key={label} className="flex items-baseline justify-between gap-4">
-          <dt className="label-mono shrink-0 text-muted-foreground">{label}</dt>
+          <dt className="label-mono shrink-0 text-on-surface-variant">
+            {label}
+          </dt>
           <dd className="body-small text-right">{detail}</dd>
         </div>
       ))}

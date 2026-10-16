@@ -120,7 +120,7 @@ export default function ProductsDesk() {
   if (!desk) {
     return (
       <section className="surface rounded-lg p-panel">
-        <p className="label-mono text-muted-foreground">Opening the shop…</p>
+        <p className="label-mono text-on-surface-variant">Opening the shop…</p>
       </section>
     )
   }
@@ -238,7 +238,7 @@ export default function ProductsDesk() {
             sub="Your shop. Add a piece, change a price, sell out a size."
           />
 
-          <p className="label-mono mt-panel text-muted-foreground">
+          <p className="label-mono mt-panel text-on-surface-variant">
             {firstPublish
               ? "Built-in shop · publish once to run it from here"
               : `Live · published ${desk.publishedAt ? ago(+new Date(desk.publishedAt)) : ""}`}
@@ -249,7 +249,7 @@ export default function ProductsDesk() {
               .filter((group) => group.items.length > 0)
               .map((group) => (
                 <div key={group.key}>
-                  <h3 className="label-mono mb-1.5 text-accent">
+                  <h3 className="label-mono mb-1.5 text-tertiary">
                     {group.title}
                   </h3>
                   <ul className="space-y-1.5">
@@ -276,7 +276,7 @@ export default function ProductsDesk() {
                 </div>
               ))}
             {desk.items.length === 0 && (
-              <p className="body-small text-muted-foreground">
+              <p className="body-small text-on-surface-variant">
                 Nothing in the shop yet. Add your first piece.
               </p>
             )}
@@ -330,7 +330,7 @@ export default function ProductsDesk() {
                   </div>
                 </div>
                 <p
-                  className={`body-xs ${gate.error ? "text-primary-bright" : "text-muted-foreground"}`}
+                  className={`body-xs ${gate.error ? "text-error" : "text-on-surface-variant"}`}
                 >
                   {gate.error ||
                     "Asked once on this device, so only you can change the shop."}{" "}
@@ -346,7 +346,7 @@ export default function ProductsDesk() {
             ) : (
               <>
                 <div className="flex items-center justify-between gap-part">
-                  <span className="label-mono text-muted-foreground">
+                  <span className="label-mono text-on-surface-variant">
                     {firstPublish && changes === 0
                       ? "Not published yet"
                       : `${changes} ${changes === 1 ? "change" : "changes"} not on the site yet`}
@@ -403,11 +403,11 @@ function ProductRow({
       <button
         type="button"
         onClick={onOpen}
-        className={`studio-row group flex min-w-0 flex-1 items-center gap-part rounded-md border border-border bg-card/60 p-2 text-left transition-colors hover:border-accent ${
+        className={`studio-row group flex min-w-0 flex-1 items-center gap-part rounded-md border border-outline-variant bg-surface-container-low/60 p-2 text-left transition-colors hover:border-tertiary ${
           item.hidden ? "is-hidden" : ""
         }`}
       >
-        <span className="size-14 shrink-0 overflow-hidden rounded-sm border border-border bg-muted">
+        <span className="size-14 shrink-0 overflow-hidden rounded-sm border border-outline-variant bg-surface-container-highest">
           {item.image && (
             <img
               src={item.image}
@@ -429,7 +429,7 @@ function ProductRow({
               />
             )}
           </span>
-          <span className="label-mono mt-0.5 block truncate text-muted-foreground">
+          <span className="label-mono mt-0.5 block truncate text-on-surface-variant">
             {facts.join(" · ")}
           </span>
           {(item.hidden || soldOut || issues.length > 0) && (
@@ -476,8 +476,8 @@ function Tag({
     <span
       className={`label-mono inline-flex items-center gap-1 rounded-xs border px-1.5 py-0.5 ${
         alert
-          ? "border-primary/50 text-primary-bright"
-          : "border-border text-muted-foreground"
+          ? "border-error/50 text-error"
+          : "border-outline-variant text-on-surface-variant"
       }`}
     >
       {children}
@@ -503,7 +503,7 @@ function MoveKey({
       title={label}
       disabled={disabled}
       onClick={onClick}
-      className="flex w-8 flex-1 items-center justify-center rounded-md border border-border bg-card/60 text-muted-foreground transition-colors hover:border-accent hover:text-accent disabled:pointer-events-none disabled:opacity-30"
+      className="flex w-8 flex-1 items-center justify-center rounded-md border border-outline-variant bg-surface-container-low/60 text-on-surface-variant transition-colors hover:border-tertiary hover:text-tertiary disabled:pointer-events-none disabled:opacity-30"
     >
       {children}
     </button>

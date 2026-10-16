@@ -13,7 +13,7 @@ export default function AlbumTile({
     <button
       type="button"
       onClick={onOpen}
-      className="surface group relative cursor-pointer overflow-hidden rounded-lg text-left transition-colors hover:border-accent"
+      className="surface group relative cursor-pointer overflow-hidden rounded-lg text-left transition-colors hover:border-tertiary"
     >
       <div className="h-48 overflow-hidden">
         <img
@@ -22,10 +22,10 @@ export default function AlbumTile({
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
       </div>
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background/80 to-transparent p-card pt-12">
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-scrim via-scrim/80 to-transparent p-card pt-12">
         <div className="body-large-bold">{album.album}</div>
-        <p className="body-xs text-accent">{album.band}</p>
-        <p className="label-mono mt-1 text-muted-foreground">
+        <p className="body-xs text-tertiary">{album.band}</p>
+        <p className="label-mono mt-1 text-on-surface-variant">
           {album.year} · {album.role}
         </p>
       </div>

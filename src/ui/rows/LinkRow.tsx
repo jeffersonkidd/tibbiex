@@ -4,7 +4,7 @@ import type { LinkEntry } from "../../content/links"
 import { castMagicFrom } from "../../lib/magic-dust"
 
 const ROW =
-  "surface group block w-full transform rounded-lg p-panel text-left transition-all duration-300 hover:scale-[1.01] hover:border-accent"
+  "surface group block w-full transform rounded-lg p-panel text-left transition-all duration-300 hover:scale-[1.01] hover:border-tertiary"
 
 /* One Home-tab row. Mirrors the Figma "Link Row" set, whose Type variant is
    derived here from the entry: `external` is External, anything else Default.
@@ -24,20 +24,21 @@ export default function LinkRow({
   const face = (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
-        {/* At rest the sigil is PanelHeader's amber one, border and all, which
-            also makes it the same 50px box; on hover it still turns red. */}
-        <div className="rounded-md border border-accent-soft bg-accent-tint p-3 text-accent transition-colors group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground">
+        {/* At rest the sigil is PanelHeader's tertiary-container one, border
+            and all, which also makes it the same 50px box; on hover it still
+            turns red. */}
+        <div className="rounded-md border border-transparent bg-tertiary-container p-3 text-on-tertiary-container transition-colors group-hover:border-primary group-hover:bg-primary group-hover:text-on-primary">
           <Icon className="h-6 w-6" />
         </div>
         <div>
           <div className="body-base-bold">{title}</div>
-          <p className="label-mono mt-1 text-muted-foreground">{meta}</p>
+          <p className="label-mono mt-1 text-on-surface-variant">{meta}</p>
         </div>
       </div>
       {external ? (
-        <ExternalLink className="h-5 w-5 text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-accent" />
+        <ExternalLink className="h-5 w-5 text-on-surface-variant transition-all group-hover:translate-x-1 group-hover:text-tertiary" />
       ) : (
-        <ChevronRight className="h-5 w-5 text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-accent" />
+        <ChevronRight className="h-5 w-5 text-on-surface-variant transition-all group-hover:translate-x-1 group-hover:text-tertiary" />
       )}
     </div>
   )

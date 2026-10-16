@@ -41,15 +41,15 @@ export default function LinkTicket({
   return (
     <div className="studio-ticket surface relative rounded-lg p-panel">
       <div className="flex items-center justify-between gap-part">
-        <p className="label-mono text-muted-foreground">Your link</p>
-        <p className="label-mono text-muted-foreground">{url.length} chars</p>
+        <p className="label-mono text-on-surface-variant">Your link</p>
+        <p className="label-mono text-on-surface-variant">{url.length} chars</p>
       </div>
 
       <p
         id="studio-link"
-        className="studio-url mt-part break-all rounded-md border border-border bg-input-background p-card"
+        className="studio-url mt-part break-all rounded-md border border-outline-variant bg-surface-container-lowest/80 p-card"
       >
-        <span className="text-foreground">{BASE_URL}</span>
+        <span className="text-on-surface">{BASE_URL}</span>
         <span className="studio-url-joint">?</span>
         {TAG_PARTS.map((part, i) => (
           <span key={part}>
@@ -82,7 +82,7 @@ export default function LinkTicket({
           >
             <span aria-hidden className="studio-legend-dot" />
             <span className="label-mono w-20 shrink-0">{part}</span>
-            <span className="body-xs text-muted-foreground">
+            <span className="body-xs text-on-surface-variant">
               {MEANING[part]}
             </span>
           </li>

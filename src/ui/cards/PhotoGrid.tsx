@@ -18,7 +18,7 @@ export default function PhotoGrid({
   return (
     <>
       <Separator space="md" />
-      <span className="label-mono text-muted-foreground">Photos</span>
+      <span className="label-mono text-on-surface-variant">Photos</span>
 
       <div className="mt-3 columns-2 gap-cluster sm:columns-3">
         {photos.map((photo, index) => (
@@ -27,7 +27,7 @@ export default function PhotoGrid({
             type="button"
             onClick={() => onOpen(index)}
             aria-label={`Open photo: ${photo.alt}`}
-            className="group mb-2 block w-full break-inside-avoid overflow-hidden rounded-md border border-border transition-colors hover:border-accent"
+            className="group mb-2 block w-full break-inside-avoid overflow-hidden rounded-md border border-outline-variant transition-colors hover:border-tertiary"
           >
             <img
               src={photo.src}

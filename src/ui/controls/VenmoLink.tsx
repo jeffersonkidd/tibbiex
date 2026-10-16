@@ -19,7 +19,7 @@ export default function VenmoLink({
     <button
       type="button"
       onClick={onClick}
-      className="mx-auto flex items-center gap-glyph body-xs text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+      className="mx-auto flex items-center gap-glyph body-xs text-on-surface-variant underline-offset-4 transition-colors hover:text-on-surface hover:underline"
     >
       <VenmoIcon size={12} />
       or pay @{handle} on Venmo

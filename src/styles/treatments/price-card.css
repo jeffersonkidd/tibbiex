@@ -21,14 +21,14 @@
     calc(var(--spacing) * 3);
   text-align: left;
   cursor: pointer;
-  color: var(--color-foreground);
-  background-color: var(--color-page);
+  color: var(--color-on-surface);
+  background-color: var(--color-surface-container-lowest);
   background-image: radial-gradient(
     95% 70% at 50% 0%,
-    color-mix(in srgb, var(--color-accent) 12%, transparent) 0%,
+    color-mix(in srgb, var(--color-tertiary) 12%, transparent) 0%,
     transparent 66%
   );
-  border: 1px solid var(--color-border-strong);
+  border: 1px solid var(--color-outline);
   border-radius: var(--radius-lg);
   transition:
     transform 200ms ease,
@@ -40,14 +40,14 @@
 
 .price-card:hover {
   transform: translateY(-4px);
-  border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+  border-color: color-mix(in srgb, var(--color-tertiary) 45%, transparent);
 }
 
 /* The picked tier, lit the way a turned card was. */
 .price-card[data-state="on"] {
-  border-color: color-mix(in srgb, var(--color-accent) 70%, transparent);
+  border-color: color-mix(in srgb, var(--color-tertiary) 70%, transparent);
   box-shadow: 0 0 30px -10px
-    color-mix(in srgb, var(--color-accent) 65%, transparent);
+    color-mix(in srgb, var(--color-tertiary) 65%, transparent);
 }
 
 @keyframes price-deal {
@@ -67,7 +67,7 @@
 .price-frame {
   position: absolute;
   inset: var(--spacing);
-  border: 1px solid color-mix(in srgb, var(--color-accent) 28%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-tertiary) 28%, transparent);
   border-radius: var(--radius-sm);
   pointer-events: none;
 }
@@ -77,15 +77,15 @@
   right: calc(var(--spacing) * 2.5);
   top: calc(var(--spacing) * 2.5);
   @apply label-mono-xs;
-  /* The accent pair: the dark accent text on the amber fill. */
-  color: var(--color-accent-foreground);
-  background: color-mix(in srgb, var(--color-accent) 85%, transparent);
+  /* The tertiary pair: on-tertiary on a tertiary fill. */
+  color: var(--color-on-tertiary);
+  background: color-mix(in srgb, var(--color-tertiary) 85%, transparent);
   padding: calc(var(--spacing) * 0.5) calc(var(--spacing) * 1.5);
   border-radius: var(--radius-full);
 }
 
 .price-eyebrow {
-  color: color-mix(in srgb, var(--color-accent) 75%, transparent);
+  color: color-mix(in srgb, var(--color-tertiary) 75%, transparent);
 }
 
 .price-name {
@@ -102,13 +102,13 @@
 
 .price-unit {
   @apply label-mono-xs;
-  color: var(--color-muted-foreground);
+  color: var(--color-on-surface-variant);
 }
 
 .price-blurb {
   margin-top: var(--spacing);
   @apply body-xs;
-  color: var(--color-muted-foreground);
+  color: var(--color-on-surface-variant);
 }
 
 .price-includes {
@@ -116,10 +116,11 @@
   gap: var(--spacing);
   margin-top: calc(var(--spacing) * 2.5);
   padding-top: calc(var(--spacing) * 2.5);
-  border-top: 1px solid color-mix(in srgb, var(--color-accent) 16%, transparent);
+  border-top: 1px solid
+    color-mix(in srgb, var(--color-tertiary) 16%, transparent);
   width: 100%;
   @apply body-xs;
-  color: var(--color-muted-foreground);
+  color: var(--color-on-surface-variant);
 }
 
 .price-includes li {

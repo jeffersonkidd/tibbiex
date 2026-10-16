@@ -55,14 +55,14 @@ export default function Avatar({
           aria-label={alt}
           className="avatar flex h-36 w-36 sm:h-40 sm:w-40"
         >
-          <span className="flex flex-1 items-center justify-center rounded-full bg-muted text-muted-foreground">
+          <span className="flex flex-1 items-center justify-center rounded-full bg-surface-container-highest text-on-surface-variant">
             <UserRound className="size-16 sm:size-18" aria-hidden />
           </span>
         </div>
       )}
       {live && (
         <span
-          className="absolute bottom-3.5 right-3.5 h-4 w-4 rounded-full border border-foreground bg-live"
+          className="absolute bottom-3.5 right-3.5 h-4 w-4 rounded-full border border-on-surface bg-live"
           title={live}
         />
       )}

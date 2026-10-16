@@ -59,11 +59,11 @@ export default function FundPanel() {
 
       {/* The blurb is its own block, full width under the header, rather than
           a sub line squeezed beside the sigil. */}
-      <p className="mt-3 body-small text-muted-foreground">{FUND.blurb}</p>
+      <p className="mt-3 body-small text-on-surface-variant">{FUND.blurb}</p>
 
       <div className="mt-4 flex items-baseline justify-between gap-part">
         <span className="body-large-bold">{dollars(FUND.raised)}</span>
-        <span className="body-xs text-muted-foreground">
+        <span className="body-xs text-on-surface-variant">
           of {dollars(FUND.goal)} · {FUND.backers} backers
         </span>
       </div>
@@ -108,7 +108,7 @@ export default function FundPanel() {
         </Button>
 
         {FUND.cardHint && (
-          <p className="body-xs text-center text-muted-foreground">
+          <p className="body-xs text-center text-on-surface-variant">
             {CARD_HINT}
           </p>
         )}
@@ -119,7 +119,7 @@ export default function FundPanel() {
       {TOP_CONTRIBUTORS.length > 0 && (
         <>
           <Separator space="sm" />
-          <span className="label-mono block text-muted-foreground">
+          <span className="label-mono block text-on-surface-variant">
             Top Contributors
           </span>
           <div className="mt-2 space-y-1.5">

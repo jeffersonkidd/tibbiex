@@ -108,7 +108,7 @@ export default function App() {
   useEffect(() => trackTab(activeTab), [activeTab])
 
   return (
-    <div className="flex min-h-screen justify-center pb-20 font-sans text-foreground selection:bg-accent-soft">
+    <div className="flex min-h-screen justify-center pb-20 font-sans text-on-surface selection:bg-tertiary/20">
       <Toaster position="top-center" richColors />
 
       <div className="w-full min-w-0 max-w-[600px] space-y-stack px-4 pt-6 sm:px-6">

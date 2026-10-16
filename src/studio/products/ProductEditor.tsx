@@ -63,7 +63,7 @@ export default function ProductEditor({
         >
           All products
         </Button>
-        <span className="label-mono text-muted-foreground">
+        <span className="label-mono text-on-surface-variant">
           {isNew
             ? "New, not on the site yet"
             : item.hidden
@@ -73,14 +73,14 @@ export default function ProductEditor({
       </div>
 
       <div className="studio-preview surface rounded-lg p-panel">
-        <p className="label-mono mb-part text-muted-foreground">
+        <p className="label-mono mb-part text-on-surface-variant">
           How it shows in the shop
         </p>
         <div className="mx-auto w-full max-w-64">
           {preview ? (
             <ShopCard item={preview} onOpen={() => {}} />
           ) : (
-            <div className="surface flex aspect-square flex-col items-center justify-center gap-glyph rounded-lg text-muted-foreground">
+            <div className="surface flex aspect-square flex-col items-center justify-center gap-glyph rounded-lg text-on-surface-variant">
               <ImageOff className="size-6" />
               <span className="body-xs">Add a photo to see the card</span>
             </div>
@@ -97,7 +97,7 @@ export default function ProductEditor({
           run={run}
         />
         <fieldset className="mt-part">
-          <legend className="label-mono mb-1.5 text-muted-foreground">
+          <legend className="label-mono mb-1.5 text-on-surface-variant">
             Cover shape on the card
           </legend>
           <Toggles
@@ -140,7 +140,7 @@ export default function ProductEditor({
         </div>
 
         <fieldset className="mt-part">
-          <legend className="label-mono mb-1.5 text-muted-foreground">
+          <legend className="label-mono mb-1.5 text-on-surface-variant">
             Shelf
           </legend>
           <Toggles
@@ -186,7 +186,7 @@ export default function ProductEditor({
         </div>
         {item.formats.length < 8 && (
           <div className="mt-part">
-            <p className="label-mono mb-1.5 text-muted-foreground">
+            <p className="label-mono mb-1.5 text-on-surface-variant">
               Add a format
             </p>
             <div className="flex flex-wrap gap-glyph">
@@ -234,7 +234,7 @@ export default function ProductEditor({
           A numbered or limited run
         </label>
         {item.stock && (
-          <div className="mt-part flex items-center gap-cluster body-small text-muted-foreground">
+          <div className="mt-part flex items-center gap-cluster body-small text-on-surface-variant">
             <NumberBox
               label="How many are left"
               value={item.stock.left}
@@ -247,7 +247,7 @@ export default function ProductEditor({
               onChange={(of) => set({ stock: { ...item.stock!, of } })}
             />
             {item.stock.left === 0 && (
-              <span className="label-mono text-primary-bright">Sold out</span>
+              <span className="label-mono text-error">Sold out</span>
             )}
           </div>
         )}
@@ -273,7 +273,7 @@ export default function ProductEditor({
           value={item.hidden ? "hidden" : "shown"}
           onPick={(id) => set({ hidden: id === "hidden" ? true : undefined })}
         />
-        <p className="body-xs mt-1.5 text-muted-foreground">
+        <p className="body-xs mt-1.5 text-on-surface-variant">
           Hidden keeps it here, off the shelves. New pieces start hidden so you
           can get them right first.
         </p>
@@ -282,12 +282,12 @@ export default function ProductEditor({
       {issues.length > 0 && (
         <div
           role="status"
-          className="rounded-md border border-primary/50 bg-primary/10 p-card"
+          className="rounded-md border border-error/50 bg-error-container p-card"
         >
-          <p className="label-mono mb-1 text-primary-bright">
+          <p className="label-mono mb-1 text-on-error-container">
             Before it can go up
           </p>
-          <ul className="body-xs list-inside list-disc space-y-0.5 text-foreground">
+          <ul className="body-xs list-inside list-disc space-y-0.5 text-on-error-container">
             {issues.map((issue) => (
               <li key={issue}>{issue}</li>
             ))}
@@ -321,7 +321,7 @@ function Panel({
   return (
     <div className="surface rounded-lg p-panel">
       <h3 className="heading-l">{title}</h3>
-      {hint && <p className="body-xs mt-0.5 text-muted-foreground">{hint}</p>}
+      {hint && <p className="body-xs mt-0.5 text-on-surface-variant">{hint}</p>}
       <div className="mt-part">{children}</div>
     </div>
   )
@@ -378,7 +378,7 @@ function NumberBox({
       aria-label={label}
       value={Number.isFinite(value) ? value : ""}
       onChange={(e) => onChange(Math.round(Number(e.target.value)))}
-      className="w-20 rounded-md border border-border bg-input-background px-2 py-2 body-small-bold text-foreground outline-none focus:border-accent"
+      className="w-20 rounded-md border border-outline-variant bg-surface-container-lowest/80 px-2 py-2 body-small-bold text-on-surface outline-none focus:border-tertiary"
     />
   )
 }

@@ -29,7 +29,7 @@ export default function PortfolioTab({
     <>
       {/* Band strip -- the same filter treatment the Buy tab uses, and
           where a shop group's "View credits" link lands. */}
-      <div className="surface hide-scrollbar flex gap-cluster overflow-x-auto rounded-lg bg-card/50 p-strip">
+      <div className="surface hide-scrollbar flex gap-cluster overflow-x-auto rounded-lg bg-surface-container-low/50 p-strip">
         {PORTFOLIO.map((entry) => (
           <FilterPill
             key={entry.id}
@@ -52,12 +52,14 @@ export default function PortfolioTab({
               band name that wraps on a phone leaves this row where it was. */}
           <div className="mt-3 flex flex-wrap items-center justify-between gap-x-part gap-y-2">
             <Pill icon={Guitar}>{entry.role}</Pill>
-            <span className="label-mono text-muted-foreground">
+            <span className="label-mono text-on-surface-variant">
               {entry.years}
             </span>
           </div>
 
-          <p className="body-small mt-3 text-muted-foreground">{entry.blurb}</p>
+          <p className="body-small mt-3 text-on-surface-variant">
+            {entry.blurb}
+          </p>
 
           <Separator space="sm" />
           <DetailList items={entry.highlights} />

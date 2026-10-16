@@ -58,7 +58,7 @@ export default function PriceCard({
         <ul className="price-includes">
           {includes.map((line) => (
             <li key={line}>
-              <Check className="h-3.5 w-3.5 shrink-0 text-accent" />
+              <Check className="h-3.5 w-3.5 shrink-0 text-tertiary" />
               {line}
             </li>
           ))}

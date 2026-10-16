@@ -139,8 +139,8 @@ export default function LinkMaker() {
                   tile.id === ELSEWHERE.id ? "col-span-3 sm:col-span-1" : ""
                 } flex flex-col items-center gap-glyph rounded-md border px-1 py-3 transition-all ${
                   on
-                    ? "brand-pop border-foreground bg-muted text-foreground"
-                    : "border-border bg-input-background text-muted-foreground hover:border-foreground/30 hover:text-foreground"
+                    ? "brand-pop border-transparent bg-secondary-container text-on-secondary-container"
+                    : "border-outline-variant bg-surface-container-lowest/80 text-on-surface-variant hover:border-outline hover:text-on-surface"
                 }`}
               >
                 <Icon className="size-5" />
@@ -233,8 +233,8 @@ export default function LinkMaker() {
                 <span
                   className={`rounded-md border px-2 py-1 body-xs-bold ${
                     i === all.length - 1
-                      ? "border-accent-soft bg-accent-tint text-accent"
-                      : "border-border bg-input-background text-foreground"
+                      ? "border-tertiary/20 bg-tertiary/10 text-tertiary"
+                      : "border-outline-variant bg-surface-container-lowest/80 text-on-surface"
                   }`}
                 >
                   {step}
@@ -242,14 +242,14 @@ export default function LinkMaker() {
                 {i < all.length - 1 && (
                   <ChevronRight
                     aria-hidden
-                    className="size-3.5 text-muted-foreground"
+                    className="size-3.5 text-on-surface-variant"
                   />
                 )}
               </li>
             ))}
           </ol>
           {channel.inText && (
-            <p className="body-xs mt-part text-muted-foreground">
+            <p className="body-xs mt-part text-on-surface-variant">
               There's no link field here: paste it into the text itself, on a
               line of its own.
             </p>
@@ -257,7 +257,7 @@ export default function LinkMaker() {
           <div className="mt-panel flex items-center gap-part">
             {wired ? (
               <>
-                <p className="body-small-bold flex-1 text-accent">
+                <p className="body-small-bold flex-1 text-tertiary">
                   Wired {ago(entry!.wiredAt!)}.
                 </p>
                 <Button
@@ -287,7 +287,7 @@ export default function LinkMaker() {
       <div className="surface rounded-lg p-panel">
         <div className="flex items-baseline justify-between gap-part">
           <h3 className="heading-s">Profiles wired</h3>
-          <p className="label-mono text-accent">
+          <p className="label-mono text-tertiary">
             {wiredCount} / {CHANNELS.length}
           </p>
         </div>
@@ -297,7 +297,7 @@ export default function LinkMaker() {
             label="Profiles wired"
           />
         </div>
-        <ul className="mt-part divide-y divide-border">
+        <ul className="mt-part divide-y divide-outline-variant">
           {CHANNELS.map((c) => {
             const state = ledger[c.id]
             const Icon = c.icon
@@ -314,13 +314,13 @@ export default function LinkMaker() {
                   }}
                   className="group flex w-full items-center gap-part py-2.5 text-left"
                 >
-                  <Icon className="size-4 shrink-0 text-muted-foreground group-hover:text-foreground" />
+                  <Icon className="size-4 shrink-0 text-on-surface-variant group-hover:text-on-surface" />
                   <span className="body-small-bold flex-1">{c.name}</span>
                   <span
                     className={`label-mono ${
                       state?.wiredAt
-                        ? "text-accent"
-                        : "text-muted-foreground/70"
+                        ? "text-tertiary"
+                        : "text-on-surface-variant/70"
                     }`}
                   >
                     {state?.wiredAt
@@ -351,11 +351,11 @@ function Step({
 }) {
   return (
     <p
-      className={`label-mono mb-part flex items-center gap-cluster text-muted-foreground ${
+      className={`label-mono mb-part flex items-center gap-cluster text-on-surface-variant ${
         flush ? "" : "mt-panel"
       }`}
     >
-      <span className="text-accent">0{n}</span>
+      <span className="text-tertiary">0{n}</span>
       {label}
     </p>
   )

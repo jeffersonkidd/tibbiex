@@ -8,7 +8,7 @@ export default function ReaganYouthMark() {
   return (
     <div
       aria-label="Reagan Youth"
-      className="ry-mark grid shrink-0 place-items-center rounded-md border border-border bg-muted/60 px-2 py-1.5 text-center leading-none"
+      className="ry-mark grid shrink-0 place-items-center rounded-md border border-outline-variant bg-surface-container-highest/60 px-2 py-1.5 text-center leading-none"
     >
       <span className="ry-mark-top">REAGAN</span>
       <span className="ry-mark-bottom">YOUTH</span>

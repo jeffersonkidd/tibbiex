@@ -22,9 +22,9 @@
   inset: 0;
   background-image: linear-gradient(
     180deg,
-    color-mix(in srgb, var(--color-card) 0%, transparent) 0%,
-    color-mix(in srgb, var(--color-card) 40%, transparent) 50%,
-    color-mix(in srgb, var(--color-card) 90%, transparent) 100%
+    color-mix(in srgb, var(--color-surface-container-low) 0%, transparent) 0%,
+    color-mix(in srgb, var(--color-surface-container-low) 40%, transparent) 50%,
+    color-mix(in srgb, var(--color-surface-container-low) 90%, transparent) 100%
   );
 }
 
@@ -34,5 +34,5 @@
    band, so the image and its @supports block are both gone. A plain fill says
    the same thing. */
 .profile-quote {
-  color: color-mix(in srgb, var(--color-foreground) 80%, transparent);
+  color: color-mix(in srgb, var(--color-on-surface) 80%, transparent);
 }

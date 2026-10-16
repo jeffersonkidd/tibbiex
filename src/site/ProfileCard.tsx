@@ -53,7 +53,7 @@ export default function ProfileCard({
             href={live.href}
             target="_blank"
             rel="noreferrer noopener"
-            className="label-mono inline-flex items-center gap-glyph rounded-full border border-foreground/80 bg-live px-2.5 py-1 text-on-live transition-[filter] hover:brightness-110"
+            className="label-mono inline-flex items-center gap-glyph rounded-full border border-on-surface/80 bg-live px-2.5 py-1 text-on-live transition-[filter] hover:brightness-110"
           >
             <Radio size={12} aria-hidden /> {live.label}
           </a>
@@ -90,7 +90,7 @@ export default function ProfileCard({
 
         <ul
           aria-label="Bands"
-          className="flex flex-wrap gap-x-part gap-y-0.5 body-base-bold text-muted-foreground"
+          className="flex flex-wrap gap-x-part gap-y-0.5 body-base-bold text-on-surface-variant"
         >
           {PROFILE.bands.map(({ name, shop }) => {
             const band = onOpenShop && shelved(shop)
@@ -100,7 +100,7 @@ export default function ProfileCard({
                   <button
                     type="button"
                     onClick={() => onOpenShop(band)}
-                    className="underline decoration-muted-foreground/40 underline-offset-4 transition-colors hover:text-foreground hover:decoration-foreground"
+                    className="underline decoration-on-surface-variant/40 underline-offset-4 transition-colors hover:text-on-surface hover:decoration-on-surface"
                   >
                     {name}
                   </button>

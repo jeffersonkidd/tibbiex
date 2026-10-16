@@ -69,8 +69,8 @@ export default function BookingModal({ onClose }: { onClose: () => void }) {
               submit button is a trap on a phone: a tap landing slightly low
               opens a mail client for a form that already sends. It stays
               selectable for anyone who would rather write themselves. */}
-          <p className="body-xs mt-4 text-center text-muted-foreground">
-            Or write to <span className="text-foreground">{CONTACT_EMAIL}</span>
+          <p className="body-xs mt-4 text-center text-on-surface-variant">
+            Or write to <span className="text-on-surface">{CONTACT_EMAIL}</span>
           </p>
         </OverlayBody>
       </form>

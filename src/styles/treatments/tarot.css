@@ -18,7 +18,7 @@
 .arcana-veil {
   background-image: radial-gradient(
     120% 60% at 50% 0%,
-    color-mix(in srgb, var(--color-accent) 9%, transparent) 0%,
+    color-mix(in srgb, var(--color-tertiary) 9%, transparent) 0%,
     transparent 62%
   );
 }

@@ -36,7 +36,7 @@ export default function EmailField({
         size={size}
       />
       {error && (
-        <p id={errorId} role="alert" className="body-xs mt-1.5 text-primary">
+        <p id={errorId} role="alert" className="body-xs mt-1.5 text-error">
           {error}
         </p>
       )}

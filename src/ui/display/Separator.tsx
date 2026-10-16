@@ -1,6 +1,6 @@
 /* The hairline between two parts of a panel: the highlights under a
    portfolio blurb, the contributor list under the fund form, the photo grid,
-   the social keys under the wordmark. It was `border-t border-border` typed
+   the social keys under the wordmark. It was `border-t border-outline-variant` typed
    out at each of those, which meant the rule's colour lived in six places.
 
    `space` is the air it opens on both sides, and it defaults to none: inside
@@ -23,5 +23,7 @@ export default function Separator({
 }: {
   space?: keyof typeof SEPARATOR_SPACE
 }) {
-  return <hr className={`w-full border-border ${SEPARATOR_SPACE[space]}`} />
+  return (
+    <hr className={`w-full border-outline-variant ${SEPARATOR_SPACE[space]}`} />
+  )
 }
