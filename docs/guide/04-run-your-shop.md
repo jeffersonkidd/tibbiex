@@ -36,8 +36,9 @@ that the Studio runs the shop.
    many are left and how many were made.
 6. A new piece starts **Hidden**. When the card at the top, **How it shows in
    the shop**, looks right, switch it to **Showing**.
-7. Tap **All products** to go back, then **Publish to the shop**. The first
-   time on a new device, it asks for your **Studio passcode**.
+7. Tap **All products** to go back, then **Publish to the shop**. It uses the
+   passcode you typed at the door; it only asks again if the passcode has
+   changed.
 
 You'll see _"The shop is updated. Visitors see it within a minute."_
 

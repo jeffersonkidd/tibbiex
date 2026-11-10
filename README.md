@@ -105,25 +105,35 @@ its own folder only once it has a second file.
 
 ## Studio
 
-The owner's back office lives at `/studio` (`studio.html`, a second Vite entry,
-so the public page ships none of it; `vercel.json` rewrites `/studio` to it and
-`robots.txt` keeps crawlers out). It wears the site's tokens and type, and a
-strip at the top switches modules (`/studio#avatar` opens straight onto one).
-Opening it also sets the `?no-analytics` flag in that browser, since its only
-visitor is the owner.
+The owner's back office lives at `/dashboard` (`dashboard.html`, a second Vite
+entry, so the public page ships none of it; `vercel.json` rewrites `/dashboard`
+to it, redirects the old `/studio` address there, and `robots.txt` keeps
+crawlers out; `vite.config.ts` does the same for `pnpm dev` and `pnpm
+preview`). It wears the site's tokens and type, and a strip at the top switches
+modules (`/dashboard#avatar` opens straight onto one).
 
-There is no login to open it. A module that changes the live site checks the
-studio passcode (`STUDIO_PASSCODE`) on its write instead, asked for once per
-device.
+The door is a login screen: an all-access laminate that asks for the studio
+passcode (`STUDIO_PASSCODE`) and checks it with `api/login.ts`. A device asks
+once, then walks straight in until **Lock** forgets it or the passcode changes.
+The screen is a courtesy rather than the lock: every module that changes the
+live site still sends the passcode with its write, and that endpoint checks it.
+Getting past the door sets the `?no-analytics` flag in that browser, since its
+only visitor is the owner. Guessing is capped by a Vercel Firewall rule,
+**Studio passcode guesses** (set in the dashboard, not in this repo): 30
+requests per 10 minutes per IP across `/api/login` and every non-GET to
+`/api/products` and `/api/avatar`, answered with a 429 the studio explains. A
+spread-out attacker gets more IPs, so make the passcode long too (four random
+words or more).
 
 ```
-src/studio/
-  main.tsx, Studio.tsx   the entry and the shell
+src/dashboard/
+  main.tsx, Studio.tsx   the entry and the shell, door first
+  Login.tsx              the door: the all-access pass at /dashboard
   links/                 Module 01, Link Maker
     LinkMaker.tsx          pick a profile and a spot on it, copy, paste
     LinkTicket.tsx         the link, each UTM tag inked and explained
     ledger.ts              which profiles are wired, in localStorage
-  passcode.ts            the passcode every write asks for, once per device
+  passcode.ts            the passcode: saved once per device, checked at the door
   avatar/                Module 02, Avatar
     AvatarMaker.tsx        drop, paste or pick a photo; frame it in the ring
     avatar.ts              the crop maths, the image it renders, the API calls

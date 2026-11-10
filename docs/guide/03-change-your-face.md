@@ -12,8 +12,9 @@ Open **Studio → Avatar**.
 1. Drop, paste or pick a photo. JPG and PNG are the safest.
 2. Frame it in the ring: **drag** to move it, and **slide or scroll** to zoom.
    On a computer, the arrow keys move it and plus / minus zoom.
-3. Type your **Studio passcode**. Each device asks for it once, _"so a stranger
-   can't change your face."_
+3. Your passcode came in with you through the door at
+   **tibbiex.studio/dashboard**, so there's nothing to type. If the Studio ever
+   asks for it here, the passcode has changed: type the new one.
 4. Tap **Make it live**.
 
 You'll see _"New face is live. The site catches up within a minute."_

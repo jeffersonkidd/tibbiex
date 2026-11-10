@@ -9,7 +9,7 @@ import type {
   PublishedCatalog,
 } from "../../lib/catalog"
 import { SHOP_URL } from "../../lib/shop"
-import { StudioError, savePasscode } from "../passcode"
+import { StudioError, TOO_MANY_TRIES, savePasscode } from "../passcode"
 
 /* The studio's side of api/products.ts -- read what is live, upload a photo,
    publish the whole catalogue -- plus everything the editor needs that is
@@ -73,6 +73,7 @@ async function call(
     savePasscode(null)
     throw new StudioError(data.error ?? "That passcode isn't right.", true)
   }
+  if (response.status === 429) throw new StudioError(TOO_MANY_TRIES)
   if (!response.ok) {
     throw new StudioError(
       data.error ??

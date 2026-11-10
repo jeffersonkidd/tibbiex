@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
-Disallow: /studio
+Disallow: /dashboard
 
 Sitemap: https://tibbiex.studio/sitemap.xml

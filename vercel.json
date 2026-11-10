@@ -1,3 +1,6 @@
 {
-  "rewrites": [{ "source": "/studio", "destination": "/studio.html" }]
+  "rewrites": [{ "source": "/dashboard", "destination": "/dashboard.html" }],
+  "redirects": [
+    { "source": "/studio", "destination": "/dashboard", "permanent": true }
+  ]
 }

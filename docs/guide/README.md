@@ -9,7 +9,7 @@ teaches both.
 code, no terminal: everything here happens on a phone or in a browser.
 
 **Where it lives:** these files for now. Later they become a **Guide** module
-in the Studio (`/studio#guide`), next to Link Maker and Avatar, so the lesson
+in the Studio (`/dashboard#guide`), next to Link Maker and Avatar, so the lesson
 sits in the same place as the tool it teaches.
 
 ---
@@ -18,7 +18,7 @@ sits in the same place as the tool it teaches.
 
 | #   | Lesson                                                             | The tool                                       | The habit                                | Status                |
 | --- | ------------------------------------------------------------------ | ---------------------------------------------- | ---------------------------------------- | --------------------- |
-| 1   | [Your Studio](01-your-studio.md)                                   | `/studio`, the module strip                    | Open it on every device you post from    | Ready                 |
+| 1   | [Your Studio](01-your-studio.md)                                   | `/dashboard`, the door and the module strip    | Open it on every device you post from    | Ready                 |
 | 2   | [Every post gets its own link](02-every-post-gets-its-own-link.md) | Link Maker                                     | Never paste the bare address             | Ready                 |
 | 3   | [Change your face](03-change-your-face.md)                         | Avatar                                         | One face, everywhere, changed on purpose | Ready                 |
 | 4   | [Run your shop](04-run-your-shop.md)                               | Products                                       | The shop tells the truth                 | Ready                 |

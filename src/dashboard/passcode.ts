@@ -24,6 +24,40 @@ export function savePasscode(passcode: string | null) {
   }
 }
 
+/* What a connection hears once it has made 30 passcode checks in ten
+   minutes: the Vercel Firewall rule "Studio passcode guesses" answers 429 for
+   /api/login and every write to /api/products and /api/avatar, so guessing
+   can't simply move from the door to an endpoint. Set in the Vercel
+   dashboard, not in this repo; change the wording if the window changes. */
+export const TOO_MANY_TRIES =
+  "Too many tries from this connection. Wait ten minutes, then try again."
+
+/* Ask the door (api/login.ts) whether a passcode opens the studio. Nothing
+   is saved here; the login screen saves it once the answer is yes.
+
+     ok          it does
+     refused     it doesn't
+     unset       STUDIO_PASSCODE isn't configured on the server
+     busy        the firewall's rate limit stopped it (TOO_MANY_TRIES)
+     unreachable no answer: offline, or `pnpm dev`, which runs no API */
+export type DoorAnswer = "ok" | "refused" | "unset" | "busy" | "unreachable"
+
+export async function checkPasscode(passcode: string): Promise<DoorAnswer> {
+  try {
+    const response = await fetch("/api/login", {
+      method: "POST",
+      headers: { "x-studio-passcode": passcode },
+    })
+    if (response.status === 204) return "ok"
+    if (response.status === 401) return "refused"
+    if (response.status === 503) return "unset"
+    if (response.status === 429) return "busy"
+    return "unreachable"
+  } catch {
+    return "unreachable"
+  }
+}
+
 /* What a failed write says, and whether the passcode was the reason. */
 export class StudioError extends Error {
   constructor(

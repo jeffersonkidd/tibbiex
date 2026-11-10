@@ -60,7 +60,7 @@ function pickInk() {
 /* One burst: an expanding ring at the point of contact, a shower of sparks
    around it, and a handful of comets that streak off across the viewport
    shedding a trail as they go. */
-function castMagic(x: number, y: number) {
+export function castMagic(x: number, y: number) {
   if (prefersStillness()) return
 
   MOTES.push({

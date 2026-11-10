@@ -1,5 +1,5 @@
 import { AVATAR_URL } from "../../content/site"
-import { StudioError, savePasscode } from "../passcode"
+import { StudioError, TOO_MANY_TRIES, savePasscode } from "../passcode"
 
 export { StudioError, savedPasscode } from "../passcode"
 
@@ -57,6 +57,7 @@ async function write(
     savePasscode(null)
     throw new StudioError(data.error ?? "That passcode isn't right.", true)
   }
+  if (response.status === 429) throw new StudioError(TOO_MANY_TRIES)
   if (!response.ok) {
     throw new StudioError(
       data.error ??
