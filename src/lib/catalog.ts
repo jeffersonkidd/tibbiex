@@ -1,6 +1,8 @@
 import type { Mail } from "../content/payments"
 import { formatsOf, shelfOf } from "../content/shop"
 import type { ShopFormat, ShopItem } from "../content/shop"
+import { categoryOf, fitOf } from "../content/taxonomy"
+import type { Fit, ProductCategory } from "../content/taxonomy"
 
 /* The catalogue as it travels: what the studio publishes to api/products.ts,
    what that endpoint stores and serves, and what api/checkout.ts prices an
@@ -17,6 +19,13 @@ export type CatalogFormat = {
   /* Whole dollars, before shipping, 1 to 1000. */
   price: number
   mail: Mail
+  /* Its leaf of the category tree (content/taxonomy.ts), spelled out.
+     Optional only because catalogues published before it lack it; read it
+     through categoryOf(), which falls back by format id. The studio will
+     not publish a format without one. */
+  category?: ProductCategory
+  /* A tee's cut; dropped from anything that is not a tee. */
+  fit?: Fit
   sizes?: { label: string; soldOut?: true }[]
   includes?: { label: string; detail: string }[]
   /* The gallery photo to turn to when this format is picked. */
@@ -55,11 +64,15 @@ export function toCatalogItem(item: ShopItem): CatalogItem {
   ]
   const formats: CatalogFormat[] = formatsOf(item).map((format) => {
     const photo = item.formatPhotos?.[format.id]
+    const category = categoryOf(format)
+    const fit = fitOf(format)
     return {
       id: format.id,
       label: format.label,
       price: format.price,
       mail: format.mail ?? "parcel",
+      ...(category && { category }),
+      ...(fit && { fit }),
       ...(format.sizes?.length && { sizes: format.sizes }),
       ...(format.includes?.length && { includes: format.includes }),
       ...(photo && gallery.includes(photo) && { photo }),

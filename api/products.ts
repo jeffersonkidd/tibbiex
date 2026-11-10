@@ -68,12 +68,17 @@ function ascii(bytes: Uint8Array, from: number, to: number) {
 type Mail = "letter" | "flat" | "parcel"
 const MAILS: Mail[] = ["letter", "flat", "parcel"]
 const ASPECTS = ["square", "portrait", "landscape"] as const
+/* The category leaves and tee fits, from src/content/taxonomy.ts. */
+const CATEGORIES = ["tees", "patches", "stickers", "music", "bundles"] as const
+const FITS = ["mens", "womens", "unisex"] as const
 
 type Format = {
   id: string
   label: string
   price: number
   mail: Mail
+  category?: (typeof CATEGORIES)[number]
+  fit?: (typeof FITS)[number]
   sizes?: { label: string; soldOut?: true }[]
   includes?: { label: string; detail: string }[]
   photo?: string
@@ -179,6 +184,15 @@ function parseFormat(raw: unknown, name: string, gallery: string[]): Format {
     price: whole(f.price, 1, 1000, `${where}: the price`),
     mail: MAILS.includes(f.mail as Mail) ? (f.mail as Mail) : "parcel",
   }
+  /* A category is optional on the wire -- older catalogues lack one -- but
+     one that is there must be a real leaf. */
+  if (f.category !== undefined && f.category !== null && f.category !== "") {
+    const category = CATEGORIES.find((c) => c === f.category)
+    if (!category) throw new Invalid(`${where}: that isn't a category.`)
+    format.category = category
+  }
+  const fit = FITS.find((v) => v === f.fit)
+  if (fit && format.category === "tees") format.fit = fit
   if (f.sizes !== undefined) {
     const sizes = many(f.sizes, 12, `${where}: sizes`, (s) => {
       const size = record(s, `${where}: a size`)

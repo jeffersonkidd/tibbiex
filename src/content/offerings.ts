@@ -6,6 +6,7 @@ import { CHATS, LESSONS } from "./sessions"
 import type { SessionTier } from "./sessions"
 import { SHOP_SHELVES } from "./shop"
 import type { ShopShelf } from "./shop"
+import type { ServiceCategory } from "./taxonomy"
 
 /* The top of everything she sells, one level above the shop's shelves:
    Products, the things that ship, and Services, the time she gives. Not
@@ -25,6 +26,9 @@ export type OfferingId = "products" | "services"
    session menu is one modal for every service, laid out from this. */
 export type Service = {
   id: "chat" | "tarot" | "lessons"
+  /* Its leaf of the category tree, under Services › Sessions
+     (content/taxonomy.ts). */
+  category: ServiceCategory
   title: string
   /* Its tab under Sessions on the Buy tab. */
   short: string
@@ -66,6 +70,7 @@ const BOOKING_TERMS =
    its menu directly. */
 export const TAROT_SESSION: Service = {
   id: "tarot",
+  category: "tarot",
   title: "1-on-1 Tarot Readings",
   short: "Tarot",
   eyebrow: "Readings",
@@ -81,6 +86,7 @@ export const TAROT_SESSION: Service = {
 export const SERVICES: Service[] = [
   {
     id: "chat",
+    category: "chats",
     title: "1-on-1 Video Chats",
     short: "Chats",
     eyebrow: "Chats",
@@ -95,6 +101,7 @@ export const SERVICES: Service[] = [
   TAROT_SESSION,
   {
     id: "lessons",
+    category: "lessons",
     title: "1-on-1 Lessons",
     short: "Lessons",
     eyebrow: "Lessons",

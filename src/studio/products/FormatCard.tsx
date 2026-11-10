@@ -2,6 +2,12 @@ import { useState } from "react"
 import { Plus, Trash2, X } from "lucide-react"
 
 import { formatPrice } from "../../content/shop"
+import {
+  FITS,
+  PRODUCT_CATEGORIES,
+  categoryOf,
+  fitOf,
+} from "../../content/taxonomy"
 import type { CatalogFormat } from "../../lib/catalog"
 import Field from "../../ui/controls/Field"
 import { MAIL_CLASSES, SIZE_RUNS, shippingFor } from "./products"
@@ -26,6 +32,8 @@ export default function FormatCard({
   const includes = format.includes ?? []
   const set = (patch: Partial<CatalogFormat>) =>
     onChange({ ...format, ...patch })
+  const category = categoryOf(format)
+  const fit = fitOf(format)
 
   function addSize() {
     const label = newSize.trim().toUpperCase().slice(0, 12)
@@ -73,6 +81,55 @@ export default function FormatCard({
           <Trash2 className="size-4" />
         </button>
       </div>
+
+      <fieldset>
+        <legend
+          className={`label-mono mb-1.5 ${
+            category ? "text-on-surface-variant" : "text-error"
+          }`}
+        >
+          What it is
+        </legend>
+        <div className="flex flex-wrap gap-glyph">
+          {PRODUCT_CATEGORIES.map((entry) => (
+            <button
+              key={entry.id}
+              type="button"
+              aria-pressed={category === entry.id}
+              onClick={() =>
+                set({
+                  category: entry.id,
+                  /* A fit only means anything on a tee. */
+                  fit: entry.id === "tees" ? (fit ?? "unisex") : undefined,
+                })
+              }
+              className={`studio-toggle rounded-md border px-2.5 py-1.5 body-xs-bold ${
+                category === entry.id ? "is-on" : ""
+              }`}
+            >
+              {entry.title}
+            </button>
+          ))}
+        </div>
+        {category === "tees" && (
+          <div className="mt-1.5 flex flex-wrap items-center gap-glyph">
+            <span className="label-mono text-on-surface-variant">Cut</span>
+            {FITS.map((entry) => (
+              <button
+                key={entry.id}
+                type="button"
+                aria-pressed={fit === entry.id}
+                onClick={() => set({ fit: entry.id })}
+                className={`studio-toggle rounded-md border px-2.5 py-1.5 body-xs-bold ${
+                  fit === entry.id ? "is-on" : ""
+                }`}
+              >
+                {entry.title}
+              </button>
+            ))}
+          </div>
+        )}
+      </fieldset>
 
       <fieldset>
         <legend className="label-mono mb-1.5 text-on-surface-variant">

@@ -2,6 +2,14 @@ import { useState } from "react"
 import { ChevronLeft, Eye, EyeOff, ImageOff, Plus, Trash2 } from "lucide-react"
 
 import { PORTFOLIO } from "../../content/portfolio"
+import {
+  FACETS,
+  categoryOf,
+  pathOf,
+  splitTag,
+  tagsOf,
+} from "../../content/taxonomy"
+import type { ProductCategory } from "../../content/taxonomy"
 import { toShopItem } from "../../lib/catalog"
 import type { CatalogItem } from "../../lib/catalog"
 import Button from "../../ui/controls/Button"
@@ -219,6 +227,8 @@ export default function ProductEditor({
         )}
       </Panel>
 
+      <FiledUnder item={item} />
+
       <Panel title="Run and shipping">
         <label className="flex items-center gap-part body-small">
           <input
@@ -306,6 +316,70 @@ export default function ProductEditor({
         </Button>
       </div>
     </section>
+  )
+}
+
+/* Where the piece is filed: the tree path for each kind of thing it comes
+   in, and the tags worked out from everything above. Read-only on purpose
+   -- the tags follow the fields, so there is nothing here to keep in step
+   by hand. */
+function FiledUnder({ item }: { item: CatalogItem }) {
+  const leaves = [
+    ...new Set(
+      item.formats
+        .map((format) => categoryOf(format))
+        .filter((id): id is ProductCategory => Boolean(id)),
+    ),
+  ]
+  const tags = tagsOf(item)
+  return (
+    <Panel
+      title="Filed under"
+      hint="Worked out from the shelf, the formats and the run. Change those and this follows."
+    >
+      {leaves.length ? (
+        <ul className="space-y-1">
+          {leaves.map((id) => (
+            <li key={id} className="body-small">
+              {pathOf(id).map((step, i) => (
+                <span key={step.id}>
+                  {i > 0 && (
+                    <span className="text-on-surface-variant"> › </span>
+                  )}
+                  <span
+                    className={
+                      i === pathOf(id).length - 1 ? "body-small-bold" : ""
+                    }
+                  >
+                    {step.title}
+                  </span>
+                </span>
+              ))}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="body-xs text-on-surface-variant">
+          Add a format and pick what it is to file it.
+        </p>
+      )}
+      <div className="mt-part flex flex-wrap gap-glyph" aria-label="Tags">
+        {tags.map((value) => {
+          const { facet, value: name } = splitTag(value)
+          const title = FACETS.find((entry) => entry.id === facet)?.title
+          return (
+            <span
+              key={value}
+              title={title}
+              className="label-mono rounded-sm border border-outline-variant bg-surface-container-low px-1.5 py-0.5 normal-case"
+            >
+              <span className="text-on-surface-variant">{facet}:</span>
+              <span className="text-tertiary">{name}</span>
+            </span>
+          )
+        })}
+      </div>
+    </Panel>
   )
 }
 

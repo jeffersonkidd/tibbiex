@@ -19,6 +19,8 @@ import { PORTFOLIO } from "./portfolio"
 import type { BandId } from "./portfolio"
 import type { Mail } from "./payments"
 import { MEDIA_URL } from "./site"
+import { categoryOf, tagsOf } from "./taxonomy"
+import type { Fit, ProductCategory, Tag } from "./taxonomy"
 
 export type Size = { label: string; soldOut?: true }
 
@@ -37,6 +39,12 @@ export type ShopFormat = {
   includes?: { label: string; detail: string }[]
   /* Which shipping rate it takes -- see SHIPPING. A parcel unless it says. */
   mail?: Mail
+  /* Which leaf of the category tree it sits on (content/taxonomy.ts). The
+     standard ids fall back to theirs, so only a new kind of format must
+     say -- read it through categoryOf(), not directly. */
+  category?: ProductCategory
+  /* A tee's cut. Read through fitOf(). */
+  fit?: Fit
 }
 
 type ShopItemBase = {
@@ -87,8 +95,8 @@ export type ShopItem = ShopItemBase &
    itself. */
 export function formatsOf(item: ShopItem): ShopFormat[] {
   if (item.formats) return item.formats
-  const { id, item: label, price, sizes, includes, mail } = item
-  return [{ id, label, price, sizes, includes, mail }]
+  const { id, item: label, price, sizes, includes, mail, category, fit } = item
+  return [{ id, label, price, sizes, includes, mail, category, fit }]
 }
 
 export function lowestPrice(item: ShopItem) {
@@ -113,13 +121,15 @@ const WOMENS_SIZES: Size[] = ["XS", "S", "M", "L", "XL", "2XL"].map(
    The studio offers these four as the presets for a new product.
 
    index.html restates every design's offers in its JSON-LD for crawlers, so
-   a price or format change here is a hand-edit there as well. */
+   a price, format or category change here is a hand-edit there as well
+   (each offer carries its leaf's Google path from content/taxonomy.ts). */
 export const STANDARD_FORMATS: ShopFormat[] = [
   {
     id: "sticker",
     label: "Sticker",
     price: 5,
     mail: "letter",
+    category: "stickers",
     includes: [
       { label: "Size", detail: "4 × 6 in" },
       { label: "Art", detail: "Full color" },
@@ -130,6 +140,7 @@ export const STANDARD_FORMATS: ShopFormat[] = [
     label: "Patch",
     price: 10,
     mail: "flat",
+    category: "patches",
     includes: [
       { label: "Size", detail: "5 × 7 in" },
       { label: "Art", detail: "Full color" },
@@ -139,6 +150,8 @@ export const STANDARD_FORMATS: ShopFormat[] = [
     id: "tee",
     label: "Men’s tee",
     price: 35,
+    category: "tees",
+    fit: "mens",
     sizes: MENS_SIZES,
     includes: [
       { label: "Blank", detail: "Gildan" },
@@ -149,6 +162,8 @@ export const STANDARD_FORMATS: ShopFormat[] = [
     id: "tee-womens",
     label: "Women’s tee",
     price: 35,
+    category: "tees",
+    fit: "womens",
     sizes: WOMENS_SIZES,
     includes: [
       { label: "Blank", detail: "The soft one" },
@@ -158,8 +173,8 @@ export const STANDARD_FORMATS: ShopFormat[] = [
 ]
 
 /* The two tees alone, for a design that is not printed as a sticker or patch. */
-const TEE_FORMATS = STANDARD_FORMATS.filter((format) =>
-  format.id.startsWith("tee"),
+const TEE_FORMATS = STANDARD_FORMATS.filter(
+  (format) => format.category === "tees",
 )
 
 /* The Next Generation's mockup for each of the standard formats, by id. */
@@ -231,6 +246,7 @@ export const YOUTH_ANTHEMS_BUNDLE: ShopItem = {
   id: "m0",
   item: "Youth Anthems bundle",
   price: 50,
+  category: "bundles",
   image:
     "https://images.unsplash.com/photo-1526394931762-90052e97b376?q=80&w=800&auto=format&fit=crop",
   gallery: [
@@ -339,6 +355,17 @@ export function shelfOf(item: ShopItem): "bands" | "art" {
   return item.shelf ?? (item.band ? "bands" : "art")
 }
 
+/* An item's tags (content/taxonomy.ts), worked out from its fields. */
+export const shopTagsOf = (item: ShopItem): Tag[] =>
+  tagsOf({ ...item, shelf: shelfOf(item), formats: formatsOf(item) })
+
+/* Whether an item has a format on one of these category leaves. */
+export const sellsAny = (item: ShopItem, categories: ProductCategory[]) =>
+  formatsOf(item).some((format) => {
+    const category = categoryOf(format)
+    return category !== undefined && categories.includes(category)
+  })
+
 /* The Buy tab's shelves, in the order its first screen stacks them: a 3:1
    banner each (drawn by scripts/draw-illustrations.py, SHELF_BANNERS), and
    no products until one is picked. The picked shelf's banner stays on top,
@@ -388,31 +415,32 @@ export const COLLECTION_BANNERS: Record<string, string> = {
 
 /* What a collection comes in: square hang tags under its banner, in this
    order. The first three are also shelves of their own on the Buy tab,
-   named by `shelf`. Each tag gathers the format ids it covers -- Tees is both cuts, and
-   Music is any record or track -- and shows only when the collection has one
-   of them; tapping it opens the product on the first of those it has. The
-   tags name no design, so the same four serve every collection. A format
-   none of them covers gets a plain button instead. */
+   named by `shelf`. Each tag is one leaf of the category tree
+   (content/taxonomy.ts) -- Tees is both cuts, Music is any record or track
+   -- and shows only when the collection has a format on it; tapping it
+   opens the product on the first of those. The tags name no design, so the
+   same four serve every collection. A format on any other leaf (a bundle)
+   gets a plain button instead. */
 export const FORMAT_TAGS: {
   label: string
   image: string
-  ids: string[]
+  category: ProductCategory
   shelf?: ShopShelf
 }[] = [
+  { label: "Tee Shirts", image: teesTag, category: "tees", shelf: "tees" },
   {
-    label: "Tee Shirts",
-    image: teesTag,
-    ids: ["tee", "tee-womens"],
-    shelf: "tees",
+    label: "Patches",
+    image: patchesTag,
+    category: "patches",
+    shelf: "patches",
   },
-  { label: "Patches", image: patchesTag, ids: ["patch"], shelf: "patches" },
   {
     label: "Stickers",
     image: stickersTag,
-    ids: ["sticker"],
+    category: "stickers",
     shelf: "stickers",
   },
-  { label: "Music", image: musicTag, ids: ["record", "track", "download"] },
+  { label: "Music", image: musicTag, category: "music" },
 ]
 
 /* Everything the site derives from a catalogue, worked out in one place

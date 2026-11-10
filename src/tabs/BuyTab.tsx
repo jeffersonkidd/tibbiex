@@ -6,9 +6,12 @@ import {
   FORMAT_TAGS,
   SHOP_SHELVES,
   formatsOf,
+  sellsAny,
 } from "../content/shop"
 import type { ShopItem, ShopShelf } from "../content/shop"
 import { SERVICES } from "../content/offerings"
+import { PRODUCT_CATEGORIES, categoryOf } from "../content/taxonomy"
+import type { ProductCategory } from "../content/taxonomy"
 import type { Service } from "../content/offerings"
 import { useShop } from "../lib/shop"
 import Breadcrumbs from "../ui/controls/Breadcrumbs"
@@ -72,10 +75,9 @@ export default function BuyTab({
     if (id === "art")
       return shop.art.map((item) => ({ id: item.id, title: item.item }))
     const kind = kindOf(id)
-    return sources.filter((source) =>
-      source.items.some((item) =>
-        formatsOf(item).some((format) => kind?.ids.includes(format.id)),
-      ),
+    return sources.filter(
+      (source) =>
+        kind && source.items.some((item) => sellsAny(item, [kind.category])),
     )
   }
 
@@ -161,9 +163,7 @@ export default function BuyTab({
        and each kind of item the band sells. A kind shows its own banner
        from the first screen over the products. */
     const kinds = FORMAT_TAGS.filter((tag) =>
-      band.items.some((item) =>
-        formatsOf(item).some((format) => tag.ids.includes(format.id)),
-      ),
+      band.items.some((item) => sellsAny(item, [tag.category])),
     )
     const bandKind = kinds.find((tag) => tag.label === view)
     const bandBanner = BAND_TILES[band.id]
@@ -199,7 +199,7 @@ export default function BuyTab({
             )}
             <KindCards
               items={band.items}
-              ids={bandKind.ids}
+              categories={[bandKind.category]}
               onOpen={onOpenProduct}
             />
           </>
@@ -255,7 +255,7 @@ export default function BuyTab({
       {kind && (
         <KindCards
           items={sources.find((source) => source.id === tab.id)?.items ?? []}
-          ids={kind.ids}
+          categories={[kind.category]}
           onOpen={onOpenProduct}
         />
       )}
@@ -278,25 +278,31 @@ function Banner({ image, label }: { image: string; label: string }) {
   )
 }
 
-/* Every format of one kind across some items, a card each with that
-   format's own mockup and price -- men's and women's tees apart -- each
+/* Every format on some category leaves across some items, a card each with
+   that format's own mockup and price -- men's and women's tees apart -- each
    opening the product on that format. Within an item they come in the
-   order of `ids`. */
+   order of `categories`, then the item's own order. With `rest`, a format
+   on no leaf at all -- one published before formats were filed -- comes
+   last rather than going missing. */
 function KindCards({
   items,
-  ids,
+  categories,
+  rest = false,
   onOpen,
 }: {
   items: ShopItem[]
-  ids: string[]
+  categories: ProductCategory[]
+  rest?: boolean
   onOpen: (item: ShopItem, format?: string) => void
 }) {
+  const rank = (category: ProductCategory | undefined) =>
+    category ? categories.indexOf(category) : rest ? categories.length : -1
   return (
     <div className="grid grid-cols-2 gap-stack">
       {items.flatMap((item) =>
         formatsOf(item)
-          .filter((format) => ids.includes(format.id))
-          .sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id))
+          .filter((format) => rank(categoryOf(format)) >= 0)
+          .sort((a, b) => rank(categoryOf(a)) - rank(categoryOf(b)))
           .map((format) => (
             <ShopCard
               key={`${item.id}-${format.id}`}
@@ -337,17 +343,16 @@ function ShopGrid({
             onOpen={() => onOpen(item)}
           />
           {/* Tees, patches, stickers, music -- the strip's order -- then
-              any format none of those covers. */}
+              any other leaf, in the tree's order. */}
           <KindCards
             items={[item]}
-            ids={[
-              ...FORMAT_TAGS.flatMap((tag) => tag.ids),
-              ...formatsOf(item)
-                .map((format) => format.id)
-                .filter(
-                  (id) => !FORMAT_TAGS.some((tag) => tag.ids.includes(id)),
-                ),
+            categories={[
+              ...FORMAT_TAGS.map((tag) => tag.category),
+              ...PRODUCT_CATEGORIES.map((entry) => entry.id).filter(
+                (id) => !FORMAT_TAGS.some((tag) => tag.category === id),
+              ),
             ]}
+            rest
             onOpen={onOpen}
           />
         </div>

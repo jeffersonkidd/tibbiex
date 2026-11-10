@@ -1,6 +1,7 @@
 import { PORTFOLIO } from "../../content/portfolio"
 import { SHIPPING } from "../../content/payments"
 import { BUNDLED_SHOP, STANDARD_FORMATS } from "../../content/shop"
+import { categoryOf, fitOf } from "../../content/taxonomy"
 import { toCatalogItem } from "../../lib/catalog"
 import type {
   CatalogFormat,
@@ -180,6 +181,8 @@ export function newFormat(preset: string, taken: string[]): CatalogFormat {
       label: standard.label,
       price: standard.price,
       mail: standard.mail ?? "parcel",
+      ...(standard.category && { category: standard.category }),
+      ...(standard.fit && { fit: standard.fit }),
       ...(standard.sizes && {
         sizes: standard.sizes.map(({ label }) => ({ label })),
       }),
@@ -221,6 +224,8 @@ export function problems(item: CatalogItem): string[] {
   item.formats.forEach((format, index) => {
     const name = format.label.trim() || `Format ${index + 1}`
     if (!format.label.trim()) found.push(`${name} needs a name.`)
+    if (!categoryOf(format))
+      found.push(`${name}: pick what kind of thing it is.`)
     if (
       !Number.isInteger(format.price) ||
       format.price < 1 ||
@@ -260,6 +265,13 @@ export function tidy(item: CatalogItem): CatalogItem {
     if (!next.sizes?.length) delete next.sizes
     if (!next.includes?.length) delete next.includes
     if (!next.photo || !item.gallery.includes(next.photo)) delete next.photo
+    /* Spell the category out, so the published file never leans on the
+       fallback by id, and drop a fit from anything that is not a tee. */
+    const category = categoryOf(next)
+    if (category) next.category = category
+    const fit = fitOf(next)
+    if (fit) next.fit = fit
+    else delete next.fit
     return next
   })
   const next: CatalogItem = {
