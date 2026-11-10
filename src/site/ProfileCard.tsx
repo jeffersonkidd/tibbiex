@@ -47,7 +47,9 @@ export default function ProfileCard({
         />
       </div>
 
-      <div className="relative flex flex-col items-start gap-stack p-panel">
+      {/* The same inset as the fund panel's, so the two lit panels at
+          either end of the Home tab frame their content alike. */}
+      <div className="relative flex flex-col items-start gap-part px-4 pt-4 pb-5 md:pt-5.5 md:pr-6 md:pb-6 md:pl-7">
         {live && (
           <a
             href={live.href}

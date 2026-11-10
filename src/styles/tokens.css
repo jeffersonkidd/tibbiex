@@ -86,8 +86,12 @@
   --color-tertiary-container: rgb(158 106 0);
   --color-on-tertiary-container: rgb(255 251 255);
   /* tertiary-fixed is the pale amber that stays the same in light and dark:
-     the glint on the meter's leading edge. */
+     the glint on the meter's leading edge, the price sticker on a link
+     row and the amber eyebrows over the rows and the fund. Its on-colour is
+     the dark ink printed on that sticker -- hand-set to match the demo the
+     rows came from, not taken from the Theme Builder export. */
   --color-tertiary-fixed: rgb(255 221 176);
+  --color-on-tertiary-fixed: rgb(60 38 0);
 
   /* Error: invalid fields, form messages, the studio's warnings and its
      remove buttons. Not in the scheme the roles above came from; these are
@@ -147,6 +151,15 @@
   --radius-3xl: 24px;
   --radius-4xl: 32px;
   --radius-full: 9999px; /* ours; not a Tailwind theme variable */
+
+  /* --- Breakpoints -------------------------------------------------------
+     md is the one breakpoint the layout turns on: below it the column is
+     480px and every link row is a whole polaroid; from it up the column is
+     780px, the print shrinks to the left of each row and the fund sets its
+     print beside its copy. 800px against Tailwind's 768. Stylesheets reach
+     it as @media (width >= theme(--breakpoint-md)). sm and the rest are
+     Tailwind's own. */
+  --breakpoint-md: 800px; /* ours; Tailwind ships 768px */
 
   /* --- Spacing -----------------------------------------------------------
      The one number the whole numbered scale multiplies: p-4 is

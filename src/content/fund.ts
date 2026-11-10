@@ -1,3 +1,4 @@
+import podcastInterview from "../assets/illustrations/fund/podcast-interview.svg"
 import { markStaged } from "./staged"
 
 /* "Still Alive", the podcast the fund pays for. The goal and the running
@@ -8,6 +9,15 @@ export const FUND = {
   title: "“Still Alive” Podcast",
   blurb: "Interviews with the East Coast punks who kept it going.",
   eyebrow: "Podcast fund",
+  /* The panel's print: the picture, in full colour, and the word scrawled
+     under it on desktop. A square scene, shown edge to
+     edge. The picture is a placeholder drawing -- Tibbie and a punk guest
+     at the mics, faceless -- until a real photo from the show replaces it. */
+  print: {
+    src: podcastInterview,
+    scrawl: "still alive",
+    staged: true as const,
+  },
   goal: 2000,
   raised: 1240,
   backers: 38,

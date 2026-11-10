@@ -47,16 +47,16 @@ export default function Avatar({
           src={shown}
           alt={alt}
           onError={() => setFailed(true)}
-          className="avatar h-36 w-36 object-cover sm:h-40 sm:w-40"
+          className="avatar h-36 w-36 object-cover md:h-40 md:w-40"
         />
       ) : (
         <div
           role="img"
           aria-label={alt}
-          className="avatar flex h-36 w-36 sm:h-40 sm:w-40"
+          className="avatar flex h-36 w-36 md:h-40 md:w-40"
         >
           <span className="flex flex-1 items-center justify-center rounded-full bg-surface-container-highest text-on-surface-variant">
-            <UserRound className="size-16 sm:size-18" aria-hidden />
+            <UserRound className="size-16 md:size-18" aria-hidden />
           </span>
         </div>
       )}

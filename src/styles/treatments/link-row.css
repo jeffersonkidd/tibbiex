@@ -1,0 +1,490 @@
+/* ===========================================================================
+   Link row — the Home tab's links as taped-up instant prints, worn by
+   ui/rows/LinkRow inside a .link-rows run.
+
+   Phone: the whole link is the print. The photo window is its top, the
+   title is written in marker on the white strip under it, and a label-maker
+   tag on the photo says what kind of link it is. Each card is taped, pinned
+   or stapled to the page at its own lean.
+
+   From md (800px): there is no card at all. The print shrinks to a Polaroid
+   on the left, captioned in marker, and the copy sits beside it straight on
+   the record, with an amber eyebrow above the title and a line under it.
+
+   The picture is a cutout that climbs out of the photo window: clipped to
+   the window's sides and floor, free above its top edge. --rise is how tall
+   the cutout stands against the window -- 1.2 is a fifth above it.
+
+   Hover lights the window's halftone amber, pops the cutout, draws a red
+   marker line under the title and picks the print up off the page.
+
+   Per-row knobs, set inline from content/links.ts: --tilt (desktop print)
+   and --tilt-m (phone card) in degrees, --lean (the cutout's hover tilt),
+   --rise-d and --rise-m.
+=========================================================================== */
+
+.link-rows {
+  --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  flex-direction: column;
+  /* Phone: 26px between cards plus 62px above each for its cutout to climb
+     into. The first one's room sits on top of the stack gap above. */
+  gap: 88px;
+  padding-top: 46px;
+}
+
+.link-row {
+  --rise: var(--rise-m, 1.2);
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0 10px;
+  width: 100%;
+  padding: 12px 12px 0;
+  text-align: left;
+  color: var(--color-inverse-on-surface);
+  background-color: var(--color-inverse-surface);
+  border-radius: var(--radius-xs);
+  box-shadow:
+    0 1px 0 color-mix(in srgb, var(--color-shadow) 30%, transparent),
+    0 18px 30px -12px color-mix(in srgb, var(--color-shadow) 90%, transparent);
+  transform: rotate(var(--tilt-m, -1deg));
+  transition:
+    box-shadow 300ms,
+    transform 360ms var(--ease-pop);
+  -webkit-tap-highlight-color: transparent;
+}
+.link-row:hover,
+.link-row:focus-visible {
+  transform: rotate(0deg) translateY(-4px);
+  box-shadow:
+    0 1px 0 color-mix(in srgb, var(--color-shadow) 30%, transparent),
+    0 26px 36px -14px color-mix(in srgb, var(--color-shadow) 95%, transparent);
+}
+.link-row:focus-visible {
+  outline: 2px solid var(--color-tertiary-fixed);
+  outline-offset: 3px;
+}
+
+/* --- The print ------------------------------------------------------------
+   On a phone it is only a wrapper: the card is the paper, and the hardware
+   hangs off the card's corners. */
+.link-print {
+  grid-column: 1 / -1;
+}
+
+/* The photo window: a halftone dot screen over a dark fill, which the cutout
+   stands in front of. */
+.link-window {
+  --dot: color-mix(in srgb, var(--color-shadow) 22%, transparent);
+  --glow: transparent;
+  position: relative;
+  aspect-ratio: 5 / 4;
+  background:
+    radial-gradient(circle, var(--dot) 1.1px, transparent 1.6px) 0 0 / 6px 6px,
+    radial-gradient(120% 90% at 50% 115%, var(--glow), transparent 70%),
+    var(--color-surface-container-high);
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--color-shadow) 25%, transparent);
+  transition: background 320ms;
+}
+.link-row:hover .link-window,
+.link-row:focus-visible .link-window {
+  --dot: color-mix(in srgb, var(--color-tertiary-container) 85%, transparent);
+  --glow: color-mix(in srgb, var(--color-tertiary-fixed) 40%, transparent);
+}
+
+/* A row with no picture yet shows its icon in the window. */
+.link-glyph {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 30%;
+  height: 30%;
+  color: var(--color-on-surface-variant);
+}
+
+/* The cutout: as tall as --rise windows, bottom on the window's floor. The
+   clip keeps it inside the window's sides and floor but lets it out over
+   the top edge. */
+.link-figure {
+  --top: calc((1 - 1 / var(--rise)) * 100%);
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  height: calc(var(--rise) * 100%);
+  clip-path: polygon(
+    -60% -20%,
+    160% -20%,
+    160% var(--top),
+    100% var(--top),
+    100% 100%,
+    0 100%,
+    0 var(--top),
+    -60% var(--top)
+  );
+  pointer-events: none;
+}
+.link-figure img {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  height: 100%;
+  width: auto;
+  max-width: none;
+  transform: translateX(-50%);
+  transform-origin: 50% 100%;
+  filter: drop-shadow(
+    0 6px 8px color-mix(in srgb, var(--color-shadow) 45%, transparent)
+  );
+  transition: transform 380ms var(--ease-pop);
+}
+.link-row:hover .link-figure img,
+.link-row:focus-visible .link-figure img {
+  transform: translateX(-50%) scale(1.08) rotate(var(--lean, -3deg));
+}
+
+/* The caption strip under a desktop print. On a phone the strip is the
+   card's bottom, which holds the title instead. */
+.link-strip {
+  display: none;
+}
+
+/* --- Hardware --------------------------------------------------------------
+   Duct tape at two opposite corners, a safety pin, or a pair of staples. */
+.link-tape {
+  @apply duct-tape;
+  position: absolute;
+  z-index: 4;
+  width: 84px;
+  height: 24px;
+  box-shadow: 0 2px 3px color-mix(in srgb, var(--color-shadow) 30%, transparent);
+}
+.link-tape[data-at="tl"] {
+  top: -10px;
+  left: -26px;
+  transform: rotate(-38deg);
+}
+.link-tape[data-at="tr"] {
+  top: -10px;
+  right: -26px;
+  transform: rotate(40deg);
+}
+.link-tape[data-at="bl"] {
+  bottom: -8px;
+  left: -26px;
+  transform: rotate(34deg);
+}
+.link-tape[data-at="br"] {
+  bottom: -8px;
+  right: -26px;
+  transform: rotate(-32deg);
+}
+
+.link-pin {
+  position: absolute;
+  top: -16px;
+  left: -16px;
+  z-index: 4;
+  width: 92px;
+  color: var(--color-on-surface-variant);
+  transform: rotate(-24deg);
+  filter: drop-shadow(
+    0 2px 2px color-mix(in srgb, var(--color-shadow) 55%, transparent)
+  );
+  pointer-events: none;
+}
+.link-pin-clasp {
+  fill: var(--color-outline);
+  stroke: var(--color-outline-variant);
+}
+
+.link-staple {
+  position: absolute;
+  top: 4px;
+  z-index: 4;
+  width: 24px;
+  height: 5px;
+  border-radius: 1px;
+  background: linear-gradient(
+    to bottom,
+    var(--color-on-surface),
+    var(--color-outline)
+  );
+  box-shadow: 0 1px 1px color-mix(in srgb, var(--color-shadow) 50%, transparent);
+}
+.link-staple[data-at="a"] {
+  left: 16%;
+  transform: rotate(-6deg);
+}
+.link-staple[data-at="b"] {
+  right: 16%;
+  transform: rotate(4deg);
+}
+
+/* --- Price sticker -----------------------------------------------------------
+   An amber starburst slapped on the photo's corner: amber, because amber
+   marks prices on this site. Lettering sized for the sticker, not a text
+   style. */
+.link-burst {
+  position: absolute;
+  right: -6px;
+  bottom: -22px;
+  z-index: 3;
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  background: var(--color-tertiary-fixed);
+  color: var(--color-on-tertiary-fixed);
+  clip-path: polygon(
+    50% 0%,
+    61% 14%,
+    79% 9%,
+    80% 27%,
+    97% 33%,
+    87% 49%,
+    97% 65%,
+    80% 72%,
+    79% 91%,
+    61% 86%,
+    50% 100%,
+    39% 86%,
+    21% 91%,
+    20% 72%,
+    3% 65%,
+    13% 49%,
+    3% 33%,
+    20% 27%,
+    21% 9%,
+    39% 14%
+  );
+  transform: rotate(12deg);
+  transition: transform 380ms var(--ease-pop);
+}
+.link-burst b {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-normal);
+  font-size: 18px;
+  line-height: 1;
+}
+.link-burst small {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 7.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.15;
+}
+.link-row:hover .link-burst {
+  transform: rotate(-8deg) scale(1.12);
+}
+
+/* --- The copy ------------------------------------------------------------- */
+.link-text {
+  min-width: 0;
+  padding: 14px 2px 18px 4px;
+}
+.link-eyebrow,
+.link-blurb {
+  display: none;
+}
+
+/* The red marker line draws itself in under the title on hover. The title
+   is inline so the line follows every line of a wrapped title. A data URI
+   cannot read var(), so the stroke is --color-primary written out
+   (%23BA0800 is rgb(186 8 0)); retype it if the primary changes. */
+.link-title {
+  @apply heading-l;
+  display: inline;
+  padding-bottom: 3px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 10' preserveAspectRatio='none'%3E%3Cpath d='M2 6 C 30 2, 60 9, 95 5 S 160 2, 198 6' fill='none' stroke='%23BA0800' stroke-width='3.2' stroke-linecap='round'/%3E%3C/svg%3E")
+    no-repeat 0 100% / 0% 8px;
+  transition: background-size 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.link-row:hover .link-title,
+.link-row:focus-visible .link-title {
+  background-size: 100% 8px;
+}
+
+.link-meta {
+  margin-top: 4px;
+  color: color-mix(in srgb, var(--color-inverse-on-surface) 78%, transparent);
+}
+
+/* The hand-drawn arrow. */
+.link-go {
+  align-self: center;
+  width: 34px;
+  height: 24px;
+  color: var(--color-inverse-on-surface);
+  transition:
+    transform 300ms var(--ease-pop),
+    color 260ms;
+}
+.link-row:hover .link-go,
+.link-row:focus-visible .link-go {
+  transform: translateX(5px) rotate(-6deg);
+  color: var(--color-primary);
+}
+
+/* ===========================================================================
+   md and up: the print beside the copy, no card.
+   Sizes scale with the viewport between the breakpoint and a wide screen:
+   (100vw - 40px) is the width the demo measured them against.
+=========================================================================== */
+@media (width >= theme(--breakpoint-md)) {
+  .link-rows {
+    gap: 40px;
+    padding-top: 20px;
+  }
+
+  .link-row {
+    --rise: var(--rise-d, 1.24);
+    grid-template-columns: clamp(140px, (100vw - 40px) * 0.21, 168px) 1fr auto;
+    gap: 28px;
+    padding: 12px 30px 12px 24px;
+    color: inherit;
+    background: transparent;
+    box-shadow: none;
+    transform: none;
+    border-radius: var(--radius-lg);
+  }
+  .link-row:hover,
+  .link-row:focus-visible {
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Now the print is the paper: a square-ish window over a fat bottom
+     border, taped at a lean. */
+  .link-print {
+    grid-column: auto;
+    position: relative;
+    z-index: 2;
+    padding: 10px 10px 0;
+    background-color: var(--color-inverse-surface);
+    border-radius: var(--radius-xs);
+    box-shadow:
+      0 1px 0 color-mix(in srgb, var(--color-shadow) 30%, transparent),
+      0 14px 24px -10px color-mix(in srgb, var(--color-shadow) 85%, transparent);
+    transform: rotate(var(--tilt, -4deg));
+    transition: transform 380ms var(--ease-pop);
+  }
+  .link-row:hover .link-print,
+  .link-row:focus-visible .link-print {
+    transform: rotate(0deg) translateY(-4px) scale(1.04);
+  }
+
+  .link-strip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+  }
+  .link-strip .scrawl {
+    font-size: 19px;
+  }
+
+  .link-print .dymo {
+    display: none;
+  }
+
+  .link-tape {
+    width: 100px;
+    height: 28px;
+  }
+  .link-tape[data-at="tl"] {
+    top: -12px;
+    left: -34px;
+  }
+  .link-tape[data-at="tr"] {
+    top: -12px;
+    right: -34px;
+  }
+  .link-tape[data-at="bl"] {
+    left: -34px;
+  }
+  .link-tape[data-at="br"] {
+    right: -34px;
+  }
+  .link-pin {
+    width: 116px;
+    left: -20px;
+  }
+  .link-staple {
+    top: 3px;
+    width: 30px;
+  }
+
+  .link-burst {
+    right: -18px;
+    bottom: -16px;
+    width: 74px;
+    height: 74px;
+  }
+  .link-burst b {
+    font-size: 21px;
+  }
+  .link-burst small {
+    font-size: 9px;
+  }
+
+  .link-text {
+    padding: 0;
+  }
+  .link-eyebrow {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--color-tertiary-fixed);
+  }
+  /* Bigger than any heading style, and growing with the window: Figma has
+     no style for it yet. */
+  .link-title {
+    font-size: clamp(26px, (100vw - 40px) * 0.042, 36px);
+    line-height: 1.1;
+    letter-spacing: 0.01em;
+    background-size: 0% 10px;
+  }
+  .link-row:hover .link-title,
+  .link-row:focus-visible .link-title {
+    background-size: 100% 10px;
+  }
+  .link-meta {
+    margin-top: 10px;
+    font-size: var(--text-sm);
+    color: var(--color-on-surface-variant);
+  }
+  .link-blurb {
+    display: block;
+    max-width: 44ch;
+    margin-top: 10px;
+    color: var(--color-on-surface-variant);
+  }
+
+  .link-go {
+    width: 48px;
+    height: 34px;
+    color: var(--color-on-surface-variant);
+  }
+  .link-row:hover .link-go,
+  .link-row:focus-visible .link-go {
+    color: var(--color-tertiary-fixed);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link-row,
+  .link-print,
+  .link-figure img,
+  .link-burst,
+  .link-go,
+  .link-title {
+    transition: none;
+  }
+}

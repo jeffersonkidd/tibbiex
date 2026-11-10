@@ -79,14 +79,6 @@ export default function App() {
     tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
   }
 
-  /* The Art shelf has no band to narrow to, so it is its own hand-off: Home's
-     fourth polaroid. */
-  function openArt() {
-    setShopShelf("art")
-    setActiveTab("Buy")
-    tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
-  }
-
   /* The return leg. The Portfolio panel is unmounted while Buy is showing, so
      the target section cannot be scrolled to until after the switch renders --
      hence the ref handed to the effect below rather than a scroll right here. */
@@ -108,10 +100,15 @@ export default function App() {
   useEffect(() => trackTab(activeTab), [activeTab])
 
   return (
-    <div className="flex min-h-screen justify-center pb-20 font-sans text-on-surface selection:bg-tertiary/20">
+    /* The column is 480px until md, then 780px: narrow enough below md that
+       a link row's polaroid keeps phone proportions on a tablet, wide enough
+       above it for each print to sit beside its copy. overflow-x: clip trims
+       the tape and stickers that hang past a print at the screen's edge,
+       without making a scroll container. */
+    <div className="flex min-h-screen justify-center overflow-x-clip px-4 pb-20 font-sans text-on-surface selection:bg-tertiary/20 sm:px-6">
       <Toaster position="top-center" richColors />
 
-      <div className="w-full min-w-0 max-w-[600px] space-y-stack px-4 pt-6 sm:px-6">
+      <div className="w-full min-w-0 max-w-[480px] space-y-stack pt-6 md:max-w-[780px]">
         <Header onShare={() => setModal({ kind: "share" })} />
 
         <ProfileCard
@@ -130,7 +127,6 @@ export default function App() {
               }
               onOpenBooking={() => setModal({ kind: "booking" })}
               onOpenShop={isTabEnabled("Buy") ? openShop : undefined}
-              onOpenArt={openArt}
             />
           )}
 

@@ -18,7 +18,9 @@
        price-card.css  one priced tier in a row of them (.price-*)
        featured.css    the amber lighting worn by the featured block
        meter.css       the rehearsal meter
-       polaroid.css    the instant prints that lead into the shop
+       polaroid.css    instant prints, duct tape, the label-maker tag
+       link-row.css    the Home tab's links, each one a print
+       fund.css        the "Still Alive" panel and its developing print
        magic-dust.css  the spark canvas, above everything
 
    The type rules reference three faces -- Shantell Sans for body, Roboto Mono for the
@@ -44,4 +46,6 @@
 @import "./treatments/featured.css";
 @import "./treatments/meter.css";
 @import "./treatments/polaroid.css";
+@import "./treatments/link-row.css";
+@import "./treatments/fund.css";
 @import "./treatments/magic-dust.css";

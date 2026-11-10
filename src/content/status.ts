@@ -46,8 +46,15 @@ export function collectStaged(): StagedEntry[] {
   }
 
   for (const link of LINKS) {
-    if ("staged" in link && link.staged) {
+    if (link.staged) {
       entries.push({ area: "Links", label: link.title })
+    }
+    /* A switched-off row's picture is not going live either. */
+    if (link.enabled !== false && link.print?.staged) {
+      entries.push({
+        area: "Links",
+        label: `${link.title} — placeholder picture`,
+      })
     }
   }
 
@@ -68,6 +75,13 @@ export function collectStaged(): StagedEntry[] {
     entries.push({
       area: "Fund",
       label: `Goal, total and backers ($${FUND.raised} of $${FUND.goal})`,
+    })
+  }
+
+  if (FUND.print.staged) {
+    entries.push({
+      area: "Fund",
+      label: "Podcast picture — placeholder drawing",
     })
   }
 

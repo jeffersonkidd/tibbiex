@@ -1,43 +1,23 @@
 /* ===========================================================================
-   Polaroid — instant prints dropped on the page, worn by ui/cards/PolaroidStack.
+   Polaroid — instant prints and the hardware that holds them up.
 
-   The paper is inverse-surface and the caption ink inverse-on-surface: M3's
-   light surface for the dark page and the ink that goes on it, which reads
-   as photo stock once it is a filled shape. Each print sets --tilt in the markup;
-   a print lifts and fans away from its neighbour on hover, as if picked up.
+   The paper is inverse-surface and the ink inverse-on-surface: M3's light
+   surface for the dark page and the ink that goes on it, which reads as
+   photo stock once it is a filled shape. Three things wear it: the shop
+   prints in ui/cards/PolaroidStack (.polaroid, below), every link row
+   (link-row.css) and the fund's print (fund.css).
 
-   Each print is taped to the page at two corners with duct tape:
-   ::before and ::after, a grey strip with a woven grain and ends torn by
-   hand rather than cut. The grey is --color-outline, so the tape stays
-   as colourless as the page under it.
+   What they share lives here: the duct tape, the label-maker tag, the marker
+   scrawl on a print's strip, and the strips of tape the fund writes its
+   contributors on. The tape's grey is --color-outline, so it stays as
+   colourless as the page under it.
 =========================================================================== */
 
-.polaroid {
-  --tilt: 0deg;
-  --fan: 0deg;
-  --lift: 0px;
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--spacing) * 2);
-  padding: calc(var(--spacing) * 2) calc(var(--spacing) * 2)
-    calc(var(--spacing) * 3);
-  color: var(--color-inverse-on-surface);
-  background-color: var(--color-inverse-surface);
-  border-radius: var(--radius-xs);
-  box-shadow:
-    0 1px 0 color-mix(in srgb, var(--color-shadow) 30%, transparent),
-    0 14px 28px -10px color-mix(in srgb, var(--color-shadow) 85%, transparent);
-  transform: translateY(var(--lift)) rotate(calc(var(--tilt) + var(--fan)));
-  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
-  position: relative;
-}
-
-.polaroid::before,
-.polaroid::after {
-  content: "";
-  position: absolute;
-  width: 44%;
-  aspect-ratio: 3.4 / 1;
+/* --- Duct tape --------------------------------------------------------------
+   A grey strip with a woven grain and ends torn by hand rather than cut. A
+   utility so a pseudo-element can @apply it; size and place it where it is
+   worn. */
+@utility duct-tape {
   pointer-events: none;
   background-color: color-mix(in srgb, var(--color-outline) 94%, transparent);
   /* The cloth weave under the coating, and the sheen along one edge. */
@@ -77,6 +57,151 @@
     0% 29%,
     4% 14%
   );
+}
+
+/* --- Label-maker tag ----------------------------------------------------------
+   Embossed vinyl punched with what a print is for -- Tarot, Merch, Podcast
+   fund -- stuck to the photo's corner. It does the job the icon box used to
+   do on a row. */
+.dymo {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  z-index: 3;
+  padding: 4px 9px 3px;
+  border-radius: var(--radius-xs);
+  background-color: var(--color-surface-container-lowest);
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-on-surface) 10%, transparent),
+    transparent 45%
+  );
+  color: var(--color-on-surface);
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--text-label);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  /* The emboss: a dark lip above each letter, a lit one below. */
+  text-shadow:
+    0 -1px 0 color-mix(in srgb, var(--color-shadow) 90%, transparent),
+    0 1px 0 color-mix(in srgb, var(--color-on-surface) 30%, transparent);
+  transform: rotate(-3deg);
+  box-shadow: 0 2px 4px color-mix(in srgb, var(--color-shadow) 50%, transparent);
+}
+
+/* --- Marker scrawl -------------------------------------------------------
+   A word written on a print's strip, a hair off level. */
+.scrawl {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-normal);
+  line-height: 1;
+  color: var(--color-inverse-on-surface);
+  transform: rotate(-3deg);
+}
+
+/* --- Tape strips ---------------------------------------------------------
+   A strip of paper tape with a line written on it: the fund's top
+   contributors, worn by ui/rows/SupporterRow. Torn at both ends and laid
+   down by hand, so each one in a run sits at its own angle and length. */
+.tape-strip {
+  display: flex;
+  align-items: baseline;
+  gap: calc(var(--spacing) * 2.5);
+  padding: 8px 20px 7px;
+  color: var(--color-inverse-on-surface);
+  background-color: var(--color-inverse-surface);
+  background-image:
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-on-surface) 30%, transparent),
+      transparent 40%,
+      color-mix(in srgb, var(--color-shadow) 8%, transparent)
+    ),
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-shadow) 5%, transparent) 0 1px,
+      transparent 1px 3px
+    );
+  clip-path: polygon(
+    1% 0,
+    99% 0,
+    100% 18%,
+    98.6% 38%,
+    100% 60%,
+    98.8% 80%,
+    99.6% 100%,
+    0.6% 100%,
+    0 82%,
+    1.2% 62%,
+    0 40%,
+    1.4% 20%
+  );
+  transform: rotate(var(--lay, 0deg));
+  filter: drop-shadow(
+    0 3px 3px color-mix(in srgb, var(--color-shadow) 45%, transparent)
+  );
+}
+/* Phone: every strip runs the full width, and the message wraps under the
+   name. From md up, a run of three steps in and shortens. */
+.tape-strip:nth-child(3n + 1) {
+  --lay: -0.8deg;
+}
+.tape-strip:nth-child(3n + 2) {
+  --lay: 0.6deg;
+}
+.tape-strip:nth-child(3n) {
+  --lay: -0.4deg;
+}
+
+@media (width >= theme(--breakpoint-md)) {
+  .tape-strip:nth-child(3n + 1) {
+    width: 96%;
+  }
+  .tape-strip:nth-child(3n + 2) {
+    width: 90%;
+    margin-left: 3%;
+  }
+  .tape-strip:nth-child(3n) {
+    width: 84%;
+    margin-left: 1%;
+  }
+}
+
+/* --- Shop prints -------------------------------------------------------------
+   Instant prints dropped on the page, worn by ui/cards/PolaroidStack. Each
+   print sets --tilt in the markup; a print lifts and fans away from its
+   neighbour on hover, as if picked up. Each is taped to the page at two
+   corners: ::before and ::after. */
+
+.polaroid {
+  --tilt: 0deg;
+  --fan: 0deg;
+  --lift: 0px;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 2);
+  padding: calc(var(--spacing) * 2) calc(var(--spacing) * 2)
+    calc(var(--spacing) * 3);
+  color: var(--color-inverse-on-surface);
+  background-color: var(--color-inverse-surface);
+  border-radius: var(--radius-xs);
+  box-shadow:
+    0 1px 0 color-mix(in srgb, var(--color-shadow) 30%, transparent),
+    0 14px 28px -10px color-mix(in srgb, var(--color-shadow) 85%, transparent);
+  transform: translateY(var(--lift)) rotate(calc(var(--tilt) + var(--fan)));
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+}
+
+.polaroid::before,
+.polaroid::after {
+  @apply duct-tape;
+  content: "";
+  position: absolute;
+  width: 44%;
+  aspect-ratio: 3.4 / 1;
 }
 
 /* Taped at its outer corners, so the strips never pile up where the two
