@@ -1,7 +1,8 @@
-/* A password over a whole deployment, for hiding a branch while it is being
-   built. It does nothing unless PREVIEW_PASSWORD is set, and that variable
-   is only ever set in the Vercel project's Preview environment, scoped to one
-   branch, so production and every other branch pass straight through.
+/* A password over a whole deployment, for hiding the site while it is being
+   built. It does nothing unless PREVIEW_PASSWORD is set, and which Vercel
+   environments carry that variable decides what is hidden: Production hides
+   tibbiex.studio itself, Preview (optionally scoped to one branch) hides the
+   preview deployments. Delete the variable and redeploy to open the site.
 
    Basic Auth, so the browser asks once and then resends the password with
    every request to the deployment, including the page's own /api calls. Any
@@ -35,10 +36,10 @@ export default function middleware(request: Request) {
   const given = passwordFrom(request)
   if (given !== null && matches(given, expected)) return next()
 
-  return new Response("This preview is password protected.", {
+  return new Response("This site is password protected while it is built.", {
     status: 401,
     headers: {
-      "WWW-Authenticate": 'Basic realm="Tibbie X preview", charset="UTF-8"',
+      "WWW-Authenticate": 'Basic realm="Tibbie X", charset="UTF-8"',
       "Cache-Control": "no-store",
     },
   })
