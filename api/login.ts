@@ -1,7 +1,7 @@
 /* The studio's door: does this passcode open it?
 
-     POST    204 when the `x-studio-passcode` header matches STUDIO_PASSCODE,
-             401 when it does not, 503 while STUDIO_PASSCODE is unset.
+     POST    204 when the `x-studio-passcode` header matches DASHBOARD_PASSWORD,
+             401 when it does not, 503 while DASHBOARD_PASSWORD is unset.
 
    It changes nothing and hands out nothing -- no cookie, no token. The login
    screen at /dashboard asks it once, then keeps the passcode in the browser the
@@ -24,7 +24,7 @@ function matches(given: string, expected: string) {
 }
 
 export async function POST(request: Request) {
-  const expected = process.env.STUDIO_PASSCODE
+  const expected = process.env.DASHBOARD_PASSWORD
   if (!expected) {
     return Response.json(
       { error: "The studio passcode isn't set up yet." },

@@ -10,7 +10,7 @@
      DELETE  go back to the bundled portrait.
 
    Writes need the studio passcode in the `x-studio-passcode` header, checked
-   against STUDIO_PASSCODE. It is the studio's first secret and the only gate
+   against DASHBOARD_PASSWORD. It is the studio's first secret and the only gate
    it has, so make it long -- there is no rate limit behind it.
 
    Files live in Vercel Blob under avatar/, one per upload with a random
@@ -18,7 +18,7 @@
    one. After a successful upload the older files are deleted.
 
    Requires a Blob store connected to the project (which sets
-   BLOB_READ_WRITE_TOKEN) and STUDIO_PASSCODE. `pnpm dev` does not run this
+   BLOB_READ_WRITE_TOKEN) and DASHBOARD_PASSWORD. `pnpm dev` does not run this
    file -- use `vercel dev` to exercise it. */
 import { createHash, timingSafeEqual } from "node:crypto"
 import { del, list, put } from "@vercel/blob"
@@ -66,7 +66,7 @@ function unavailable() {
 
 /* Compared as digests so the check takes the same time whatever was sent. */
 function authorised(request: Request) {
-  const expected = process.env.STUDIO_PASSCODE
+  const expected = process.env.DASHBOARD_PASSWORD
   const given = request.headers.get("x-studio-passcode")
   if (!expected || !given) return false
   const digest = (text: string) => createHash("sha256").update(text).digest()

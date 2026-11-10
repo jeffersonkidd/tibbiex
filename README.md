@@ -113,7 +113,7 @@ preview`). It wears the site's tokens and type, and a strip at the top switches
 modules (`/dashboard#avatar` opens straight onto one).
 
 The door is a login screen: an all-access laminate that asks for the studio
-passcode (`STUDIO_PASSCODE`) and checks it with `api/login.ts`. A device asks
+passcode (`DASHBOARD_PASSWORD`) and checks it with `api/login.ts`. A device asks
 once, then walks straight in until **Lock** forgets it or the passcode changes.
 The screen is a courtesy rather than the lock: every module that changes the
 live site still sends the passcode with its write, and that endpoint checks it.
@@ -287,7 +287,7 @@ Environment variables in the Vercel project:
 - `MAIL_FROM` — what mail is sent as, e.g. `Tibbie X Studio
 <hello@tibbiex.studio>`. An address that only sends: `contact@` receives
   through Cloudflare Email Routing, and sending as it invites a loop.
-- `STUDIO_PASSCODE` — what the studio asks for before it changes the live
+- `DASHBOARD_PASSWORD` — what the studio asks for before it changes the live
   site. Set by hand, and make it long: it is the only gate on the avatar
   upload and the shop. Without it every studio write is refused.
 - `BLOB_READ_WRITE_TOKEN` — set by Vercel when a Blob store is connected to the

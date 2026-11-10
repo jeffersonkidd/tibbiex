@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from "react"
 
 /* The studio passcode, shared by every module that writes to the live site.
-   Each endpoint checks it against STUDIO_PASSCODE; the browser remembers it
+   Each endpoint checks it against DASHBOARD_PASSWORD; the browser remembers it
    once it has worked, and forgets it the moment an endpoint refuses it, so
    it is asked for once per device and again only when it is wrong. */
 
@@ -37,7 +37,7 @@ export const TOO_MANY_TRIES =
 
      ok          it does
      refused     it doesn't
-     unset       STUDIO_PASSCODE isn't configured on the server
+     unset       DASHBOARD_PASSWORD isn't configured on the server
      busy        the firewall's rate limit stopped it (TOO_MANY_TRIES)
      unreachable no answer: offline, or `pnpm dev`, which runs no API */
 export type DoorAnswer = "ok" | "refused" | "unset" | "busy" | "unreachable"

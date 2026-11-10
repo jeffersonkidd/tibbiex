@@ -28,7 +28,7 @@
    api/checkout.ts reads the same file to price a shop order.
 
    Requires a Blob store connected to the project (BLOB_READ_WRITE_TOKEN) and
-   STUDIO_PASSCODE. `pnpm dev` does not run this file -- use `vercel dev`. */
+   DASHBOARD_PASSWORD. `pnpm dev` does not run this file -- use `vercel dev`. */
 import { createHash, timingSafeEqual } from "node:crypto"
 import { del, list, put } from "@vercel/blob"
 
@@ -332,7 +332,7 @@ async function sweep(kept: { url: string }[], newest: Catalog) {
 /* --- Gate ---------------------------------------------------------------- */
 
 function authorised(request: Request) {
-  const expected = process.env.STUDIO_PASSCODE
+  const expected = process.env.DASHBOARD_PASSWORD
   const given = request.headers.get("x-studio-passcode")
   if (!expected || !given) return false
   const digest = (value: string) => createHash("sha256").update(value).digest()
