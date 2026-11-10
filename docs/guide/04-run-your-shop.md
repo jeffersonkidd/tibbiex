@@ -2,93 +2,124 @@
 
 ## Why
 
-Products lets you change the shop yourself: add a piece, change a price, sell
-out a size. Nobody has to rebuild the site, and visitors see the change within
-a minute.
+Your shop runs on **Shopify**. Shopify keeps your products, prices and stock,
+takes the payment, works out shipping and tax, and gives you the order list.
+The site shows whatever Shopify has, so a change you make there shows on the
+site without anyone rebuilding anything.
+
+The Studio's **Products** module is how products get **into** Shopify. It
+holds Shopify's import sheet, which you can fill in on your phone and then
+hand to Shopify in one go.
 
 ## Do it
 
-Open **Studio → Products**. Your pieces are listed on their shelves, one per
-band and then **Art**, in the order the Buy tab shows them. Use the up and
-down arrows beside a piece to move it on its shelf.
+### Getting products into Shopify
 
-**The first time only:** the top line says **Built-in shop · publish once to
-run it from here**. Tap **Publish to the shop** once, before you change
-anything. That moves the shop the site was built with into the Studio. After
-that the Studio runs the shop.
+Open **Studio → Products**. You'll see every product in the sheet, grouped
+under its design (`design:vampire-cats`, `design:on-a-leash`…).
 
-**To add a piece:**
+**The first time only:** the top line says **Filled from the site's
+catalogue · save once to keep it**. Everything the site sold is already in the
+sheet, one product for each format: _Vampire Cats Sticker_, _Vampire Cats
+Patch_, _Vampire Cats Men's Tee_ and so on. Tap **Save the sheet** once, before
+you change anything.
+
+**To add a product:**
 
 1. Tap **Add a product**.
-2. Under **Photos**, drop, paste or pick your photos. The first one is the
-   **Cover**. To make another photo the cover, tap its star.
-3. Under **The piece**, fill in the **Name** and a line or two of
-   **Description**. In **Photo description**, say what the cover shows, for
-   anyone who can't see it. Then pick its **Shelf**: a band, or **Art**.
-4. Under **Formats and prices**, tap the ways it's sold: **Sticker**,
-   **Patch**, **Men's tee**, **Women's tee** or **Something else**. For each one,
-   set:
-   - the **price** in whole dollars, before shipping
-   - **Ships as**: **Letter** for a sticker, **Flat** for a patch, **Parcel** for
-     a tee or a record. The button shows what shipping adds.
-   - **Sizes**, if it has any. Leave them empty if it's one-size.
-5. If it's a limited run, tick **A numbered or limited run** and fill in how
-   many are left and how many were made.
-6. A new piece starts **Hidden**. When the card at the top, **How it shows in
-   the shop**, looks right, switch it to **Showing**.
-7. Tap **All products** to go back, then **Publish to the shop**. It uses the
-   passcode you typed at the door; it only asks again if the passcode has
-   changed.
+2. Under **Photos**, drop, paste or pick the photos. Put the photo of this
+   format first (the tee on a body, the sticker on a table) and the artwork
+   second. Fill in an **Image alt text** for each one: what it shows, for
+   anyone who can't see it.
+3. Under **The product**, fill in the **Title** (e.g. _Vampire Cats Sticker_),
+   a **URL handle** (e.g. _vampire-cats-sticker_) and a **Description**. Set the
+   **Vendor** to the band, or _Tibbie X_ for your own art.
+4. Tap its **Type**: **T-Shirt**, **Patch**, **Sticker**, **Record** or
+   **Bundle**. That also fills in **Product category**.
+5. In **Tags**, write `design:` and the design's name, so the site puts it
+   with the rest of that design. Then add `band:` for band merch,
+   `line:art` for your own art, and `fit:mens` or `fit:womens` for a tee. For
+   example: `design:vampire-cats, line:art, fit:womens`.
+6. Under **Variants**, a product with sizes has **Option1 name** _Size_ and one
+   variant per size. Tap **Add a variant** for each size and fill in its
+   **Option1 value** (_S_, _M_…) and **Price**. A product with no sizes keeps
+   the one variant it starts with.
+7. A new product starts as a **Draft**. Switch **Status** to **Active** when
+   it's right.
+8. Tap **All products**, then **Save the sheet**.
 
-You'll see _"The shop is updated. Visitors see it within a minute."_
+**To send the sheet to Shopify:**
 
-**To change a piece:** tap it, change what you need, then **Publish to the
-shop**.
+1. Tap **Download CSV**. If something isn't finished, the Studio opens it
+   instead and lists what's missing under **Before it can be imported**.
+2. In Shopify, go to **Products → Import** and pick the file you downloaded.
+3. Tick **Overwrite products with matching handles**, so a product that's
+   already in Shopify is updated instead of doubled.
+4. Tap **Upload and preview**, check it, then **Import products**.
 
-- **Sold out of one size:** tap that size. It stays on the site, crossed out.
-  Tap it again when you restock.
-- **Sold a limited-run piece:** lower **How many are left** yourself. The
-  number doesn't count down on its own when someone buys. At 0 the piece
-  shows **Sold out**, and checkout won't sell it.
-- **Taking a piece down for now:** set it to **Hidden**. It stays in the
-  Studio, so you can bring it back.
-- **Taking a piece down for good:** tap **Delete this product**, then **Tap
-  again to delete it**.
+### Day to day: in Shopify
 
-Nothing reaches the site until you publish. Your edits are kept on the device
-you made them on, so closing the tab doesn't lose them. **Discard** throws
-them all away and goes back to what's live.
+Once a product is in Shopify, change it **in Shopify**, not in the sheet:
+
+- **Sold out of a size:** set that variant's stock to 0. The site crosses the
+  size out.
+- **A new price:** change it on the variant.
+- **Taking a product down:** set it to **Draft**. It disappears from the site
+  and stays in Shopify for later.
+- **Orders:** they're in **Orders**, with the buyer's address. Mark each one
+  fulfilled when it ships.
+
+The sheet doesn't follow what you change in Shopify. If you want the Studio's
+sheet to match the store again, export your products from Shopify
+(**Products → Export**, as a CSV for Excel or Numbers), then in the Studio tap
+**Upload a CSV**, pick the file and tap **Replace it**.
+
+### Optional: one collection per design
+
+To give a design its own name, description and cover on the site, make a
+**collection** in Shopify (**Products → Collections → Create collection**).
+Name it after the design, set it to **Automated** with the condition **Product tag
+is equal to** `design:vampire-cats`, add the artwork as its image, and write the
+description. Its URL handle has to be the design's tag without `design:`, here
+_vampire-cats_. Without a collection the site uses what the products share.
 
 ## Check it worked
 
-The bar at the bottom of the screen goes away, and the top line says **Live ·
-published** with how long ago. Wait a minute, then tap **View site**, open
-**Buy** and tap **Art**, or **Bands** and then the band, whichever shelf the
-piece is on.
+In the Studio, the top line says **Saved** and how long ago. In Shopify, the
+import finishes with a count of products created or updated. Then tap **View
+site**, open **Buy**, and find the design. Each format you imported is one of
+its choices, and **Buy** takes you to Shopify's checkout.
 
 ## If something's off
 
-- **"… isn't finished yet."** The Studio opens that piece and lists what's
-  missing under **Before it can go up**: usually a name, a photo or a format.
-  Fix the list, then publish again.
-- **"The shop changed on another device since you opened it."** Someone
-  published from another phone or computer after you opened the Studio. Reload
-  the page and make your change again. That way you can't undo theirs without
-  seeing it.
-- **"Picked up your unpublished edits."** You left changes on this device
-  without publishing them. Publish them, or tap **Discard**.
-- **A photo won't upload.** Save it as a JPG or PNG and try again.
-  Screenshots work.
+- **"… isn't ready to import yet."** The Studio opens that product and lists
+  what's missing under **Before it can be imported**: usually a Title, a Price
+  or a size with no value. Fix the list, then download again.
+- **A product shows on its own instead of with its design.** Its **Tags** are
+  missing `design:`, or it's spelled differently from the others. The **On the
+  site** note under the product says so.
+- **The button says "Not on sale yet".** The site can't reach Shopify, or that
+  product isn't in the store yet. Import it, and check it's **Active** and
+  published to the online store.
+- **Shopify says a photo couldn't be downloaded.** Upload it again in the
+  Studio, save, and import again. Screenshots work. Save anything else as a JPG
+  or PNG first.
+- **"The sheet changed on another device since you opened it."** Someone saved
+  from another phone or computer after you opened the Studio. Reload the page
+  and make your change again.
+- **"Picked up your unsaved edits."** You left changes on this device without
+  saving them. Save them, or tap **Discard**.
 - **Wrong passcode.** Ask J.F. Don't guess repeatedly.
 
 ## The habit
 
-**The shop tells the truth.** If a size is gone, mark it the day it goes. If a
-run is down to three, say three. Someone who orders a tee in their size and
-gets a refund note won't try a second time, and a real "4 of 20 left" sells
-better than anything you could write about it.
+**The shop tells the truth.** Shopify counts stock down by itself now, so the
+truth mostly keeps itself, as long as the count you started with was real.
+When you restock, put in the real number. If a size is gone, let it show as
+gone. Someone who orders a tee in their size and gets a refund note won't try a
+second time.
 
-**Publish a new piece with its post, not after.** Get it right while it's
-**Hidden**, switch it to **Showing**, publish, and post it with a Link Maker
-link (lesson 2), all the same day. That way the people who tap through from
-your post find the piece waiting for them.
+**Put a new design up with its post, not after.** Get it into Shopify as a
+**Draft**, check it, switch it to **Active**, then post it with a Link Maker
+link (lesson 2), all on the same day. That way the people who tap through from
+your post find it waiting for them.

@@ -17,28 +17,37 @@ import stickersBanner from "../assets/illustrations/shop/shelves/stickers.svg"
 import teesBanner from "../assets/illustrations/shop/shelves/tees.svg"
 import { PORTFOLIO } from "./portfolio"
 import type { BandId } from "./portfolio"
-import type { Mail } from "./payments"
 import { MEDIA_URL } from "./site"
 import { categoryOf, tagsOf } from "./taxonomy"
 import type { Fit, ProductCategory, Tag } from "./taxonomy"
 
-export type Size = { label: string; soldOut?: true }
+/* One size of a format. On a shop read from Shopify it is one variant, and
+   `variantId` is what checkout buys; the catalogue bundled with the app has
+   none, so nothing bundled can be bought. */
+export type Size = { label: string; soldOut?: true; variantId?: string }
 
 /* One thing a buyer picks and pays for. A plain item is its own single
    format; a piece of art sold several ways (sticker, patch, tee) lists one
-   per way, each with its own price, sizes and spec. */
+   per way, each with its own price, sizes and spec.
+
+   In Shopify each format is a product of its own -- "Vampire Cats Sticker",
+   "Vampire Cats Men's Tee" -- because Shopify files a product, not a
+   variant, under a category and a type. The site gathers them back into one
+   design by their `design:` tag (lib/shopify.ts). */
 export type ShopFormat = {
   id: string
   label: string
-  /* Whole dollars, before shipping. Formatted where it is shown, and sent
-     as-is to checkout. */
+  /* In dollars, before shipping, as Shopify prices it. */
   price: number
   /* Offered sizes, in order. A sold-out size stays listed, struck through. */
   sizes?: Size[]
-  /* What is in the box, label then detail. */
+  /* A format without sizes is one variant, bought by this id. */
+  variantId?: string
+  /* A format without sizes that Shopify has none of. */
+  soldOut?: true
+  /* What is in the box, label then detail. Not in Shopify: it describes
+     the format, not the design, so it lives in STANDARD_FORMATS. */
   includes?: { label: string; detail: string }[]
-  /* Which shipping rate it takes -- see SHIPPING. A parcel unless it says. */
-  mail?: Mail
   /* Which leaf of the category tree it sits on (content/taxonomy.ts). The
      standard ids fall back to theirs, so only a new kind of format must
      say -- read it through categoryOf(), not directly. */
@@ -69,16 +78,17 @@ type ShopItemBase = {
      formats are shared between designs, so the pairing lives on the item.
      Each photo must also be in the gallery. */
   formatPhotos?: Record<string, string>
-  /* A numbered or limited run. */
-  stock?: { left: number; of: number }
-  ships?: string
+  /* A numbered or limited run: how many were made (the `run:` tag in
+     Shopify), and how many are left where that is known. */
+  stock?: { of: number; left?: number }
   /* Stock art or a provisional price -- see the content-status note. */
   staged?: true
   /* Which shelf of the Buy tab it sits on. Without it, an item that names a
      band is on Bands and anything else is on Art. */
   shelf?: "bands" | "art"
-  /* Kept in the catalogue but off the site: a draft, or a run that is over
-     and may come back. Set from the studio. */
+  /* Kept in the catalogue but off the site. In Shopify that is a draft,
+     which the Storefront API never returns; on the bundled catalogue it is
+     this flag. */
   hidden?: true
 }
 
@@ -95,15 +105,38 @@ export type ShopItem = ShopItemBase &
    itself. */
 export function formatsOf(item: ShopItem): ShopFormat[] {
   if (item.formats) return item.formats
-  const { id, item: label, price, sizes, includes, mail, category, fit } = item
-  return [{ id, label, price, sizes, includes, mail, category, fit }]
+  const {
+    id,
+    item: label,
+    price,
+    sizes,
+    variantId,
+    soldOut,
+    includes,
+    category,
+    fit,
+  } = item
+  return [
+    { id, label, price, sizes, variantId, soldOut, includes, category, fit },
+  ]
 }
 
 export function lowestPrice(item: ShopItem) {
   return Math.min(...formatsOf(item).map((format) => format.price))
 }
 
-export const formatPrice = (price: number) => `$${price}`
+/* Whole dollars as "$35", anything else to the cent: "$19.99". */
+export const formatPrice = (price: number) =>
+  Number.isInteger(price) ? `$${price}` : `$${price.toFixed(2)}`
+
+/* A format with nothing left to sell: no sizes in stock, or none at all. */
+export const formatSoldOut = (format: ShopFormat) =>
+  Boolean(format.soldOut) ||
+  Boolean(format.sizes?.length && format.sizes.every((size) => size.soldOut))
+
+/* An item with nothing left: a run counted down to 0, or every format gone. */
+export const itemSoldOut = (item: ShopItem) =>
+  item.stock?.left === 0 || formatsOf(item).every(formatSoldOut)
 
 const MENS_SIZES: Size[] = ["S", "M", "L", "XL", "2XL", "3XL"].map((label) => ({
   label,
@@ -113,7 +146,8 @@ const WOMENS_SIZES: Size[] = ["XS", "S", "M", "L", "XL", "2XL"].map(
 )
 
 /* The four ways the studio prints a design, from the client's brief, all plus
-   shipping. The men's tee is on a Gildan blank; the women's is the soft one
+   shipping. In Shopify each is a product; the site recognises one by its
+   Type and `fit:` tag and gives it the label and details below. The men's tee is on a Gildan blank; the women's is the soft one
    with cap sleeves (not ribbed). Both tees are $35 -- the brief only priced
    the women's outright, so confirm the men's matches -- and the patch size
    came with a question mark ("5x7?"), so confirm that too.
@@ -128,7 +162,6 @@ export const STANDARD_FORMATS: ShopFormat[] = [
     id: "sticker",
     label: "Sticker",
     price: 5,
-    mail: "letter",
     category: "stickers",
     includes: [
       { label: "Size", detail: "4 × 6 in" },
@@ -139,7 +172,6 @@ export const STANDARD_FORMATS: ShopFormat[] = [
     id: "patch",
     label: "Patch",
     price: 10,
-    mail: "flat",
     category: "patches",
     includes: [
       { label: "Size", detail: "5 × 7 in" },
@@ -185,9 +217,10 @@ const TNG_PHOTOS = {
   "tee-womens": `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/womens-tee.fe53a5a5.jpg`,
 }
 
-/* Reagan Youth's first real piece, in the standard formats. */
+/* Reagan Youth's first real piece, in the standard formats. Each design's
+   id is its `design:` tag in Shopify. */
 export const THE_NEXT_GENERATION: ShopItem = {
-  id: "ry-the-next-generation",
+  id: "the-next-generation",
   item: "The Next Generation",
   image: `${MEDIA_URL}/shop/bands/reagan-youth/the-next-generation/artwork.5a3e32a7.jpg`,
   aspect: "landscape",
@@ -219,7 +252,7 @@ const FRANK_PHOTOS = {
 /* Leftover Crack's first real piece, in the standard formats: Frank is
    Tibbie X's cat, who lives at C-Squat and kills pigeons. */
 export const LEFTOVER_FRANK: ShopItem = {
-  id: "lc-leftover-frank",
+  id: "leftover-frank",
   item: "Leftover Frank",
   image: FRANK_ARTWORK,
   aspect: "square",
@@ -267,7 +300,6 @@ export const YOUTH_ANTHEMS_BUNDLE: ShopItem = {
     { label: "Logo tee", detail: "Screen printed" },
     { label: "Numbered", detail: "Hand marked, 1–20" },
   ],
-  ships: "Ships in 5 days",
 }
 
 const ON_A_LEASH_ARTWORK = `${MEDIA_URL}/shop/bands/gash/on-a-leash/artwork.18aa4224.jpg`
@@ -282,7 +314,7 @@ const ON_A_LEASH_PHOTOS = {
    sticker and no patch. The portrait art is padded to a square on black so the
    square shop photo keeps the logo and the floor in frame. */
 export const ON_A_LEASH: ShopItem = {
-  id: "gash-on-a-leash",
+  id: "on-a-leash",
   item: "On a Leash",
   image: ON_A_LEASH_ARTWORK,
   aspect: "portrait",
@@ -298,10 +330,6 @@ export const ON_A_LEASH: ShopItem = {
   formatPhotos: ON_A_LEASH_PHOTOS,
   formats: TEE_FORMATS,
 }
-
-/* Whether the product modal's Buy button carries CARD_HINT and "US shipping
-   only." under it. Off; an item's own `ships` line still shows. */
-export const SHOP_CARD_HINT = false
 
 /* The Bands shelf as bundled with the app. The placeholders are gone. */
 const BUY: ShopItem[] = [THE_NEXT_GENERATION, LEFTOVER_FRANK, ON_A_LEASH]
@@ -320,7 +348,7 @@ const VAMPIRE_CATS_PHOTOS = {
    formats. Too detailed to shrink to a pin, so there deliberately is no pin.
    The photos are on the media bucket under their own hashes (see MEDIA_URL). */
 export const VAMPIRE_CATS: ShopItem = {
-  id: "a-vampire-cats",
+  id: "vampire-cats",
   item: "Vampire Cats",
   shelf: "art",
   image: VAMPIRE_CATS_ARTWORK,
@@ -344,11 +372,11 @@ export const VAMPIRE_CATS: ShopItem = {
    it -- `shelf: "art"` keeps it off that band's shelf. */
 const ART: ShopItem[] = [VAMPIRE_CATS]
 
-/* The catalogue that ships with the app. The site shows it until the studio
-   publishes one (api/products.ts), and the studio starts from it the first
-   time, so the first publish carries every product over. After that the
-   published catalogue is the truth and this is only the fallback for when
-   the endpoint is unreachable -- `pnpm dev`, or storage not connected. */
+/* The catalogue that ships with the app. Shopify is the truth; this is what
+   the site shows when the store cannot be read -- `pnpm dev` without the
+   Shopify variables, or the Storefront API down -- and it has no variant
+   ids, so nothing on it can be bought. It is also what the studio's import
+   sheet is first filled from (dashboard/products/sheet.ts). */
 export const BUNDLED_SHOP: ShopItem[] = [...BUY, ...ART]
 
 export function shelfOf(item: ShopItem): "bands" | "art" {
@@ -406,16 +434,16 @@ export const BAND_TILES: Partial<Record<BandId, string>> = {
   gash: gashTile,
 }
 
-/* Each design as a collection, by item id: the band strip's 3:1 poster,
+/* Each design as a collection, by its `design:` tag: the band strip's 3:1 poster,
    with the collection's name, its band (or Art) and what it comes in, and
    its sticker as the emblem. Shown full width at the top of the
    collection, over its format tags; it opens the product on its first
    format. */
 export const COLLECTION_BANNERS: Record<string, string> = {
-  "ry-the-next-generation": nextGenerationBanner,
-  "lc-leftover-frank": leftoverFrankBanner,
-  "gash-on-a-leash": onALeashBanner,
-  "a-vampire-cats": vampireCatsBanner,
+  "the-next-generation": nextGenerationBanner,
+  "leftover-frank": leftoverFrankBanner,
+  "on-a-leash": onALeashBanner,
+  "vampire-cats": vampireCatsBanner,
 }
 
 /* What a collection comes in: square hang tags under its banner, in this

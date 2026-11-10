@@ -2,19 +2,20 @@ import { useEffect, useState } from "react"
 import { BellRing, CreditCard } from "lucide-react"
 import { toast } from "sonner"
 
-import { CARD_HINT, SHIPPING } from "../../content/payments"
-import { VENMO_HANDLE } from "../../content/site"
-import { formatPrice, formatsOf, SHOP_CARD_HINT } from "../../content/shop"
+import {
+  formatPrice,
+  formatSoldOut,
+  formatsOf,
+  itemSoldOut,
+} from "../../content/shop"
 import type { ShopFormat, ShopItem } from "../../content/shop"
 import { isEmail } from "../../lib/email"
 import { sendMessage } from "../../lib/messages"
-import { payVia } from "../../lib/payments"
-import type { Order } from "../../lib/payments"
+import { shopifyCheckoutUrl } from "../../lib/shopify"
 import Button from "../../ui/controls/Button"
 import Chip from "../../ui/controls/Chip"
 import EmailField from "../../ui/controls/EmailField"
 import Honeypot from "../../ui/controls/Honeypot"
-import VenmoLink from "../../ui/controls/VenmoLink"
 import DetailList from "../../ui/display/DetailList"
 import Separator from "../../ui/display/Separator"
 import Overlay from "../../ui/overlays/Overlay"
@@ -33,11 +34,13 @@ import OverlayBody from "../../ui/overlays/OverlayBody"
    gallery to that format's photo when the item names one. It opens on the
    artwork, not the first format's photo.
 
-   The button goes to Stripe, which collects the address and adds shipping --
-   which is why it is the button and Venmo is only the link under it: a Venmo
-   order arrives with no address, so shipping rides on the amount and the
-   buyer DMs one. Under it all, a restock alert
-   for a run that is gone or a size that sold out. */
+   The button buys the one variant picked through Shopify's checkout, which
+   prices it, adds shipping and tax, takes the address and counts the stock
+   down. There is no Venmo here: a Venmo sale would never reach Shopify, so
+   its stock and orders would quietly stop being true. On the catalogue
+   bundled with the app nothing has a variant, so the button says so instead.
+   Under it all, a restock alert for a run that is gone or a size that sold
+   out. */
 export default function ProductModal({
   item,
   formatId,
@@ -52,7 +55,7 @@ export default function ProductModal({
   const photos = item.gallery?.length ? item.gallery : [item.image]
   const formats = formatsOf(item)
   const choosing = formats.length > 1
-  const soldOut = item.stock?.left === 0
+  const soldOut = itemSoldOut(item)
   const opening = formats.find((entry) => entry.id === formatId) ?? formats[0]
   /* Only a format chosen on the shelf moves the photo; opened plainly, the
      modal starts on the artwork as it always has. */
@@ -69,7 +72,18 @@ export default function ProductModal({
   const [sending, setSending] = useState(false)
 
   const sizes = format.sizes ?? []
-  const shipping = SHIPPING.rates[format.mail ?? "parcel"]
+  /* What checkout would buy: the picked size's variant, or the format's own
+     when it has no sizes. */
+  const variantId = sizes.length
+    ? sizes.find((entry) => entry.label === size)?.variantId
+    : format.variantId
+  /* Whether this format can be bought at all: it has variants (it came from
+     Shopify, not the bundled catalogue) and is not sold out. */
+  const onSale =
+    !formatSoldOut(format) &&
+    (sizes.length
+      ? sizes.some((entry) => entry.variantId)
+      : Boolean(format.variantId))
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -89,46 +103,27 @@ export default function ProductModal({
   }
 
   /* What was picked, in words: "Men's tee, L", or just "L" on an item that
-     is its own only format. It names the order in Stripe and on Venmo, and
-     the restock request. */
+     is its own only format. It names the button and the restock request. */
   const picked = [choosing && format.label, size].filter(Boolean).join(", ")
-
-  const order: Order = {
-    amount: format.price,
-    note: picked ? `${item.item} — ${picked}` : item.item,
-    purpose: "shop",
-    mail: format.mail ?? "parcel",
-    item: item.id,
-    format: format.id,
-    ...(size && { size }),
-  }
 
   async function buy() {
     if (sizeMissing()) return
+    if (!variantId) {
+      toast.error("That one isn't on sale right now.")
+      return
+    }
 
-    /* Navigating away, so the button keeps saying so. */
+    /* A full navigation, not a new tab: Shopify's checkout takes it from
+       here. Navigating away, so the button keeps saying so. */
     setSending(true)
     try {
-      await payVia("card", order)
+      window.location.href = await shopifyCheckoutUrl(variantId)
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Could not reach Stripe.",
+        error instanceof Error ? error.message : "Couldn't start checkout.",
       )
       setSending(false)
     }
-  }
-
-  /* No await ahead of payVia here: the Venmo tab has to open inside the click
-     or the browser blocks it. Stripe adds shipping on its own page; Venmo has
-     none, so it rides on the amount. */
-  function payWithVenmo() {
-    if (sizeMissing()) return
-    payVia("venmo", {
-      ...order,
-      amount: order.amount + shipping,
-      note: `${order.note} + shipping`,
-    })
-    toast.success("Venmo is open — DM your shipping address to finish.")
   }
 
   return (
@@ -170,14 +165,14 @@ export default function ProductModal({
           <span className="numeric-amount text-tertiary">
             {formatPrice(format.price)}
           </span>
-          <span className="label-mono text-on-surface-variant">
-            + {formatPrice(shipping)} shipping
-          </span>
+          <span className="label-mono text-on-surface-variant">+ shipping</span>
           {item.stock && (
             <span className="label-mono text-on-surface-variant">
               {soldOut
                 ? `All ${item.stock.of} gone`
-                : `${item.stock.left} of ${item.stock.of} left`}
+                : item.stock.left !== undefined
+                  ? `${item.stock.left} of ${item.stock.of} left`
+                  : `A run of ${item.stock.of}`}
             </span>
           )}
         </div>
@@ -253,26 +248,16 @@ export default function ProductModal({
               className="mt-5"
               icon={CreditCard}
               onClick={buy}
-              disabled={sending}
+              disabled={sending || !onSale}
             >
               {sending
-                ? "Opening Stripe…"
-                : `Buy${picked ? ` ${picked}` : ""} — ${formatPrice(format.price)}`}
+                ? "Opening checkout…"
+                : !onSale
+                  ? formatSoldOut(format)
+                    ? `${format.label} is sold out`
+                    : "Not on sale yet"
+                  : `Buy${picked ? ` ${picked}` : ""} — ${formatPrice(format.price)}`}
             </Button>
-            {(SHOP_CARD_HINT || item.ships) && (
-              <p className="body-xs mt-2 text-center text-on-surface-variant">
-                {SHOP_CARD_HINT && <>{CARD_HINT} US shipping only.</>}
-                {SHOP_CARD_HINT && item.ships && <br />}
-                {item.ships}
-              </p>
-            )}
-
-            <div className="mt-2">
-              <VenmoLink handle={VENMO_HANDLE} onClick={payWithVenmo} />
-              <p className="body-xs mt-1 text-center text-on-surface-variant">
-                Includes shipping. DM your address after.
-              </p>
-            </div>
           </>
         )}
 
@@ -310,8 +295,8 @@ function RestockAlert({
   const [sent, setSent] = useState(false)
   const [sending, setSending] = useState(false)
   const [trap, setTrap] = useState("")
-  const anySizeGone = formatsOf(item).some((format) =>
-    format.sizes?.some((s) => s.soldOut),
+  const anySizeGone = formatsOf(item).some(
+    (format) => formatSoldOut(format) || format.sizes?.some((s) => s.soldOut),
   )
 
   /* Only worth offering when something is, or could be, gone. */

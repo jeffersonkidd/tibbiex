@@ -21,7 +21,7 @@ sits in the same place as the tool it teaches.
 | 1   | [Your Studio](01-your-studio.md)                                   | `/dashboard`, the door and the module strip    | Open it on every device you post from    | Ready                 |
 | 2   | [Every post gets its own link](02-every-post-gets-its-own-link.md) | Link Maker                                     | Never paste the bare address             | Ready                 |
 | 3   | [Change your face](03-change-your-face.md)                         | Avatar                                         | One face, everywhere, changed on purpose | Ready                 |
-| 4   | [Run your shop](04-run-your-shop.md)                               | Products                                       | The shop tells the truth                 | Ready                 |
+| 4   | [Run your shop](04-run-your-shop.md)                               | Products, then Shopify                         | The shop tells the truth                 | Ready                 |
 | 5   | Read your numbers                                                  | _Where they came from_ (Studio module 4)       | Do more of what worked, where it worked  | Waits on module 4     |
 | 6   | Post the work, not a pitch                                         | Picture postcards and cards from the JKidd kit | Document real things; never invent       | Waits on the kit      |
 | 7   | A week of posting                                                  | All of the above                               | A routine you can keep                   | Written after 5 and 6 |

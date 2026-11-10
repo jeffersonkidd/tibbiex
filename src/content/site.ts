@@ -29,3 +29,10 @@ export const MEDIA_URL = "https://media.tibbiex.studio"
    wherever it is stored. Until one is uploaded it answers 404, and the
    profile card falls back to the portrait bundled with the app. */
 export const AVATAR_URL = "/api/avatar"
+
+/* The Shopify store the shop is run from -- the source of truth for every
+   product, price and stock count. Its permanent myshopify address, which the
+   Storefront API answers on whatever storefront domain is attached later.
+   The public token that goes with it is VITE_SHOPIFY_STOREFRONT_TOKEN
+   (lib/shopify.ts). */
+export const SHOPIFY_DOMAIN = "tibbiex.myshopify.com"

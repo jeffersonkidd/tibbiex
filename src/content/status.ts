@@ -13,7 +13,6 @@ import { FUND, SUPPORTERS } from "./fund"
 import { LINKS } from "./links"
 import { SERVICES } from "./offerings"
 import { DISCOGRAPHY } from "./music"
-import { SHIPPING } from "./payments"
 import { PORTFOLIO } from "./portfolio"
 import { PROFILE } from "./profile"
 import { isTabEnabled } from "./tabs"
@@ -92,14 +91,6 @@ export function collectStaged(): StagedEntry[] {
     entries.push({
       area: "Fund",
       label: "Podcast picture — placeholder drawing",
-    })
-  }
-
-  if (SHIPPING.staged) {
-    const { letter, flat, parcel } = SHIPPING.rates
-    entries.push({
-      area: "Shipping",
-      label: `Flat rates: letter $${letter}, flat $${flat}, parcel $${parcel} (mirrored in api/checkout.ts)`,
     })
   }
 

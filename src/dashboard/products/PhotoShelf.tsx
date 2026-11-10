@@ -4,13 +4,14 @@ import { toast } from "sonner"
 
 import { StudioError } from "../passcode"
 import type { Write } from "../passcode"
-import { shrinkPhoto, uploadPhoto } from "./products"
+import { shrinkPhoto, uploadPhoto } from "./sheet"
 
-/* An item's photos: the first is the cover -- the shop card, the polaroid,
-   the first thing the product modal opens on -- and the rest are the
-   thumbnails under it. Photos go up the moment they are picked, dropped or
-   pasted, shrunk in the browser first; nothing is on the site until the
-   catalogue that names them is published. */
+/* A product's photos, in Image position order: the first is the one Shopify
+   shows first. By the sheet's convention a format's own mockup comes first
+   and the design's artwork second, which is the artwork the site uses as
+   the design's cover. Photos go up the moment they are picked, dropped or
+   pasted, shrunk in the browser first, and their public links go into the
+   sheet's Product image URL column for Shopify to fetch at import. */
 export default function PhotoShelf({
   gallery,
   onChange,

@@ -66,8 +66,8 @@ src/
     MagicDust          the spark canvas, mounted once in App
   content/           ALL site content, one file per subject (see below)
   lib/               pure logic, no JSX
-    shop.ts            the live shop: bundled, then cached, then /api/products
-    catalog.ts         the catalogue's wire shape, to and from ShopItem
+    shop.ts            the live shop: bundled, then cached, then Shopify
+    shopify.ts         the Storefront API: products into designs, the checkout
     payments.ts        payVia() for either rail, the Stripe call, the return toast
     messages.ts        sendMessage() and subscribe(), the two mail endpoints
     email.ts           the address check
@@ -93,7 +93,7 @@ api/
   contact.ts         sends the booking and restock messages via Resend
   subscribe.ts       adds a newsletter contact to the Resend audience
   avatar.ts          the studio's avatar: serves it, swaps it in Vercel Blob
-  products.ts        the shop catalogue and its photos, in Vercel Blob
+  products.ts        the studio's Shopify import sheet and its photos, in Blob
 public/              files needing a stable, unhashed URL: og.jpg, the portrait
                      the structured data points at, icons, robots, sitemap
 ```
@@ -120,8 +120,10 @@ live site still sends the passcode with its write, and that endpoint checks it.
 Getting past the door sets the `?no-analytics` flag in that browser, since its
 only visitor is the owner. Guessing is capped by a Vercel Firewall rule,
 **Studio passcode guesses** (set in the dashboard, not in this repo): 30
-requests per 10 minutes per IP across `/api/login` and every non-GET to
-`/api/products` and `/api/avatar`, answered with a 429 the studio explains. A
+requests per 10 minutes per IP across `/api/login`, every request to
+`/api/products` (its GET checks the passcode too, since the import sheet holds
+cost prices) and every non-GET to `/api/avatar`, answered with a 429 the
+studio explains. A
 spread-out attacker gets more IPs, so make the passcode long too (four random
 words or more).
 
@@ -137,12 +139,13 @@ src/dashboard/
   avatar/                Module 02, Avatar
     AvatarMaker.tsx        drop, paste or pick a photo; frame it in the ring
     avatar.ts              the crop maths, the image it renders, the API calls
-  products/              Module 03, Products
-    ProductsDesk.tsx       every product by shelf; reorder; the publish bar
-    ProductEditor.tsx      one product: photos, words, shelf, formats, run
-    FormatCard.tsx         one format: price, postage, sizes, photo, details
-    PhotoShelf.tsx         upload, order and choose the cover
-    products.ts            the API calls, presets, checks, draft, photo shrink
+  products/              Module 03, Products: Shopify's import sheet
+    SheetDesk.tsx          the products by design; download, upload; the save bar
+    SheetProduct.tsx       one product, field by field, under the CSV's names
+    SheetGrid.tsx          the whole sheet as rows and columns
+    PhotoShelf.tsx         upload and order a product's photos
+    sheet.ts               the columns, CSV in and out, checks, first fill,
+                           the API calls, draft, photo shrink
 src/content/channels.ts  the profiles, their UTM source and where to paste
 src/lib/utm.ts           buildLink() and slug()
 src/styles/studio.css    loaded by the studio only
@@ -161,35 +164,41 @@ Blob. The profile card asks `/api/avatar` for its image and falls back to the
 bundled portrait while none is uploaded (and under `pnpm dev`). A new face
 reaches visitors within a minute; **Back to the original** deletes the upload.
 
-**Products** is the shop, run without a deploy. Every product is listed on
-its shelf (each band, then Art) in the order the Buy tab shows it, with
-arrows to reorder. Opening one edits everything the product modal shows:
-photos (the first is the cover; drop, paste or pick, shrunk in the browser
-and uploaded straight away), name, description, photo description, shelf,
-card shape, formats (start from Sticker, Patch, Men's tee, Women's tee or
-something else; each with its price, postage class, sizes, the photo to turn
-to and what's in the box), a limited run, a shipping note, and whether it is
-showing or hidden. A tap on a size marks it sold out. The site's own shop
-card sits at the top, drawn from the edit.
+**Products** is how products get into Shopify, which runs the shop and is
+its source of truth. The site reads products, prices and stock from the
+Storefront API (`src/lib/shopify.ts`) and sells through Shopify's checkout;
+nothing in the Studio reaches a visitor until it is imported into Shopify.
 
-Edits pile up as a draft — kept in the browser, so a closed tab loses
-nothing — and **Publish to the shop** puts the whole catalogue live through
-`api/products.ts`, which validates it field by field and stores it in Vercel
-Blob. Visitors see it within a minute. A publish made on an older copy than
-what's live (two devices) is refused rather than undoing the other one. The
-last five publishes are kept: deleting the newest `shop/catalog/` file in the
-Blob dashboard rolls the shop back one.
+The module keeps Shopify's own product CSV, column for column as Shopify's
+template has it, so it can be filled in on a phone and saved between visits.
+Products are listed under their `design:` tag; opening one edits it field by
+field, every label the CSV's own column name (Title, URL handle, Description,
+Vendor, Type, Tags, the options and each variant's value, SKU, price and
+inventory quantity, Status, Published on online store, the SEO fields), with
+photos dropped, pasted or picked, shrunk in the browser and uploaded to Blob
+for their public **Product image URL**. **Sheet** shows the whole grid for the
+columns the product page leaves out. Each product lists what would stop
+Shopify's importer, and **Download CSV** waits until there is nothing on any
+of those lists; the file goes into Shopify under **Products → Import**.
+**Upload a CSV** replaces the sheet from a file: the template, a Shopify
+export (either generation of its column names) or an earlier download.
 
-Until the first publish the site shows the catalogue bundled in
-`content/shop.ts`, and the studio starts from it, so that first publish
-carries every product over. From then on the published catalogue is the
-truth and `content/shop.ts` is only the fallback (under `pnpm dev`, or with no
-Blob store).
+Edits pile up as a draft in the browser, and **Save the sheet** stores the
+whole sheet through `api/products.ts`, which checks it cell by cell and keeps
+it in Vercel Blob. A save made on an older copy than the saved one (two
+devices) is refused rather than undoing the other one; the last five saves are
+kept under `shop/sheet/`.
 
-Shop prices are set server-side once a catalogue is published:
-`api/checkout.ts` reads it and prices the order by item, format and size,
-refusing a hidden item, a sold-out run or a sold-out size. The amount the
-browser sends is ignored.
+The first sheet is filled from what the site already sold: the catalogue the
+Studio used to publish (`shop/catalog/`), if there is one, otherwise the one
+bundled in `content/shop.ts`. It is written as Shopify wants it, **one product
+per format** ("Vampire Cats Sticker", "Vampire Cats Men's Tee"), because Shopify
+files a product, not a variant, under a category and a type. Each carries
+`design:`, `line:`, `band:`, `fit:` and `run:` tags, its format's mockup as
+photo 1 and the design's artwork as photo 2, and the site gathers products
+sharing a `design:` tag back into one piece with one modal. A Shopify
+collection whose handle is the design's tag, if there is one, names it,
+describes it and gives it its cover.
 
 Modules still to come, roughly in order:
 
@@ -205,14 +214,19 @@ Modules still to come, roughly in order:
 
 ## Paying
 
-`FundPanel`, `ReadingMenu` and `ProductModal` each build one order (amount,
-note, purpose) and hand it to `payVia()`. The site never touches the money: it
-composes hand-offs.
+The shop sells through **Shopify**. `ProductModal` names the one variant
+picked, `lib/shopify.ts` makes a one-line cart with the Storefront API, and the
+buyer goes to Shopify's checkout, which prices it, adds shipping and tax, takes
+the address and counts the stock down. There is no Venmo on a product: a Venmo
+sale would never reach Shopify, so its stock and orders would stop being true.
 
-Card is the rail each panel is built around — its form, its button and the
+Everything else that takes money — `FundPanel` and the session deposits —
+builds one order (amount, note, purpose) and hands it to `payVia()`. The site
+never touches the money: it composes hand-offs.
+
+Card is the rail those panels are built around — its form, its button and the
 Stripe Checkout Session `api/checkout.ts` opens — because it is the one that
-returns the payer to the site, mails a receipt and can collect a shipping
-address. Venmo is a link under the button (`VenmoLink`), not half a toggle:
+returns the payer to the site and mails a receipt. Venmo is a link under the button (`VenmoLink`), not half a toggle:
 nothing comes back from it, the note is public, and on desktop it often ignores
 the amount in the URL.
 
@@ -245,8 +259,9 @@ anything that becomes a mail header, and cap every field's length.
 
 Everything the site _says_ lives in `src/content/` as typed data, one file per
 subject: `profile.ts` (the card, socials, tags), `links.ts`, `music.ts`,
-`shows.ts`, `portfolio.ts`, `shop.ts` (the fallback catalogue — the live one
-is edited in the studio), `fund.ts`, `newsletter.ts`,
+`shows.ts`, `portfolio.ts`, `shop.ts` (the formats, banners and shelves; the
+products themselves are in Shopify, and the catalogue here is only the
+fallback), `fund.ts`, `newsletter.ts`,
 `readings.ts`, `payments.ts` (the Venmo URL), `tabs.ts` and `site.ts` (address,
 inbox, Venmo handle). Changing what the site shows is an edit there, not to any
 JSX.
@@ -279,8 +294,14 @@ version set by `engines.node` in `package.json` (24.x).
 
 Environment variables in the Vercel project:
 
-- `STRIPE_SECRET_KEY` — card checkout for the fund, reading deposits and shop
-  orders. Set by hand. Without it the endpoint returns "Card payments aren't
+- `VITE_SHOPIFY_STOREFRONT_TOKEN` — the Storefront API's public token for
+  `tibbiex.myshopify.com` (`SHOPIFY_DOMAIN` in `content/site.ts`), from the
+  Headless channel in the Shopify admin, with product, collection and cart
+  access. Public by design: Vite builds it into the page. Without it the shop
+  shows the catalogue bundled with the app and nothing can be bought. Like
+  every `VITE_` variable it is read at build time, so redeploy after setting it.
+- `STRIPE_SECRET_KEY` — card checkout for the fund and session deposits. Set by
+  hand. Without it the endpoint returns "Card payments aren't
   configured yet" and the Venmo links still work.
 - `RESEND_API_KEY` — from the Resend dashboard. Without it the forms return
   "Messages aren't configured yet".
@@ -289,11 +310,11 @@ Environment variables in the Vercel project:
   through Cloudflare Email Routing, and sending as it invites a loop.
 - `DASHBOARD_PASSWORD` — what the studio asks for before it changes the live
   site. Set by hand, and make it long: it is the only gate on the avatar
-  upload and the shop. Without it every studio write is refused.
+  upload and the import sheet. Without it every studio write is refused.
 - `BLOB_READ_WRITE_TOKEN` — set by Vercel when a Blob store is connected to the
   project (Storage → Create → Blob). Without it the profile card keeps the
-  bundled portrait, the shop keeps the bundled catalogue, and studio uploads
-  and publishes say storage isn't configured yet.
+  bundled portrait, and studio uploads and saves say storage isn't configured
+  yet.
 - `RESEND_AUDIENCE_ID` — the newsletter audience, set by hand. Without it the
   sign-up returns "The list isn't configured yet".
 

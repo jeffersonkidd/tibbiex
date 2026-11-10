@@ -9,14 +9,14 @@ import AvatarMaker from "./avatar/AvatarMaker"
 import LinkMaker from "./links/LinkMaker"
 import Login from "./Login"
 import { checkPasscode, savePasscode, savedPasscode } from "./passcode"
-import ProductsDesk from "./products/ProductsDesk"
+import SheetDesk from "./products/SheetDesk"
 
 /* The modules, in the order they were built. The id is the URL hash, so
    /dashboard#avatar opens straight onto that module and a bookmark keeps it. */
 const MODULES = [
   { id: "links", label: "Link Maker", Module: LinkMaker },
   { id: "avatar", label: "Avatar", Module: AvatarMaker },
-  { id: "products", label: "Products", Module: ProductsDesk },
+  { id: "products", label: "Products", Module: SheetDesk },
 ] as const
 
 type ModuleId = (typeof MODULES)[number]["id"]

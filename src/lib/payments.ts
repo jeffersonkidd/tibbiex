@@ -2,25 +2,19 @@ import { useEffect } from "react"
 import { toast } from "sonner"
 
 import { venmoPayUrl } from "../content/payments"
-import type { Mail, Rail } from "../content/payments"
+import type { Rail } from "../content/payments"
 
 /* What a payment is for. The server maps each one to the name, receipt
    wording and metadata Stripe shows, so a client can pick a purpose but never
-   write the line item itself. Keep in step with PURPOSES in api/checkout.ts. */
-export type CheckoutPurpose = "fund" | "chat" | "reading" | "lesson" | "shop"
+   write the line item itself. Keep in step with PURPOSES in api/checkout.ts.
+   The shop is not here: products are bought through Shopify's checkout
+   (lib/shopify.ts), which owns their prices, shipping and stock. */
+export type CheckoutPurpose = "fund" | "chat" | "reading" | "lesson"
 
 export type Order = {
   amount: number
   note: string
   purpose: CheckoutPurpose
-  /* Shop orders only: which shipping rate Stripe adds on top. */
-  mail?: Mail
-  /* Shop orders only: what is being bought, by id. Once a catalogue is
-     published from the studio, api/checkout.ts prices the order from these
-     and ignores amount, note and mail. */
-  item?: string
-  format?: string
-  size?: string
 }
 
 /* Client half of the card rail. Asks the serverless function (api/checkout.ts)

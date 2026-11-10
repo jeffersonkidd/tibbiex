@@ -29,16 +29,3 @@ export function venmoPayUrl(amount: number, note: string) {
 /* The fine print under a paying panel's button. The Venmo half of it is on
    the link itself, which names the handle. */
 export const CARD_HINT = "Card payments are processed by Stripe."
-
-/* How a shop order travels, in USPS's own classes: a letter (a sticker), a
-   flat -- a large envelope, for something too thick to post as a letter (a
-   patch) -- or a parcel (a tee, a record). Each shop format names one. */
-export type Mail = "letter" | "flat" | "parcel"
-
-/* Every shop price is plus flat US shipping, in whole dollars, at the rates
-   the client set: $2 a sticker, $3 a patch, $8 a tee. The site ships
-   domestically only. api/checkout.ts keeps its own copy in SHIPPING_RATES,
-   which is what Stripe charges: change both. */
-export const SHIPPING: { rates: Record<Mail, number>; staged?: true } = {
-  rates: { letter: 2, flat: 3, parcel: 8 },
-}

@@ -51,6 +51,13 @@ export type Category = {
      index.html and any feed built later. Services have none: Google's
      product list does not cover someone's time. */
   google?: string
+  /* A product leaf's place in Shopify: the Standard Product Taxonomy path
+     that goes in the import sheet's "Product category" column (checked
+     against Shopify/product-taxonomy, dist/en/categories.txt), and the
+     "Type" a product on this leaf carries -- which is what the site reads
+     back to file a Shopify product. Shopify's tree is fixed and drives tax
+     and channel feeds; ours stays short and drives the shelves. */
+  shopify?: { category: string; type: string }
 }
 
 export const CATEGORIES: Category[] = [
@@ -66,6 +73,10 @@ export const CATEGORIES: Category[] = [
     title: "Tees",
     parent: "apparel",
     google: "Apparel & Accessories > Clothing > Shirts & Tops",
+    shopify: {
+      category: "Apparel & Accessories > Clothing > Clothing Tops > T-Shirts",
+      type: "T-Shirt",
+    },
   },
   {
     id: "patches",
@@ -73,6 +84,13 @@ export const CATEGORIES: Category[] = [
     parent: "products",
     google:
       "Arts & Entertainment > Hobbies & Creative Arts > Arts & Crafts > Art & Crafting Materials > Embellishments & Trims > Appliques & Patches",
+    /* A sew-on band patch is a clothing accessory to Shopify, not a
+       crafting supply, though Google files it under crafts. */
+    shopify: {
+      category:
+        "Apparel & Accessories > Clothing Accessories > Clothing Patches",
+      type: "Patch",
+    },
   },
   {
     id: "stickers",
@@ -80,14 +98,26 @@ export const CATEGORIES: Category[] = [
     parent: "products",
     google:
       "Arts & Entertainment > Hobbies & Creative Arts > Arts & Crafts > Art & Crafting Materials > Embellishments & Trims > Decorative Stickers",
+    shopify: {
+      category:
+        "Arts & Entertainment > Hobbies & Creative Arts > Arts & Crafts > Art & Crafting Materials > Embellishments & Trims > Decorative Stickers",
+      type: "Sticker",
+    },
   },
   {
     id: "music",
     title: "Music",
     parent: "products",
     google: "Media > Music & Sound Recordings",
+    shopify: { category: "Media > Music & Sound Recordings", type: "Record" },
   },
-  { id: "bundles", title: "Bundles", parent: "products" },
+  /* A bundle is several things, so Shopify gets no category for it. */
+  {
+    id: "bundles",
+    title: "Bundles",
+    parent: "products",
+    shopify: { category: "", type: "Bundle" },
+  },
   { id: "services", title: "Services" },
   { id: "sessions", title: "Sessions", parent: "services" },
   { id: "tarot", title: "Tarot Readings", parent: "sessions" },
@@ -113,6 +143,23 @@ export function isProductCategory(id: unknown): id is ProductCategory {
 
 export const categoryById = (id: CategoryId) =>
   CATEGORIES.find((entry) => entry.id === id)!
+
+/* The leaf a Shopify product sits on, read from its Type. Case and a
+   trailing plural are forgiven ("t-shirts" is a T-Shirt); a Type the shop
+   has never heard of files nowhere. */
+export function categoryOfType(type: string): ProductCategory | undefined {
+  const singular = (value: string) =>
+    value
+      .trim()
+      .toLowerCase()
+      .replace(/(ch|sh|x)es$/, "$1")
+      .replace(/s$/, "")
+  const wanted = singular(type)
+  if (!wanted) return undefined
+  return PRODUCT_CATEGORIES.find(
+    (entry) => entry.shopify && singular(entry.shopify.type) === wanted,
+  )?.id
+}
 
 /* A leaf and every branch above it, root first: Products › Apparel › Tees. */
 export function pathOf(id: CategoryId): Category[] {
@@ -166,11 +213,20 @@ export function fitOf(format: Fileable): Fit | undefined {
 
 /* --- Tags ---------------------------------------------------------------- */
 
-/* The facets, each a prefix: `band:gash`, `fit:womens`. */
+/* The facets, each a prefix: `band:gash`, `fit:womens`.
+
+   They are Shopify tags as well. The import sheet writes `line:`, `band:`,
+   `design:`, `fit:` and `run:` into each product's Tags column, and the
+   site reads them back off the Storefront API to rebuild what it shows:
+   `design:` is what gathers one design's products (a sticker, a patch, two
+   tees) into one modal. `category:` comes from the product's Type and
+   `status:` from what is in stock, so those two are never typed into
+   Shopify. */
 export type Facet =
   | "line"
   | "band"
-  | "collection"
+  | "design"
+  | "run"
   | "category"
   | "fit"
   | "status"
@@ -186,7 +242,8 @@ export const FACETS: { id: Facet; title: string; from: string }[] = [
     title: "Band",
     from: "the band it is for, or whose mark it bears",
   },
-  { id: "collection", title: "Collection", from: "the design's name" },
+  { id: "design", title: "Design", from: "the design it is a format of" },
+  { id: "run", title: "Run", from: "how many were made, on a limited run" },
   { id: "category", title: "Category", from: "each format's kind" },
   { id: "fit", title: "Fit", from: "each tee's cut" },
   { id: "status", title: "Status", from: "the run, the sizes, Hidden" },
@@ -207,37 +264,44 @@ export const slugOf = (name: string) =>
     .normalize("NFKD")
     .replace(/[̀-ͯ]/g, "")
     .toLowerCase()
+    /* An apostrophe joins rather than splits: "Men's Tee" is mens-tee. */
+    .replace(/['’]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "")
 
 /* Everything an item can be filtered by. `formats` and `shelf` are passed
    in rather than read through shop.ts's helpers, so this file stays free of
-   runtime imports from the shop and the studio can call it on its own
-   wire shape too. */
+   runtime imports from the shop. */
 export function tagsOf(item: {
-  item: string
+  id: string
   band?: string
   shelf: "bands" | "art"
-  formats: (Fileable & { sizes?: { soldOut?: true }[] })[]
-  stock?: { left: number }
+  formats: (Fileable & {
+    soldOut?: true
+    sizes?: { soldOut?: true }[]
+  })[]
+  stock?: { of: number; left?: number }
   hidden?: true
   staged?: true
 }): Tag[] {
   const tags: Tag[] = [tag("line", item.shelf === "art" ? "art" : "band")]
   if (item.band) tags.push(tag("band", item.band))
-  const collection = slugOf(item.item)
-  if (collection) tags.push(tag("collection", collection))
+  tags.push(tag("design", item.id))
   for (const format of item.formats) {
     const category = categoryOf(format)
     if (category) tags.push(tag("category", category))
     const fit = fitOf(format)
     if (fit) tags.push(tag("fit", fit))
   }
-  if (item.stock)
-    tags.push(tag("status", item.stock.left > 0 ? "limited" : "sold-out"))
-  const sizes = item.formats.flatMap((format) => format.sizes ?? [])
-  if (!item.stock && sizes.length && sizes.every((size) => size.soldOut))
-    tags.push(tag("status", "sold-out"))
+  const gone = (format: (typeof item.formats)[number]) =>
+    Boolean(format.soldOut) ||
+    Boolean(format.sizes?.length && format.sizes.every((size) => size.soldOut))
+  const soldOut =
+    item.stock?.left === 0 ||
+    (item.formats.length > 0 && item.formats.every(gone))
+  if (item.stock) tags.push(tag("run", String(item.stock.of)))
+  if (soldOut) tags.push(tag("status", "sold-out"))
+  else if (item.stock) tags.push(tag("status", "limited"))
   if (item.staged) tags.push(tag("status", "staged"))
   if (item.hidden) tags.push(tag("status", "hidden"))
   return [...new Set(tags)]
