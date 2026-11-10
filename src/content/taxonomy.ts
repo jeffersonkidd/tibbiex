@@ -255,6 +255,42 @@ export function serviceTagsOf(service: Service): Tag[] {
   ]
 }
 
+/* The pills a shopper can narrow the Buy tab by, each a test on one card's
+   tags (one format of one design). Only the facets a buyer cares about are
+   here -- line, band and category are already the shelves and strips.
+
+   A fit pill lets through anything that has no fit at all, so picking
+   Women's on a collection drops the men's tee and keeps the sticker; and a
+   unisex tee answers to both. Within a group one pill is on at a time. */
+export type ShopFilter = {
+  id: string
+  group: "fit" | "status"
+  label: string
+  match: (tags: Tag[]) => boolean
+}
+
+const fitMatch = (fit: Fit) => (tags: Tag[]) =>
+  !tags.some((t) => t.startsWith("fit:")) ||
+  tags.includes(tag("fit", fit)) ||
+  tags.includes(tag("fit", "unisex"))
+
+export const SHOP_FILTERS: ShopFilter[] = [
+  { id: "mens", group: "fit", label: "Men’s", match: fitMatch("mens") },
+  { id: "womens", group: "fit", label: "Women’s", match: fitMatch("womens") },
+  {
+    id: "in-stock",
+    group: "status",
+    label: "In stock",
+    match: (tags) => !tags.includes(tag("status", "sold-out")),
+  },
+  {
+    id: "limited",
+    group: "status",
+    label: "Limited run",
+    match: (tags) => tags.includes(tag("status", "limited")),
+  },
+]
+
 /* Whether an item's tags carry every tag asked for: the one query every
    filtered view is. */
 export const hasTags = (tags: Tag[], wanted: Tag[]) =>

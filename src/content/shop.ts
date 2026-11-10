@@ -359,6 +359,11 @@ export function shelfOf(item: ShopItem): "bands" | "art" {
 export const shopTagsOf = (item: ShopItem): Tag[] =>
   tagsOf({ ...item, shelf: shelfOf(item), formats: formatsOf(item) })
 
+/* One card's tags: the item's, narrowed to a single format, so a men's tee
+   card is not also tagged women's. What the Buy tab's filter pills test. */
+export const cardTagsOf = (item: ShopItem, format: ShopFormat): Tag[] =>
+  tagsOf({ ...item, shelf: shelfOf(item), formats: [format] })
+
 /* Whether an item has a format on one of these category leaves. */
 export const sellsAny = (item: ShopItem, categories: ProductCategory[]) =>
   formatsOf(item).some((format) => {

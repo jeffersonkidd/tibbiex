@@ -5,12 +5,17 @@ import {
   COLLECTION_BANNERS,
   FORMAT_TAGS,
   SHOP_SHELVES,
+  cardTagsOf,
   formatsOf,
   sellsAny,
 } from "../content/shop"
-import type { ShopItem, ShopShelf } from "../content/shop"
+import type { ShopFormat, ShopItem, ShopShelf } from "../content/shop"
 import { SERVICES } from "../content/offerings"
-import { PRODUCT_CATEGORIES, categoryOf } from "../content/taxonomy"
+import {
+  PRODUCT_CATEGORIES,
+  SHOP_FILTERS,
+  categoryOf,
+} from "../content/taxonomy"
 import type { ProductCategory } from "../content/taxonomy"
 import type { Service } from "../content/offerings"
 import { useShop } from "../lib/shop"
@@ -54,6 +59,43 @@ export default function BuyTab({
     setView("Collections")
     onPickChange(band)
   }
+
+  /* The filter pills that are on, kept against the view they were picked
+     in: moving to another shelf, tab or kind starts unfiltered. */
+  const scope = `${shelf}|${pick}|${view}`
+  const [filter, setFilter] = useState({ scope, ids: [] as string[] })
+  const active = SHOP_FILTERS.filter(
+    (entry) => filter.scope === scope && filter.ids.includes(entry.id),
+  )
+  const passes = (item: ShopItem, format: ShopFormat) => {
+    const tags = cardTagsOf(item, format)
+    return active.every((entry) => entry.match(tags))
+  }
+  function toggle(id: string) {
+    const picked = SHOP_FILTERS.find((entry) => entry.id === id)!
+    const ids = active
+      .filter((entry) => entry.group !== picked.group)
+      .map((entry) => entry.id)
+    setFilter({
+      scope,
+      ids: active.some((entry) => entry.id === id) ? ids : [...ids, id],
+    })
+  }
+  const filters = (items: ShopItem[], categories?: ProductCategory[]) => (
+    <TagFilters
+      cards={items.flatMap((item) =>
+        formatsOf(item)
+          .filter((format) => {
+            if (!categories) return true
+            const category = categoryOf(format)
+            return category !== undefined && categories.includes(category)
+          })
+          .map((format) => ({ item, format })),
+      )}
+      active={active.map((entry) => entry.id)}
+      onToggle={toggle}
+    />
+  )
 
   /* What each shelf's strip holds: an id and a title per tab. */
   const kindOf = (id: ShopShelf) => FORMAT_TAGS.find((tag) => tag.shelf === id)
@@ -192,6 +234,7 @@ export default function BuyTab({
           ))}
         </div>
         {madeInHouse}
+        {filters(band.items, bandKind && [bandKind.category])}
         {bandKind ? (
           <>
             {kindBanner && (
@@ -200,11 +243,12 @@ export default function BuyTab({
             <KindCards
               items={band.items}
               categories={[bandKind.category]}
+              passes={passes}
               onOpen={onOpenProduct}
             />
           </>
         ) : (
-          <ShopGrid items={band.items} onOpen={onOpenProduct} />
+          <ShopGrid items={band.items} passes={passes} onOpen={onOpenProduct} />
         )}
       </>
     )
@@ -213,6 +257,8 @@ export default function BuyTab({
   const tabs = tabsOf(current.id)
   const tab = tabs.find((entry) => entry.id === pick) ?? tabs[0]
   const kind = kindOf(current.id)
+  const artItems = shop.art.filter((item) => item.id === tab.id)
+  const kindItems = sources.find((source) => source.id === tab.id)?.items ?? []
 
   return (
     <>
@@ -231,6 +277,9 @@ export default function BuyTab({
 
       {current.id !== "sessions" && madeInHouse}
 
+      {current.id === "art" && filters(artItems)}
+      {kind && filters(kindItems, [kind.category])}
+
       {current.id === "sessions" &&
         SERVICES.filter((service) => service.id === tab.id).map((service) => (
           <ShelfTile
@@ -244,18 +293,16 @@ export default function BuyTab({
         ))}
 
       {current.id === "art" && (
-        <ShopGrid
-          items={shop.art.filter((item) => item.id === tab.id)}
-          onOpen={onOpenProduct}
-        />
+        <ShopGrid items={artItems} passes={passes} onOpen={onOpenProduct} />
       )}
 
       {/* A kind of item: every format of that kind from the picked band
           (or Art), a card each, men's and women's tees apart. */}
       {kind && (
         <KindCards
-          items={sources.find((source) => source.id === tab.id)?.items ?? []}
+          items={kindItems}
           categories={[kind.category]}
+          passes={passes}
           onOpen={onOpenProduct}
         />
       )}
@@ -288,11 +335,13 @@ function KindCards({
   items,
   categories,
   rest = false,
+  passes = () => true,
   onOpen,
 }: {
   items: ShopItem[]
   categories: ProductCategory[]
   rest?: boolean
+  passes?: (item: ShopItem, format: ShopFormat) => boolean
   onOpen: (item: ShopItem, format?: string) => void
 }) {
   const rank = (category: ProductCategory | undefined) =>
@@ -301,7 +350,9 @@ function KindCards({
     <div className="grid grid-cols-2 gap-stack">
       {items.flatMap((item) =>
         formatsOf(item)
-          .filter((format) => rank(categoryOf(format)) >= 0)
+          .filter(
+            (format) => rank(categoryOf(format)) >= 0 && passes(item, format),
+          )
           .sort((a, b) => rank(categoryOf(a)) - rank(categoryOf(b)))
           .map((format) => (
             <ShopCard
@@ -323,13 +374,20 @@ function KindCards({
    falls into an ordinary two-up grid of cards after them. */
 function ShopGrid({
   items,
+  passes,
   onOpen,
 }: {
   items: ShopItem[]
+  passes: (item: ShopItem, format: ShopFormat) => boolean
   onOpen: (item: ShopItem, format?: string) => void
 }) {
-  const bannered = items.filter((item) => COLLECTION_BANNERS[item.id])
-  const rest = items.filter((item) => !COLLECTION_BANNERS[item.id])
+  /* A filter drops a collection with no card left, rather than leaving its
+     banner over nothing. */
+  const shown = items.filter((item) =>
+    formatsOf(item).some((format) => passes(item, format)),
+  )
+  const bannered = shown.filter((item) => COLLECTION_BANNERS[item.id])
+  const rest = shown.filter((item) => !COLLECTION_BANNERS[item.id])
 
   return (
     <div className="flex flex-col gap-stack">
@@ -353,6 +411,7 @@ function ShopGrid({
               ),
             ]}
             rest
+            passes={passes}
             onOpen={onOpen}
           />
         </div>
@@ -364,6 +423,48 @@ function ShopGrid({
           ))}
         </div>
       )}
+    </div>
+  )
+}
+
+/* The filter pills over whatever cards a view holds (SHOP_FILTERS). A pill
+   shows only when it would change what is shown and still leave something:
+   Men's/Women's where both cuts are on the shelf, Limited run where some
+   but not all are. With no such pill the row is left off. An active pill
+   always stays, so it can be turned back off. */
+function TagFilters({
+  cards,
+  active,
+  onToggle,
+}: {
+  cards: { item: ShopItem; format: ShopFormat }[]
+  active: string[]
+  onToggle: (id: string) => void
+}) {
+  const tagged = cards.map(({ item, format }) => cardTagsOf(item, format))
+  const pills = SHOP_FILTERS.filter((entry) => {
+    if (active.includes(entry.id)) return true
+    const kept = tagged.filter((tags) => entry.match(tags)).length
+    return kept > 0 && kept < tagged.length
+  })
+  if (!pills.length) return null
+  return (
+    <div
+      role="group"
+      aria-label="Filter"
+      className="hide-scrollbar -mt-cluster flex items-center gap-glyph overflow-x-auto"
+    >
+      <span className="label-mono shrink-0 text-on-surface-variant">
+        Filter
+      </span>
+      {pills.map((entry) => (
+        <FilterPill
+          key={entry.id}
+          label={entry.label}
+          active={active.includes(entry.id)}
+          onClick={() => onToggle(entry.id)}
+        />
+      ))}
     </div>
   )
 }
