@@ -3,19 +3,12 @@
    every other list in this file they live as data: the panel below only lays
    them out, so changing what a session costs or includes is a data edit.
 
-   Amber, not brand red, stays the colour of this corner of the app.
+   Amber, not brand red, stays the colour of this corner of the app. The
+   other sessions' tiers, which share the shape, are in sessions.ts.
 --------------------------------------------------------------------------- */
-export type Reading = {
-  id: string
-  label: string
-  minutes: number
-  price: number
-  blurb: string
-  includes: string[]
-  featured?: boolean
-}
+import type { SessionTier } from "./sessions"
 
-export const READINGS: Reading[] = [
+export const READINGS: SessionTier[] = [
   {
     id: "half",
     label: "Half Hour",

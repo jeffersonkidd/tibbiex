@@ -61,8 +61,9 @@ them all away and goes back to what's live.
 ## Check it worked
 
 The bar at the bottom of the screen goes away, and the top line says **Live ·
-published** with how long ago. Wait a minute, then tap **View site** and open
-**Buy**.
+published** with how long ago. Wait a minute, then tap **View site**, open
+**Buy** and tap **Art**, or **Bands** and then the band, whichever shelf the
+piece is on.
 
 ## If something's off
 

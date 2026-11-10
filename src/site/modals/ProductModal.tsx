@@ -40,18 +40,30 @@ import OverlayBody from "../../ui/overlays/OverlayBody"
    for a run that is gone or a size that sold out. */
 export default function ProductModal({
   item,
+  formatId,
   onClose,
 }: {
   item: ShopItem
+  /* The format to open on, chosen from the shelf; the first by default. It
+     brings that format's mockup up front, as tapping its chip would. */
+  formatId?: string
   onClose: () => void
 }) {
   const photos = item.gallery?.length ? item.gallery : [item.image]
   const formats = formatsOf(item)
   const choosing = formats.length > 1
   const soldOut = item.stock?.left === 0
+  const opening = formats.find((entry) => entry.id === formatId) ?? formats[0]
+  /* Only a format chosen on the shelf moves the photo; opened plainly, the
+     modal starts on the artwork as it always has. */
+  const openingPhoto = formatId ? item.formatPhotos?.[opening.id] : undefined
 
-  const [photo, setPhoto] = useState(0)
-  const [format, setFormat] = useState<ShopFormat>(formats[0])
+  const [photo, setPhoto] = useState(
+    openingPhoto && photos.includes(openingPhoto)
+      ? photos.indexOf(openingPhoto)
+      : 0,
+  )
+  const [format, setFormat] = useState<ShopFormat>(opening)
   const [size, setSize] = useState<string | null>(null)
   const [sizeError, setSizeError] = useState(false)
   const [sending, setSending] = useState(false)

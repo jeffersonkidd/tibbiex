@@ -5,7 +5,7 @@ import Button from "../../ui/controls/Button"
 import Overlay from "../../ui/overlays/Overlay"
 import OverlayBody from "../../ui/overlays/OverlayBody"
 
-/* One record, opened from the Music tab or the rehearsal panel. */
+/* One record, opened from the Listen tab or the rehearsal panel. */
 export default function AlbumModal({
   album,
   onClose,

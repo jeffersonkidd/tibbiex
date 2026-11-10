@@ -11,6 +11,7 @@
    telling the truth end to end. */
 import { FUND, SUPPORTERS } from "./fund"
 import { LINKS } from "./links"
+import { SERVICES } from "./offerings"
 import { DISCOGRAPHY } from "./music"
 import { SHIPPING } from "./payments"
 import { PORTFOLIO } from "./portfolio"
@@ -54,6 +55,15 @@ export function collectStaged(): StagedEntry[] {
       entries.push({
         area: "Links",
         label: `${link.title} — placeholder picture`,
+      })
+    }
+  }
+
+  for (const service of SERVICES) {
+    if (service.staged) {
+      entries.push({
+        area: "Sessions",
+        label: `${service.title} — wording, lengths and prices`,
       })
     }
   }

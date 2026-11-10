@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react"
-import { Spade } from "lucide-react"
+import { GraduationCap, MessageCircle, Spade } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 import { toast } from "sonner"
 
-import { READINGS } from "../../content/readings"
+import type { Service } from "../../content/offerings"
 import { CARD_HINT } from "../../content/payments"
 import { VENMO_HANDLE } from "../../content/site"
 import { castMagicFrom } from "../../lib/magic-dust"
@@ -13,16 +14,33 @@ import VenmoLink from "../../ui/controls/VenmoLink"
 import Overlay from "../../ui/overlays/Overlay"
 import OverlayBody from "../../ui/overlays/OverlayBody"
 
-/* The menu. One tier is always selected -- the hour, since it is the one most
-   people want -- so the button at the bottom always has something to say. Like
-   the fund, this panel only composes a hand-off: it takes no money itself. The
-   button hands the deposit to Stripe; the link under it hands the same deposit
-   to Venmo. */
-export default function ReadingMenu({ onClose }: { onClose: () => void }) {
-  const [pickedId, setPickedId] = useState("hour")
+/* The glyph on each session's button. */
+const ICONS: Record<Service["id"], LucideIcon> = {
+  chat: MessageCircle,
+  tarot: Spade,
+  lessons: GraduationCap,
+}
+
+/* One menu for every session on the Sessions shelf -- chats, tarot readings,
+   lessons -- laid out from the service it is opened on. One tier is always
+   selected -- the featured one, since it is the one most people want -- so
+   the button at the bottom always has something to say. Like the fund, this
+   panel only composes a hand-off: it takes no money itself. The button hands
+   the deposit to Stripe; the link under it hands the same deposit to Venmo.
+   The tarot keeps its amber veil, which is that corner of the app's alone. */
+export default function SessionMenu({
+  service,
+  onClose,
+}: {
+  service: Service
+  onClose: () => void
+}) {
+  const { tiers } = service
+  const [pickedId, setPickedId] = useState(
+    () => (tiers.find((tier) => tier.featured) ?? tiers[0]).id,
+  )
   const [sending, setSending] = useState(false)
-  const picked =
-    READINGS.find((reading) => reading.id === pickedId) ?? READINGS[0]
+  const picked = tiers.find((tier) => tier.id === pickedId) ?? tiers[0]
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -39,8 +57,8 @@ export default function ReadingMenu({ onClose }: { onClose: () => void }) {
 
   const deposit = {
     amount: picked.price,
-    note: `${picked.minutes}-minute reading`,
-    purpose: "reading",
+    note: `${picked.minutes}-minute ${service.noun}`,
+    purpose: service.purpose,
   } as const
 
   /* The same hand-off the fund makes, carrying the tier as the note. */
@@ -68,39 +86,38 @@ export default function ReadingMenu({ onClose }: { onClose: () => void }) {
   return (
     <Overlay onClose={onClose} size="lg">
       <OverlayBody
-        eyebrow="Readings"
-        title="1-on-1 Tarot Readings"
-        sub={
-          "Twenty-two cards, cut in the dark, read live over FaceTime. Pick how long you want the table open."
-        }
-        className="arcana-veil"
+        eyebrow={service.eyebrow}
+        title={service.title}
+        sub={service.sub}
+        className={service.id === "tarot" ? "arcana-veil" : undefined}
       >
         <div className="mt-6 grid grid-cols-1 gap-part sm:grid-cols-3 sm:gap-stack">
-          {READINGS.map((reading, i) => (
+          {tiers.map((tier, i) => (
             <PriceCard
-              key={reading.id}
+              key={tier.id}
               index={i}
-              eyebrow={`${reading.minutes} min`}
-              name={reading.label}
-              amount={`$${reading.price}`}
+              eyebrow={`${tier.minutes} min`}
+              name={tier.label}
+              amount={`$${tier.price}`}
               unit="flat"
-              blurb={reading.blurb}
-              includes={reading.includes}
-              flag={reading.featured ? "Most asked for" : undefined}
-              pressed={reading.id === picked.id}
-              onClick={(e) => pick(reading.id, e)}
-              label={`${reading.label}, ${reading.minutes} minutes, $${reading.price}`}
+              blurb={tier.blurb}
+              includes={tier.includes}
+              flag={tier.featured ? "Most asked for" : undefined}
+              pressed={tier.id === picked.id}
+              onClick={(e) => pick(tier.id, e)}
+              label={`${tier.label}, ${tier.minutes} minutes, $${tier.price}`}
             />
           ))}
         </div>
 
-        <p className="body-xs mt-5 text-on-surface-variant">
-          The deposit holds the slot; we settle the time by DM and I call you
-          when it comes round. In person instead if you are local. No gods, no
-          gatekeeping — the deck has no authority over you.
-        </p>
+        <p className="body-xs mt-5 text-on-surface-variant">{service.terms}</p>
 
-        <Button className="mt-4" icon={Spade} onClick={hold} disabled={sending}>
+        <Button
+          className="mt-4"
+          icon={ICONS[service.id]}
+          onClick={hold}
+          disabled={sending}
+        >
           {sending
             ? "Opening Stripe…"
             : `Hold ${picked.minutes} minutes — $${picked.price}`}

@@ -1,5 +1,5 @@
-/* Stripe Checkout for every card payment on the site: the podcast fund, reading
- * deposits and shop orders.
+/* Stripe Checkout for every card payment on the site: the podcast fund, session
+ * deposits (chats, readings, lessons) and shop orders.
  *
  * The site is a static SPA, so this is the one piece of server it has: it takes
  * an amount, a note and a purpose from a panel, opens a Checkout Session and
@@ -37,7 +37,9 @@ const NOTE_MAX_LENGTH = 200
    src/lib/payments.ts. */
 const PURPOSES = {
   fund: { name: "Still Alive Podcast — Tibbie X", submitType: "donate" },
+  chat: { name: "1-on-1 Video Chat — deposit", submitType: "book" },
   reading: { name: "1-on-1 Tarot Reading — deposit", submitType: "book" },
+  lesson: { name: "1-on-1 Lesson — deposit", submitType: "book" },
   shop: { name: "Tibbie X Studio order", submitType: "pay" },
 } as const
 

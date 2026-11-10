@@ -7,7 +7,7 @@ import type { Mail, Rail } from "../content/payments"
 /* What a payment is for. The server maps each one to the name, receipt
    wording and metadata Stripe shows, so a client can pick a purpose but never
    write the line item itself. Keep in step with PURPOSES in api/checkout.ts. */
-export type CheckoutPurpose = "fund" | "reading" | "shop"
+export type CheckoutPurpose = "fund" | "chat" | "reading" | "lesson" | "shop"
 
 export type Order = {
   amount: number

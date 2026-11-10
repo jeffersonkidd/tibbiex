@@ -5,6 +5,8 @@ import { SpeedInsights } from "@vercel/speed-insights/react"
 
 import { REAGAN_YOUTH_LP } from "./content/music"
 import type { Album } from "./content/music"
+import { TAROT_SESSION } from "./content/offerings"
+import type { Service } from "./content/offerings"
 import { PORTFOLIO } from "./content/portfolio"
 import type { BandId, Photo } from "./content/portfolio"
 import { YOUTH_ANTHEMS_BUNDLE } from "./content/shop"
@@ -25,7 +27,7 @@ import TabStrip from "./site/TabStrip"
 import AlbumModal from "./site/modals/AlbumModal"
 import BookingModal from "./site/modals/BookingModal"
 import ProductModal from "./site/modals/ProductModal"
-import ReadingMenu from "./site/modals/ReadingMenu"
+import SessionMenu from "./site/modals/SessionMenu"
 import ShareModal from "./site/modals/ShareModal"
 
 import BuyTab from "./tabs/BuyTab"
@@ -41,8 +43,8 @@ type Modal =
   | { kind: "album"; album: Album }
   | { kind: "booking" }
   | { kind: "share" }
-  | { kind: "readings" }
-  | { kind: "product"; item: ShopItem }
+  | { kind: "session"; service: Service }
+  | { kind: "product"; item: ShopItem; format?: string }
   /* The photo set travels with the index rather than being looked up by id,
      so the arrows stay inside one band. */
   | { kind: "lightbox"; photos: Photo[]; index: number }
@@ -55,16 +57,15 @@ type Modal =
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>(VISIBLE_TABS[0].label)
   const [modal, setModal] = useState<Modal | null>(null)
-  /* Which shelf the Buy tab shows, and which band the Bands shelf is
-     narrowed to. Both are set from a portfolio section's shop link, and
-     resettable from the filter strips. */
-  const [shopShelf, setShopShelf] = useState<ShopShelf>("all")
-  const [shopBand, setShopBand] = useState<BandId>(PORTFOLIO[0].id)
+  /* Which shelf the Buy tab shows -- null for its first screen, a banner
+     per shelf -- and which tab under it is picked: a band, a session, a
+     collection. Set from a shop link elsewhere on the page too. */
+  const [shopShelf, setShopShelf] = useState<ShopShelf | null>(null)
+  const [shopPick, setShopPick] = useState<string | null>(null)
   /* The same idea one tab over, except the Portfolio strip always has exactly
      one band selected -- there is no "all" view of the credits. */
   const [portfolioBand, setPortfolioBand] = useState<BandId>(PORTFOLIO[0].id)
   const tabsRef = useRef<HTMLElement>(null)
-  const pendingScroll = useRef<BandId | null>(null)
   const close = () => setModal(null)
 
   useCheckoutReturn()
@@ -74,28 +75,10 @@ export default function App() {
      can start well below the fold after a long portfolio scroll. */
   function openShop(band: BandId) {
     setShopShelf("bands")
-    setShopBand(band)
+    setShopPick(band)
     setActiveTab("Buy")
     tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
   }
-
-  /* The return leg. The Portfolio panel is unmounted while Buy is showing, so
-     the target section cannot be scrolled to until after the switch renders --
-     hence the ref handed to the effect below rather than a scroll right here. */
-  function openPortfolio(band: BandId) {
-    pendingScroll.current = band
-    setPortfolioBand(band)
-    setActiveTab("Portfolio")
-  }
-
-  useEffect(() => {
-    const band = pendingScroll.current
-    if (activeTab !== "Portfolio" || !band) return
-    pendingScroll.current = null
-    document
-      .getElementById(`portfolio-${band}`)
-      ?.scrollIntoView({ behavior: "smooth", block: "start" })
-  }, [activeTab])
 
   useEffect(() => trackTab(activeTab), [activeTab])
 
@@ -121,7 +104,9 @@ export default function App() {
         <main className="space-y-stack">
           {activeTab === "Home" && (
             <HomeTab
-              onOpenReadings={() => setModal({ kind: "readings" })}
+              onOpenReadings={() =>
+                setModal({ kind: "session", service: TAROT_SESSION })
+              }
               onOpenOffer={() =>
                 setModal({ kind: "product", item: YOUTH_ANTHEMS_BUNDLE })
               }
@@ -130,7 +115,7 @@ export default function App() {
             />
           )}
 
-          {activeTab === "Music" && (
+          {activeTab === "Listen" && (
             <MusicTab
               onOpenRehearsal={() =>
                 setModal({ kind: "album", album: REAGAN_YOUTH_LP })
@@ -155,13 +140,24 @@ export default function App() {
           {activeTab === "Buy" && (
             <BuyTab
               shelf={shopShelf}
-              onShelfChange={setShopShelf}
-              band={shopBand}
-              onBandChange={setShopBand}
-              onOpenPortfolio={
-                isTabEnabled("Portfolio") ? openPortfolio : undefined
+              pick={shopPick}
+              onShelfChange={(next) => {
+                /* A new shelf, or back to the first screen: start at the
+                   top of the Buy tab, under the tab strip. */
+                setShopShelf(next)
+                setShopPick(null)
+                tabsRef.current?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start",
+                })
+              }}
+              onPickChange={setShopPick}
+              onOpenProduct={(item, format) =>
+                setModal({ kind: "product", item, format })
               }
-              onOpenProduct={(item) => setModal({ kind: "product", item })}
+              onOpenService={(service) =>
+                setModal({ kind: "session", service })
+              }
             />
           )}
         </main>
@@ -174,9 +170,15 @@ export default function App() {
       )}
       {modal?.kind === "booking" && <BookingModal onClose={close} />}
       {modal?.kind === "share" && <ShareModal onClose={close} />}
-      {modal?.kind === "readings" && <ReadingMenu onClose={close} />}
+      {modal?.kind === "session" && (
+        <SessionMenu service={modal.service} onClose={close} />
+      )}
       {modal?.kind === "product" && (
-        <ProductModal item={modal.item} onClose={close} />
+        <ProductModal
+          item={modal.item}
+          formatId={modal.format}
+          onClose={close}
+        />
       )}
       {modal?.kind === "lightbox" && (
         <Lightbox

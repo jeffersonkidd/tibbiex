@@ -13,27 +13,41 @@
    Permanent Marker ships one weight, so nothing display is ever bolded.
 =========================================================================== */
 
+/* --- Marker underline -----------------------------------------------------
+   The red line drawn under a title in marker: one wobbly stroke, stretched to
+   the text's width. heading-xl wears it always; a Home link-row title draws
+   it in on hover by animating background-size from 0% (treatments/
+   link-row.css). It is a background rather than a text-decoration, which
+   cannot wobble, so it follows each line of an inline title and only the box
+   of a block one -- heading-xl shrinks its box to the text so the line does
+   too. A data URI cannot read var(), so the stroke is --color-primary
+   written out (%23BA0800 is rgb(186 8 0)); retype it if the primary
+   changes. */
+@utility marker-underline {
+  padding-bottom: 0.12em;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 10' preserveAspectRatio='none'%3E%3Cpath d='M2 6 C 30 2, 60 9, 95 5 S 160 2, 198 6' fill='none' stroke='%23BA0800' stroke-width='3.2' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 0.3em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
 /* --- Headings ----------------------------------------------------------- */
 
-/* Band titles: the Portfolio sections and the Buy groups. */
+/* Band titles on the Portfolio tab, and the studio's page title. Underlined
+   in marker, the same stroke the Home link-row titles draw in on hover; the
+   box shrinks to the text so the line ends where the words do. */
 @utility heading-xl {
+  @apply marker-underline;
+  width: fit-content;
   font-family: var(--font-display);
   font-size: var(--text-3xl);
   font-weight: var(--font-weight-normal);
-  /* Loose enough that the underline, which hangs 0.18em under the baseline,
-     stays inside the box instead of printing over the line below. */
   line-height: 1.25;
   letter-spacing: 0.02em;
   text-transform: uppercase;
   text-wrap: balance;
-  /* Figma gives the offset and thickness as a percentage of the font size,
-     which is what em is here. */
-  text-decoration-line: underline;
-  text-decoration-style: solid;
-  text-decoration-color: var(--color-primary);
-  text-decoration-thickness: 0.08em;
-  text-underline-offset: 0.1em;
-  text-decoration-skip-ink: auto;
 }
 
 /* Panel and modal titles. */

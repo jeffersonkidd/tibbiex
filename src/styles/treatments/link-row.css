@@ -295,21 +295,18 @@
   display: none;
 }
 
-/* The red marker line draws itself in under the title on hover. The title
-   is inline so the line follows every line of a wrapped title. A data URI
-   cannot read var(), so the stroke is --color-primary written out
-   (%23BA0800 is rgb(186 8 0)); retype it if the primary changes. */
+/* The marker underline (typography.css) draws itself in under the title on
+   hover. The title is inline so the line follows every line of a wrapped
+   title. */
 .link-title {
-  @apply heading-l;
+  @apply heading-l marker-underline;
   display: inline;
-  padding-bottom: 3px;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 10' preserveAspectRatio='none'%3E%3Cpath d='M2 6 C 30 2, 60 9, 95 5 S 160 2, 198 6' fill='none' stroke='%23BA0800' stroke-width='3.2' stroke-linecap='round'/%3E%3C/svg%3E")
-    no-repeat 0 100% / 0% 8px;
+  background-size: 0% 0.3em;
   transition: background-size 420ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .link-row:hover .link-title,
 .link-row:focus-visible .link-title {
-  background-size: 100% 8px;
+  background-size: 100% 0.3em;
 }
 
 .link-meta {
@@ -449,11 +446,6 @@
     font-size: clamp(26px, (100vw - 40px) * 0.042, 36px);
     line-height: 1.1;
     letter-spacing: 0.01em;
-    background-size: 0% 10px;
-  }
-  .link-row:hover .link-title,
-  .link-row:focus-visible .link-title {
-    background-size: 100% 10px;
   }
   .link-meta {
     margin-top: 10px;

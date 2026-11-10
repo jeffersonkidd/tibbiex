@@ -1,3 +1,20 @@
+import gashTile from "../assets/illustrations/shop/bands/gash.svg"
+import leftoverCrackTile from "../assets/illustrations/shop/bands/leftover-crack.svg"
+import reaganYouthTile from "../assets/illustrations/shop/bands/reagan-youth.svg"
+import musicTag from "../assets/illustrations/shop/formats/music.svg"
+import patchesTag from "../assets/illustrations/shop/formats/patches.svg"
+import stickersTag from "../assets/illustrations/shop/formats/stickers.svg"
+import teesTag from "../assets/illustrations/shop/formats/tees.svg"
+import vampireCatsBanner from "../assets/illustrations/shop/collections/a-vampire-cats.svg"
+import onALeashBanner from "../assets/illustrations/shop/collections/gash-on-a-leash.svg"
+import leftoverFrankBanner from "../assets/illustrations/shop/collections/lc-leftover-frank.svg"
+import nextGenerationBanner from "../assets/illustrations/shop/collections/ry-the-next-generation.svg"
+import artBanner from "../assets/illustrations/shop/shelves/art.svg"
+import bandsBanner from "../assets/illustrations/shop/shelves/bands.svg"
+import patchesBanner from "../assets/illustrations/shop/shelves/patches.svg"
+import sessionsBanner from "../assets/illustrations/shop/shelves/sessions.svg"
+import stickersBanner from "../assets/illustrations/shop/shelves/stickers.svg"
+import teesBanner from "../assets/illustrations/shop/shelves/tees.svg"
 import { PORTFOLIO } from "./portfolio"
 import type { BandId } from "./portfolio"
 import type { Mail } from "./payments"
@@ -322,16 +339,80 @@ export function shelfOf(item: ShopItem): "bands" | "art" {
   return item.shelf ?? (item.band ? "bands" : "art")
 }
 
-/* The Buy tab's first filter. All is the default: every band's group,
-   then Art (see arrangeShop below), so a visitor sees the
-   whole catalogue without tapping through. Bands narrows to one band at a
-   time; Art is one flat shelf with no second strip. */
-export type ShopShelf = "all" | "bands" | "art"
+/* The Buy tab's shelves, in the order its first screen stacks them: a 3:1
+   banner each (drawn by scripts/draw-illustrations.py, SHELF_BANNERS), and
+   no products until one is picked. The picked shelf's banner stays on top,
+   with a strip of what is under it:
 
-export const SHOP_SHELVES: { id: ShopShelf; title: string }[] = [
-  { id: "all", title: "All" },
-  { id: "bands", title: "Bands" },
-  { id: "art", title: "Art" },
+     Sessions              each service in content/offerings.ts
+     Bands                 each band with something for sale, then its
+                           collections
+     Art                   each collection on the Art shelf
+     Tee Shirts, Patches,  each band and Art that has that kind of item,
+     Stickers              then those items as cards, one per format
+
+   Sessions is her time rather than her goods; the rest are products (see
+   offerings.ts). A shelf with nothing on it is left off the first screen. */
+export type ShopShelf =
+  "sessions" | "bands" | "art" | "tees" | "patches" | "stickers"
+
+export const SHOP_SHELVES: { id: ShopShelf; title: string; banner: string }[] =
+  [
+    { id: "sessions", title: "Sessions", banner: sessionsBanner },
+    { id: "bands", title: "Bands", banner: bandsBanner },
+    { id: "art", title: "Art", banner: artBanner },
+    { id: "tees", title: "Tee Shirts", banner: teesBanner },
+    { id: "patches", title: "Patches", banner: patchesBanner },
+    { id: "stickers", title: "Stickers", banner: stickersBanner },
+  ]
+
+/* Each band's own gig-poster strip, drawn to the band level's template:
+   what the Bands shelf shows, one per band, before a band is picked. */
+export const BAND_TILES: Partial<Record<BandId, string>> = {
+  "reagan-youth": reaganYouthTile,
+  "leftover-crack": leftoverCrackTile,
+  gash: gashTile,
+}
+
+/* Each design as a collection, by item id: the band strip's 3:1 poster,
+   with the collection's name, its band (or Art) and what it comes in, and
+   its sticker as the emblem. Shown full width at the top of the
+   collection, over its format tags; it opens the product on its first
+   format. */
+export const COLLECTION_BANNERS: Record<string, string> = {
+  "ry-the-next-generation": nextGenerationBanner,
+  "lc-leftover-frank": leftoverFrankBanner,
+  "gash-on-a-leash": onALeashBanner,
+  "a-vampire-cats": vampireCatsBanner,
+}
+
+/* What a collection comes in: square hang tags under its banner, in this
+   order. The first three are also shelves of their own on the Buy tab,
+   named by `shelf`. Each tag gathers the format ids it covers -- Tees is both cuts, and
+   Music is any record or track -- and shows only when the collection has one
+   of them; tapping it opens the product on the first of those it has. The
+   tags name no design, so the same four serve every collection. A format
+   none of them covers gets a plain button instead. */
+export const FORMAT_TAGS: {
+  label: string
+  image: string
+  ids: string[]
+  shelf?: ShopShelf
+}[] = [
+  {
+    label: "Tee Shirts",
+    image: teesTag,
+    ids: ["tee", "tee-womens"],
+    shelf: "tees",
+  },
+  { label: "Patches", image: patchesTag, ids: ["patch"], shelf: "patches" },
+  {
+    label: "Stickers",
+    image: stickersTag,
+    ids: ["sticker"],
+    shelf: "stickers",
+  },
+  { label: "Music", image: musicTag, ids: ["record", "track", "download"] },
 ]
 
 /* Everything the site derives from a catalogue, worked out in one place

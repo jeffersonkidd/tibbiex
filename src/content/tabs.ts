@@ -3,7 +3,9 @@
 // typechecked while it is off — turning it back on is a one-word change.
 export const TABS = [
   { label: "Home", enabled: true },
-  { label: "Music", enabled: false },
+  /* Her discography, under MusicTab. Called Listen in the strip so it is
+     not confused with Music, the shop's word for records and tracks. */
+  { label: "Listen", enabled: false },
   { label: "Portfolio", enabled: false },
   { label: "Tour", enabled: false },
   { label: "Buy", enabled: true },
