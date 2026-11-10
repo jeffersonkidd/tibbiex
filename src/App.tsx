@@ -83,15 +83,15 @@ export default function App() {
   useEffect(() => trackTab(activeTab), [activeTab])
 
   return (
-    /* The column is 480px until md, then 780px: narrow enough below md that
-       a link row's polaroid keeps phone proportions on a tablet, wide enough
-       above it for each print to sit beside its copy. overflow-x: clip trims
+    /* The column is max-w-3xl (768px) at every width, one of Tailwind's
+       container sizes in tokens.css. From md up each link row's print sits
+       beside its copy; below md it is a whole polaroid. overflow-x: clip trims
        the tape and stickers that hang past a print at the screen's edge,
        without making a scroll container. */
     <div className="flex min-h-screen justify-center overflow-x-clip px-4 pb-20 font-sans text-on-surface selection:bg-tertiary/20 sm:px-6">
       <Toaster position="top-center" richColors />
 
-      <div className="w-full min-w-0 max-w-[480px] space-y-stack pt-6 md:max-w-[780px]">
+      <div className="w-full min-w-0 max-w-3xl space-y-stack pt-6">
         <Header onShare={() => setModal({ kind: "share" })} />
 
         <ProfileCard

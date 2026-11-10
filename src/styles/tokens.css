@@ -153,13 +153,43 @@
   --radius-full: 9999px; /* ours; not a Tailwind theme variable */
 
   /* --- Breakpoints -------------------------------------------------------
-     md is the one breakpoint the layout turns on: below it the column is
-     480px and every link row is a whole polaroid; from it up the column is
-     780px, the print shrinks to the left of each row and the fund sets its
-     print beside its copy. 800px against Tailwind's 768. Stylesheets reach
-     it as @media (width >= theme(--breakpoint-md)). sm and the rest are
-     Tailwind's own. */
-  --breakpoint-md: 800px; /* ours; Tailwind ships 768px */
+     Tailwind 4.3's ramp, restated in px so every step can be seen and
+     overridden here, as the radius ramp is. Every step is Tailwind's own;
+     the layout orients off these and adds none of its own.
+
+     Tailwind writes them in rem. Each line notes its rem value at the
+     browser's default 16px root: px = rem x 16, so 48rem is 768px. The px
+     here are fixed, so a visitor who raises their browser's default font
+     size does not move them, where Tailwind's rem would.
+
+     md is the one the layout turns on: below it every link row is a whole
+     polaroid; from it up the print shrinks to the left of each row and the
+     fund sets its print beside its copy. Stylesheets reach it as
+     @media (width >= theme(--breakpoint-md)). */
+  --breakpoint-sm: 640px; /* 40rem = 640 / 16 */
+  --breakpoint-md: 768px; /* 48rem = 768 / 16 */
+  --breakpoint-lg: 1024px; /* 64rem = 1024 / 16 */
+  --breakpoint-xl: 1280px; /* 80rem = 1280 / 16 */
+  --breakpoint-2xl: 1536px; /* 96rem = 1536 / 16 */
+
+  /* --- Container sizes ---------------------------------------------------
+     Tailwind 4.3's ramp, restated in px the same way. Each is a max-w-*
+     utility (max-w-3xl is 768px) and an @-variant for container queries
+     (@3xl: applies when an @container ancestor is at least that wide). The
+     page column is max-w-3xl; the modals take xs, md and 3xl (Overlay). */
+  --container-3xs: 256px; /* 16rem = 256 / 16 */
+  --container-2xs: 288px; /* 18rem = 288 / 16 */
+  --container-xs: 320px; /* 20rem = 320 / 16 */
+  --container-sm: 384px; /* 24rem = 384 / 16 */
+  --container-md: 448px; /* 28rem = 448 / 16 */
+  --container-lg: 512px; /* 32rem = 512 / 16 */
+  --container-xl: 576px; /* 36rem = 576 / 16 */
+  --container-2xl: 672px; /* 42rem = 672 / 16 */
+  --container-3xl: 768px; /* 48rem = 768 / 16 */
+  --container-4xl: 896px; /* 56rem = 896 / 16 */
+  --container-5xl: 1024px; /* 64rem = 1024 / 16 */
+  --container-6xl: 1152px; /* 72rem = 1152 / 16 */
+  --container-7xl: 1280px; /* 80rem = 1280 / 16 */
 
   /* --- Spacing -----------------------------------------------------------
      The one number the whole numbered scale multiplies: p-4 is
