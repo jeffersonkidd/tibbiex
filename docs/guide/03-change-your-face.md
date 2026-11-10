@@ -12,11 +12,11 @@ Open **Studio → Avatar**.
 1. Drop, paste or pick a photo. JPG and PNG are the safest.
 2. Frame it in the ring: **drag** to move it, and **slide or scroll** to zoom.
    On a computer, the arrow keys move it and plus / minus zoom.
-3. Type your **Studio passcode**. Each device asks for it once, *"so a stranger
-   can't change your face."*
+3. Type your **Studio passcode**. Each device asks for it once, _"so a stranger
+   can't change your face."_
 4. Tap **Make it live**.
 
-You'll see *"New face is live. The site catches up within a minute."*
+You'll see _"New face is live. The site catches up within a minute."_
 
 To undo, tap **Back to the original**. That brings back the portrait the site
 shipped with.
@@ -36,6 +36,7 @@ The Studio also shows what's live now. If you've never changed it, that's
 - **Wrong passcode.** Ask J.F. Don't guess repeatedly.
 
 ## The habit
+
 ![alt text](https://file%2B.vscode-resource.vscode-cdn.net/Users/jeffersonkidd/Desktop/jkidd-ds/packages/blocks/src/assets/fronts/western.jpg?version%3D1792049368249)
 **One face, everywhere, changed on purpose.** Fans recognize you by your
 picture before they read your name. When you change the face on the site,

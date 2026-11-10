@@ -9,8 +9,8 @@ picture or put your link somewhere new.
 ## Do it
 
 1. Go to **tibbiex.studio/studio**. Bookmark it, on your phone too.
-2. You'll see a small message at the top: *"This browser is now left out of
-   the site's analytics."* That's on purpose (see **The habit** below).
+2. You'll see a small message at the top: _"This browser is now left out of
+   the site's analytics."_ That's on purpose (see **The habit** below).
 3. The strip under **Back office** switches tools. Right now there are three:
    - **Link Maker** — makes the link you paste into each profile (lesson 2).
    - **Avatar** — changes the face on your profile card (lesson 3).

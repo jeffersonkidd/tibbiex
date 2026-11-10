@@ -15,7 +15,9 @@ column:
 
 ```jsx
 <div className="flex min-h-screen justify-center pb-20">
-  <div className="w-full max-w-2xl space-y-stack px-4 pt-6 sm:px-6">…blocks…</div>
+  <div className="w-full max-w-2xl space-y-stack px-4 pt-6 sm:px-6">
+    …blocks…
+  </div>
 </div>
 ```
 
@@ -25,15 +27,15 @@ Never give the page or that column a background colour — it hides the record.
 
 Only pre-compiled classes exist (no JIT in a design). Use these names:
 
-| Job | Classes |
-| --- | --- |
-| Text colour | `text-foreground`, `text-muted-foreground`, `text-accent`, `text-primary` |
-| Surfaces | `bg-card` (panels), `bg-muted`, `bg-popover`, `bg-input-background`, `bg-card/50` (sheer strips), `border-border`, `border-border-strong` |
-| Brand | `bg-primary` / `.brand-surface` (red CTAs + active tab only), `bg-accent-tint`, `bg-accent-soft`, `border-accent` |
+| Job                                                 | Classes                                                                                                                                                                                               |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Text colour                                         | `text-foreground`, `text-muted-foreground`, `text-accent`, `text-primary`                                                                                                                             |
+| Surfaces                                            | `bg-card` (panels), `bg-muted`, `bg-popover`, `bg-input-background`, `bg-card/50` (sheer strips), `border-border`, `border-border-strong`                                                             |
+| Brand                                               | `bg-primary` / `.brand-surface` (red CTAs + active tab only), `bg-accent-tint`, `bg-accent-soft`, `border-accent`                                                                                     |
 | Text styles (one per element, no extra size/weight) | `heading-xl`, `heading-l`, `heading-m`, `heading-s` (Permanent Marker — never bold it), `body-large(-bold)`, `body-base(-bold)`, `body-small(-bold)`, `body-xs(-bold)`, `label-mono`, `label-mono-xs` |
-| Insets | `p-strip` 6px, `p-card` 16, `p-panel` 20 (every block in the column), `p-modal` 24 |
-| Gaps | `gap-glyph` 6, `gap-cluster` 8, `gap-part` 12, `gap-stack` / `space-y-stack` 16 (between blocks) |
-| Treatments | `.surface` (panel fill + border + blur), `.featured` (amber breathing highlight, one block per page), `.arcana-veil`, `.hide-scrollbar` |
+| Insets                                              | `p-strip` 6px, `p-card` 16, `p-panel` 20 (every block in the column), `p-modal` 24                                                                                                                    |
+| Gaps                                                | `gap-glyph` 6, `gap-cluster` 8, `gap-part` 12, `gap-stack` / `space-y-stack` 16 (between blocks)                                                                                                      |
+| Treatments                                          | `.surface` (panel fill + border + blur), `.featured` (amber breathing highlight, one block per page), `.arcana-veil`, `.hide-scrollbar`                                                               |
 
 A panel is `<section className="surface rounded-lg p-panel">`. Radii: `rounded-md` for
 controls, `rounded-lg` for panels and rows. Layout utilities (`flex`, `grid-cols-*`,

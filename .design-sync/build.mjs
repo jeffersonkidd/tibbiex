@@ -14,7 +14,11 @@ const PKG = ".ds-sync/pkg"
 rmSync(PKG, { recursive: true, force: true })
 mkdirSync(PKG, { recursive: true })
 
-execFileSync("node_modules/.bin/tsc", ["-p", ".design-sync/tsconfig.dts.json"], { stdio: "inherit" })
+execFileSync(
+  "node_modules/.bin/tsc",
+  ["-p", ".design-sync/tsconfig.dts.json"],
+  { stdio: "inherit" },
+)
 
 await build({
   configFile: false,
@@ -43,7 +47,12 @@ writeFileSync(`${PKG}/index.ts`, 'export * from "../../.design-sync/entry"\n')
 writeFileSync(
   `${PKG}/package.json`,
   JSON.stringify(
-    { name: "tibbiex-ui", version: JSON.parse(readFileSync("package.json", "utf8")).version, module: "index.ts", types: "types/.design-sync/entry.d.ts" },
+    {
+      name: "tibbiex-ui",
+      version: JSON.parse(readFileSync("package.json", "utf8")).version,
+      module: "index.ts",
+      types: "types/.design-sync/entry.d.ts",
+    },
     null,
     2,
   ) + "\n",
@@ -57,7 +66,9 @@ console.log(`built ${PKG}`)
 // glyphs and marks in src/assets.
 mkdirSync(`${PKG}/docs`, { recursive: true })
 const entry = readFileSync(".design-sync/entry.ts", "utf8")
-for (const [, name, from] of entry.matchAll(/export \{ default as (\w+) \} from "\.\.\/(.+)"/g)) {
+for (const [, name, from] of entry.matchAll(
+  /export \{ default as (\w+) \} from "\.\.\/(.+)"/g,
+)) {
   const src = readFileSync(`${from}.tsx`, "utf8")
   const at = src.indexOf(`export default function ${name}`)
   const m = /\/\*([\s\S]*?)\*\/\s*$/.exec(src.slice(0, at))
@@ -67,5 +78,8 @@ for (const [, name, from] of entry.matchAll(/export \{ default as (\w+) \} from 
     .join("\n")
     .trim()
   const category = from.startsWith("src/ui/") ? from.split("/")[2] : "brand"
-  writeFileSync(`${PKG}/docs/${name}.md`, `---\ncategory: ${category}\n---\n\n# ${name}\n\n${note}\n`)
+  writeFileSync(
+    `${PKG}/docs/${name}.md`,
+    `---\ncategory: ${category}\n---\n\n# ${name}\n\n${note}\n`,
+  )
 }

@@ -7,9 +7,7 @@
   "entry": ".ds-sync/pkg/index.ts",
   "srcDir": "../../src/ui",
   "cssEntry": "ds.css",
-  "extraEntries": [
-    "lucide-react"
-  ],
+  "extraEntries": ["lucide-react"],
   "docsDir": "docs",
   "dtsPropsFor": {
     "Button": "/** \"brand\" = the red CTA (one per panel); \"secondary\" = bordered, card-filled chrome. */\n  tone?: \"brand\" | \"secondary\";\n  /** \"block\" = full width (wrap it in a sized element to size it); \"inline\" = content width; \"icon\" = glyph only, needs `name`. */\n  shape?: \"block\" | \"inline\" | \"icon\";\n  /** A lucide-react icon (or any component taking className), drawn at 16px before the label. */\n  icon?: React.ComponentType<{ className?: string }>;\n  /** Screen-reader name; required when shape is \"icon\", never set otherwise. */\n  name?: string;\n  /** The label. Required for block/inline; for icon it shows from the sm breakpoint up. */\n  children?: React.ReactNode;\n  type?: \"button\" | \"submit\";\n  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;\n  disabled?: boolean;\n  className?: string;",
