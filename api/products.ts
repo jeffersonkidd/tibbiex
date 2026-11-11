@@ -17,8 +17,8 @@
              sheet's Product image URL column for Shopify to fetch at import.
 
    Every method needs the studio passcode in `x-studio-passcode`, as
-   api/avatar.ts. The Vercel Firewall rule "Studio passcode guesses" has to
-   count GETs here as well as writes, or guessing moves to the read.
+   api/avatar.ts. The Vercel Firewall rule "Studio passcode guesses" counts
+   every method here, GETs included, so guessing can't move to the read.
 
    Storage is Vercel Blob, the same store as the avatar:
      shop/sheet/    one JSON file per save, random suffix, newest wins. The

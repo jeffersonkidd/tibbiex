@@ -3,7 +3,12 @@ import type { BandId } from "../content/portfolio"
 import { STANDARD_FORMATS } from "../content/shop"
 import type { ShopFormat, ShopItem, Size } from "../content/shop"
 import { SHOPIFY_DOMAIN } from "../content/site"
-import { FITS, categoryOfType } from "../content/taxonomy"
+import {
+  categoryById,
+  categoryOfType,
+  fitOfValue,
+  readTag,
+} from "../content/taxonomy"
 import type { Fit } from "../content/taxonomy"
 
 /* The shop's source of truth is the Shopify store. This is the site's half
@@ -129,13 +134,6 @@ export async function fetchShopify(): Promise<ShopItem[]> {
   return designsFrom(products, collections)
 }
 
-/* The value of a `facet:value` tag, if the product carries one. */
-function tagValue(tags: string[], facet: string) {
-  const prefix = `${facet}:`
-  const found = tags.find((tag) => tag.trim().toLowerCase().startsWith(prefix))
-  return found?.trim().slice(prefix.length).trim().toLowerCase() || undefined
-}
-
 /* What the words of every title in a design share: "Vampire Cats Sticker"
    and "Vampire Cats Patch" are "Vampire Cats". The fallback for a design
    with no collection to name it. */
@@ -161,9 +159,20 @@ function aspectOf(image: Image): ShopItem["aspect"] {
    format's id, label and details; anything else is filed by its Type and
    named after it. Variants beyond one are its sizes, named by their title. */
 function formatOf(product: StorefrontProduct): ShopFormat {
-  const category = categoryOfType(product.productType)
-  const fitTag = tagValue(product.tags, "fit")
-  const fit = FITS.find((entry) => entry.id === fitTag)?.id as Fit | undefined
+  /* Its Type, or when that's blank or unknown, the title's last word
+     ("Vampire Cats Sticker"). */
+  const category =
+    categoryOfType(product.productType) ??
+    categoryOfType(product.title.trim().split(/\s+/).at(-1) ?? "")
+  /* The fit: tag, or failing that the title ("Vampire Cats Women's Tee"). */
+  const fitTag = readTag(product.tags, "fit")
+  const fit: Fit | undefined =
+    (fitTag && fitOfValue(fitTag)) ||
+    (/\b(wom[ae]n|ladies)/i.test(product.title)
+      ? "womens"
+      : /\bm[ae]n['’]?s?\b/i.test(product.title)
+        ? "mens"
+        : undefined)
   const standard = STANDARD_FORMATS.find(
     (format) =>
       format.category === category &&
@@ -173,7 +182,10 @@ function formatOf(product: StorefrontProduct): ShopFormat {
   const price = Number(variants[0]?.price.amount ?? 0)
   const base: ShopFormat = {
     id: standard?.id ?? product.handle,
-    label: standard?.label ?? (product.productType.trim() || product.title),
+    label:
+      standard?.label ??
+      (category && categoryById(category).shopify?.type) ??
+      (product.productType.trim() || product.title),
     price,
     ...(category && { category }),
     ...(fit && category === "tees" && { fit }),
@@ -208,7 +220,7 @@ export function designsFrom(
 ): ShopItem[] {
   const groups = new Map<string, StorefrontProduct[]>()
   for (const product of products) {
-    const design = tagValue(product.tags, "design") ?? product.handle
+    const design = readTag(product.tags, "design") ?? product.handle
     groups.set(design, [...(groups.get(design) ?? []), product])
   }
 
@@ -248,9 +260,12 @@ export function designsFrom(
       ...Object.values(formatPhotos),
     ]
 
-    const band = tagValue(first.tags, "band")
-    const line = tagValue(first.tags, "line")
-    const run = Number(tagValue(first.tags, "run"))
+    /* Read from whichever product in the design carries them, so one
+       product missing a tag doesn't move the whole design. */
+    const tags = members.flatMap((product) => product.tags)
+    const band = readTag(tags, "band")
+    const line = readTag(tags, "line")?.replace(/s$/, "")
+    const run = parseInt(readTag(tags, "run") ?? "", 10)
     const known = PORTFOLIO.some((entry) => entry.id === band)
 
     const item: ShopItem = {

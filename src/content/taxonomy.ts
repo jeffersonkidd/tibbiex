@@ -18,6 +18,7 @@
    │   └── Tees
    ├── Patches
    ├── Stickers
+   ├── Buttons
    ├── Music
    └── Bundles
    Services
@@ -31,7 +32,7 @@ import type { ShopFormat } from "./shop"
 
 /* The leaves a format can sit on. */
 export type ProductCategory =
-  "tees" | "patches" | "stickers" | "music" | "bundles"
+  "tees" | "patches" | "stickers" | "buttons" | "music" | "bundles"
 /* The leaves a service sits on. */
 export type ServiceCategory = "tarot" | "chats" | "lessons"
 
@@ -105,6 +106,17 @@ export const CATEGORIES: Category[] = [
     },
   },
   {
+    id: "buttons",
+    title: "Buttons",
+    parent: "products",
+    /* Pinback buttons; Google's taxonomy has no leaf for them. */
+    shopify: {
+      category:
+        "Apparel & Accessories > Clothing Accessories > Pinback Buttons",
+      type: "Button",
+    },
+  },
+  {
     id: "music",
     title: "Music",
     parent: "products",
@@ -136,6 +148,7 @@ export function isProductCategory(id: unknown): id is ProductCategory {
     id === "tees" ||
     id === "patches" ||
     id === "stickers" ||
+    id === "buttons" ||
     id === "music" ||
     id === "bundles"
   )
@@ -144,21 +157,61 @@ export function isProductCategory(id: unknown): id is ProductCategory {
 export const categoryById = (id: CategoryId) =>
   CATEGORIES.find((entry) => entry.id === id)!
 
-/* The leaf a Shopify product sits on, read from its Type. Case and a
-   trailing plural are forgiven ("t-shirts" is a T-Shirt); a Type the shop
-   has never heard of files nowhere. */
-export function categoryOfType(type: string): ProductCategory | undefined {
-  const singular = (value: string) =>
-    value
-      .trim()
-      .toLowerCase()
-      .replace(/(ch|sh|x)es$/, "$1")
-      .replace(/s$/, "")
-  const wanted = singular(type)
-  if (!wanted) return undefined
-  return PRODUCT_CATEGORIES.find(
-    (entry) => entry.shopify && singular(entry.shopify.type) === wanted,
-  )?.id
+/* The other words people type into Shopify's Type for each leaf. Compared
+   squashed -- lower case, letters and digits only, singular -- so "T Shirt",
+   "t-shirts" and "TSHIRT" are all one. */
+const TYPE_WORDS: Record<ProductCategory, string[]> = {
+  tees: ["tee", "tshirt", "shirt", "graphic tee"],
+  patches: ["patch", "sew on patch", "iron on patch", "back patch"],
+  stickers: ["sticker", "decal", "vinyl sticker"],
+  buttons: ["button", "pin", "pinback", "pinback button", "badge"],
+  music: [
+    "record",
+    "vinyl",
+    "lp",
+    "ep",
+    "album",
+    "cd",
+    "cassette",
+    "tape",
+    "music",
+  ],
+  bundles: ["bundle", "set", "pack", "kit"],
+}
+
+const squash = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "")
+    .replace(/(ch|sh|x)es$/, "$1")
+    .replace(/s$/, "")
+
+/* The leaf a Shopify product sits on, read from its Type, or failing that
+   from the end of its Product category path ("… > Pinback Buttons"). Case,
+   spacing, hyphens, plurals and the usual other words are forgiven; a Type
+   the shop has never heard of files nowhere. */
+export function categoryOfType(
+  type: string,
+  path = "",
+): ProductCategory | undefined {
+  const wanted = squash(type)
+  const byType = wanted
+    ? PRODUCT_CATEGORIES.find(
+        (entry) =>
+          squash(entry.shopify?.type ?? "") === wanted ||
+          squash(entry.title) === wanted ||
+          TYPE_WORDS[entry.id].some((word) => squash(word) === wanted),
+      )
+    : undefined
+  if (byType) return byType.id
+  const leaf = path.trim().toLowerCase()
+  return leaf
+    ? PRODUCT_CATEGORIES.find(
+        (entry) =>
+          entry.shopify?.category &&
+          entry.shopify.category.toLowerCase() === leaf,
+      )?.id
+    : undefined
 }
 
 /* A leaf and every branch above it, root first: Products › Apparel › Tees. */
@@ -178,6 +231,7 @@ export function pathOf(id: CategoryId): Category[] {
    catalogue published before formats carried one. */
 const CATEGORY_BY_FORMAT: Record<string, ProductCategory> = {
   sticker: "stickers",
+  button: "buttons",
   patch: "patches",
   tee: "tees",
   "tee-womens": "tees",
@@ -256,6 +310,45 @@ export const tag = (facet: Facet, value: string): Tag => `${facet}:${value}`
 export function splitTag(value: Tag): { facet: Facet; value: string } {
   const at = value.indexOf(":")
   return { facet: value.slice(0, at) as Facet, value: value.slice(at + 1) }
+}
+
+/* The value of a `facet:value` tag on a Shopify product, however it was
+   typed: "Design: Vampire Cats", "design-vampire-cats" and
+   "design:vampire-cats" are all vampire-cats. The facet's case, a space
+   round the colon, a hyphen or equals sign in its place and the value's
+   own case and spacing are forgiven. Undefined when no tag has the facet. */
+export function readTag(tags: string[], facet: Facet): string | undefined {
+  const pattern = new RegExp(`^\\s*${facet}\\s*[:=-]\\s*(.+)$`, "i")
+  for (const value of tags) {
+    const found = value.match(pattern)?.[1]
+    const slug = found && slugOf(found)
+    if (slug) return slug
+  }
+  return undefined
+}
+
+/* A tag tidied to the shape the site writes -- the facets above lower-cased
+   and slugged, `design:vampire-cats` -- and anything else left as typed. */
+export function tidyTag(value: string): string {
+  const trimmed = value.trim()
+  const match = trimmed.match(/^\s*([a-z]+)\s*[:=-]\s*(.+)$/i)
+  const facet = match?.[1].toLowerCase() as Facet | undefined
+  if (!match || !facet || !FACETS.some((entry) => entry.id === facet))
+    return trimmed
+  const tidied =
+    facet === "fit"
+      ? (fitOfValue(match[2]) ?? slugOf(match[2]))
+      : slugOf(match[2])
+  return tidied ? `${facet}:${tidied}` : trimmed
+}
+
+/* A fit however it was written: Men's, mens, male, Ladies, women… */
+export function fitOfValue(value: string): Fit | undefined {
+  const word = value.toLowerCase().replace(/[^a-z]/g, "")
+  if (/^(wom[ae]ns?|female|ladies|lady|girls?)$/.test(word)) return "womens"
+  if (/^(m[ae]ns?|male|guys?|boys?)$/.test(word)) return "mens"
+  if (/^(unisex|either|all)$/.test(word)) return "unisex"
+  return undefined
 }
 
 /* A design's name as a tag value: "Leftover Frank" -> leftover-frank. */

@@ -17,6 +17,7 @@ import Button from "../../ui/controls/Button"
 import Field from "../../ui/controls/Field"
 import PanelHeader from "../../ui/display/PanelHeader"
 import { ago } from "../links/ledger"
+import { readTag } from "../../content/taxonomy"
 import { StudioError, usePasscode } from "../passcode"
 import SheetGrid from "./SheetGrid"
 import SheetProduct from "./SheetProduct"
@@ -34,6 +35,7 @@ import {
   same,
   saveSheet,
   savedDraft,
+  tidy,
   toCsv,
   variantRows,
 } from "./sheet"
@@ -44,11 +46,7 @@ import type { Desk, Product, Row } from "./sheet"
 function byDesign(rows: Row[]) {
   const groups = new Map<string, Product[]>()
   for (const product of productsOf(rows)) {
-    const tag = first(rows, product)
-      .Tags.split(",")
-      .map((t) => t.trim())
-      .find((t) => t.toLowerCase().startsWith("design:"))
-    const key = tag ? tag.slice("design:".length).trim() : ""
+    const key = readTag(first(rows, product).Tags.split(/[,;]/), "design") ?? ""
     groups.set(key, [...(groups.get(key) ?? []), product])
   }
   return [...groups].sort(([a], [b]) => (a ? 0 : 1) - (b ? 0 : 1))
@@ -101,6 +99,7 @@ export default function SheetDesk() {
     name: string
     rows: Row[]
     dropped: string[]
+    fixed: string[]
   } | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
   const gate = usePasscode()
@@ -179,18 +178,32 @@ export default function SheetDesk() {
     toast("Back to the saved sheet.")
   }
 
+  /* Tidy first, so a price typed "$35" or a Type typed "tee" never stops
+     a download; what tidy changed lands in the sheet, to save. */
   function exportCsv() {
     if (!desk) return
-    if (blocked.length) {
-      setEditing(blocked[0].rows[0])
+    const { rows, fixed } = tidy(desk.rows)
+    if (fixed.length) {
+      setRows(rows)
+      setEditing(null)
+    }
+    const stuck = productsOf(rows).filter(
+      (product) => problems(rows, product).length > 0,
+    )
+    if (stuck.length) {
+      setEditing(stuck[0].rows[0])
       setView("products")
       toast.error(
-        `${first(desk.rows, blocked[0]).Title || blocked[0].handle} isn't ready to import yet.`,
+        `${first(rows, stuck[0]).Title || stuck[0].handle} isn't ready to import yet.`,
       )
       return
     }
-    download(desk.rows)
+    download(rows)
     toast.success("Downloaded. In Shopify: Products → Import.")
+    if (fixed.length)
+      toast(`Tidied first: ${fixed.join(" ")} Save to keep the tidy sheet.`, {
+        duration: 12_000,
+      })
   }
 
   async function pick(file: File | undefined) {
@@ -212,12 +225,18 @@ export default function SheetDesk() {
     if (!desk) return
     setBusy(true)
     try {
+      /* Saved tidy, so the store never holds what a download would fix
+         (and the server would refuse a handle with capitals in it). */
+      const { rows, fixed } = tidy(desk.rows)
       await gate.run(async (passcode) => {
-        const next = await saveSheet(passcode, desk.base, desk.rows)
+        const next = await saveSheet(passcode, desk.base, rows)
         castMagicFrom(e)
         setDesk(next)
+        if (fixed.length) setEditing(null)
         keepDraft(next.base, null)
         toast.success("Saved. Download the CSV when it's ready for Shopify.")
+        if (fixed.length)
+          toast(`Tidied as it saved: ${fixed.join(" ")}`, { duration: 12_000 })
       })
     } catch (error) {
       toast.error(
@@ -288,7 +307,7 @@ export default function SheetDesk() {
             <input
               ref={fileRef}
               type="file"
-              accept=".csv,text/csv"
+              accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values,text/plain"
               hidden
               onChange={(e) => {
                 pick(e.target.files?.[0])
@@ -311,6 +330,16 @@ export default function SheetDesk() {
                   These columns aren't in Shopify's template and will be left
                   out: {upload.dropped.join(", ")}.
                 </p>
+              )}
+              {upload.fixed.length > 0 && (
+                <div className="body-xs mt-1 text-on-surface-variant">
+                  <p>Tidied on the way in:</p>
+                  <ul className="mt-1 list-disc space-y-0.5 pl-4">
+                    {upload.fixed.map((fix) => (
+                      <li key={fix}>{fix}</li>
+                    ))}
+                  </ul>
+                </div>
               )}
               <div className="mt-cluster flex gap-cluster">
                 <Button

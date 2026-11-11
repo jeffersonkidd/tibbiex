@@ -12,6 +12,8 @@ What it draws, and where each lands:
         leftover-crack-merch.svg   the Leftover Crack merch pile
     src/assets/illustrations/fund/
         podcast-interview.svg      Tibbie and a guest at the "Still Alive" mics
+    src/assets/illustrations/profile/
+        tibbie-portrait.svg        Tibbie's avatar: head and shoulders, drawn
     src/assets/illustrations/shop/
         bands.svg                  the Bands shelf: a bass, an amp, picks
         art.svg                    the Art shelf: a splattered canvas, a can, a brush
@@ -19,7 +21,7 @@ What it draws, and where each lands:
     src/assets/illustrations/shop/shelves/
         <shelf id>.svg             the Buy tab's first screen: a poster strip per
                                    shelf (sessions, bands, art, tees, patches,
-                                   stickers)
+                                   stickers, buttons)
     src/assets/illustrations/shop/sessions/
         chat.svg                   the video chats, as a session: a poster strip
         tarot.svg                  the tarot readings, as a session: a poster strip
@@ -32,7 +34,8 @@ What it draws, and where each lands:
         <item id>.svg              each design as a collection: a poster strip
     src/assets/illustrations/shop/formats/
         tees.svg, patches.svg,     the formats a collection comes in: one
-        stickers.svg, music.svg    square hang tag each, the same for all
+        stickers.svg, buttons.svg, square hang tag each, the same for all
+        music.svg
 
 The shop's pictures go by level, and every picture on one level shares a
 template (shelf_tile for the shelves, band_tile for the bands and the
@@ -56,6 +59,7 @@ files. No dependencies beyond the standard library."""
 import math
 import xml.etree.ElementTree as ElementTree
 import random
+import re
 import sys
 from pathlib import Path
 
@@ -651,6 +655,127 @@ TAROT = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 410 560" width="
 
 
 
+# --- The portrait ----------------------------------------------------------------
+
+def lift(d, scale, frm, to):
+    """Redraw path data at another size and place: absolute points move from
+    around `frm` to around `to` and scale, relative ones only scale. Covers
+    the M, L, C (and m, l, c) the tarot figure is drawn with."""
+    out, cmd, nums = [], None, []
+
+    def flush():
+        if cmd is None:
+            return
+        pts = []
+        for i in range(0, len(nums), 2):
+            x, y = nums[i] * scale, nums[i + 1] * scale
+            if cmd.isupper():
+                x = to[0] + (nums[i] - frm[0]) * scale
+                y = to[1] + (nums[i + 1] - frm[1]) * scale
+            pts.append(f"{x:.1f} {y:.1f}")
+        out.append(cmd + " ".join(pts))
+
+    for token in re.findall(r"[MLCZmlcz]|-?\d*\.?\d+", d):
+        if token.isalpha():
+            flush()
+            cmd, nums = token, []
+            if token in "Zz":
+                out.append("Z")
+                cmd = None
+        else:
+            nums.append(float(token))
+    flush()
+    return " ".join(out)
+
+
+def portrait():
+    """Tibbie's avatar: a head-and-shoulders drawing of her. The head, hair and
+    captain's cap are the tarot figure's own, redrawn bigger, so she is the
+    same person in every picture; the bust, the halter, the chains and the
+    sunglasses come from the photo. Square and transparent round the
+    figure, so the avatar's ring shows behind her the way it did behind the
+    cut-out, and drawn to survive the ring's circular crop."""
+    w = h = 320
+    s, frm, to = 1.12, (205, 164), (150, 140)  # the tarot head -> this one
+
+    def tarot(d, fill, stroke=INK, width=3):
+        return f'<path d="{lift(d, s, frm, to)}" fill="{fill}" stroke="{stroke}" stroke-width="{width}" />'
+
+    tank = "#F7ECE8"  # the tarot figure's white tank
+    pivot = lift("M205 100", s, frm, to)[1:]
+
+    body = "\n".join([
+        # Hair, the mass behind her shoulders: the tarot figure's.
+        tarot("M152 104 C120 130 132 160 118 190 C104 222 128 236 116 262 C140 276 168 268 176 252 "
+              "L234 252 C244 270 274 276 296 262 C284 236 306 220 292 190 C278 160 290 128 258 104 Z", HAIR),
+        tarot("M132 176 C126 200 140 214 130 240 M282 176 C290 200 274 216 284 240", "none", HAIR_SHADE),
+
+        # Neck, then shoulders broad enough to fill the frame.
+        f'<path d="M132 184 L132 240 L168 240 L168 184 Z" fill="{SKIN_SHADE}" stroke="{INK}" stroke-width="3" />',
+        f'<path d="M24 340 L34 284 C46 258 92 242 128 236 L172 236 C208 242 250 254 264 278 L276 340 Z" '
+        f'fill="{SKIN}" stroke="{INK}" stroke-width="3" />',
+
+        # The halter: two straps up to the back of her neck, the top over them.
+        f'<path d="M118 282 L136 238 M182 282 L164 238" fill="none" stroke="{INK}" stroke-width="11" />'
+        f'<path d="M118 282 L136 238 M182 282 L164 238" fill="none" stroke="{tank}" stroke-width="6" />',
+        f'<path d="M68 340 L78 290 C94 276 110 272 122 278 C134 300 166 300 178 278 C190 272 206 276 222 290 '
+        f'L232 340 Z" fill="{tank}" stroke="{INK}" stroke-width="3" />',
+        f'<path d="M134 316 C144 324 156 324 166 316" fill="none" stroke="#E4D3CD" stroke-width="3" />',
+
+        # Two chains: the short one with the tarot pendant, the long one
+        # down to the sunglasses hooked in her neckline.
+        f'<path d="M131 226 C134 258 166 258 169 226" fill="none" stroke="{AMBER_MID}" stroke-width="2" />'
+        f'<path d="M150 250 l4 8 -4 8 -4 -8z" fill="{AMBER}" stroke="{AMBER_DARK}" stroke-width="1.4" />',
+        f'<path d="M129 230 C120 280 140 292 150 292 C160 292 180 280 171 230" fill="none" stroke="{AMBER_MID}" stroke-width="2" />',
+        f'<path d="M126 298 L174 298" stroke="{INK}" stroke-width="3" />'
+        f'<ellipse cx="137" cy="304" rx="12" ry="9" fill="{BLACK}" stroke="{INK}" stroke-width="3" />'
+        f'<ellipse cx="163" cy="304" rx="12" ry="9" fill="{BLACK}" stroke="{INK}" stroke-width="3" />'
+        f'<path d="M131 302 l6 -4 M157 302 l6 -4" stroke="{OUTLINE}" stroke-width="1.6" />',
+
+        # Tattoos on both shoulders: the tarot figure's rose on her right.
+        f'<path d="M58 266 c8 -6 16 0 12 8 c-4 8 -14 4 -12 -4 M70 288 c-8 2 -10 10 -4 14 '
+        f'M220 268 l10 -8 M226 280 l10 -8" fill="none" stroke="{INK}" stroke-width="2.4" />'
+        f'<circle cx="65" cy="271" r="3.4" fill="{RED}" />',
+
+        # Head, faceless, and the hair in front: the tarot figure's.
+        f'<ellipse cx="150" cy="140" rx="56" ry="65" fill="{SKIN}" stroke="{INK}" stroke-width="3" />',
+        tarot("M156 112 C176 136 210 128 236 116 C246 112 256 114 258 120 C262 140 258 150 254 156 "
+              "C252 136 240 128 226 132 C204 140 174 140 156 128 Z", HAIR),
+        tarot("M156 116 C140 140 150 168 140 196 C132 220 148 236 140 252 C156 252 162 236 160 216 "
+              "C158 196 168 176 164 156 C162 140 166 128 156 116 Z", HAIR),
+        tarot("M254 116 C270 140 260 168 270 196 C278 220 262 236 270 252 C254 252 248 236 250 216 "
+              "C252 196 242 176 246 156 C248 140 244 128 254 116 Z", HAIR),
+        tarot("M150 170 C146 190 156 206 150 228 M260 170 C264 190 254 206 260 228", "none", HAIR_SHADE, 2.4),
+        f'<circle cx="95" cy="173" r="7" fill="none" stroke="{AMBER_MID}" stroke-width="2.4" />'
+        f'<circle cx="205" cy="173" r="7" fill="none" stroke="{AMBER_MID}" stroke-width="2.4" />',
+
+        # The captain's cap: the tarot figure's, at the same tilt.
+        f'<g transform="rotate(-6 {pivot})">'
+        + tarot("M146 112 C140 92 160 70 205 68 C254 66 274 88 266 112 Z", BLACK)
+        + tarot("M150 100 L262 100 L264 114 L148 114 Z", DARK)
+        + tarot("M148 114 C170 128 240 128 264 114 C252 132 162 132 148 114 Z", BLACK)
+        + tarot("M156 118 C178 126 232 126 256 118", "none", DARK_HI, 2)
+        + f'<path d="{lift("M152 106 L260 106", s, frm, to)}" stroke="{AMBER}" stroke-width="2" stroke-dasharray="4 3" />'
+        + tarot("M205 80 l5 9 10 1 -8 6 3 10 -10 -6 -10 6 3 -10 -8 -6 10 -1z", AMBER, AMBER_DARK, 1.2)
+        + "</g>",
+
+    ])
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
+  <!-- Tibbie, drawn and faceless: head and shoulders, in the captain's cap,
+       halter and chains, tattooed shoulders. The profile card's
+       avatar (site/ProfileCard.tsx). Generated by scripts/draw-illustrations.py;
+       edit it there: the tarot figure's head, hair and cap at this size, flat
+       shapes in the site's palette, with a paper sticker edge round her. -->
+  <defs>
+    {STICKER}
+  </defs>
+  <g filter="url(#sticker)" stroke-linejoin="round" stroke-linecap="round">
+{body}
+  </g>
+</svg>
+"""
+
+
 # --- Shop shelves (the top level: Bands, Art) -----------------------------------
 
 def shelf_tile(title, art, seed):
@@ -781,11 +906,19 @@ def art_art():
 
 # --- Band shelves (the second level, under Bands) --------------------------------
 
+# Room round a banner's strip for the tape on its corners: the canvas is the
+# 600 x 200 strip plus this much each side. BANNER_WIDTH/BANNER_HEIGHT in
+# content/shop.ts restate the canvas: change both.
+BANNER_MARGIN = (24, 16)
+
+
 def band_tile(name, sub_line, emblem, paper, ink, seed, sub_ink=None,
               sub_size=15, about=None):
     """The template every band's picture shares, and unlike the shelf tiles
-    above: a wide 3:1 gig-poster strip wheat-pasted on black, torn along its
-    top and bottom, taped at two corners. The band's name is lettered huge
+    above: a wide 3:1 gig-poster strip, torn along its top and bottom and
+    taped at two corners. Nothing is painted behind it, so the page shows
+    through the torn edges, and the canvas runs past the strip on every side
+    (BANNER_MARGIN) so the tape hanging off its corners isn't cut off. The band's name is lettered huge
     on the left with her role and years under it, and the band's emblem is a
     sticker on the right. Only the name, the line, the emblem and the paper
     and ink colours change between bands.
@@ -795,6 +928,7 @@ def band_tile(name, sub_line, emblem, paper, ink, seed, sub_ink=None,
     replaces the file's header comment, and `sub_size` lets a longer line
     clear the emblem."""
     w, h = 600, 200
+    mx, my = BANNER_MARGIN
     rng = random.Random(seed)
     top = [(0, 14)] + [(i * 600 / 14, 14 + rng.uniform(-5, 5)) for i in range(1, 14)] + [(600, 14)]
     bottom = [(600, 186)] + [(600 - i * 600 / 14, 186 + rng.uniform(-5, 5)) for i in range(1, 14)] + [(0, 186)]
@@ -805,7 +939,6 @@ def band_tile(name, sub_line, emblem, paper, ink, seed, sub_ink=None,
     tape = (f'<rect x="-46" y="-13" width="92" height="26" fill="{OUTLINE}" fill-opacity="0.92" stroke="{INK}" stroke-opacity="0.4" stroke-width="1.4" />'
             f'<path d="M-46 -6 H46 M-46 4 H46" stroke="{INK}" stroke-opacity="0.15" stroke-width="2" />')
     body = "\n".join([
-        f'<rect width="{w}" height="{h}" fill="{BLACK}" />',
         f'<path d="{poster}" fill="{paper}" stroke="{INK}" stroke-width="3" />',
         # Photocopier grit.
         f'<g fill="{ink}" fill-opacity="0.18">{speckle}</g>',
@@ -820,12 +953,12 @@ def band_tile(name, sub_line, emblem, paper, ink, seed, sub_ink=None,
         f'<g transform="translate(22 22) rotate(-34)">{tape}</g>',
         f'<g transform="translate(578 178) rotate(-34)">{tape}</g>',
     ])
-    return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="{-mx} {-my} {w + 2 * mx} {h + 2 * my}" width="{w + 2 * mx}" height="{h + 2 * my}">
   <!-- {about or f"{' '.join(name).title()}'s shelf in the shop."} A placeholder,
        generated by scripts/draw-illustrations.py; edit it there. Every band's
        and collection's picture shares this template (band_tile): a 3:1
-       gig-poster strip on black, the name lettered big, a line under it,
-       an emblem. -->
+       gig-poster strip on nothing, taped, the name lettered big, a line
+       under it, an emblem. -->
   <defs>
     {CANVAS}
   </defs>
@@ -1114,6 +1247,34 @@ def x_mark(cx, cy, size, ink, width=10):
             f'stroke="{ink}" stroke-width="{width}" />')
 
 
+def pin_button(cx, cy, r, face, art="", angle=0):
+    """A pinback button, face up: the printed face rolled over a metal rim,
+    a crescent of shine across its top left, the art in the middle."""
+    shine = (f'<path d="M{cx - r * 0.72:.1f} {cy - r * 0.18:.1f} A{r * 0.74:.1f} {r * 0.74:.1f} 0 0 1 '
+             f'{cx - r * 0.1:.1f} {cy - r * 0.74:.1f}" fill="none" stroke="{PAPER}" '
+             f'stroke-opacity="0.55" stroke-width="{max(3, r * 0.09):.1f}" />')
+    return (f'<g transform="rotate({angle} {cx} {cy})">'
+            f'<circle cx="{cx}" cy="{cy + r * 0.06:.1f}" r="{r}" fill="{OUTLINE}" stroke="{INK}" stroke-width="3" />'
+            f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="{face}" stroke="{INK}" stroke-width="3" />'
+            f'<circle cx="{cx}" cy="{cy}" r="{r * 0.88:.1f}" fill="none" stroke="{INK}" stroke-opacity="0.22" stroke-width="2" />'
+            f'{art}{shine}</g>')
+
+
+def pin_back(cx, cy, r, angle=0):
+    """A pinback button turned over: the bare back and its bent steel pin."""
+    return (f'<g transform="rotate({angle} {cx} {cy})">'
+            f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="{OUTLINE}" stroke="{INK}" stroke-width="3" />'
+            f'<circle cx="{cx}" cy="{cy}" r="{r * 0.8:.1f}" fill="{CREAM}" stroke="{INK}" stroke-width="2" />'
+            f'<path d="M{cx - r * 0.62:.1f} {cy + r * 0.1:.1f} L{cx + r * 0.6:.1f} {cy - r * 0.08:.1f}" '
+            f'stroke="{INK}" stroke-width="6" />'
+            f'<path d="M{cx - r * 0.62:.1f} {cy + r * 0.1:.1f} L{cx + r * 0.6:.1f} {cy - r * 0.08:.1f}" '
+            f'stroke="{OUTLINE}" stroke-width="3" />'
+            f'<path d="M{cx - r * 0.62:.1f} {cy + r * 0.1:.1f} c-10 -2 -12 -16 -2 -18" fill="none" '
+            f'stroke="{INK}" stroke-width="4" />'
+            f'<rect x="{cx + r * 0.52:.1f}" y="{cy - r * 0.2:.1f}" width="{r * 0.26:.1f}" height="{r * 0.24:.1f}" rx="3" '
+            f'fill="{DARK_HI}" stroke="{INK}" stroke-width="2" /></g>')
+
+
 def star(cx, cy, r, fill, points=5):
     pts = []
     for i in range(points * 2):
@@ -1143,11 +1304,17 @@ FORMAT_TILES = {
         x_mark(300, 322, 50, INK, width=10),
     ])),
     # A record sliding out of its sleeve.
-    "music": ("MUSIC", "".join([
+    "music": ("LISTEN", "".join([
         record(290, 246, 104, RED),
         f'<rect x="100" y="232" width="206" height="206" rx="3" fill="{BLACK}" stroke="{INK}" stroke-width="3" transform="rotate(-4 203 335)" />',
         f'<circle cx="203" cy="335" r="62" fill="none" stroke="{DARK_HI}" stroke-width="3" transform="rotate(-4 203 335)" />',
         star(203, 335, 30, RED),
+    ])),
+    # Two buttons face up, one turned over to show its pin.
+    "buttons": ("BUTTONS", "".join([
+        pin_back(318, 196, 62, angle=-18),
+        pin_button(184, 236, 88, RED, star(184, 236, 46, AMBER), angle=-8),
+        pin_button(300, 344, 70, BLACK, x_mark(300, 344, 44, CORAL, width=11), angle=6),
     ])),
 }
 
@@ -1317,6 +1484,12 @@ def patch_badge(cx, cy):
             + x_mark(cx, cy, 34, PAPER, width=8))
 
 
+def button_badge(cx, cy):
+    """Two pinback buttons, overlapping, for Buttons."""
+    return (pin_button(cx - 22, cy - 6, 52, BLACK, star(cx - 22, cy - 6, 28, AMBER), angle=-8)
+            + pin_button(cx + 34, cy + 26, 40, AMBER, x_mark(cx + 34, cy + 26, 24, RED, width=7), angle=8))
+
+
 def sticker_badge(cx, cy):
     """A starburst sticker with a star, for Stickers."""
     return starburst(cx, cy, 70, 52, AMBER, angle=8) + star(cx, cy, 30, RED)
@@ -1336,11 +1509,14 @@ SHELF_BANNERS = {
                     paper=CREAM, ink=RED, sub_ink=INK, seed=1040, emblem=patch_badge(500, 100)),
     "stickers": dict(name=["STICKERS"], sub_line="DIE CUT · FULL COLOR",
                      paper=CORAL, ink=INK, seed=1050, emblem=sticker_badge(500, 100)),
+    "buttons": dict(name=["BUTTONS"], sub_line="PINBACK · FOR JACKETS, BAGS AND HATS",
+                    paper=RED_DEEP, ink=AMBER, sub_ink=PAPER, seed=1060, emblem=button_badge(500, 100)),
 }
 
 
 LINK_ROWS = "src/assets/illustrations/link-rows"
 FUND = "src/assets/illustrations/fund"
+PROFILE = "src/assets/illustrations/profile"
 SHOP = "src/assets/illustrations/shop"
 
 files = {
@@ -1362,6 +1538,7 @@ files = {
     **{f"{SHOP}/formats/{name}.svg": format_tile(label, item, seed=800 + i * 10)
        for i, (name, (label, item)) in enumerate(FORMAT_TILES.items())},
     f"{FUND}/podcast-interview.svg": podcast(),
+    f"{PROFILE}/tibbie-portrait.svg": portrait(),
     f"{LINK_ROWS}/gash-onstage.svg": gash(),
     f"{LINK_ROWS}/reagan-youth-merch.svg": merch_pile(
         "The Reagan Youth merch pile: tee, the record out of its sleeve, a sticker and a raw-cut patch.",

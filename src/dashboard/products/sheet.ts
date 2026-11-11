@@ -2,11 +2,14 @@ import { PORTFOLIO } from "../../content/portfolio"
 import { BUNDLED_SHOP, formatsOf } from "../../content/shop"
 import type { ShopFormat, ShopItem } from "../../content/shop"
 import {
+  PRODUCT_CATEGORIES,
   categoryById,
   categoryOf,
   categoryOfType,
   fitOf,
+  readTag,
   slugOf,
+  tidyTag,
 } from "../../content/taxonomy"
 import { StudioError, TOO_MANY_TRIES, savePasscode } from "../passcode"
 
@@ -334,56 +337,171 @@ export function addProduct(rows: Row[]): { rows: Row[]; handle: string } {
 export const removeProduct = (rows: Row[], product: Product) =>
   rows.filter((_, i) => !product.rows.includes(i))
 
+/* --- Reading what people type ---------------------------------------- */
+
+/* Each reader takes a cell as someone might have typed it -- in the
+   editor, in Excel, in Numbers, in Shopify's own export -- and gives back
+   what Shopify's importer wants, or undefined when it can't tell. The
+   checks below and tidy() use the same ones, so a sheet the checks pass is
+   a sheet tidy() can make importable. */
+
+/* "$35", "35", "35,00", "1,200.50", "USD 35" -> "35.00". */
+export function money(value: string): string | undefined {
+  let digits = value.trim().replace(/[^\d.,-]/g, "")
+  if (!/\d/.test(digits)) return undefined
+  /* A comma before the last one or two digits is a decimal comma. */
+  if (/^-?[\d.]*\d,\d{1,2}$/.test(digits))
+    digits = digits.replace(/\./g, "").replace(",", ".")
+  else digits = digits.replace(/,/g, "")
+  const amount = Number(digits)
+  return Number.isFinite(amount) ? amount.toFixed(2) : undefined
+}
+
+/* yes, y, 1, x, ✓, on, true -> TRUE; no, n, 0, off, false -> FALSE. */
+export function truth(value: string): "TRUE" | "FALSE" | undefined {
+  const word = value.trim().toLowerCase()
+  if (/^(true|yes|y|1|x|✓|✔|on)$/.test(word)) return "TRUE"
+  if (/^(false|no|n|0|off)$/.test(word)) return "FALSE"
+  return undefined
+}
+
+export function statusOf(value: string) {
+  const word = value.trim().toLowerCase()
+  if (/^(active|live|published|public|visible|on|for sale)$/.test(word))
+    return "Active"
+  if (/^(draft|hidden|off|unpublished|private|not live|pending)$/.test(word))
+    return "Draft"
+  if (/^(archived?|retired|old|gone)$/.test(word)) return "Archived"
+  return undefined
+}
+
+/* "12", "12.0", "1,200", " 5 " -> a whole number as text. */
+export function whole(value: string): string | undefined {
+  const amount = Number(value.trim().replace(/[\s,]/g, ""))
+  return value.trim() && Number.isFinite(amount)
+    ? String(Math.round(amount))
+    : undefined
+}
+
+function sellingPolicy(value: string) {
+  const word = value.trim().toLowerCase()
+  if (/^(deny|no|n|false|0|stop)$/.test(word)) return "DENY"
+  if (/^(continue|yes|y|true|1|allow)$/.test(word)) return "CONTINUE"
+  return undefined
+}
+
+function tracker(value: string) {
+  const word = value.trim().toLowerCase()
+  if (/^(shopify|yes|y|true|1|track(ed)?)$/.test(word)) return "shopify"
+  if (/^(no|n|false|0|none|untracked|not tracked)$/.test(word)) return ""
+  return undefined
+}
+
+/* "150", "150 g", "5.3 oz", "1 lb", "0.2kg" -> grams. */
+function grams(value: string): string | undefined {
+  const match = value
+    .trim()
+    .toLowerCase()
+    .match(/^([\d.,]+)\s*(g|grams?|kg|kilos?|oz|ounces?|lbs?|pounds?)?$/)
+  if (!match) return undefined
+  const amount = Number(match[1].replace(",", "."))
+  if (!Number.isFinite(amount)) return undefined
+  const unit = match[2] ?? "g"
+  const factor = unit.startsWith("k")
+    ? 1000
+    : unit.startsWith("o")
+      ? 28.3495
+      : unit.startsWith("l") || unit.startsWith("p")
+        ? 453.592
+        : 1
+  return String(Math.round(amount * factor))
+}
+
+/* A photo link Shopify can download: https, whatever was pasted. */
+export function imageUrl(value: string): string | undefined {
+  const link = value.trim()
+  if (!link) return undefined
+  const full = link.startsWith("//")
+    ? `https:${link}`
+    : /^www\./i.test(link)
+      ? `https://${link}`
+      : link.replace(/^http:\/\//i, "https://")
+  try {
+    return new URL(full).protocol === "https:" ? full : undefined
+  } catch {
+    return undefined
+  }
+}
+
+const tidyTags = (value: string) => {
+  const seen = new Set<string>()
+  return value
+    .split(/[,;]/)
+    .map(tidyTag)
+    .filter((tag) => {
+      const key = tag.toLowerCase()
+      if (!tag || seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+    .join(", ")
+}
+
 /* --- Checks -------------------------------------------------------------- */
 
-const HANDLE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
-const STATUSES = ["active", "draft", "archived"]
-const BOOLEAN = ["", "true", "false"]
-
-/* What would make Shopify's importer refuse or mangle a product, in words,
-   naming the column to fix. A download waits until there are none. */
+/* What would make Shopify's importer refuse or mangle a product even after
+   tidy() has had its go, in words, naming the column to fix. A download
+   waits until there are none. */
 export function problems(rows: Row[], product: Product): string[] {
   const found: string[] = []
   const head = first(rows, product)
   if (!head.Title.trim()) found.push("Give it a Title.")
-  if (!HANDLE.test(product.handle))
-    found.push("The URL handle can only use a–z, 0–9 and single hyphens.")
-  if (head.Status && !STATUSES.includes(head.Status.trim().toLowerCase()))
+  if (!slugOf(product.handle)) found.push("Give it a URL handle.")
+  if (head.Status.trim() && !statusOf(head.Status))
     found.push("Status must be Active, Draft or Archived.")
-  if (!BOOLEAN.includes(head["Published on online store"].trim().toLowerCase()))
-    found.push("Published on online store must be TRUE or FALSE.")
+  const published = head["Published on online store"]
+  if (published.trim() && !truth(published))
+    found.push("Published on online store must be yes or no.")
 
   const variants = variantRows(rows, product).map((index) => rows[index])
   if (!variants.length) found.push("Add a variant, so it has a Price.")
   const names = OPTION_NAMES.map((column) => head[column].trim())
   if (variants.length > 1 && !names[0])
     found.push("Name the option in Option1 name, e.g. Size.")
+  /* A variant with no Price takes the first priced one's (tidy()), so
+     only a product with none at all is stuck. */
+  const priced = variants.filter((row) => row.Price.trim())
+  if (variants.length && !priced.length) found.push("Give it a Price above 0.")
   const seen = new Set<string>()
   variants.forEach((row, i) => {
     const which = variants.length > 1 ? `Variant ${i + 1}` : "The variant"
-    const price = Number(row.Price)
-    if (!row.Price.trim() || !Number.isFinite(price) || price <= 0)
+    if (row.Price.trim() && !(Number(money(row.Price)) > 0))
       found.push(`${which} needs a Price above 0.`)
-    const quantity = row["Inventory quantity"].trim()
-    if (quantity && !/^-?\d+$/.test(quantity))
-      found.push(`${which}: Inventory quantity must be a whole number.`)
+    const quantity = row["Inventory quantity"]
+    if (quantity.trim() && whole(quantity) === undefined)
+      found.push(`${which}: Inventory quantity must be a number.`)
     const values = OPTION_VALUES.map((column) => row[column].trim())
     values.forEach((value, n) => {
       if (names[n] && !value)
         found.push(`${which} has no ${names[n]} (Option${n + 1} value).`)
     })
-    const key = values.join(" / ")
-    if (seen.has(key)) found.push(`Two variants are both “${key}”.`)
+    const key = values.join(" / ").toLowerCase()
+    if (seen.has(key) && key.replace(/[ /]/g, ""))
+      found.push(`Two variants are both “${values.join(" / ")}”.`)
     seen.add(key)
   })
   for (const photo of photosOf(rows, product)) {
-    if (!/^https:\/\//.test(photo.url)) {
-      found.push("A Product image URL isn't a public https link.")
+    if (!imageUrl(photo.url)) {
+      found.push("A Product image URL isn't a web link Shopify can reach.")
       break
     }
   }
   return [...new Set(found)]
 }
+
+const TYPE_NAMES = PRODUCT_CATEGORIES.flatMap((entry) =>
+  entry.shopify ? [entry.shopify.type] : [],
+)
 
 /* What the site will make of a product, where it would surprise her: it
    files a product by its Type and gathers designs by tag, so a product
@@ -391,20 +509,230 @@ export function problems(rows: Row[], product: Product): string[] {
    block. */
 export function siteNotes(rows: Row[], product: Product): string[] {
   const head = first(rows, product)
-  const tags = head.Tags.split(",").map((tag) => tag.trim().toLowerCase())
+  const tags = head.Tags.split(/[,;]/)
   const notes: string[] = []
-  const category = categoryOfType(head.Type)
+  const category =
+    categoryOfType(head.Type, head["Product category"]) ??
+    categoryOfType(head.Title.trim().split(/\s+/).at(-1) ?? "")
   if (!category)
     notes.push(
-      "The site files a product by its Type: Sticker, Patch, T-Shirt, Record or Bundle.",
+      `The site files a product by its Type: ${TYPE_NAMES.slice(0, -1).join(", ")} or ${TYPE_NAMES.at(-1)}.`,
     )
-  if (category === "tees" && !tags.some((tag) => tag.startsWith("fit:")))
+  if (
+    category === "tees" &&
+    !readTag(tags, "fit") &&
+    !/\b(wom[ae]n|ladies|m[ae]n['’]?s?)\b/i.test(head.Title)
+  )
     notes.push("A T-Shirt wants a fit: tag (fit:mens or fit:womens).")
-  if (!tags.some((tag) => tag.startsWith("design:")))
+  if (!readTag(tags, "design"))
     notes.push(
       "No design: tag, so the site shows it as a design of its own rather than a format of one.",
     )
   return notes
+}
+
+/* --- Tidying ------------------------------------------------------------- */
+
+const MONEY: Column[] = ["Price", "Compare-at price", "Cost per item"]
+const YES_NO: Column[] = [
+  "Published on online store",
+  "Charge tax",
+  "Requires shipping",
+  "Gift card",
+  "Google Shopping / Custom product",
+]
+
+/* The sheet made importable wherever that can be done without guessing at
+   what she meant, and every change said in words: a price typed "$35",
+   "yes" for TRUE, a handle with capitals, "Tee" as a Type, a tag typed
+   "Design: Vampire Cats", a photo link on http, a variant left without a
+   price (it takes the first one's), a row repeated by a paste. Runs on an
+   uploaded file and before every download. */
+export function tidy(input: Row[]): { rows: Row[]; fixed: string[] } {
+  const counts = new Map<string, number>()
+  const say = (message: string) =>
+    counts.set(message, (counts.get(message) ?? 0) + 1)
+  let rows = input.map((row) => ({ ...row }))
+
+  /* Handles first, since they say which rows are one product. Two handles
+     that tidy to the same one stay two products. */
+  const handles = new Map<string, string>()
+  const owner = new Map<string, string>()
+  for (const row of rows) {
+    const original = row["URL handle"]
+    if (!handles.has(original)) {
+      const base = slugOf(original) || slugOf(row.Title) || "product"
+      let handle = base
+      for (let n = 2; owner.has(handle) && owner.get(handle) !== original; n++)
+        handle = `${base}-${n}`
+      handles.set(original, handle)
+      owner.set(handle, original)
+      if (handle !== original)
+        say("URL handles made lowercase words joined by hyphens")
+    }
+    row["URL handle"] = handles.get(original)!
+  }
+  rows = gather(rows)
+
+  const set = (row: Row, column: Column, value: string | undefined) => {
+    if (value === undefined || value === row[column]) return false
+    row[column] = value
+    return true
+  }
+
+  for (const row of rows) {
+    for (const column of MONEY) {
+      const typed = row[column].trim()
+      if (set(row, column, typed ? money(typed) : undefined)) {
+        if (!/^\d+(\.\d+)?$/.test(typed))
+          say("Prices written as plain dollars and cents")
+      }
+    }
+    for (const column of YES_NO) {
+      const typed = row[column]
+      if (
+        set(row, column, truth(typed)) &&
+        typed.trim().toUpperCase() !== row[column]
+      )
+        say("Yes and no written as TRUE and FALSE")
+    }
+    const status = row.Status
+    if (set(row, "Status", status.trim() ? statusOf(status) : undefined)) {
+      if (status.trim().toLowerCase() !== row.Status.toLowerCase())
+        say(`Status “${status.trim()}” read as ${row.Status}`)
+    }
+    const policy = row["Continue selling when out of stock"]
+    if (
+      set(row, "Continue selling when out of stock", sellingPolicy(policy)) &&
+      policy.trim().toUpperCase() !== row["Continue selling when out of stock"]
+    )
+      say("Continue selling when out of stock written as DENY or CONTINUE")
+    const tracked = row["Inventory tracker"]
+    if (
+      set(
+        row,
+        "Inventory tracker",
+        tracked.trim() ? tracker(tracked) : undefined,
+      ) &&
+      tracked.trim().toLowerCase() !== row["Inventory tracker"]
+    )
+      say("Inventory tracker written as shopify, or left blank")
+    if (
+      set(
+        row,
+        "Inventory quantity",
+        row["Inventory quantity"].trim()
+          ? whole(row["Inventory quantity"])
+          : undefined,
+      )
+    )
+      say("Stock counts made whole numbers")
+    const weight = row["Weight value (grams)"]
+    if (
+      set(
+        row,
+        "Weight value (grams)",
+        weight.trim() ? grams(weight) : undefined,
+      )
+    )
+      say("Weights turned into grams")
+    for (const column of ["Product image URL", "Variant image URL"] as const) {
+      if (set(row, column, imageUrl(row[column])) && row[column])
+        say("Photo links made https")
+    }
+    const position = row["Image position"].trim()
+    if (position && !/^\d+$/.test(position)) {
+      row["Image position"] = whole(position) ?? ""
+      say("Image positions made whole numbers")
+    }
+    const typedTags = row.Tags
+    if (typedTags.trim()) {
+      const tags = tidyTags(typedTags)
+      if (
+        set(row, "Tags", tags) &&
+        tags.replace(/\s/g, "") !== typedTags.replace(/\s/g, "")
+      )
+        say(
+          "Tags tidied to design:, band:, fit: and the rest as the site reads them",
+        )
+    }
+  }
+
+  /* Rows are gathered, so the sheet is each product's rows in turn. */
+  const next: Row[] = []
+  for (const product of productsOf(rows)) {
+    const own = product.rows.map((index) => rows[index])
+
+    /* The row carrying the product's details goes first, wherever a sort
+       left it. */
+    const detailed = own.findIndex((row) => row.Title.trim())
+    if (detailed > 0) {
+      own.unshift(...own.splice(detailed, 1))
+      say("Rows reordered so each product's details come first")
+    }
+    const head = own[0]
+    const name = head.Title.trim() || product.handle
+
+    /* The Type in the site's own word, and the category it implies. */
+    const category =
+      categoryOfType(head.Type, head["Product category"]) ??
+      (head.Type.trim()
+        ? undefined
+        : categoryOfType(head.Title.trim().split(/\s+/).at(-1) ?? ""))
+    const leaf = category ? categoryById(category).shopify : undefined
+    if (leaf) {
+      const typed = head.Type.trim()
+      if (typed !== leaf.type) {
+        head.Type = leaf.type
+        say(
+          typed
+            ? `Type “${typed}” read as ${leaf.type}`
+            : `${name}: Type filled in as ${leaf.type}, from its title`,
+        )
+      }
+      if (!head["Product category"].trim() && leaf.category) {
+        head["Product category"] = leaf.category
+        say("Product category filled in from the Type")
+      }
+    }
+
+    /* Repeated rows, from a paste or a merge, go. */
+    const seen = new Set<string>()
+    const kept = own.filter((row) => {
+      const key = COLUMNS.map((column) => row[column]).join("\u0000")
+      if (seen.has(key)) {
+        say("Repeated rows dropped")
+        return false
+      }
+      seen.add(key)
+      return true
+    })
+
+    const variants = kept.filter(isVariantRow)
+    if (
+      variants.length === 1 &&
+      !head["Option1 name"].trim() &&
+      !variants[0]["Option1 value"].trim()
+    ) {
+      head["Option1 name"] = "Title"
+      variants[0]["Option1 value"] = "Default Title"
+    }
+    const price = variants.find((row) => row.Price.trim())?.Price
+    for (const row of variants) {
+      if (!row.Price.trim() && price) {
+        row.Price = price
+        say(`${name}: a variant with no Price takes $${price}`)
+      }
+    }
+
+    next.push(...kept)
+  }
+  rows = next
+
+  const fixed = [...counts].map(([message, n]) =>
+    n > 1 ? `${message} (${n}).` : `${message}.`,
+  )
+  return { rows, fixed }
 }
 
 /* --- CSV ----------------------------------------------------------------- */
@@ -423,13 +751,15 @@ export function toCsv(rows: Row[]): string {
 }
 
 /* RFC 4180, forgiving: quoted fields across lines, doubled quotes, CRLF or
-   LF, and a byte-order mark if a spreadsheet added one. */
-function parseCsv(text: string): string[][] {
+   LF, a byte-order mark if a spreadsheet added one, semicolons or tabs for
+   commas (Excel in much of Europe, a paste from Numbers), and a stray quote
+   inside a cell taken as a quote rather than the start of one. */
+function parseCsv(text: string, delimiter = ","): string[][] {
+  const source = text.replace(/^\uFEFF/, "")
   const records: string[][] = []
   let record: string[] = []
   let field = ""
   let quoted = false
-  const source = text.replace(/^﻿/, "")
   for (let i = 0; i < source.length; i++) {
     const char = source[i]
     if (quoted) {
@@ -438,8 +768,10 @@ function parseCsv(text: string): string[][] {
         i++
       } else if (char === '"') quoted = false
       else field += char
-    } else if (char === '"') quoted = true
-    else if (char === ",") {
+    } else if (char === '"' && !field.trim()) {
+      field = ""
+      quoted = true
+    } else if (char === delimiter) {
       record.push(field)
       field = ""
     } else if (char === "\n" || char === "\r") {
@@ -492,32 +824,101 @@ const CLASSIC: Record<string, Column> = {
   "seo description": "SEO description",
 }
 
+/* A header cell as a column: Shopify's template name or an older export's,
+   in any case, with stray spaces, a byte-order mark or a required-field
+   asterisk forgiven. */
+const BY_NAME = new Map(
+  COLUMNS.map((column) => [column.toLowerCase(), column] as const),
+)
+function columnOf(name: string): Column | undefined {
+  const key = name
+    .replace(/^\uFEFF/, "")
+    .trim()
+    .replace(/\s*\*$/, "")
+    .replace(/\s+/g, " ")
+    .toLowerCase()
+  return BY_NAME.get(key) ?? CLASSIC[key]
+}
+
 /* A CSV back into rows: Shopify's template, a Shopify export (either
-   generation of its column names) or this studio's own download. Columns it
-   doesn't know are dropped and named, so nothing goes silently. */
-export function fromCsv(text: string): { rows: Row[]; dropped: string[] } {
-  const [header, ...records] = parseCsv(text)
-  if (!header) throw new StudioError("That file is empty.")
-  const byName = new Map(
-    COLUMNS.map((column) => [column.toLowerCase(), column] as const),
-  )
-  const mapped = header.map((name) => {
-    const key = name.trim().toLowerCase()
-    return byName.get(key) ?? CLASSIC[key]
+   generation of its column names), this studio's own download, or any of
+   those after a spreadsheet has had it. Lines above the column names are
+   skipped; a row with no URL handle is a new product when it has a Title
+   and part of the product above when it doesn't; then tidy() makes it
+   importable. Columns it doesn't know are dropped and named, and every fix
+   is said, so nothing changes silently. */
+export function fromCsv(text: string): {
+  rows: Row[]
+  dropped: string[]
+  fixed: string[]
+} {
+  /* Comma, semicolon or tab: whichever reads the most column names, on the
+     first of the top 20 lines that names a handle or a title. */
+  const reads = [",", ";", "\t"].map((delimiter) => {
+    const table = parseCsv(text, delimiter)
+    const at = table
+      .slice(0, 20)
+      .findIndex((cells) =>
+        cells.some((cell) =>
+          ["URL handle", "Title"].includes(columnOf(cell) ?? ""),
+        ),
+      )
+    const known = at === -1 ? 0 : table[at].filter(columnOf).length
+    return { table, at, known }
   })
-  if (!mapped.includes("URL handle"))
+  const { table, at } = reads.reduce((best, read) =>
+    read.known > best.known ? read : best,
+  )
+  if (!table.length) throw new StudioError("That file is empty.")
+  if (at === -1)
     throw new StudioError(
-      "That isn't a Shopify product sheet: it has no URL handle column.",
+      "That isn't a Shopify product sheet: it has no URL handle or Title column.",
     )
-  const dropped = header.filter((_, i) => !mapped[i])
-  const rows = records.map((record) => {
+  const header = table[at]
+  const taken = new Set<Column>()
+  const mapped = header.map((name) => {
+    const column = columnOf(name)
+    if (!column || taken.has(column)) return undefined
+    taken.add(column)
+    return column
+  })
+  const dropped = header.filter((name, i) => !mapped[i] && name.trim())
+
+  const fixed: string[] = []
+  if (at > 0)
+    fixed.push(
+      `Skipped ${at} ${at === 1 ? "line" : "lines"} above the column names.`,
+    )
+  let handle = ""
+  let attached = 0
+  let stray = 0
+  const rows: Row[] = []
+  for (const record of table.slice(at + 1)) {
     const row = blankRow()
     mapped.forEach((column, i) => {
       if (column) row[column] = (record[i] ?? "").trim()
     })
-    return row
-  })
-  return { rows: gather(rows.filter((row) => row["URL handle"])), dropped }
+    if (COLUMNS.every((column) => !row[column])) continue
+    if (row["URL handle"]) handle = row["URL handle"]
+    else if (row.Title) handle = slugOf(row.Title)
+    else if (handle) attached++
+    else {
+      stray++
+      continue
+    }
+    row["URL handle"] = handle
+    rows.push(row)
+  }
+  if (attached)
+    fixed.push(
+      `${attached} ${attached === 1 ? "row" : "rows"} with no URL handle went with the product above.`,
+    )
+  if (stray)
+    fixed.push(
+      `${stray} ${stray === 1 ? "row" : "rows"} before the first product left out.`,
+    )
+  const tidied = tidy(rows)
+  return { rows: tidied.rows, dropped, fixed: [...fixed, ...tidied.fixed] }
 }
 
 /* --- The first fill ------------------------------------------------------ */

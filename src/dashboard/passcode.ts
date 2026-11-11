@@ -26,7 +26,8 @@ export function savePasscode(passcode: string | null) {
 
 /* What a connection hears once it has made 30 passcode checks in ten
    minutes: the Vercel Firewall rule "Studio passcode guesses" answers 429 for
-   /api/login and every write to /api/products and /api/avatar, so guessing
+   /api/login, every request to /api/products (its read checks the passcode
+   too) and every write to /api/avatar, so guessing
    can't simply move from the door to an endpoint. Set in the Vercel
    dashboard, not in this repo; change the wording if the window changes. */
 export const TOO_MANY_TRIES =

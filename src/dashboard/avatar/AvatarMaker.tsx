@@ -3,7 +3,7 @@ import type { MouseEvent, PointerEvent } from "react"
 import { ImagePlus, RotateCcw, UserRound, ZoomIn, ZoomOut } from "lucide-react"
 import { toast } from "sonner"
 
-import profilePic from "../../assets/imagery/tibbie-portrait-4.png"
+import profilePic from "../../assets/illustrations/profile/tibbie-portrait.svg"
 import { castMagicFrom } from "../../lib/magic-dust"
 import Button from "../../ui/controls/Button"
 import Field from "../../ui/controls/Field"

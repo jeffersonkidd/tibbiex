@@ -1,7 +1,7 @@
 import { useRef, useState, type FormEvent } from "react"
 import { ArrowLeft, KeyRound } from "lucide-react"
 
-import profilePic from "../assets/imagery/tibbie-portrait-4.png"
+import profilePic from "../assets/illustrations/profile/tibbie-portrait.svg"
 import tagPic from "../assets/marks/tibbiex-tag.png"
 import { AVATAR_URL } from "../content/site"
 import { castMagic } from "../lib/magic-dust"

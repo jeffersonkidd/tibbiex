@@ -1,6 +1,7 @@
 import gashTile from "../assets/illustrations/shop/bands/gash.svg"
 import leftoverCrackTile from "../assets/illustrations/shop/bands/leftover-crack.svg"
 import reaganYouthTile from "../assets/illustrations/shop/bands/reagan-youth.svg"
+import buttonsTag from "../assets/illustrations/shop/formats/buttons.svg"
 import musicTag from "../assets/illustrations/shop/formats/music.svg"
 import patchesTag from "../assets/illustrations/shop/formats/patches.svg"
 import stickersTag from "../assets/illustrations/shop/formats/stickers.svg"
@@ -11,6 +12,7 @@ import leftoverFrankBanner from "../assets/illustrations/shop/collections/lc-lef
 import nextGenerationBanner from "../assets/illustrations/shop/collections/ry-the-next-generation.svg"
 import artBanner from "../assets/illustrations/shop/shelves/art.svg"
 import bandsBanner from "../assets/illustrations/shop/shelves/bands.svg"
+import buttonsBanner from "../assets/illustrations/shop/shelves/buttons.svg"
 import patchesBanner from "../assets/illustrations/shop/shelves/patches.svg"
 import sessionsBanner from "../assets/illustrations/shop/shelves/sessions.svg"
 import stickersBanner from "../assets/illustrations/shop/shelves/stickers.svg"
@@ -404,26 +406,35 @@ export const sellsAny = (item: ShopItem, categories: ProductCategory[]) =>
    no products until one is picked. The picked shelf's banner stays on top,
    with a strip of what is under it:
 
-     Sessions              each service in content/offerings.ts
      Bands                 each band with something for sale, then its
                            collections
+     Tee Shirts, Patches   each band and Art that has that kind of item,
+                           then those items as cards, one per format
      Art                   each collection on the Art shelf
-     Tee Shirts, Patches,  each band and Art that has that kind of item,
-     Stickers              then those items as cards, one per format
+     Stickers, Buttons     as Tee Shirts and Patches
+     Sessions              each service in content/offerings.ts
 
    Sessions is her time rather than her goods; the rest are products (see
    offerings.ts). A shelf with nothing on it is left off the first screen. */
 export type ShopShelf =
-  "sessions" | "bands" | "art" | "tees" | "patches" | "stickers"
+  "sessions" | "bands" | "art" | "tees" | "patches" | "stickers" | "buttons"
+
+/* Every 3:1 banner's canvas (shelves, sessions, bands, collections): the
+   600 x 200 strip plus room round it for the tape on its corners, which
+   hangs past the strip. BANNER_MARGIN in scripts/draw-illustrations.py
+   sets it: change both. */
+export const BANNER_WIDTH = 648
+export const BANNER_HEIGHT = 232
 
 export const SHOP_SHELVES: { id: ShopShelf; title: string; banner: string }[] =
   [
-    { id: "sessions", title: "Sessions", banner: sessionsBanner },
     { id: "bands", title: "Bands", banner: bandsBanner },
-    { id: "art", title: "Art", banner: artBanner },
     { id: "tees", title: "Tee Shirts", banner: teesBanner },
     { id: "patches", title: "Patches", banner: patchesBanner },
+    { id: "art", title: "Art", banner: artBanner },
     { id: "stickers", title: "Stickers", banner: stickersBanner },
+    { id: "buttons", title: "Buttons", banner: buttonsBanner },
+    { id: "sessions", title: "Sessions", banner: sessionsBanner },
   ]
 
 /* Each band's own gig-poster strip, drawn to the band level's template:
@@ -447,12 +458,12 @@ export const COLLECTION_BANNERS: Record<string, string> = {
 }
 
 /* What a collection comes in: square hang tags under its banner, in this
-   order. The first three are also shelves of their own on the Buy tab,
+   order. All but Listen are also shelves of their own on the Buy tab,
    named by `shelf`. Each tag is one leaf of the category tree
-   (content/taxonomy.ts) -- Tees is both cuts, Music is any record or track
+   (content/taxonomy.ts) -- Tees is both cuts, Listen is any record or track
    -- and shows only when the collection has a format on it; tapping it
    opens the product on the first of those. The tags name no design, so the
-   same four serve every collection. A format on any other leaf (a bundle)
+   same tags serve every collection. A format on any other leaf (a bundle)
    gets a plain button instead. */
 export const FORMAT_TAGS: {
   label: string
@@ -473,7 +484,14 @@ export const FORMAT_TAGS: {
     category: "stickers",
     shelf: "stickers",
   },
-  { label: "Music", image: musicTag, category: "music" },
+  {
+    label: "Buttons",
+    image: buttonsTag,
+    category: "buttons",
+    shelf: "buttons",
+  },
+  /* Called Listen, like the Listen tab: it is the records and tracks. */
+  { label: "Listen", image: musicTag, category: "music" },
 ]
 
 /* Everything the site derives from a catalogue, worked out in one place

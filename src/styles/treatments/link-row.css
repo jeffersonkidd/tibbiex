@@ -27,10 +27,11 @@
   --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
   display: flex;
   flex-direction: column;
-  /* Phone: 26px between cards plus 62px above each for its cutout to climb
-     into. The first one's room sits on top of the stack gap above. */
-  gap: 88px;
-  padding-top: 46px;
+  /* Phone: 26px between cards plus 50px above each for its cutout to climb
+     into (a fifth of a 3:2 window). The first one's room sits on top of the
+     stack gap above. */
+  gap: 76px;
+  padding-top: 40px;
 }
 
 .link-row {
@@ -75,12 +76,14 @@
 }
 
 /* The photo window: a halftone dot screen over a dark fill, which the cutout
-   stands in front of. */
+   stands in front of. 3:2 on a phone, where the card is the screen's whole
+   width and anything squarer stands a full screen tall with its cutout;
+   5:4 in the narrow desktop print. */
 .link-window {
   --dot: color-mix(in srgb, var(--color-shadow) 22%, transparent);
   --glow: transparent;
   position: relative;
-  aspect-ratio: 5 / 4;
+  aspect-ratio: 3 / 2;
   background:
     radial-gradient(circle, var(--dot) 1.1px, transparent 1.6px) 0 0 / 6px 6px,
     radial-gradient(120% 90% at 50% 115%, var(--glow), transparent 70%),
@@ -356,6 +359,10 @@
   .link-row:focus-visible {
     transform: none;
     box-shadow: none;
+  }
+
+  .link-window {
+    aspect-ratio: 5 / 4;
   }
 
   /* Now the print is the paper: a square-ish window over a fat bottom

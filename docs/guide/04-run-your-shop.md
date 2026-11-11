@@ -34,8 +34,10 @@ you change anything.
 3. Under **The product**, fill in the **Title** (e.g. _Vampire Cats Sticker_),
    a **URL handle** (e.g. _vampire-cats-sticker_) and a **Description**. Set the
    **Vendor** to the band, or _Tibbie X_ for your own art.
-4. Tap its **Type**: **T-Shirt**, **Patch**, **Sticker**, **Record** or
-   **Bundle**. That also fills in **Product category**.
+4. Tap its **Type**: **T-Shirt**, **Patch**, **Sticker**, **Button**,
+   **Record** or **Bundle**. That also fills in **Product category**. Each
+   kind of thing is its own product, even when it's the same design: the
+   Vampire Cats sticker and the Vampire Cats button are two products.
 5. In **Tags**, write `design:` and the design's name, so the site puts it
    with the rest of that design. Then add `band:` for band merch,
    `line:art` for your own art, and `fit:mens` or `fit:womens` for a tee. For
@@ -73,6 +75,14 @@ The sheet doesn't follow what you change in Shopify. If you want the Studio's
 sheet to match the store again, export your products from Shopify
 (**Products → Export**, as a CSV for Excel or Numbers), then in the Studio tap
 **Upload a CSV**, pick the file and tap **Replace it**.
+
+The file doesn't have to be neat. A sheet that's been through Excel or
+Numbers, sorted, saved with semicolons, or typed by hand will come in: a
+price typed _$35_, _yes_ for TRUE, _live_ for Active, _tee_ for T-Shirt, a tag
+typed _Design: Vampire Cats_, a row with its URL handle left blank. Before you
+tap **Replace it**, the Studio lists everything it tidied under **Tidied on
+the way in**. It does the same tidying when you tap **Download CSV**, and
+tells you what it changed.
 
 ### Optional: one collection per design
 

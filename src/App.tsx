@@ -15,6 +15,7 @@ import { VISIBLE_TABS, isTabEnabled } from "./content/tabs"
 import type { Tab } from "./content/tabs"
 
 import { analyticsOptedOut, trackTab } from "./lib/analytics"
+import { markAskedToJoin, shouldAskToJoin } from "./lib/newsletter-prompt"
 import { useCheckoutReturn } from "./lib/payments"
 
 import Lightbox from "./ui/overlays/Lightbox"
@@ -26,6 +27,7 @@ import ProfileCard from "./site/ProfileCard"
 import TabStrip from "./site/TabStrip"
 import AlbumModal from "./site/modals/AlbumModal"
 import BookingModal from "./site/modals/BookingModal"
+import NewsletterModal from "./site/modals/NewsletterModal"
 import ProductModal from "./site/modals/ProductModal"
 import SessionMenu from "./site/modals/SessionMenu"
 import ShareModal from "./site/modals/ShareModal"
@@ -42,6 +44,7 @@ import TourTab from "./tabs/TourTab"
 type Modal =
   | { kind: "album"; album: Album }
   | { kind: "booking" }
+  | { kind: "newsletter" }
   | { kind: "share" }
   | { kind: "session"; service: Service }
   | { kind: "product"; item: ShopItem; format?: string }
@@ -68,6 +71,23 @@ export default function App() {
   const tabsRef = useRef<HTMLElement>(null)
   const close = () => setModal(null)
 
+  /* The newsletter asks once, on a visitor's first tap on a link row or a
+     shop banner: the sign-up opens, and what they tapped runs when it
+     closes, joined or not. After that, taps go straight through. */
+  const afterNewsletter = useRef<(() => void) | null>(null)
+  function askFirst(next: () => void) {
+    if (!shouldAskToJoin()) return next()
+    markAskedToJoin()
+    afterNewsletter.current = next
+    setModal({ kind: "newsletter" })
+  }
+  function closeNewsletter() {
+    const next = afterNewsletter.current
+    afterNewsletter.current = null
+    setModal(null)
+    next?.()
+  }
+
   useCheckoutReturn()
 
   /* The one hand-off between the two tabs: switch to Buy, narrow it to the
@@ -76,6 +96,15 @@ export default function App() {
   function openShop(band: BandId) {
     setShopShelf("bands")
     setShopPick(band)
+    setActiveTab("Buy")
+    tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+  }
+
+  /* The Home link rows' way in: the Buy tab on one shelf, or on its first
+     screen with null. */
+  function openBuy(shelf: ShopShelf | null) {
+    setShopShelf(shelf)
+    setShopPick(null)
     setActiveTab("Buy")
     tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
   }
@@ -111,7 +140,8 @@ export default function App() {
                 setModal({ kind: "product", item: YOUTH_ANTHEMS_BUNDLE })
               }
               onOpenBooking={() => setModal({ kind: "booking" })}
-              onOpenShop={isTabEnabled("Buy") ? openShop : undefined}
+              onOpenBuy={isTabEnabled("Buy") ? openBuy : undefined}
+              askFirst={askFirst}
             />
           )}
 
@@ -158,6 +188,7 @@ export default function App() {
               onOpenService={(service) =>
                 setModal({ kind: "session", service })
               }
+              askFirst={askFirst}
             />
           )}
         </main>
@@ -169,6 +200,9 @@ export default function App() {
         <AlbumModal album={modal.album} onClose={close} />
       )}
       {modal?.kind === "booking" && <BookingModal onClose={close} />}
+      {modal?.kind === "newsletter" && (
+        <NewsletterModal onClose={closeNewsletter} />
+      )}
       {modal?.kind === "share" && <ShareModal onClose={close} />}
       {modal?.kind === "session" && (
         <SessionMenu service={modal.service} onClose={close} />

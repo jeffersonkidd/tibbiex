@@ -2,6 +2,8 @@ import { useState } from "react"
 
 import {
   BAND_TILES,
+  BANNER_HEIGHT,
+  BANNER_WIDTH,
   COLLECTION_BANNERS,
   FORMAT_TAGS,
   SHOP_SHELVES,
@@ -43,6 +45,7 @@ export default function BuyTab({
   onPickChange,
   onOpenProduct,
   onOpenService,
+  askFirst = (next) => next(),
 }: {
   shelf: ShopShelf | null
   pick: string | null
@@ -50,6 +53,9 @@ export default function BuyTab({
   onPickChange: (pick: string | null) => void
   onOpenProduct: (item: ShopItem, format?: string) => void
   onOpenService: (service: Service) => void
+  /* Run what a banner does, after anything App wants to show first (the
+     newsletter, on a visitor's first tap). */
+  askFirst?: (next: () => void) => void
 }) {
   const shop = useShop()
   /* What a picked band shows: Collections, or one kind of item by its
@@ -135,9 +141,9 @@ export default function BuyTab({
             key={entry.id}
             image={entry.banner}
             label={entry.title}
-            width={600}
-            height={200}
-            onOpen={() => onShelfChange(entry.id)}
+            width={BANNER_WIDTH}
+            height={BANNER_HEIGHT}
+            onOpen={() => askFirst(() => onShelfChange(entry.id))}
           />
         ))}
       </div>
@@ -181,9 +187,9 @@ export default function BuyTab({
                   key={group.id}
                   image={image}
                   label={group.title}
-                  width={600}
-                  height={200}
-                  onOpen={() => openBand(group.id)}
+                  width={BANNER_WIDTH}
+                  height={BANNER_HEIGHT}
+                  onOpen={() => askFirst(() => openBand(group.id))}
                 />
               ) : (
                 <button
@@ -248,7 +254,12 @@ export default function BuyTab({
             />
           </>
         ) : (
-          <ShopGrid items={band.items} passes={passes} onOpen={onOpenProduct} />
+          <ShopGrid
+            items={band.items}
+            passes={passes}
+            onOpen={onOpenProduct}
+            askFirst={askFirst}
+          />
         )}
       </>
     )
@@ -286,14 +297,19 @@ export default function BuyTab({
             key={service.id}
             image={service.banner}
             label={service.title}
-            width={600}
-            height={200}
-            onOpen={() => onOpenService(service)}
+            width={BANNER_WIDTH}
+            height={BANNER_HEIGHT}
+            onOpen={() => askFirst(() => onOpenService(service))}
           />
         ))}
 
       {current.id === "art" && (
-        <ShopGrid items={artItems} passes={passes} onOpen={onOpenProduct} />
+        <ShopGrid
+          items={artItems}
+          passes={passes}
+          onOpen={onOpenProduct}
+          askFirst={askFirst}
+        />
       )}
 
       {/* A kind of item: every format of that kind from the picked band
@@ -317,10 +333,10 @@ function Banner({ image, label }: { image: string; label: string }) {
     <img
       src={image}
       alt={label}
-      width={600}
-      height={200}
+      width={BANNER_WIDTH}
+      height={BANNER_HEIGHT}
       decoding="async"
-      className="h-auto w-full rounded-lg border border-outline-variant shadow-[0_14px_24px_-12px_var(--color-shadow)]"
+      className="h-auto w-full drop-shadow-[0_12px_12px_var(--color-shadow)]"
     />
   )
 }
@@ -376,10 +392,12 @@ function ShopGrid({
   items,
   passes,
   onOpen,
+  askFirst = (next) => next(),
 }: {
   items: ShopItem[]
   passes: (item: ShopItem, format: ShopFormat) => boolean
   onOpen: (item: ShopItem, format?: string) => void
+  askFirst?: (next: () => void) => void
 }) {
   /* A filter drops a collection with no card left, rather than leaving its
      banner over nothing. */
@@ -396,11 +414,11 @@ function ShopGrid({
           <ShelfTile
             image={COLLECTION_BANNERS[item.id]}
             label={item.item}
-            width={600}
-            height={200}
-            onOpen={() => onOpen(item)}
+            width={BANNER_WIDTH}
+            height={BANNER_HEIGHT}
+            onOpen={() => askFirst(() => onOpen(item))}
           />
-          {/* Tees, patches, stickers, music -- the strip's order -- then
+          {/* Tees, patches, stickers, buttons, Listen -- the strip's order -- then
               any other leaf, in the tree's order. */}
           <KindCards
             items={[item]}

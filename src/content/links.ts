@@ -60,8 +60,9 @@ export type LinkEntry = {
   external?: true
   /* Opens something in this view instead of navigating away. */
   action?: "tarot" | "offer" | "booking"
-  /* Opens this band's shelf in the Buy tab. The row goes dark with the Buy
-     tab, or when the band has nothing for sale. */
+  /* The band whose merch the row sells. The row opens the Buy tab's first
+     screen, and goes dark with the Buy tab or when the band has nothing for
+     sale. */
   shop?: BandId
   enabled?: boolean
   staged?: true
@@ -71,8 +72,8 @@ const cheapestReading = Math.min(...READINGS.map((reading) => reading.price))
 
 /* The first tab. Rows are outbound links, except those carrying `action`
    or `shop`: such a row is a button that opens something inside the app
-   instead of navigating away -- the reading menu, a band's shelf in the
-   shop, the featured merch offer or the booking form.
+   instead of navigating away -- the Buy tab (its first screen, or Sessions
+   for tarot), the featured merch offer or the booking form.
 
    Every picture is a placeholder drawing (src/assets/illustrations/
    link-rows/, SVG): a faceless cartoon of her and drawn props, with no

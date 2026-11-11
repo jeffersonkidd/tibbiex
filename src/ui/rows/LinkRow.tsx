@@ -9,14 +9,17 @@ import { castMagicFrom } from "../../lib/magic-dust"
    climb out of its photo.
 
    A row with `onOpen` opens something in this view and renders as a
-   <button>; without it the row is an <a> to `href`. Both throw sparks from
-   the pointer. A row with no `print` yet shows its icon in an empty window. */
+   <button>; without it the row is an <a> to `href`, and `onFollow` sees the
+   click first -- it can preventDefault() to hold the navigation. Both throw
+   sparks from the pointer. A row with no `print` yet shows its icon in an empty window. */
 export default function LinkRow({
   link,
   onOpen,
+  onFollow,
 }: {
   link: LinkEntry
   onOpen?: () => void
+  onFollow?: (e: MouseEvent<HTMLAnchorElement>) => void
 }) {
   const { icon: Icon, title, meta, eyebrow, blurb, print, href } = link
 
@@ -92,7 +95,15 @@ export default function LinkRow({
 
   if (!onOpen) {
     return (
-      <a href={href} onClick={castMagicFrom} className="link-row" style={style}>
+      <a
+        href={href}
+        onClick={(e) => {
+          castMagicFrom(e)
+          onFollow?.(e)
+        }}
+        className="link-row"
+        style={style}
+      >
         {face}
       </a>
     )

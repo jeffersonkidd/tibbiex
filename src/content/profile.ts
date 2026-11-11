@@ -39,8 +39,11 @@ export const PROFILE = {
     { name: "Kissy Kamikaze" },
     { name: "X-Possibles" },
   ] as { name: string; shop?: BandId }[],
-  /* Whether the avatar shows her portrait (assets/imagery/tibbie-portrait-4:
-     the cap-salute selfie, cut out so the ring's white shows behind her) or a placeholder glyph in the same ring. */
+  /* Whether the avatar shows her portrait or a placeholder glyph in the same
+     ring. The portrait is the studio's uploaded avatar when there is one,
+     else assets/illustrations/profile/tibbie-portrait.svg: her head and
+     shoulders drawn like the tarot and GASH figures, transparent round her
+     so the ring's white shows behind. */
   portrait: true,
   /* The green badge on the banner and the dot on the avatar. There is no feed
      telling the site she is live, so this is a claim someone has to keep true:

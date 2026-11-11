@@ -1,4 +1,5 @@
 import { useState } from "react"
+import type { ReactNode } from "react"
 import { Check, Mail } from "lucide-react"
 import { toast } from "sonner"
 
@@ -10,20 +11,20 @@ import Chip from "../../ui/controls/Chip"
 import EmailField from "../../ui/controls/EmailField"
 import Honeypot from "../../ui/controls/Honeypot"
 import PanelHeader from "../../ui/display/PanelHeader"
+import Overlay from "../../ui/overlays/Overlay"
 
-/* "Join my Newsletter" -- the sign-up at the head of the Home tab, from the
-   component reference in .files/tibbiex-components.html. Two steps: the
-   address, then (optionally) what to hear about.
-
-   It is the featured block, so it wears the amber lighting from featured.css
-   while there is still something to do; the confirmation drops it, since a
-   finished thing is not what the eye should be pulled to.
+/* "Join my Newsletter" -- once a panel at the head of the Home tab, now a
+   modal: App opens it the first time a visitor taps a link row or a shop
+   banner (lib/newsletter-prompt.ts), and carries on to what they tapped
+   when it closes. Two steps: the address, then (optionally) what to hear
+   about. The header keeps the featured amber while there is something to
+   do; the confirmation drops it.
 
    The last step posts to api/subscribe.ts, which writes the address into the
    Resend audience and sends a confirmation. Until that lands the visitor is
    not on the list, so the button says what it is doing and a failure comes
    back as a toast with the address still in the field. */
-export default function NewsletterSignup() {
+export default function NewsletterModal({ onClose }: { onClose: () => void }) {
   const [step, setStep] = useState<"email" | "topics" | "sent">("email")
   const [email, setEmail] = useState("")
   const [error, setError] = useState<string | null>(null)
@@ -61,22 +62,22 @@ export default function NewsletterSignup() {
 
   if (step === "sent") {
     return (
-      <section className="surface rounded-lg p-panel" aria-live="polite">
+      <Shell onClose={onClose}>
         <PanelHeader
           icon={Check}
           title="You’re on the list"
           sub="Check your inbox — there’s a note confirming it."
         />
-      </section>
+        <Button className="mt-4" tone="secondary" onClick={onClose}>
+          Carry on
+        </Button>
+      </Shell>
     )
   }
 
   if (step === "topics") {
     return (
-      <section
-        className="surface featured rounded-lg p-panel"
-        aria-live="polite"
-      >
+      <Shell onClose={onClose}>
         <PanelHeader
           lit
           spark={NEWSLETTER.spark}
@@ -109,12 +110,12 @@ export default function NewsletterSignup() {
         <p className="body-xs mt-2 text-center text-on-surface-variant">
           One confirmation email, then about one a month.
         </p>
-      </section>
+      </Shell>
     )
   }
 
   return (
-    <section className="surface featured rounded-lg p-panel">
+    <Shell onClose={onClose}>
       <PanelHeader
         lit
         spark={NEWSLETTER.spark}
@@ -151,6 +152,30 @@ export default function NewsletterSignup() {
           {NEWSLETTER.cadence.text}
         </p>
       )}
-    </section>
+      <button
+        type="button"
+        onClick={onClose}
+        className="body-small mt-4 w-full text-center text-on-surface-variant underline-offset-4 hover:text-on-surface hover:underline"
+      >
+        Not now
+      </button>
+    </Shell>
+  )
+}
+
+/* Every step sits in the same modal, and says when it changes. */
+function Shell({
+  onClose,
+  children,
+}: {
+  onClose: () => void
+  children: ReactNode
+}) {
+  return (
+    <Overlay onClose={onClose}>
+      <section className="p-modal [&>:first-child]:pr-10" aria-live="polite">
+        {children}
+      </section>
+    </Overlay>
   )
 }
